@@ -7,11 +7,17 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "intervention/image": "^3.9",
+        "jenssegers/mongodb": "^5.1",
         "laravel/framework": "^11.31",
         "laravel/horizon": "^5.29",
+        "laravel/passport": "^12.3",
         "laravel/telescope": "^5.2",
         "laravel/tinker": "^2.9",
-        "nwidart/laravel-modules": "^11.1"
+        "nwidart/laravel-modules": "^11.1",
+        "pragmarx/google2fa-laravel": "^2.2",
+        "spatie/laravel-activitylog": "^4.9",
+        "spatie/laravel-multitenancy": "^4.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
