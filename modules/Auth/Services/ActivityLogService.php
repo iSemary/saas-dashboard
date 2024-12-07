@@ -36,8 +36,8 @@ class ActivityLogService
         return array_map(function ($item) {
             $causerName = null;
 
-            if ($item->causer_type === 'App\Models\User' && $item->causer_id) {
-                $causer = \App\Models\User::find($item->causer_id);
+            if ($item->causer_type === 'Modules\Auth\Entities\User' && $item->causer_id) {
+                $causer = \Modules\Auth\Entities\User::find($item->causer_id);
                 $causerName = $causer ? $causer->name : null;
             }
 

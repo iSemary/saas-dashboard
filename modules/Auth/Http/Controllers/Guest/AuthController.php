@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\Auth\Http\Controllers\Api;
+namespace Modules\Auth\Http\Controllers\Guest;
 
-use App\Http\Controllers\Api\ApiController;
+use App\Http\Controllers\ApiController;
 use App\Models\Customer;
 use Modules\Auth\Services\RegistrationService;
 use Modules\Auth\Services\ActivityLogService;
@@ -16,7 +16,7 @@ use Modules\Auth\Jobs\ForgetPasswordMailJob;
 use Modules\Auth\Jobs\RegistrationMailJob;
 use Modules\Auth\Entities\EmailToken;
 use Modules\Auth\Entities\LoginAttempt;
-use App\Models\User;
+use Modules\Auth\Entities\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -37,7 +37,10 @@ class AuthController extends ApiController
         $this->registrationService = $registrationService;
         $this->activityLogService = $activityLogService;
     }
-
+    public function showLoginForm()
+    {
+        return view('guest.auth.login');
+    }
     /**
      * The function registers a new user, creates a user record, fires an email confirmation queue,
      * collects user details, and returns a success JSON response.
@@ -91,8 +94,10 @@ class AuthController extends ApiController
 
     private function attemptLogin(LoginUserRequest $request): bool
     {
+        $field = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
         return auth()->attempt([
-            'email' => $request->email,
+            $field => $request->username,
             'password' => $request->password
         ]);
     }
@@ -142,7 +147,8 @@ class AuthController extends ApiController
 
     private function handleFailedLogin(LoginUserRequest $request, $tenant): JsonResponse
     {
-        $user = User::where("email", $request->email)->first();
+        $field = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        $user = User::where($field, $request->username)->first();
 
         if ($user) {
             return $this->handleExistingUserFailedLogin($user, $request, $tenant);
@@ -170,18 +176,20 @@ class AuthController extends ApiController
 
     private function handleNonExistentUserLogin(LoginUserRequest $request): JsonResponse
     {
-        $trashedUser = User::where("email", $request->email)->withTrashed()->first();
+        $field = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        $trashedUser = User::where($field, $request->username)->withTrashed()->first();
 
         if ($trashedUser) {
             return $this->attemptAccountRecovery($request, $trashedUser);
         }
 
-        return $this->return(400, 'Invalid credentials');
+        return $this->return(400, 'Invalid credentials Non Exists');
     }
 
     private function attemptAccountRecovery(LoginUserRequest $request, User $trashedUser): JsonResponse
     {
-        User::where("email", $request->email)->withTrashed()->restore();
+        $field = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        User::where($field, $request->username)->withTrashed()->restore();
 
         if ($this->attemptLogin($request)) {
             return $this->handleSuccessfulRecovery($request);
@@ -310,11 +318,21 @@ class AuthController extends ApiController
     public function forgetPassword(ForgetPasswordRequest $request): JsonResponse
     {
         $user = User::select(['id', 'name', 'email'])->where("email", $request->email)->first();
+        if (!$user) {
+            return $this->return(400, 'User not found');
+        }
+
         $token = $user->createResetToken();
+
+        // Get the tenant ID
+        $tenantId = Tenant::current()->id;
+
         // Send reset password link
         ForgetPasswordMailJob::dispatchAfterResponse($user, $token, $tenantId);
+
         return $this->return(200, "Reset email has been sent successfully");
     }
+
 
     /**
      * The function resets a user's password by fetching the user from the database using a token, updating

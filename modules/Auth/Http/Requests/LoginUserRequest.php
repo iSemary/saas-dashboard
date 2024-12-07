@@ -19,8 +19,8 @@ class LoginUserRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            'subdomain' => 'required|max:64|exists:tenants,name|exists:customers,username|min:2|regex:/^[a-zA-Z0-9]+$/',
-            'email' => 'required|email|max:255',
+            'subdomain' => 'required|max:64|exists:tenants,name|min:2|regex:/^[a-zA-Z0-9]+$/',
+            'username' => 'required|max:255',
             'password' => 'required|max:255|min:8',
         ];
     }

@@ -2,7 +2,7 @@
 
 namespace Modules\Auth\Repository;
 
-use App\Models\User;
+use Modules\Auth\Entities\User;
 use Modules\Auth\Helper\UserHelper;
 
 class UserRepository {

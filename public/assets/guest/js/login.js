@@ -1,7 +1,7 @@
 $("#organizationForm").on("submit", function (e) {
     e.preventDefault();
 
-    const organizationName = $("#organization_name").val();
+    const organizationName = $("#organizationName").val();
     let url = $(this).attr("action");
     if (!organizationName) {
         alert("Organization name is required");
@@ -17,6 +17,7 @@ $("#organizationForm").on("submit", function (e) {
         success: function (response) {
             if (response.success) {
                 $("#organizationForm").hide();
+                $("#loginOrganizationName").val(organizationName);
                 $("#loginForm").show();
             } else {
                 alert(response.message || "Invalid organization name.");
@@ -33,19 +34,39 @@ $("#loginForm").on("submit", function (e) {
 
     let url = $(this).attr("action");
 
+    let username = $("#username").val().trim();
+    let password = $("#password").val().trim();
+    let rememberMe = $("#rememberMe").is(":checked");
+    let organizationName = $("#loginOrganizationName").val().trim();
+
+    // Validate fields
+    if (!organizationName) {
+        alert("Organization name is required.");
+        return;
+    }
+    if (!username) {
+        alert("Username is required.");
+        return;
+    }
+    if (!password) {
+        alert("Password is required.");
+        return;
+    }
+
     $.ajax({
         url: url,
         method: "POST",
         data: {
-            organization_name: organizationName,
+            subdomain: organizationName,
+            username: username,
+            password: password,
+            remember_me: rememberMe,
             _token: $('meta[name="csrf-token"]').attr("content"),
         },
         success: function (response) {
             if (response.success) {
-                $("#organizationForm").hide();
-                $("#loginForm").show();
-            } else {
-                alert(response.message || "Invalid organization name.");
+                localStorage.setItem('access_token', response.data.access_token);
+                window.location.href = response.data.redirect;
             }
         },
         error: function () {

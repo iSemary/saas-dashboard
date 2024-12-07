@@ -11,7 +11,7 @@
                         Organization Name
                     </span>
                     <div class="wrap-input100 validate-input m-b-36" data-validate="Organization Name is required">
-                        <input class="input100" type="text" name="organization_name" id="organization_name">
+                        <input class="input100" type="text" name="organization_name" id="organizationName">
                         <span class="focus-input100"></span>
                     </div>
 
@@ -27,10 +27,17 @@
                         Account Login
                     </span>
                     <span class="txt1 p-b-11">
+                        Organization
+                    </span>
+                    <div class="wrap-input100 validate-input m-b-36" data-validate="Organization name is required">
+                        <input class="input100" type="text" id="loginOrganizationName" name="login_organization_name" readonly>
+                        <span class="focus-input100"></span>
+                    </div>
+                    <span class="txt1 p-b-11">
                         Username
                     </span>
                     <div class="wrap-input100 validate-input m-b-36" data-validate="Username is required">
-                        <input class="input100" type="text" name="username">
+                        <input class="input100" type="text" id="username" name="username">
                         <span class="focus-input100"></span>
                     </div>
                     <span class="txt1 p-b-11">
@@ -40,12 +47,12 @@
                         <span class="btn-show-pass">
                             <i class="fa fa-eye"></i>
                         </span>
-                        <input class="input100" type="password" name="pass">
+                        <input class="input100" type="password" id="password" name="password">
                         <span class="focus-input100"></span>
                     </div>
                     <div class="flex-sb-m w-full p-b-48">
                         <div class="contact100-form-checkbox">
-                            <input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
+                            <input class="input-checkbox100" id="ckb1" type="checkbox" id="rememberMe" name="remember_me">
                             <label class="label-checkbox100" for="ckb1">
                                 Remember me
                             </label>
