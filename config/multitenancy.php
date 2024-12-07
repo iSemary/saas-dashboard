@@ -19,7 +19,7 @@ return [
      * This class should extend `Spatie\Multitenancy\TenantFinder\TenantFinder`
      *
      */
-    'tenant_finder' => null,
+    'tenant_finder' => Spatie\Multitenancy\TenantFinder\DomainTenantFinder::class,
 
     /*
      * These fields are used by tenant:artisan command to match one or more tenant.
@@ -34,16 +34,15 @@ return [
      * A valid task is any class that implements Spatie\Multitenancy\Tasks\SwitchTenantTask
      */
     'switch_tenant_tasks' => [
-        // \Spatie\Multitenancy\Tasks\PrefixCacheTask::class,
-        // \Spatie\Multitenancy\Tasks\SwitchTenantDatabaseTask::class,
-        // \Spatie\Multitenancy\Tasks\SwitchRouteCacheTask::class,
+        \Spatie\Multitenancy\Tasks\PrefixCacheTask::class,
+        \Spatie\Multitenancy\Tasks\SwitchTenantDatabaseTask::class,
+        \Spatie\Multitenancy\Tasks\SwitchRouteCacheTask::class,
     ],
 
     /*
      * This class is the model used for storing configuration on tenants.
      *
-     * It must  extend `Spatie\Multitenancy\Models\Tenant::class` or
-     * implement `Spatie\Multitenancy\Contracts\IsTenant::class` interface
+     * It must be or extend `Spatie\Multitenancy\Models\Tenant::class`
      */
     'tenant_model' => Tenant::class,
 
@@ -59,24 +58,19 @@ return [
      *
      * Set to `null` to use the default connection.
      */
-    'tenant_database_connection_name' => null,
+    'tenant_database_connection_name' => 'tenant',
 
     /*
      * The connection name to reach the landlord database.
      */
-    'landlord_database_connection_name' => null,
-
-    /*
-     * This key will be used to associate the current tenant in the context
-     */
-    'current_tenant_context_key' => 'tenantId',
+    'landlord_database_connection_name' => 'landlord',
 
     /*
      * This key will be used to bind the current tenant in the container.
      */
     'current_tenant_container_key' => 'currentTenant',
 
-    /*
+    /**
      * Set it to `true` if you like to cache the tenant(s) routes
      * in a shared file using the `SwitchRouteCacheTask`.
      */

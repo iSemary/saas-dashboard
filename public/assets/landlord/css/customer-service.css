@@ -1,0 +1,202 @@
+.direct-chat-messages {
+    height: 100%;
+}
+.fileUpload {
+    opacity: 0;
+}
+
+.fileUpload:hover, .fileUpload:active, .fileUpload:focus {
+    cursor: pointer;
+}
+
+.fileUpload input.upload, .upload2 {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    width: 148px;
+    height: 46px;
+    cursor: pointer;
+}
+
+.fileUpload input[type="image"] {
+    position: fixed;
+    right: 100%;
+    bottom: 100%;
+}
+
+.file-upload-chat label {
+    padding: 0 10px;
+    color: #007bff;
+    cursor: pointer;
+}
+.fileUpload {
+    margin: 5px 5px 5px 0 !important;
+    width: 35px;
+    height: 33px;
+    padding: 6px 7px 7px 7px;
+}
+i#waitICON {
+    margin: 8px;
+}
+#myImg {
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#myImg:hover {
+    opacity: 0.7;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0); /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.9); /* Black w/ opacity */
+}
+
+/* Modal Content (image) */
+.modal-content {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+}
+
+/* Caption of Modal Image */
+#caption {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+    text-align: center;
+    color: #ccc;
+    padding: 10px 0;
+    height: 150px;
+}
+
+/* Add Animation */
+.modal-content, #caption {
+    -webkit-animation-name: zoom;
+    -webkit-animation-duration: 0.6s;
+    animation-name: zoom;
+    animation-duration: 0.6s;
+}
+
+@-webkit-keyframes zoom {
+    from {
+        -webkit-transform: scale(0)
+    }
+    to {
+        -webkit-transform: scale(1)
+    }
+}
+
+@keyframes zoom {
+    from {
+        transform: scale(0)
+    }
+    to {
+        transform: scale(1)
+    }
+}
+
+/* The Close Button */
+.close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* 100% Image Width on Smaller Screens */
+@media only screen and (max-width: 700px) {
+    .modal-content {
+        width: 100%;
+    }
+}
+.direct-chat-text {
+    text-align: right;
+}
+.direct-chat-text img {
+    width: 250px;
+    height: 250px;
+    border: 1px solid #fff;
+    border-radius: 5px;
+}
+.modal-backdrop.show {
+    opacity: 1;
+}
+#ChatContent {
+    overflow-y: scroll;
+    height: 464px;
+}
+.default-chat img {
+    width: 169px;
+}
+.default-chat {
+    text-align: center;
+}
+.direct-chat-img {
+    border-radius: 50%;
+    float: left;
+    height: 40px;
+    width: 40px;
+}
+.direct-chat-text {
+    border-radius: .3rem;
+    background: #d2d6de;
+    border: 1px solid #d2d6de;
+    color: #444;
+    margin: 5px 0 0 50px;
+    padding: 5px 10px;
+    position: relative;
+}
+.direct-chat-msg {
+    margin-bottom: 10px;
+}
+.direct-chat-primary .right>.direct-chat-text {
+    background: #007bff;
+    border-color: #007bff;
+    color: #fff;
+}
+.right .direct-chat-text {
+    margin-left: 0;
+    margin-right: 50px;
+}
+.direct-chat-text {
+    text-align: right;
+}
+.direct-chat-name {
+    font-weight: 600;
+}
+.direct-chat-msg, .direct-chat-text {
+    display: block;
+}
+.right .direct-chat-img {
+    float: right;
+}
