@@ -19,16 +19,21 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             '2fa' => \App\Http\Middleware\Validate2FA::class,
+            'set-db-connection' => \App\Http\Middleware\SetDatabaseConnection::class,
+            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
         ]);
 
         $middleware->group('tenant', [
+            'set-db-connection',
             \Spatie\Multitenancy\Http\Middleware\NeedsTenant::class,
             \Spatie\Multitenancy\Http\Middleware\EnsureValidTenantSession::class
         ]);
     })
-    ->withExceptions(function (Exceptions $exceptions) {
-        //
-    })
+    ->withExceptions(function (Exceptions $exceptions) {})
+    ->withProviders([
+        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
+    ])
     ->withCommands([
         __DIR__ . '/../app/Console/Commands',
     ])

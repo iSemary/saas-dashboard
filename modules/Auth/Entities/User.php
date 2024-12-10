@@ -52,7 +52,7 @@ class User extends Authenticatable
             return 'landlord';
         }
 
-        return 'tenant'; // Database connection for tenant
+        return 'tenant';
     }
 
     public function role()
@@ -152,5 +152,18 @@ class User extends Authenticatable
         return LogOptions::defaults()
             ->logAll()
             ->logOnlyDirty();
+    }
+
+    public function getCurrentToken()
+    {
+        $token = DB::table('oauth_access_tokens')
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->first();
+
+        if ($token) {
+            return $token->id;
+        }
+        return null;
     }
 }

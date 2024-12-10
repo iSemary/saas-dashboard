@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Auth\Http\Controllers\Guest;
+namespace Modules\Auth\Http\Controllers\Guest\Api;
 
 use App\Http\Controllers\ApiController;
 use App\Models\Customer;
@@ -38,19 +38,9 @@ class AuthController extends ApiController
         $this->registrationService = $registrationService;
         $this->activityLogService = $activityLogService;
     }
-    public function showLoginForm(Request $request)
+    public function showLoginForm()
     {
-        $subdomain = TenantHelper::getSubDomain();
-        if ($subdomain) {
-            $tenant = Tenant::where("name", $subdomain)->exists();
-            if ($tenant) {
-                return view('guest.auth.login', ['tenant' => $subdomain]);
-            } else {
-                throw new Exception("Invalid organization.");
-            }
-        } else {
-            return view('guest.auth.login');
-        }
+        return view('guest.auth.login');
     }
     /**
      * The function registers a new user, creates a user record, fires an email confirmation queue,
@@ -269,21 +259,23 @@ class AuthController extends ApiController
      */
     public function logout(Request $request): JsonResponse
     {
-        $user = auth()->guard('web')->user();
+        $user = auth()->guard('api')->user();
         try {
             if ($request->type == 1) {
-                // Log out only the current session
-                auth()->guard('web')->logout();
+                // Delete only the request token
+                DB::table("oauth_access_tokens")->where("id", $user->token()['id'])->delete();
             } else {
-                // Log out all sessions
+                // Delete all user tokens
                 $user->tokens->each(function ($token, $key) use ($user) {
-                    $token->delete();
+                    if ($token->id !== $user->token()['id']) {
+                        $token->delete();
+                    }
                 });
-                auth()->guard('web')->logout();  // Log out the current session
             }
+
             return redirect()->route("login");
         } catch (Exception $e) {
-            return $this->return(400, 'Couldn\'t logout', [], ['e' => $e->getMessage()]);
+            return $this->return(400, 'Couldn\'t logout using this token', [], ['e' => $e->getMessage()]);
         }
     }
 
@@ -500,6 +492,69 @@ class AuthController extends ApiController
         return $this->return(200, "Account deactivated successfully");
     }
 
+    /**
+     * Generate 2FA QrCode After registration
+     *
+     * @return void
+     */
+    public function generate2FACode()
+    {
+        $user = auth()->guard('api')->user();
+
+        $google2fa = app('pragmarx.google2fa');
+        $googleSecretKey = $google2fa->generateSecretKey();
+
+        $qrCode = $google2fa->getQRCodeInline(config('app.name'), $user['email'], $googleSecretKey);
+
+        return $this->return(200, "QR Code Generated Successfully", ['qr_code' => $qrCode, 'secret_key' => $googleSecretKey]);
+    }
+
+    /**
+     * Verify 2FA After registration
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function verify2FA(Request $request)
+    {
+        $user = auth()->guard('api')->user();
+        $request->validate(['code' => 'required|string|max:6', 'secret_key' => 'required|string']);
+
+        // Verify the 2FA code
+        $google2fa = app('pragmarx.google2fa');
+        $isValid = $google2fa->verifyKey($request->secret_key, $request->code);
+
+        if ($isValid) {
+            // Create a new 2FA token
+            FactorAuthenticateToken::create(['user_id' => $user->id, 'token_id' => $user->token()->id]);
+            $user->update(["google2fa_secret" => $request->secret_key]);
+            return $this->return(200, "2FA Verified Successfully");
+        }
+        return $this->return(400, "Invalid OTP number");
+    }
+
+    /**
+     * Validate 2fa after login
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function validate2FA(Request $request)
+    {
+        $user = auth()->guard('api')->user();
+        $request->validate(['code' => 'required|string|max:6']);
+
+        // Validate the 2FA code
+        $google2fa = app('pragmarx.google2fa');
+        $isValid = $google2fa->verifyKey($user->google2fa_secret, $request->code);
+
+        if ($isValid) {
+            // Create a new 2FA token
+            FactorAuthenticateToken::create(['user_id' => $user->id, 'token_id' => $user->token()->id]);
+            return $this->return(200, "2FA Verified Successfully");
+        }
+        return $this->return(400, "Invalid OTP number");
+    }
 
     /**
      * Update user details [settings page]

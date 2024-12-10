@@ -2,10 +2,10 @@ headerParams = {
     "Content-Type": "application/x-www-form-urlencoded",
     Authorization: "Bearer " + localStorage.getItem("auth_token"),
 };
-const currencyObject = JSON.parse($('meta[name="store_currency"]').attr("content"));
-const currency = currencyObject.value;
+// const currencyObject = JSON.parse($('meta[name="store_currency"]').attr("content"));
+// const currency = currencyObject.value;
 const CsrfToken = $('meta[name="_token"]').attr("content");
-const LoadingSpan = `<span><i class="fa fa-spinner fa-spin"></i> ${lang.please_wait}</span>`;
+// const LoadingSpan = `<span><i class="fa fa-spinner fa-spin"></i> ${lang.please_wait}</span>`;
 
 /**
  *
@@ -116,7 +116,7 @@ $("#navbarVerticalNav")
 // DataTables Config
 $.extend(true, $.fn.dataTable.defaults, {
     language: {
-        url: LanguageJson,
+        url: "LanguageJson",
     },
     lengthMenu: [
         [10, 25, 50, -1],

@@ -2,11 +2,21 @@
 
 namespace Modules\Tenant\Helper;
 
+use Illuminate\Support\Facades\Request;
 use Modules\Auth\Entities\User;
 use Spatie\Multitenancy\Models\Tenant;
 
 class TenantHelper
 {
+    public static function getSubDomain()
+    {
+        // Get the host (e.g., landlord.sass.test)
+        $host = request()->getHost();
+        // Extract the subdomain by splitting the host
+        $subdomain = explode('.', $host)[0];
+        // Check if the subdomain is valid (not empty) and return it
+        return $subdomain ? $subdomain : null;
+    }
 
     public static function format($customerUsername)
     {
