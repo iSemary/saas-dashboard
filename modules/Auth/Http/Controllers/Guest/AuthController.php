@@ -265,9 +265,8 @@ class AuthController extends ApiController
      * method, headers, and input data. In this code, it is used to determine the type of logout action
      * to perform.
      * 
-     * @return JsonResponse a JsonResponse.
      */
-    public function logout(Request $request): JsonResponse
+    public function logout(Request $request)
     {
         $user = auth()->guard('web')->user();
         try {

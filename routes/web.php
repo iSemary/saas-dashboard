@@ -16,7 +16,6 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
-
     // 2FA
     Route::get('2fa/setup', [TwoFactorAuthController::class, 'showSetupForm'])->name('2fa.setup');
     Route::get('2fa/validate', [TwoFactorAuthController::class, 'showValidateForm'])->name('2fa.validate');

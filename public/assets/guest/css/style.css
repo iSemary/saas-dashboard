@@ -202,7 +202,6 @@ button:hover {
 }
 
 .txt1 {
-    font-family: Raleway-SemiBold;
     font-size: 13px;
     color: #555555;
     line-height: 1.4;
@@ -210,7 +209,6 @@ button:hover {
 }
 
 .txt3 {
-    font-family: Raleway-Regular;
     font-size: 13px;
     color: #555555;
     line-height: 1.4;
@@ -228,7 +226,6 @@ button:hover {
     justify-content: center;
     align-items: center;
     padding: 15px;
-    background-color: #ebebeb;
 }
 
 .wrap-login100 {

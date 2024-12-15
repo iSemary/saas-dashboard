@@ -1,34 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
+use Modules\Auth\Http\Controllers\Guest\AuthController;
 
-Route::get('/login', function () {
-    return Inertia::render('Auth/Login');
-});
-
-Route::get('/register', function () {
-    return Inertia::render('Auth/Register');
-});
-
-Route::group(['middleware' => ['tenant']], function () {
-    Route::get("/2fa/generate", function () {
-        return Inertia::render('Auth/2FA/FactorAuthenticate');
-    });
-    
-    Route::get("/2fa/validate", function () {
-        return Inertia::render('Auth/2FA/Validate');
-    });
-
-    Route::get('/settings', function () {
-        return Inertia::render('Settings/Settings');
-    });
-
-    Route::get('/login-attempts', function () {
-        return Inertia::render('Auth/Attempts');
-    });
-
-    Route::get('/activity-log', function () {
-        return Inertia::render('Auth/ActivityLog');
-    });
+Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:landlord', '2fa'])->group(function () {
+    Route::resource('permissions', AuthController::class)->names('permissions');
+    Route::resource('roles', AuthController::class)->names('roles');
 });

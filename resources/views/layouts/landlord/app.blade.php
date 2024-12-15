@@ -59,7 +59,7 @@
 
 </head>
 
-<body class="sidebar-mini layout-fixed sidebar-collapse">
+<body class="sidebar-mini layout-fixed sidebar-expand">
     {{-- All Content --}}
     <div class="wrapper">
         {{-- Header --}}

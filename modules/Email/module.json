@@ -1,0 +1,9 @@
+{
+    "name": "Email",
+    "alias": "email",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [ ],
+    "files": []
+}

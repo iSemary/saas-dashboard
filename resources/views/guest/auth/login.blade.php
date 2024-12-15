@@ -2,7 +2,7 @@
 @section('content')
     <div class="limiter">
         <div class="container-login100">
-            <div class="wrap-login100 p-l-85 p-r-85 p-t-55 p-b-55">
+            <div class="wrap-login100 p-4">
                 @if (!isset($tenant))
                     <form id="organizationForm" method="POST" action="{{ route('organization.check') }}"
                         class="login100-form validate-form flex-sb flex-w">
@@ -65,7 +65,7 @@
                         </div>
 
                         <div>
-                            <a href="#" class="txt3">
+                            <a href="{{ route("password.forget.show") }}" class="txt3">
                                 Forgot Password?
                             </a>
                         </div>

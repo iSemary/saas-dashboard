@@ -12,6 +12,14 @@ class Resources
                 'actions' => ['read', 'create', 'update', 'delete']
             ],
             [
+                'name' => 'clients',
+                'actions' => ['read', 'create', 'update', 'delete']
+            ],
+            [
+                'name' => 'tenants',
+                'actions' => ['read', 'create', 'update', 'delete']
+            ],
+            [
                 'name' => 'permissions',
                 'actions' => ['read', 'create', 'update', 'delete']
             ],
@@ -24,11 +32,19 @@ class Resources
                 'actions' => ['read', 'create', 'update', 'delete']
             ],
             [
+                'name' => 'tags',
+                'actions' => ['read', 'create', 'update', 'delete']
+            ],
+            [
                 'name' => 'languages',
                 'actions' => ['read', 'create', 'update', 'delete']
             ],
             [
                 'name' => 'translations',
+                'actions' => ['read', 'create', 'update', 'delete']
+            ],
+            [
+                'name' => 'currencies',
                 'actions' => ['read', 'create', 'update', 'delete']
             ],
             [
@@ -64,6 +80,10 @@ class Resources
                 'actions' => ['read', 'create', 'update', 'delete']
             ],
             [
+                'name' => 'email_logs',
+                'actions' => ['read', 'resend']
+            ],
+            [
                 'name' => 'plans',
                 'actions' => ['read', 'create', 'update', 'delete']
             ],
@@ -72,7 +92,23 @@ class Resources
                 'actions' => ['read', 'create', 'update', 'delete']
             ],
             [
+                'name' => 'payment_methods',
+                'actions' => ['read', 'create', 'update', 'delete']
+            ],
+            [
+                'name' => 'payment_logs',
+                'actions' => ['read', 'create', 'update', 'delete']
+            ],
+            [
                 'name' => 'settings',
+                'actions' => ['read', 'create', 'update', 'delete']
+            ],
+            [
+                'name' => 'announcements',
+                'actions' => ['read', 'create', 'update', 'delete']
+            ],
+            [
+                'name' => 'modules',
                 'actions' => ['read', 'create', 'update', 'delete']
             ],
             [

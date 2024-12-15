@@ -1,5 +1,12 @@
 {
     "Tenant": true,
     "Auth": true,
-    "Customer": true
+    "Customer": true,
+    "Geography": true,
+    "Localization": true,
+    "Configuration": true,
+    "Email": true,
+    "Utilities": true,
+    "Subscription": true,
+    "Payment": true
 }

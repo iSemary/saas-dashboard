@@ -1,0 +1,9 @@
+{
+    "name": "Subscription",
+    "alias": "subscription",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [ ],
+    "files": []
+}
