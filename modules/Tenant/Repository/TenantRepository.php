@@ -5,9 +5,11 @@ namespace Modules\Tenant\Repository;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
-class TenantRepository {
+class TenantRepository
+{
 
-    public function init($customerUsername) {
+    public function init($customerUsername)
+    {
         $tenantId = $this->createTenantRecord($customerUsername);
         $this->setupDatabase($customerUsername);
         $this->migrateTenant($tenantId);
@@ -18,7 +20,8 @@ class TenantRepository {
         return $this->getTenantById($tenantId);
     }
 
-    private function createTenantRecord($customerUsername) {
+    private function createTenantRecord($customerUsername)
+    {
         $tenantId = DB::table('tenants')->insertGetId([
             'name' => $customerUsername,
             'domain' => $this->generateDomain($customerUsername),
@@ -30,27 +33,35 @@ class TenantRepository {
         return $tenantId;
     }
 
-    private function generateDomain($customerUsername) {
+    private function generateDomain($customerUsername)
+    {
         return $customerUsername . '.' . config('settings.domain');
     }
 
-    private function generateDatabaseName($customerUsername) {
+    private function generateDatabaseName($customerUsername)
+    {
         return config('settings.db_prefix') .  '_' . $customerUsername;
     }
 
-    private function setupDatabase($customerUsername) {
+    private function setupDatabase($customerUsername)
+    {
         $dbName = $this->generateDatabaseName($customerUsername);
         $this->createDatabase($dbName);
     }
 
-    private function createDatabase($dbName) {
+    private function createDatabase($dbName)
+    {
         DB::statement("CREATE DATABASE IF NOT EXISTS " . $dbName);
     }
 
-    private function migrateTenant($tenantId) {
+    private function migrateTenant($tenantId)
+    {
         $paths = [
             'database/migrations/tenant',
-            'modules/*/Database/Migrations/tenant'
+            'modules/*/Database/Migrations/tenant',
+            'modules/*/Database/migrations/tenant',
+            'modules/*/Database/migrations/shared',
+            'modules/*/Database/Migrations/shared',
         ];
 
         $database = 'tenant';
@@ -61,14 +72,16 @@ class TenantRepository {
         }
     }
 
-    private function seedTenantDatabase($tenantId) {
+    private function seedTenantDatabase($tenantId)
+    {
         $database = 'tenant';
 
         $command = "tenants:artisan 'migrate --database={$database} --seed' --tenant={$tenantId}";
         Artisan::call($command);
     }
 
-    private function createLogMongoDatabase($customerUsername) {
+    private function createLogMongoDatabase($customerUsername)
+    {
         $databaseName = $this->generateDatabaseName($customerUsername);
 
         $clientOptions = ['authSource' => config('database.connections.logs.options.database')];
@@ -90,7 +103,8 @@ class TenantRepository {
         $db->createCollection('logs');
     }
 
-    private function getTenantById($tenantId) {
+    private function getTenantById($tenantId)
+    {
         return DB::table('tenants')->where('id', $tenantId)->first();
     }
 }

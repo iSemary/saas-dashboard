@@ -13,6 +13,7 @@ use Modules\Auth\Entities\EmailToken;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
+use Laravolt\Avatar\Facade as Avatar;
 
 class User extends Authenticatable
 {
@@ -58,6 +59,11 @@ class User extends Authenticatable
     public function role()
     {
         return $this->roles()->latest()->first();
+    }
+
+    public function userMeta()
+    {
+        return $this->hasMany(UserMeta::class, 'user_id', 'id');
     }
 
     /**
@@ -147,6 +153,13 @@ class User extends Authenticatable
         return false;
     }
 
+    /**
+     * The function getActivitylogOptions() returns default log options to log all activities and only
+     * dirty activities.
+     * 
+     * @return LogOptions An instance of the `LogOptions` class with default settings, logging all
+     * activities and only dirty activities.
+     */
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
@@ -154,6 +167,14 @@ class User extends Authenticatable
             ->logOnlyDirty();
     }
 
+    /**
+     * This PHP function retrieves the ID of the latest access token associated with the currently
+     * authenticated user.
+     * 
+     * @return `id` of the latest `oauth_access_token` for the currently authenticated user is being
+     * returned by the `getCurrentToken` function. If a token is found, its `id` is returned; otherwise,
+     * `null` is returned.
+     */
     public function getCurrentToken()
     {
         $token = DB::table('oauth_access_tokens')
@@ -165,5 +186,19 @@ class User extends Authenticatable
             return $token->id;
         }
         return null;
+    }
+
+    /**
+     * This PHP function retrieves the avatar image of a user, either from user metadata or generates a new
+     * avatar based on the user's name.
+     * 
+     * @return string The `getAvatarAttribute` function returns a string value. If the user has an avatar
+     * meta with the key 'avatar', it returns the value of that meta. Otherwise, it creates an avatar using
+     * the user's name and returns the base64 representation of the avatar image.
+     */
+    public function getAvatarAttribute(): string
+    {
+        $avatarMeta = $this->userMeta()->where('meta_key', 'avatar')->first();
+        return $avatarMeta ? $avatarMeta->meta_value : Avatar::create($this->name)->toBase64();
     }
 }

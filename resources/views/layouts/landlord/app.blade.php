@@ -5,9 +5,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>{{ env("APP_NAME") }} | @yield('title')</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.ico') }}" />
+    <link rel="icon" type="image/png" href="{{ asset('assets/global/images/icons/logo/favicon.ico') }}" />
     <meta name="_token" content="{{ csrf_token() }}">
-    {{-- <meta name="store_currency" content="{{ json_encode(auth()->user()->getCurrency()) }}"> --}}
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {{-- Font Awesome --}}
     <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/fontawesome-free/css/all.min.css') }}" media="screen">

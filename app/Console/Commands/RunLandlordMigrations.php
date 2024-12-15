@@ -11,7 +11,7 @@ class RunLandlordMigrations extends Command
      *
      * @var string
      */
-    protected $signature = 'migrate:landlord';
+    protected $signature = 'landlord:migrate';
 
     /**
      * The console command description.
@@ -35,6 +35,21 @@ class RunLandlordMigrations extends Command
 
         $this->call('migrate', [
             '--path' => 'modules/*/Database/Migrations/landlord',
+            '--database' => 'landlord',
+        ]);
+
+        $this->call('migrate', [
+            '--path' => 'modules/*/Database/Migrations/shared',
+            '--database' => 'landlord',
+        ]);
+
+        $this->call('migrate', [
+            '--path' => 'modules/*/Database/migrations/landlord',
+            '--database' => 'landlord',
+        ]);
+
+        $this->call('migrate', [
+            '--path' => 'modules/*/Database/migrations/shared',
             '--database' => 'landlord',
         ]);
 

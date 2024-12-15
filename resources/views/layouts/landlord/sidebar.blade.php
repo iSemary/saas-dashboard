@@ -2,18 +2,17 @@
     <!-- Brand Logo -->
     <a href="{{ route('home') }}" class="brand-link">
         <!-- Store Logo / Name -->
-        <img src="{{ asset('uploads/store_logo/' . Auth::user()?->store?->logo ?? 'default.png') }}" alt="logo"
+        <img src="{{ asset('assets/global/images/icons/logo/favicon.svg') }}" alt="logo"
             class="brand-image img-circle elevation-3 float-revert">
-        <span class="brand-text font-weight-light">{{ Auth::user()->store?->name }}</span>
+        <span class="brand-text font-weight-light">{{ env("APP_NAME") }}</span>
     </a>
     <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-                {{-- <img src="{{ Auth::user()->getThumbImagePathAttribute() }}" class="img-circle elevation-2" --}}
-                {{-- alt="User Image"> --}}
+                <img src="{{ auth()->user()->avatar }}" class="img-circle elevation-2" alt="User Image">
             </div>
             <div class="info">
-                <a href="#" class="d-block">{{ auth()->user()->first_name . ' ' . auth()->user()->last_name }}</a>
+                <a href="#" class="d-block">{{ auth()->user()->name }}</a>
             </div>
         </div>
         <div class="form-inline">
@@ -43,11 +42,11 @@
                 @php
                     $sidebarNavigation = [
                         'main' => [
-                            'icon' => 'server',
+                            'icon' => 'fas fa-home',
                             'label' => 'main',
                             'items' => [
                                 'dashboard' => [
-                                    'icon' => 'tachometer-alt',
+                                    'icon' => 'fas fa-tachometer-alt',
                                     'single' => true,
                                     'external' => false,
                                     'route' => 'home',
@@ -55,25 +54,25 @@
                             ],
                         ],
                         'account_management' => [
-                            'icon' => 'account_management',
+                            'icon' => 'fas fa-user-cog',
                             'label' => 'account_management',
                             'items' => [
                                 'users' => [
-                                    'icon' => 'users',
+                                    'icon' => 'fas fa-users',
                                     'permission' => 'read.users',
                                     'route' => 'landlord.users.index',
                                     'single' => true,
                                     'external' => false,
                                 ],
                                 'clients' => [
-                                    'icon' => 'clients',
+                                    'icon' => 'fas fa-briefcase',
                                     'permission' => 'read.clients',
                                     'route' => 'landlord.clients.index',
                                     'single' => true,
                                     'external' => false,
                                 ],
                                 'tenants' => [
-                                    'icon' => 'tenants',
+                                    'icon' => 'fas fa-cubes',
                                     'permission' => 'read.tenants',
                                     'route' => 'landlord.tenants.index',
                                     'single' => true,
@@ -82,11 +81,11 @@
                             ],
                         ],
                         'mailing' => [
-                            'icon' => 'envelope',
+                            'icon' => 'fas fa-mail-bulk',
                             'label' => 'mailing',
                             'items' => [
                                 'email_templates' => [
-                                    'icon' => 'envelope',
+                                    'icon' => 'fas fa-envelope-open-text',
                                     'permission' => [
                                         'read' => 'read.email_templates',
                                         'create' => 'create.email_templates',
@@ -97,7 +96,7 @@
                                     ],
                                 ],
                                 'email_log' => [
-                                    'icon' => 'envelope',
+                                    'icon' => 'fas fa-history',
                                     'permission' => 'read.email_logs',
                                     'route' => 'landlord.email-logs.index',
                                     'single' => true,
@@ -106,11 +105,11 @@
                             ],
                         ],
                         'locale' => [
-                            'icon' => 'locale',
+                            'icon' => 'fas fa-globe-americas',
                             'label' => 'locale',
                             'items' => [
                                 'languages' => [
-                                    'icon' => 'flag',
+                                    'icon' => 'fas fa-language',
                                     'permission' => [
                                         'read' => 'read.languages',
                                         'create' => 'create.languages',
@@ -121,7 +120,7 @@
                                     ],
                                 ],
                                 'translations' => [
-                                    'icon' => 'flag',
+                                    'icon' => 'fas fa-exchange-alt',
                                     'permission' => [
                                         'read' => 'read.translations',
                                         'create' => 'create.translations',
@@ -134,11 +133,11 @@
                             ],
                         ],
                         'geography' => [
-                            'icon' => 'globe',
+                            'icon' => 'fas fa-map-marked-alt',
                             'label' => 'geography',
                             'items' => [
                                 'countries' => [
-                                    'icon' => 'flag',
+                                    'icon' => 'fas fa-flag',
                                     'permission' => [
                                         'read' => 'read.countries',
                                         'create' => 'create.countries',
@@ -149,7 +148,7 @@
                                     ],
                                 ],
                                 'cities' => [
-                                    'icon' => 'city',
+                                    'icon' => 'fas fa-city',
                                     'permission' => [
                                         'read' => 'read.cities',
                                         'create' => 'create.cities',
@@ -160,7 +159,7 @@
                                     ],
                                 ],
                                 'towns' => [
-                                    'icon' => 'home',
+                                    'icon' => 'fas fa-home',
                                     'permission' => [
                                         'read' => 'read.towns',
                                         'create' => 'create.towns',
@@ -171,7 +170,7 @@
                                     ],
                                 ],
                                 'provinces' => [
-                                    'icon' => 'map-marked-alt',
+                                    'icon' => 'fas fa-map-marker-alt',
                                     'permission' => [
                                         'read' => 'read.provinces',
                                         'create' => 'create.provinces',
@@ -184,11 +183,11 @@
                             ],
                         ],
                         'utilities' => [
-                            'icon' => 'tools',
+                            'icon' => 'fas fa-tools',
                             'label' => 'utilities',
                             'items' => [
                                 'categories' => [
-                                    'icon' => 'tag',
+                                    'icon' => 'fas fa-tags',
                                     'permission' => [
                                         'read' => 'read.categories',
                                         'create' => 'create.categories',
@@ -199,7 +198,7 @@
                                     ],
                                 ],
                                 'tags' => [
-                                    'icon' => 'tag',
+                                    'icon' => 'fas fa-tag',
                                     'permission' => [
                                         'read' => 'read.tags',
                                         'create' => 'create.tags',
@@ -210,7 +209,7 @@
                                     ],
                                 ],
                                 'currencies' => [
-                                    'icon' => 'dollar',
+                                    'icon' => 'fas fa-dollar-sign',
                                     'permission' => [
                                         'read' => 'read.currencies',
                                         'create' => 'create.currencies',
@@ -223,17 +222,17 @@
                             ],
                         ],
                         'payments' => [
-                            'icon' => 'subscription',
+                            'icon' => 'fas fa-credit-card',
                             'label' => 'payments',
                             'items' => [
                                 'payment_methods' => [
-                                    'icon' => 'payment_methods',
+                                    'icon' => 'fas fa-money-check-alt',
                                     'permission' => 'read.payment_methods',
                                     'route' => 'landlord.payment-methods.index',
                                     'single' => true,
                                 ],
                                 'payment_logs' => [
-                                    'icon' => 'payment_logs',
+                                    'icon' => 'fas fa-file-invoice-dollar',
                                     'permission' => 'read.payment_logs',
                                     'route' => 'landlord.payment-logs.index',
                                     'single' => true,
@@ -241,17 +240,17 @@
                             ],
                         ],
                         'subscriptions' => [
-                            'icon' => 'subscription',
+                            'icon' => 'fas fa-recurring',
                             'label' => 'subscriptions',
                             'items' => [
                                 'subscriptions' => [
-                                    'icon' => 'subscriptions',
+                                    'icon' => 'fas fa-calendar-alt',
                                     'permission' => 'read.subscriptions',
                                     'route' => 'landlord.subscriptions.index',
                                     'single' => true,
                                 ],
                                 'plans' => [
-                                    'icon' => 'plans',
+                                    'icon' => 'fas fa-clipboard-list',
                                     'permission' => 'read.plans',
                                     'route' => 'landlord.plans.index',
                                     'single' => true,
@@ -259,11 +258,11 @@
                             ],
                         ],
                         'authorizations' => [
-                            'icon' => 'lock',
+                            'icon' => 'fas fa-user-shield',
                             'label' => 'authorizations',
                             'items' => [
                                 'permissions' => [
-                                    'icon' => 'lock',
+                                    'icon' => 'fas fa-lock',
                                     'permission' => [
                                         'read' => 'read.permissions',
                                         'create' => 'create.permissions',
@@ -274,7 +273,7 @@
                                     ],
                                 ],
                                 'roles' => [
-                                    'icon' => 'lock',
+                                    'icon' => 'fas fa-user-tag',
                                     'permission' => [
                                         'read' => 'read.roles',
                                         'create' => 'create.roles',
@@ -287,17 +286,17 @@
                             ],
                         ],
                         'system_settings' => [
-                            'icon' => 'server',
+                            'icon' => 'fas fa-cogs',
                             'label' => 'system_settings',
                             'items' => [
                                 'settings' => [
-                                    'icon' => 'cogs',
+                                    'icon' => 'fas fa-sliders-h',
                                     'permission' => 'read.settings',
                                     'route' => 'landlord.settings.index',
                                     'single' => true,
                                 ],
                                 'announcements' => [
-                                    'icon' => 'lock',
+                                    'icon' => 'fas fa-bullhorn',
                                     'permission' => [
                                         'read' => 'read.announcements',
                                         'create' => 'create.announcements',
@@ -308,7 +307,7 @@
                                     ],
                                 ],
                                 'modules' => [
-                                    'icon' => 'lock',
+                                    'icon' => 'fas fa-puzzle-piece',
                                     'permission' => [
                                         'read' => 'read.modules',
                                         'create' => 'create.modules',
@@ -321,11 +320,11 @@
                             ],
                         ],
                         'system_monitoring' => [
-                            'icon' => 'server',
+                            'icon' => 'fas fa-server',
                             'label' => 'system_monitoring',
                             'items' => [
                                 'horizon' => [
-                                    'icon' => 'ellipsis-h',
+                                    'icon' => 'fas fa-chart-line',
                                     'permission' => [
                                         'read' => 'read.horizon',
                                         'create' => false,
@@ -337,7 +336,7 @@
                                     'path' => env('HORIZON_PATH'),
                                 ],
                                 'telescope' => [
-                                    'icon' => 'ellipsis-h',
+                                    'icon' => 'fas fa-search-plus',
                                     'permission' => [
                                         'read' => 'read.telescope',
                                         'create' => false,
