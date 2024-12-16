@@ -43,3 +43,6 @@ php artisan db:seed --class=Database\\Seeders\\landlord\\LandlordTenantSeeder
 php artisan db:seed --class=Modules\\Auth\\Database\\Seeders\\LandlordUserSeeder
 
 ```
+
+### Logo Files
+Please read this README.md file for files structure public/assets/global/images/icons/logo/README.md

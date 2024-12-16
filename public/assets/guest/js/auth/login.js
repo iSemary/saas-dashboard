@@ -60,12 +60,16 @@ $("#loginForm").on("submit", function (e) {
             subdomain: organizationName,
             username: username,
             password: password,
-            remember_me: rememberMe,
+            remember_me: !!rememberMe,
             _token: $('meta[name="csrf-token"]').attr("content"),
         },
+        dataType: "json",
         success: function (response) {
             if (response.success) {
-                localStorage.setItem('access_token', response.data.access_token);
+                localStorage.setItem(
+                    "access_token",
+                    response.data.access_token
+                );
                 window.location.href = response.data.redirect;
             }
         },

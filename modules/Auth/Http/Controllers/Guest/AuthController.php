@@ -110,7 +110,7 @@ class AuthController extends ApiController
         return Auth::guard($guard)->attempt([
             $field => $request->username,
             'password' => $request->password
-        ]);
+        ], $request->remember_me);
     }
 
     private function handleSuccessfulLogin(LoginUserRequest $request): JsonResponse

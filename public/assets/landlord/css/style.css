@@ -1,0 +1,10 @@
+.nav.nav-treeview {
+    display: block;
+    margin-left: 20px;
+    border-left: 1px solid #ffffff24;
+    padding-left: 10px;
+}
+
+.nav.nav-treeview .nav-item a {
+    padding-left: 0;
+}

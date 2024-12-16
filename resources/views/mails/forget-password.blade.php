@@ -15,7 +15,7 @@
         To reset your password, click the button below:
     </p>
     <p>
-        <a href="{{ env('APP_URL') . '/reset-password?token=' . $body['token'] }}"
+        <a href="{{ $body['url'] }}"
             style="background-color: #3490dc; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Reset
             Password</a>
     </p>
@@ -23,8 +23,8 @@
         If you are having trouble clicking the "Reset Password" button, you can also copy and paste the following link
         into your browser:
         <br>
-        <a href="{{ env('APP_URL') . '/reset-password?token=' . $body['token'] }}">
-            {{ env('APP_URL') . '/reset-password?token=' . $body['token'] }}</a>
+        <a href="{{ $body['url'] }}">
+            {{ $body['url'] }}</a>
     </p>
     <p>
         If you have any questions or need assistance, please contact our support team.

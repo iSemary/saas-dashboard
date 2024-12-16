@@ -96,7 +96,7 @@ class User extends Authenticatable
         $token = DB::table('password_reset_tokens')->where("user_id", $this->id)->value('token');
         if (!$token) {
             $token = EmailToken::generateToken();
-            DB::table('password_reset_tokens')->insert(['user_id' => $this->id, 'token' => $token]);
+            DB::table('password_reset_tokens')->insert(['user_id' => $this->id, 'email' => $this->email, 'token' => $token, 'created_at' => now()]);
         }
         return $token;
     }

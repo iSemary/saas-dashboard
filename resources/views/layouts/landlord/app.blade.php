@@ -41,6 +41,7 @@
     @endif
     {{-- Main Style --}}
     <link rel="stylesheet" href="{{ asset('assets/landlord/css/main.css') . '?v=1.2.1' }}" media="screen">
+    <link rel="stylesheet" href="{{ asset('assets/landlord/css/style.css') . '?v=1.2.1' }}" media="screen">
     {{-- Dark Mode --}}
     {{-- @if (
         !is_null(\App\Models\Setting::where('user_id', Auth::id())->first()) &&

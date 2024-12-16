@@ -57,9 +57,9 @@
                     </div>
                     <div class="flex-sb-m w-full p-b-48">
                         <div class="contact100-form-checkbox">
-                            <input class="input-checkbox100" id="ckb1" type="checkbox" id="rememberMe"
+                            <input class="" type="checkbox" id="rememberMe"
                                 name="remember_me">
-                            <label class="label-checkbox100" for="ckb1">
+                            <label class="" for="rememberMe">
                                 Remember me
                             </label>
                         </div>
@@ -81,5 +81,5 @@
     </div>
 @endsection
 @section('js')
-    <script src="{{ asset('assets/guest/js/login.js') }}"></script>
+    <script src="{{ asset('assets/guest/js/auth/login.js') }}"></script>
 @endsection

@@ -2,7 +2,6 @@
 
 namespace Modules\Tenant\Helper;
 
-use Illuminate\Support\Facades\Request;
 use Modules\Auth\Entities\User;
 use Spatie\Multitenancy\Models\Tenant;
 
