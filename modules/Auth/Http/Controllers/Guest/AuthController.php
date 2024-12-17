@@ -3,7 +3,6 @@
 namespace Modules\Auth\Http\Controllers\Guest;
 
 use App\Http\Controllers\ApiController;
-use App\Models\Customer;
 use Modules\Auth\Services\RegistrationService;
 use Modules\Auth\Services\ActivityLogService;
 use Modules\Auth\Http\Requests\ForgetPasswordRequest;
@@ -20,13 +19,14 @@ use Modules\Auth\Entities\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
-use stdClass;
-use Exception;
 use Modules\Auth\Entities\FactorAuthenticateToken;
 use Modules\Tenant\Helper\TenantHelper;
 use Spatie\Multitenancy\Models\Tenant;
 use Illuminate\Support\Facades\Auth;
+use Modules\Customer\Entities\Customer;
+use Carbon\Carbon;
+use stdClass;
+use Exception;
 
 class AuthController extends ApiController
 {
@@ -404,6 +404,9 @@ class AuthController extends ApiController
      */
     public function sendVerifyEmail(): JsonResponse
     {
+        // Get the tenant ID
+        $tenantId = Tenant::current()->id;
+
         $user = auth()->guard('api')->user();
         // Create email token
         $token = EmailToken::createToken($user->id);
@@ -455,7 +458,11 @@ class AuthController extends ApiController
         $response->customer = $customer;
         return $this->return(200, "User details fetched successfully", ['data' => $response]);
     }
-
+    
+    /**
+     * @param  mixed $user
+     * @return void
+     */
     private function prepareUserData(User $user)
     {
         $data = [

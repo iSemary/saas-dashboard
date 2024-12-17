@@ -54,12 +54,10 @@
             width: 24% !important;
         }
     </style>
-
     @yield('styles')
-
 </head>
 
-<body class="sidebar-mini layout-fixed sidebar-expand">
+<body class="sidebar-mini layout-fixed">
     {{-- All Content --}}
     <div class="wrapper">
         {{-- Header --}}

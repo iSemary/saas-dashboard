@@ -2,65 +2,59 @@
 
 namespace Modules\Geography\Http\Controllers;
 
-use App\Http\Controllers\ApiController;
-use App\Http\Controllers\Controller;
+use Modules\Geography\Services\CountryService;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
-class CountryController extends ApiController
+class CountryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $service;
+
+    public function __construct(CountryService $service)
+    {
+        $this->service = $service;
+    }
+
     public function index()
     {
-        return view('geography::index');
+        $countries = $this->service->getDataTables();
+        return view('landlord.geography.countries.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        return view('geography::create');
+        return view('landlord.geography.countries.editor');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        $this->service->create($data);
+        return redirect()->route('geography.index');
     }
 
-    /**
-     * Show the specified resource.
-     */
     public function show($id)
     {
-        return view('geography::show');
+        $country = $this->service->get($id);
+        return view('geography::show', compact('country'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($id)
     {
-        return view('geography::edit');
+        $country = $this->service->get($id);
+        return view('geography::edit', compact('country'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
-        //
+        $data = $request->all();
+        $this->service->update($id, $data);
+        return redirect()->route('geography.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
-        //
+        $this->service->delete($id);
+        return redirect()->route('geography.index');
     }
 }

@@ -22,10 +22,10 @@
         "spatie/laravel-activitylog": "^4.9",
         "spatie/laravel-health": "^1.31",
         "spatie/laravel-multitenancy": "^4.0",
-        "spatie/laravel-permission": "^6.10"
+        "spatie/laravel-permission": "^6.10",
+        "yajra/laravel-datatables-oracle": "^11.0"
     },
     "require-dev": {
-        "barryvdh/laravel-ide-helper": "^3.2",
         "fakerphp/faker": "^1.23",
         "laravel/pail": "^1.1",
         "laravel/pint": "^1.13",
@@ -71,7 +71,6 @@
     "extra": {
         "laravel": {
             "dont-discover": [
-                "barryvdh/laravel-ide-helper"
             ]
         }
     },

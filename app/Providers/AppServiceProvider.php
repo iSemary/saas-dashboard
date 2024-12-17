@@ -9,12 +9,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
-    public function register(): void
-    {
-        if (env("APP_ENV") == "local") {
-            $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
-        }    
-    }
+    public function register(): void {}
 
     /**
      * Bootstrap any application services.

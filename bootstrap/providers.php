@@ -5,6 +5,6 @@ return [
     App\Providers\HorizonServiceProvider::class,
     App\Providers\TelescopeServiceProvider::class,
     Laravolt\Avatar\ServiceProvider::class,
-    Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
-
+    Yajra\DataTables\DataTablesServiceProvider::class,
+    App\Providers\ModuleServiceProvider::class,
 ];
