@@ -118,7 +118,7 @@ class AuthController extends ApiController
         $user = auth()->user();
         $response = $this->collectUserDetails($user);
 
-        $redirect = $this->handle2FARedirection($user, $request);
+        $redirect = $this->handleRedirection($request);
 
         return $this->return(200, 'User Logged in Successfully', [
             'user' => $response,
@@ -134,26 +134,17 @@ class AuthController extends ApiController
         // Check if the user has an existing 2FA token
         $existingToken = FactorAuthenticateToken::where('user_id', $user->id)->where('token_id', $tokenId)->first();
         if (!$existingToken) {
-            $redirect = $this->handle2FARedirection($user, $request);
+            $redirect = $this->handleRedirection($request);
             return $this->return(409, '2FA token is not valid.', ['redirect' => $redirect]);
         }
         return $this->return(200, '2FA token is valid.');
     }
 
 
-    private function handle2FARedirection(User $user, Request $request)
+    private function handleRedirection(Request $request)
     {
         $tenant = Tenant::current();
-        $redirect = TenantHelper::generateURL($tenant->name);
-
-        if ($user->factor_authenticate) {
-            if ($user->google2fa_secret) {
-                $redirect .= "/2fa/validate";
-            } else {
-                $redirect .= "/2fa/generate";
-            }
-        }
-        return $redirect;
+        return TenantHelper::generateURL($tenant->name) . "?redirect=" . $request->redirect;
     }
 
     private function handleFailedLogin(LoginUserRequest $request, $tenant): JsonResponse
@@ -458,7 +449,7 @@ class AuthController extends ApiController
         $response->customer = $customer;
         return $this->return(200, "User details fetched successfully", ['data' => $response]);
     }
-    
+
     /**
      * @param  mixed $user
      * @return void

@@ -115,9 +115,9 @@ $("#navbarVerticalNav")
 
 // DataTables Config
 $.extend(true, $.fn.dataTable.defaults, {
-    language: {
-        url: "LanguageJson",
-    },
+    // language: {
+    //     url: "LanguageJson",
+    // },
     lengthMenu: [
         [10, 25, 50, -1],
         [10, 25, 50, "All"],
@@ -473,7 +473,7 @@ function createProductConfigs() {
         : $("#ProductWholesale").val("");
 }
 
-$(document).on("submit", "#CreateForm", function (e) {
+$(document).on("submit", "#createForm", function (e) {
     e.preventDefault();
     let formBtn = $(this).find(":submit");
     let formData = new FormData(this);
@@ -494,18 +494,18 @@ $(document).on("submit", "#CreateForm", function (e) {
         contentType: false,
         processData: false,
         beforeSend: function () {
-            $(".create-status").html(
+            $(".form-status").html(
                 `<h6 class="text-muted"><i class="fas fa-circle-notch fa-spin"></i> ` +
-                    lang.creating +
+                    "Processing" +
                     ` ...` +
                     `</h6>`
             );
             formBtn.prop("disabled", true);
         },
         success: function (data) {
-            $(".create-status").html(
+            $(".form-status").html(
                 `<h6 class="text-success"><i class="fas fa-check-circle"></i> ` +
-                    lang.created +
+                    "Done" +
                     `</h6>`
             );
             formBtn.prop("disabled", false);
@@ -517,13 +517,13 @@ $(document).on("submit", "#CreateForm", function (e) {
             $(".dataTable").DataTable().ajax.reload();
         },
         error: function (data) {
-            $(".create-status").html("");
+            $(".form-status").html("");
             formBtn.prop("disabled", false);
             console.log(data);
             // $.each(xhr.responseJSON.errors, function(key, value) {
-            $(".create-status").append(
+            $(".form-status").append(
                 `<h6 class="text-danger"><i class="fas fa-exclamation-triangle"></i> ` +
-                    (data.responseJSON ?? lang.something_went_wrong_404) +
+                    (data.responseJSON ?? "Something went wrong") +
                     `</h6>`
             );
             // });
@@ -623,7 +623,7 @@ function OpenEditModal(url) {
         });
 }
 
-$(document).on("submit", "#EditForm", function (e) {
+$(document).on("submit", "#editForm", function (e) {
     e.preventDefault();
     let formBtn = $(this).find(":submit");
     let formData = new FormData(this);
@@ -639,28 +639,28 @@ $(document).on("submit", "#EditForm", function (e) {
         contentType: false,
         processData: false,
         beforeSend: function () {
-            $(".edit-status").html(
+            $(".form-status").html(
                 `<h6 class="text-muted"><i class="fas fa-circle-notch fa-spin"></i> ` +
-                    lang.updating +
+                    "lang.updating" +
                     ` ...` +
                     `</h6>`
             );
             formBtn.prop("disabled", true);
         },
         success: function (data) {
-            $(".edit-status").html(
+            $(".form-status").html(
                 `<h6 class="text-success"><i class="fas fa-check-circle"></i> ` +
-                    lang.updated +
+                    "lang.updated" +
                     `</h6>`
             );
             formBtn.prop("disabled", false);
             $(".dataTable").DataTable().ajax.reload();
         },
         error: function (xhr) {
-            $(".edit-status").html("");
+            $(".form-status").html("");
             formBtn.prop("disabled", false);
             $.each(xhr.responseJSON.errors, function (key, value) {
-                $(".edit-status").append(
+                $(".form-status").append(
                     `<h6 class="text-danger"><i class="fas fa-exclamation-triangle"></i> ` +
                         value[0] +
                         `</h6>`
@@ -682,16 +682,16 @@ $("#CreateModal").on("hidden.bs.modal", function () {
  *
  */
 
-function DeleteRow(link, ModelDeleteType) {
+function deleteRow(link, ModelDeleteType) {
     Swal.fire({
-        title: lang.are_you_sure,
-        text: lang.you_want_delete_this + ModelDeleteType + " ?",
+        title: "lang.are_you_sure",
+        text: "lang.you_want_delete_this" + ModelDeleteType + " ?",
         type: "warning",
         showCancelButton: true,
         confirmButtonColor: "#d33",
         cancelButtonColor: "#3085d6",
-        confirmButtonText: lang.delete,
-        cancelButtonText: lang.cancel,
+        confirmButtonText: "lang.delete",
+        cancelButtonText: "lang.cancel",
     }).then((result) => {
         if (result.value) {
             $.ajax({
@@ -704,8 +704,8 @@ function DeleteRow(link, ModelDeleteType) {
                 .done(function (data) {
                     if (data.status == 200) {
                         Swal.fire({
-                            text: lang.deleted_successfully,
-                            confirmButtonText: lang.ok,
+                            text: "lang.deleted_successfully",
+                            confirmButtonText: "lang.ok",
                             type: "success",
                             toast: true,
                             position: "bottom",
@@ -713,7 +713,7 @@ function DeleteRow(link, ModelDeleteType) {
                     } else {
                         Swal.fire({
                             text: data.response,
-                            confirmButtonText: lang.ok,
+                            confirmButtonText: "lang.ok",
                             type: "error",
                             toast: true,
                             position: "bottom",
@@ -735,11 +735,10 @@ function DeleteRow(link, ModelDeleteType) {
 
 $(document).on("click", ".delete-btn", function (event) {
     event.preventDefault();
-    DeleteRow($(this).attr("data-url"), $(this).attr("data-delete-type"));
+    deleteRow($(this).attr("data-url"), $(this).attr("data-delete-type"));
 });
 
 // Branch change stock script
-
 $(document).on("click", ".increment-stock", function () {
     let tr = $(this).closest("tr");
     let row = ProductStockTable.row(tr);
@@ -960,8 +959,8 @@ function filterTable(
 $(document).on("submit", "#filterTable", function (e) {
     e.preventDefault();
     filterTable(
-        Route,
-        TableID,
+        route,
+        tableID,
         $("#from_date").val(),
         $("#to_date").val(),
         true,
@@ -993,4 +992,70 @@ $(document).on("change", "#country_id", function (e) {
             $("#city_id").prop("disabled", false);
         },
     });
+});
+
+$(document).on("click", ".open-create-modal", function (e) {
+    e.preventDefault();
+
+    // Get the URL from the button's data-link attribute
+    const url = $(this).data("modal-link");
+    const title = $(this).data("modal-title");
+
+    // Show the modal and set a loading message
+    const $modal = $("#createModal");
+    $modal.find(".modal-title").html(title);
+    $modal.find(".modal-body").html("<p>Loading...</p>");
+    $modal.modal("show");
+
+    // Make the AJAX request
+    $.ajax({
+        url: url,
+        method: "GET",
+        success: function (response) {
+            $modal.find(".modal-body").html(response);
+        },
+        error: function () {
+            $modal
+                .find(".modal-body")
+                .html("<p>Failed to load content. Please try again.</p>");
+        },
+    });
+});
+
+$(document).on("click", ".open-edit-modal", function (e) {
+    e.preventDefault();
+
+    // Get the URL from the button's data-link attribute
+    const url = $(this).data("modal-link");
+    const title = $(this).data("modal-title");
+
+    // Show the modal and set a loading message
+    const $modal = $("#editModal");
+    $modal.find(".modal-title").html(title);
+    $modal.find(".modal-body").html("<p>Loading...</p>");
+    $modal.modal("show");
+
+    // Make the AJAX request
+    $.ajax({
+        url: url,
+        method: "GET",
+        success: function (response) {
+            $modal.find(".modal-body").html(response);
+        },
+        error: function () {
+            $modal
+                .find(".modal-body")
+                .html("<p>Failed to load content. Please try again.</p>");
+        },
+    });
+});
+
+$(document).on("change", ".upload-image", function (e) {
+    if (this.files && this.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            $(e.target).closest('.upload-image').siblings('.preview-image').attr("src", e.target.result);
+        };
+        reader.readAsDataURL(this.files[0]);
+    }
 });

@@ -24,8 +24,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'set-db-connection' => \App\Http\Middleware\SetDatabaseConnection::class,
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'auth' => \App\Http\Middleware\Authenticate::class,
         ]);
-
+        
         $middleware->group('tenant', [
             'set-db-connection',
             \Spatie\Multitenancy\Http\Middleware\NeedsTenant::class,

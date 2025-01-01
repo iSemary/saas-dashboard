@@ -2,14 +2,17 @@
 
 namespace Modules\Geography\Services;
 
+use Modules\Geography\Entities\Country;
 use Modules\Geography\Repositories\CountryInterface;
 
 class CountryService
 {
     protected $repository;
+    public $model;
 
-    public function __construct(CountryInterface $repository)
+    public function __construct(CountryInterface $repository, Country $country)
     {
+        $this->model = $country;
         $this->repository = $repository;
     }
 

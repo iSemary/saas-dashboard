@@ -40,7 +40,10 @@
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/",
             "Modules\\": "modules/"
-        }
+        },
+        "files": [
+            "app/Functions/AppFunctions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

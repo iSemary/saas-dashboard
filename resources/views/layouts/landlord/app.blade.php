@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>{{ env("APP_NAME") }} | @yield('title')</title>
+    <title>{{ env('APP_NAME') }} {{ isset($title) ? ' | ' . $title : '' }}</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/global/images/icons/logo/favicon.ico') }}" />
     <meta name="_token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -43,9 +43,7 @@
     <link rel="stylesheet" href="{{ asset('assets/landlord/css/main.css') . '?v=1.2.1' }}" media="screen">
     <link rel="stylesheet" href="{{ asset('assets/landlord/css/style.css') . '?v=1.2.1' }}" media="screen">
     {{-- Dark Mode --}}
-    {{-- @if (
-        !is_null(\App\Models\Setting::where('user_id', Auth::id())->first()) &&
-            \App\Models\Setting::where('user_id', auth::id())->first()->theme_mode == 0)
+    {{-- @if (!is_null(\App\Models\Setting::where('user_id', Auth::id())->first()) && \App\Models\Setting::where('user_id', auth::id())->first()->theme_mode == 0)
         <link rel="stylesheet" id="DarkModeSheet" href="{{ asset('assets/landlord/css/darkmode-bootstrap.css') }}">
     @endif --}}
     {{-- Styles --}}
@@ -65,15 +63,21 @@
         {{-- Aside --}}
         @include('layouts.landlord.sidebar')
         {{-- Content --}}
-        <div class="content-wrapper">
+        <div class="content-wrapper mt-2">
+            <section class="content">
+            @include('layouts.landlord.breadcrumb', isset($breadcrumbs) ? $breadcrumbs : [])
             @yield('content')
+        </section>
         </div>
         {{-- Image Modal --}}
         {{-- @include('layouts.utilities.image-modal')
         @include('layouts.utilities.edit-modal')
         @include('layouts.utilities.create-modal') --}}
 
-        @include("layouts.landlord.footer")
+        @include("layouts.landlord.modals.edit")
+        @include("layouts.landlord.modals.create")
+
+        @include('layouts.landlord.footer')
     </div>
     {{-- Jquery --}}
     <script src="{{ asset('assets/landlord/plugins/jquery-min/jquery-3.6.0.min.js') }}"></script>
@@ -114,10 +118,8 @@
 
 
     {{-- Main Script --}}
-    <script src="{{ asset('assets/landlord/js/main.js') . '?v=1.2.1' }}" 
-        {{-- theme="{{ auth()->user()->getUserTheme() }}" --}}
-     {{-- env="{{ env('APP_ENV') }}" --}}
-     ></script>
+    <script src="{{ asset('assets/landlord/js/main.js') . '?v=1.2.1' }}" {{-- theme="{{ auth()->user()->getUserTheme() }}" --}} {{-- env="{{ env('APP_ENV') }}" --}}>
+    </script>
     <script src="{{ asset('assets/global/js/shared.js') . '?v=1.2.1' }}"></script>
 
     @yield('scripts')

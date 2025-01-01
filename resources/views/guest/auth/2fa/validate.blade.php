@@ -8,7 +8,7 @@
                     <div class="card-body">
                         <form id="twoFactorValidateForm" action="{{ route('2fa.check') }}" method="POST">
                             @csrf
-
+                            <input type="hidden" id="redirect" name="redirect" value="{{ $_GET['redirect'] ?? '' }}">
                             <div class="mb-3">
                                 <label for="otp" class="form-label">Enter OTP</label>
                                 <div class="otp-inputs">

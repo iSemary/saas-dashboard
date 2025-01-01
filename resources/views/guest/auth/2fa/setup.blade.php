@@ -8,6 +8,7 @@
                     <div class="card-body">
                         <form id="twoFactorSetupForm" action="{{ route('2fa.verify') }}" method="POST">
                             @csrf
+                            <input type="hidden" id="redirect" name="redirect" value="{{ $_GET['redirect'] ?? '' }}">
                             <input type="hidden" id="secretKey" name="secret_key" value="{{ $secretKey ?? '' }}" required>
                             <!-- QR Code -->
                             <div class="mb-3">

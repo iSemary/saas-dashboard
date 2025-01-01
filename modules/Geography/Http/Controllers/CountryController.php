@@ -2,11 +2,11 @@
 
 namespace Modules\Geography\Http\Controllers;
 
+use App\Http\Controllers\ApiController;
 use Modules\Geography\Services\CountryService;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
-class CountryController extends Controller
+class CountryController extends ApiController
 {
     protected $service;
 
@@ -14,11 +14,29 @@ class CountryController extends Controller
     {
         $this->service = $service;
     }
-
     public function index()
     {
-        $countries = $this->service->getDataTables();
-        return view('landlord.geography.countries.index');
+        if (request()->ajax()) {
+            return $this->service->getDataTables();
+        }
+        $title = $this->service->model->pluralTitle;
+        $breadcrumbs = [
+            ['text' => 'Home', 'link' => route('home')],
+            ['text' => $this->service->model->pluralTitle],
+        ];
+
+        $actionButtons = [
+            [
+                'text' => 'Add ' . $this->service->model->singleTitle,
+                'class' => 'open-create-modal btn-sm btn-success',
+                'attr' => [
+                    'data-modal-link' => route('landlord.countries.create'),
+                    'data-modal-title' => "Create " . $this->service->model->singleTitle,
+                ]
+            ],
+        ];
+
+        return view('landlord.geography.countries.index', compact('breadcrumbs', 'title', 'actionButtons'));
     }
 
     public function create()
@@ -30,31 +48,27 @@ class CountryController extends Controller
     {
         $data = $request->all();
         $this->service->create($data);
-        return redirect()->route('geography.index');
+        return $this->return(200, "Created successfully");
     }
 
-    public function show($id)
-    {
-        $country = $this->service->get($id);
-        return view('geography::show', compact('country'));
-    }
+    public function show($id) {}
 
     public function edit($id)
     {
-        $country = $this->service->get($id);
-        return view('geography::edit', compact('country'));
+        $row = $this->service->get($id);
+        return view('landlord.geography.countries.editor', compact('row'));
     }
 
     public function update(Request $request, $id)
     {
         $data = $request->all();
         $this->service->update($id, $data);
-        return redirect()->route('geography.index');
+        return $this->return(200, "Updated successfully");
     }
 
     public function destroy($id)
     {
         $this->service->delete($id);
-        return redirect()->route('geography.index');
+        return $this->return(200, "Deleted successfully");
     }
 }

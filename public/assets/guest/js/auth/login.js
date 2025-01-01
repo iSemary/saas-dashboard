@@ -36,6 +36,7 @@ $("#loginForm").on("submit", function (e) {
 
     let username = $("#username").val().trim();
     let password = $("#password").val().trim();
+    let redirect = $("#redirect").val().trim();
     let rememberMe = $("#rememberMe").is(":checked");
     let organizationName = $("#loginOrganizationName").val().trim();
 
@@ -61,6 +62,7 @@ $("#loginForm").on("submit", function (e) {
             username: username,
             password: password,
             remember_me: !!rememberMe,
+            redirect: redirect,
             _token: $('meta[name="csrf-token"]').attr("content"),
         },
         dataType: "json",

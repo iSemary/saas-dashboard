@@ -26,6 +26,7 @@
                 @endif
                 <form id="loginForm" action="{{ route('login.submit') }}" class="login100-form validate-form flex-sb flex-w"
                     method="POST" style="{{ isset($tenant) && !empty($tenant) ? 'display: block;' : 'display: none;' }}">
+                    <input type="hidden" id="redirect" name="redirect" value="{{ $_GET['redirect'] ?? '' }}">
                     <span class="login100-form-title p-b-32">
                         Account Login
                     </span>
@@ -57,15 +58,14 @@
                     </div>
                     <div class="flex-sb-m w-full p-b-48">
                         <div class="contact100-form-checkbox">
-                            <input class="" type="checkbox" id="rememberMe"
-                                name="remember_me">
+                            <input class="" type="checkbox" id="rememberMe" name="remember_me">
                             <label class="" for="rememberMe">
                                 Remember me
                             </label>
                         </div>
 
                         <div>
-                            <a href="{{ route("password.forget.show") }}" class="txt3">
+                            <a href="{{ route('password.forget.show') }}" class="txt3">
                                 Forgot Password?
                             </a>
                         </div>

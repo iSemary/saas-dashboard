@@ -29,8 +29,8 @@ class Validate2FA
             $tokenId = $user->getCurrentToken();
 
             $existingToken = FactorAuthenticateToken::where('user_id', $user->id)
-            ->where("token_id", $tokenId)
-            ->first();
+                ->where("token_id", $tokenId)
+                ->first();
         }
 
         if (!$existingToken) {
@@ -39,14 +39,14 @@ class Validate2FA
                 return response()->json(['error' => '2FA token is not valid.'], 409);
             } else {
                 // For web requests, redirect to 2FA page
+                $redirectUrl = $request->query('redirect');
                 if (User::where("id", $user->id)->first()->google2fa_secret) {
-                    return redirect()->route('2fa.validate');
+                    return redirect()->route('2fa.validate', ['redirect' => $redirectUrl]);
                 } else {
-                    return redirect()->route('2fa.setup');
+                    return redirect()->route('2fa.setup', ['redirect' => $redirectUrl]);
                 }
             }
         }
-
         return $next($request);
     }
 }

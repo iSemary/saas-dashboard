@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Route;
 
 // Routes for authenticated users (auth middleware)
 Route::middleware('auth')->group(function () {
-
     Route::middleware('2fa')->group(function () {
         Route::get('/', [TenantController::class, "index"])->name('home');
     });

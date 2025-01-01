@@ -65,7 +65,7 @@ class TwoFactorAuthController extends ApiController
 
             FactorAuthenticateToken::create(['user_id' => $user->id, 'token_id' => $tokenId]);
             $user->update(["google2fa_secret" => $request->secret_key]);
-            return $this->return(200, "2FA Verified Successfully");
+            return $this->return(200, "2FA Verified Successfully", ['redirect' => $request->redirect]);
         }
         return $this->return(400, "Invalid OTP number");
     }
@@ -83,7 +83,7 @@ class TwoFactorAuthController extends ApiController
             $tokenId = $user->getCurrentToken();
             // Create a new 2FA token
             FactorAuthenticateToken::create(['user_id' => $user->id, 'token_id' => $tokenId]);
-            return $this->return(200, "2FA Verified Successfully");
+            return $this->return(200, "2FA Verified Successfully", ['redirect' => $request->redirect]);
         }
         return $this->return(400, "Invalid OTP number");
     }

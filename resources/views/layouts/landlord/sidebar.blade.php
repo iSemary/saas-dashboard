@@ -4,7 +4,7 @@
         <!-- Store Logo / Name -->
         <img src="{{ asset('assets/global/images/icons/logo/favicon.svg') }}" alt="logo"
             class="brand-image img-circle elevation-3 float-revert">
-        <span class="brand-text font-weight-light">{{ env("APP_NAME") }}</span>
+        <span class="brand-text font-weight-light">{{ env('APP_NAME') }}</span>
     </a>
     <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
@@ -399,7 +399,7 @@
                                                 {{-- Index Page --}}
                                                 <li class="nav-item">
                                                     <a href="{{ route($item['routes']['index']) }}"
-                                                        class="nav-link @if (Request::url() === route($item['routes']['index'])) active @endif">
+                                                        class="pl-2 nav-link @if (Request::url() === route($item['routes']['index'])) active @endif">
                                                         <i class="fas fa-{{ $item['icon'] ?? '' }}"></i>
                                                         <p>@lang($key)</p>
                                                     </a>
@@ -410,10 +410,11 @@
                                                     @can($item['permission']['create'])
                                                         <li class="nav-item">
                                                             <a href="#"
-                                                                data-url="{{ route($item['routes']['create']) }}"
-                                                                class="nav-link create-btn" type="button">
+                                                                data-modal-title="@lang('create') @lang($key)"
+                                                                data-modal-link="{{ route($item['routes']['create']) }}"
+                                                                class="pl-2 nav-link open-create-modal" type="button">
                                                                 <i class="fas fa-plus-circle"></i>
-                                                                <p>@lang('add') @lang($key)</p>
+                                                                <p>@lang('create') @lang($key)</p>
                                                             </a>
                                                         </li>
                                                     @endcan
