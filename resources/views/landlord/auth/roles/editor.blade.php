@@ -22,6 +22,6 @@
 
     <div class="form-group">
         <button type="submit"
-            class="btn btn-{{ isset($row) ? 'primary' : 'success' }}">{{ isset($row) ? 'Update' : 'Create' }}</button>
+            class="btn btn-{{ isset($row) ? 'primary' : 'success' }}">{{ isset($row) ? translate('update') : translate('create') }}</button>
     </div>
 </form>

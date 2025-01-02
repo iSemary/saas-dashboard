@@ -29,7 +29,7 @@
                 <div class="list-group"><a href="#" class="list-group-item">
                         <div class="search-title">
                             <div class="text-light">
-                                @lang('no_elements_found')
+                                @translate('no_elements_found')
                             </div>
                         </div>
                         <div class="search-path"></div>
@@ -362,7 +362,7 @@
                     @endphp
 
                     @if ($hasVisibleItems)
-                        <li class="nav-header">@lang($sectionConfig['label'])</li>
+                        <li class="nav-header">@translate($sectionConfig['label'])</li>
                         @if (isset($sectionConfig['items']))
                             @foreach ($sectionConfig['items'] as $key => $item)
                                 {{-- Check for routes without permission or with specific permission --}}
@@ -372,7 +372,7 @@
                                             <a href="{{ $item['path'] ?? route($item['routes']['index']) }}"
                                                 target="_blank" class="nav-link">
                                                 <i class="nav-icon fas fa-{{ $item['icon'] ?? '' }}"></i>
-                                                <p>{{ $key }}</p>
+                                                <p>@translate($key)</p>
                                             </a>
                                         </li>
                                     @elseif(isset($item['single']) && $item['single'])
@@ -381,7 +381,7 @@
                                                 <a href="{{ route($item['route']) }}"
                                                     class="nav-link @if (Request::route()->getName() === $item['route']) active @endif">
                                                     <i class="nav-icon fas fa-{{ $item['icon'] ?? '' }}"></i>
-                                                    <p>{{ $key }}</p>
+                                                    <p>@translate($key)</p>
                                                 </a>
                                             </li>
                                         @endif
@@ -391,7 +391,7 @@
                                                 class="nav-link @if (strpos(Request::url(), '/' . $key) !== false) active @endif">
                                                 <i class="nav-icon fas fa-{{ $item['icon'] ?? '' }}"></i>
                                                 <p>
-                                                    @lang($key)
+                                                    @translate($key)
                                                     <i class="right fas fa-angle-left"></i>
                                                 </p>
                                             </a>
@@ -401,7 +401,7 @@
                                                     <a href="{{ route($item['routes']['index']) }}"
                                                         class="pl-2 nav-link @if (Request::url() === route($item['routes']['index'])) active @endif">
                                                         <i class="fas fa-{{ $item['icon'] ?? '' }}"></i>
-                                                        <p>@lang($key)</p>
+                                                        <p>@translate($key)</p>
                                                     </a>
                                                 </li>
 
@@ -410,11 +410,11 @@
                                                     @can($item['permission']['create'])
                                                         <li class="nav-item">
                                                             <a href="#"
-                                                                data-modal-title="@lang('create') @lang($key)"
+                                                                data-modal-title="@translate('create') @translate($key)"
                                                                 data-modal-link="{{ route($item['routes']['create']) }}"
                                                                 class="pl-2 nav-link open-create-modal" type="button">
                                                                 <i class="fas fa-plus-circle"></i>
-                                                                <p>@lang('create') @lang($key)</p>
+                                                                <p>@translate('create') @translate($key)</p>
                                                             </a>
                                                         </li>
                                                     @endcan

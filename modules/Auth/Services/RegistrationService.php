@@ -6,7 +6,7 @@ use Modules\Auth\Entities\EmailToken;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Modules\Auth\Jobs\RegistrationMailJob;
-use Modules\Auth\Repository\UserRepository;
+use Modules\Auth\Repositories\UserRepository;
 use Modules\Customer\Repository\CustomerRepository;
 use Modules\Tenant\Helper\TenantHelper;
 use Modules\Tenant\Repository\TenantRepository;

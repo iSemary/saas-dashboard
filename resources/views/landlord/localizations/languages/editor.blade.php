@@ -5,13 +5,13 @@
         @method('PUT')
     @endif
     <div class="form-group">
-        <label for="name" class="form-label">Name</label>
+        <label for="name" class="form-label">@translate("name")</label>
         <input type="text" name="name" id="name" class="form-control"
             value="{{ isset($row) ? $row->name : '' }}" required>
     </div>
 
     <div class="form-group">
-        <label for="locale" class="form-label">Key</label>
+        <label for="locale" class="form-label">@translate("locale")</label>
         <input type="text" name="locale" id="locale" class="form-control"
             value="{{ isset($row) ? $row->locale : '' }}" required>
     </div>
@@ -22,6 +22,6 @@
 
     <div class="form-group">
         <button type="submit"
-            class="btn btn-{{ isset($row) ? 'primary' : 'success' }}">{{ isset($row) ? 'Update' : 'Create' }}</button>
+            class="btn btn-{{ isset($row) ? 'primary' : 'success' }}">{{ isset($row) ? translate('update') : translate('create') }}</button>
     </div>
 </form>

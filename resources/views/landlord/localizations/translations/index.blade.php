@@ -9,11 +9,11 @@
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">@lang('language_id')</th>
-                        <th scope="col">@lang('translation_key')</th>
-                        <th scope="col">@lang('translation_value')</th>
-                        <th scope="col">@lang('translation_context')</th>
-                        <th scope="col">@lang('action')</th>
+                        <th scope="col">@translate('language_id')</th>
+                        <th scope="col">@translate('translation_key')</th>
+                        <th scope="col">@translate('translation_value')</th>
+                        <th scope="col">@translate('translation_context')</th>
+                        <th scope="col">@translate('action')</th>
                     </tr>
                 </thead>
                 <tbody>

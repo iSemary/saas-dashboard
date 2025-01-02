@@ -44,11 +44,11 @@ class TableHelper
         $btn = '';
 
         if (Gate::allows('update.'.$type)) {
-            $btn .= '<button type="button" data-modal-title="Edit '.$titleType.'" data-modal-link="' . route($editRoute, $row->id) . '" class="btn-info btn-sm open-edit-modal"><i class="far fa-edit"></i> ' . __('edit') . '</button>';
+            $btn .= '<button type="button" data-modal-title="Edit '.$titleType.'" data-modal-link="' . route($editRoute, $row->id) . '" class="btn-info btn-sm open-edit-modal"><i class="far fa-edit"></i> ' . translate('edit') . '</button>';
         }
 
         if (Gate::allows('delete.'.$type)) {
-            $btn .= '<button type="button" data-delete-type="' . __($titleType) . '" data-url="' . route($deleteRoute, $row->id) . '" class="btn btn-danger btn-sm delete-btn"><i class="fa fa-trash"></i> ' . __('delete') . '</button>';
+            $btn .= '<button type="button" data-delete-type="' . __($titleType) . '" data-url="' . route($deleteRoute, $row->id) . '" class="btn btn-danger btn-sm delete-btn"><i class="fa fa-trash"></i> ' . translate('delete') . '</button>';
         }
 
         return $btn;

@@ -9,9 +9,9 @@
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">@lang('name')</th>
-                        <th scope="col">@lang('locale')</th>
-                        <th scope="col">@lang('action')</th>
+                        <th scope="col">@translate('name')</th>
+                        <th scope="col">@translate('locale')</th>
+                        <th scope="col">@translate('action')</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -13,7 +13,7 @@
     <div class="form-group">
         <label for="translationValue" class="form-label">Language</label>
         <select class="form-control select2" name="language_id" required>
-            <option value="">@lang('select')</option>
+            <option value="">@translate('select')</option>
             @foreach ($languages as $language)
                 <option value="{{ $language->id }}" {{ isset($row) && $row->language_id == $language->id ? "selected": "" }}>{{ $language->name . " | " . $language->locale }}</option>
             @endforeach
@@ -36,6 +36,6 @@
 
     <div class="form-group">
         <button type="submit"
-            class="btn btn-{{ isset($row) ? 'primary' : 'success' }}">{{ isset($row) ? 'Update' : 'Create' }}</button>
+            class="btn btn-{{ isset($row) ? 'primary' : 'success' }}">{{ isset($row) ? translate('update') : translate('create') }}</button>
     </div>
 </form>

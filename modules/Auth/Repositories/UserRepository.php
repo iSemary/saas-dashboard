@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Auth\Repository;
+namespace Modules\Auth\Repositories;
 
 use Modules\Auth\Entities\User;
 use Modules\Auth\Helper\UserHelper;

@@ -44,19 +44,19 @@
             <div class="dropdown-menu dropdown-menu-right">
                 @if (Auth::user()->hasRole(['super_admin']))
                     <a class="dropdown-item" href="{{ route('admin.settings.edit', \Auth::id()) }}">
-                        <i class="fas fa-sliders-h"></i> @lang('settings')
+                        <i class="fas fa-sliders-h"></i> @translate('settings')
                     </a>
                 @endif
                 <div class="dropdown-divider"></div>
                 <a style="cursor: pointer" data-form="logout-form" class="logout-btn dropdown-item">
-                    <i class="fas fa-sign-out-alt"></i> @lang('logout')
+                    <i class="fas fa-sign-out-alt"></i> @translate('logout')
                 </a>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                     @csrf
                 </form>
                 @if (Auth::user()->hasRole(['super_admin', 'admin']))
                     <a style="cursor: pointer" data-form="logout-all-form" class="logout-btn dropdown-item">
-                        <i class="fas fa-sign-out-alt"></i> @lang('logout_all')
+                        <i class="fas fa-sign-out-alt"></i> @translate('logout_all')
                     </a>
                     <form id="logout-all-form" action="{{ route('logout-all') }}" method="POST" style="display: none;">
                         @csrf

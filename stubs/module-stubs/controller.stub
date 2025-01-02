@@ -1,19 +1,23 @@
 <?php
 
-namespace Modules\Localization\Http\Controllers;
+namespace $CLASS_NAMESPACE$;
 
 use App\Http\Controllers\ApiController;
-use Modules\Localization\Services\LanguageService;
+use $SERVICE_NAMESPACE$\$SERVICE_CLASS$;
 use Illuminate\Http\Request;
 
-class LanguageController extends ApiController
+class $CLASS$ extends ApiController
 {
     protected $service;
 
-    public function __construct(LanguageService $service)
+    public function __construct($SERVICE_CLASS$ $service)
     {
         $this->service = $service;
     }
+
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
         if (request()->ajax()) {
@@ -21,29 +25,35 @@ class LanguageController extends ApiController
         }
         $title = $this->service->model->pluralTitle;
         $breadcrumbs = [
-            ['text' => translate('home'), 'link' => route('home')],
-            ['text' => translate($this->service->model->pluralTitle)],
+            ['text' => 'Home', 'link' => route('home')],
+            ['text' => $this->service->model->pluralTitle],
         ];
 
         $actionButtons = [
             [
-                'text' => translate("create") . " " . translate($this->service->model->singleTitle),
+                'text' => 'Add ' . $this->service->model->singleTitle,
                 'class' => 'open-create-modal btn-sm btn-success',
                 'attr' => [
-                    'data-modal-link' => route('landlord.languages.create'),
-                    'data-modal-title' => translate("create") . " " . translate($this->service->model->singleTitle),
+                    'data-modal-link' => route('$LOWER_NAME$.create'),
+                    'data-modal-title' => "Create " . $this->service->model->singleTitle,
                 ]
             ],
         ];
 
-        return view('landlord.localizations.languages.index', compact('breadcrumbs', 'title', 'actionButtons'));
+        return view('$LOWER_NAME$::index', compact('breadcrumbs', 'title', 'actionButtons'));
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create()
     {
-        return view('landlord.localizations.languages.editor');
+        return view('$LOWER_NAME$::editor');
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
         $data = $request->all();
@@ -51,14 +61,26 @@ class LanguageController extends ApiController
         return $this->return(200, "Created successfully");
     }
 
-    public function show($id) {}
+    /**
+     * Show the specified resource.
+     */
+    public function show($id)
+    {
+        //
+    }
 
+    /**
+     * Show the form for editing the specified resource.
+     */
     public function edit($id)
     {
         $row = $this->service->get($id);
-        return view('landlord.localizations.languages.editor', compact('row'));
+        return view('$LOWER_NAME$::editor', compact('row'));
     }
 
+    /**
+     * Update the specified resource in storage.
+     */
     public function update(Request $request, $id)
     {
         $data = $request->all();
@@ -66,6 +88,9 @@ class LanguageController extends ApiController
         return $this->return(200, "Updated successfully");
     }
 
+    /**
+     * Remove the specified resource from storage.
+     */
     public function destroy($id)
     {
         $this->service->delete($id);
