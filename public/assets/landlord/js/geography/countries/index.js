@@ -10,12 +10,12 @@ let cols = [
         name: "name",
     },
     {
-        data: "code",
-        name: "code",
+        data: "capital_province",
+        name: "capital_province",
     },
     {
-        data: "capital_city_id",
-        name: "capital_city_id",
+        data: "code",
+        name: "code",
     },
     {
         data: "region",

@@ -1,0 +1,21 @@
+<?php
+
+namespace Modules\Geography\Entities;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Street extends Model
+{
+    use HasFactory, SoftDeletes;
+    
+    protected $connection = 'landlord';
+    
+    public $singleTitle = "street";
+    public $pluralTitle = "streets";
+    
+    protected $fillable = ['name', 'town_id'];
+    
+    protected $hidden = [];
+}

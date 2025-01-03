@@ -1013,6 +1013,7 @@ $(document).on("click", ".open-create-modal", function (e) {
         method: "GET",
         success: function (response) {
             $modal.find(".modal-body").html(response);
+            fireDependency();
         },
         error: function () {
             $modal
@@ -1041,6 +1042,7 @@ $(document).on("click", ".open-edit-modal", function (e) {
         method: "GET",
         success: function (response) {
             $modal.find(".modal-body").html(response);
+            fireDependency();
         },
         error: function () {
             $modal
@@ -1054,8 +1056,18 @@ $(document).on("change", ".upload-image", function (e) {
     if (this.files && this.files[0]) {
         var reader = new FileReader();
         reader.onload = function (e) {
-            $(e.target).closest('.upload-image').siblings('.preview-image').attr("src", e.target.result);
+            $(e.target)
+                .closest(".upload-image")
+                .siblings(".preview-image")
+                .attr("src", e.target.result);
         };
         reader.readAsDataURL(this.files[0]);
     }
 });
+
+
+
+function fireDependency(){
+    $(".form-toggle").bootstrapToggle();
+    $(".select2").select2();   
+}

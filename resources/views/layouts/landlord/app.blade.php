@@ -28,6 +28,8 @@
     <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/select2/select2.min.css') }}" media="screen">
     {{-- flickity --}}
     <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/flickity/flickity.css') }}" media="screen">
+    {{-- Bootstrap Toggle --}}
+    <link rel="stylesheet" href="{{ asset('assets/global/plugins/bootstrap-toggle/css/bootstrap-toggle.min.css') }}" media="screen">
     @if (app()->getLocale() == 'ar')
         <link rel="stylesheet" href="{{ asset('assets/landlord/css/custom.css') . '?v=1.2.1' }}" media="screen">
         <link rel="stylesheet" href="{{ asset('assets/landlord/css/bootstrap-rtl.min.css') }}" media="screen">
@@ -115,8 +117,8 @@
     <script src="{{ asset('assets/global/plugins/apexcharts/apexcharts.min.js') }}"></script>
     {{-- Flickity --}}
     <script src="{{ asset('assets/landlord/plugins/flickity/flickity.pkgd.min.js') }}"></script>
-
-
+    {{-- Bootstrap Toggle --}}
+    <script src="{{ asset('assets/global/plugins/bootstrap-toggle/js/bootstrap-toggle.min.js') }}"></script>
     {{-- Main Script --}}
     <script src="{{ asset('assets/landlord/js/main.js') . '?v=1.2.1' }}" {{-- theme="{{ auth()->user()->getUserTheme() }}" --}} {{-- env="{{ env('APP_ENV') }}" --}}>
     </script>

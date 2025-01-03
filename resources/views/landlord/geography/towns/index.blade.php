@@ -5,16 +5,14 @@
             @include('layouts.shared.filter-date')
         </div>
         <div class="card-body">
-            <table id="table" data-route="{{ route("landlord.countries.index") }}" class="table table-bordered table-striped table-hover">
+            <table id="table" data-route="{{ route("landlord.towns.index") }}" class="table table-bordered table-striped table-hover">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">@translate('name')</th>
-                        <th scope="col">@translate('code')</th>
-                        <th scope="col">@translate('capital_city_id')</th>
-                        <th scope="col">@translate('region')</th>
-                        <th scope="col">@translate('flag')</th>
-                        <th scope="col">@translate('phone_code')</th>
+                        <th scope="col">@translate('city')</th>
+                        <th scope="col">@translate('province')</th>
+                        <th scope="col">@translate('country')</th>
                         <th scope="col">@translate('action')</th>
                     </tr>
                 </thead>
@@ -25,5 +23,5 @@
     </div>
 @endsection
 @section("scripts")
-<script src="{{ asset("assets/landlord/js/geography/countries/index.js") }}"></script>
+<script src="{{ asset("assets/landlord/js/geography/towns/index.js") }}"></script>
 @endsection

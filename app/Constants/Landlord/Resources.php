@@ -68,6 +68,10 @@ class Resources
                 'actions' => ['read', 'create', 'update', 'delete']
             ],
             [
+                'name' => 'streets',
+                'actions' => ['read', 'create', 'update', 'delete']
+            ],
+            [
                 'name' => 'currencies',
                 'actions' => ['read', 'create', 'update', 'delete']
             ],

@@ -13,7 +13,6 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('code')->unique();
-            $table->unsignedBigInteger('capital_city_id')->nullable();
             $table->string('region')->nullable();
             $table->string('flag')->nullable();
             $table->string('phone_code')->nullable();

@@ -14,15 +14,8 @@ class Province extends Model
 
     public $singleTitle = "province";
     public $pluralTitle = "provinces";
-    
-    protected $fillable = [
-        'name',
-        'code',
-        'capital_city_id',
-        'region',
-        'flag',
-        'phone_code'
-    ];
+
+    protected $fillable = ['name', 'country_id', 'is_capital', 'flag', 'phone_code'];
 
     protected $hidden = [];
 }

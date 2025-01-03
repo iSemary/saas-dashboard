@@ -11,6 +11,8 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('towns', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->integer("city_id");
             $table->softDeletes();
             $table->timestamps();
         });

@@ -22,13 +22,21 @@ class CountryRepository implements CountryInterface
 
     public function datatables()
     {
-        $rows =  $this->model->query()->where(
-            function ($q) {
-                if (request()->from_date && request()->to_date) {
-                    TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
+        $rows = $this->model->query()
+            ->leftJoin("provinces", function ($join) {
+                $join->on("provinces.country_id", "=", "countries.id")
+                    ->where("provinces.is_capital", true);
+            })
+            ->select([
+                "countries.*",
+                "provinces.name as capital_province"
+            ])->where(
+                function ($q) {
+                    if (request()->from_date && request()->to_date) {
+                        TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
+                    }
                 }
-            }
-        );
+            );
 
         return DataTables::of($rows)
             ->addColumn('actions', function ($row) {

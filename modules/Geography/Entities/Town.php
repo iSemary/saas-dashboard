@@ -15,14 +15,7 @@ class Town extends Model
     public $singleTitle = "town";
     public $pluralTitle = "towns";
     
-    protected $fillable = [
-        'name',
-        'code',
-        'capital_city_id',
-        'region',
-        'flag',
-        'phone_code'
-    ];
+    protected $fillable = ['name', 'city_id'];
 
     protected $hidden = [];
 }

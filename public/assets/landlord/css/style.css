@@ -5,12 +5,12 @@
     padding-left: 10px;
 }
 
- .nav.nav-treeview .nav-item a {
+.nav.nav-treeview .nav-item a {
     padding-left: 0;
 }
 
 .bg-transparent {
-    background-color: transparent!important;
+    background-color: transparent !important;
 }
 
 .modal.right .modal-dialog {
@@ -31,4 +31,8 @@
 
 .modal.right.show .modal-dialog {
     transform: translateX(0);
+}
+
+.checkbox-inline {
+    margin-left: 20px;
 }

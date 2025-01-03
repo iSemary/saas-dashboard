@@ -14,15 +14,8 @@ class Country extends Model
 
     public $singleTitle = "country";
     public $pluralTitle = "countries";
-    
-    protected $fillable = [
-        'name',
-        'code',
-        'capital_city_id',
-        'region',
-        'flag',
-        'phone_code'
-    ];
+
+    protected $fillable = ['name', 'code', 'region', 'flag', 'phone_code'];
 
     protected $hidden = [];
 }

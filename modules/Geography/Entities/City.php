@@ -9,20 +9,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class City extends Model
 {
     use HasFactory, SoftDeletes;
-
+    
     protected $connection = 'landlord';
-
+    
     public $singleTitle = "city";
     public $pluralTitle = "cities";
     
-    protected $fillable = [
-        'name',
-        'code',
-        'capital_city_id',
-        'region',
-        'flag',
-        'phone_code'
-    ];
-
+    protected $fillable = ['name', 'province_id'];
+    
     protected $hidden = [];
 }

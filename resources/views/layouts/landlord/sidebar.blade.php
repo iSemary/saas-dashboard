@@ -147,6 +147,17 @@
                                         'create' => 'landlord.countries.create',
                                     ],
                                 ],
+                                'provinces' => [
+                                    'icon' => 'fas fa-map-marker-alt',
+                                    'permission' => [
+                                        'read' => 'read.provinces',
+                                        'create' => 'create.provinces',
+                                    ],
+                                    'routes' => [
+                                        'index' => 'landlord.provinces.index',
+                                        'create' => 'landlord.provinces.create',
+                                    ],
+                                ],
                                 'cities' => [
                                     'icon' => 'fas fa-city',
                                     'permission' => [
@@ -168,16 +179,15 @@
                                         'index' => 'landlord.towns.index',
                                         'create' => 'landlord.towns.create',
                                     ],
-                                ],
-                                'provinces' => [
-                                    'icon' => 'fas fa-map-marker-alt',
+                                ],'streets' => [
+                                    'icon' => 'fas fa-road',
                                     'permission' => [
-                                        'read' => 'read.provinces',
-                                        'create' => 'create.provinces',
+                                        'read' => 'read.streets',
+                                        'create' => 'create.streets',
                                     ],
                                     'routes' => [
-                                        'index' => 'landlord.provinces.index',
-                                        'create' => 'landlord.provinces.create',
+                                        'index' => 'landlord.streets.index',
+                                        'create' => 'landlord.streets.create',
                                     ],
                                 ],
                             ],

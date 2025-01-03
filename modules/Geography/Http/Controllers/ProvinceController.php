@@ -3,64 +3,78 @@
 namespace Modules\Geography\Http\Controllers;
 
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\Controller;
+use Modules\Geography\Services\ProvinceService;
 use Illuminate\Http\Request;
+use Modules\Geography\Services\CountryService;
 
 class ProvinceController extends ApiController
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $service;
+    protected $countryService;
+
+    public function __construct(ProvinceService $service, CountryService $countryService)
+    {
+        $this->service = $service;
+        $this->countryService = $countryService;
+    }
+
     public function index()
     {
-        return view('geography::index');
+        if (request()->ajax()) {
+            return $this->service->getDataTables();
+        }
+        $title = $this->service->model->pluralTitle;
+        $breadcrumbs = [
+            ['text' => 'Home', 'link' => route('home')],
+            ['text' => $this->service->model->pluralTitle],
+        ];
+
+        $actionButtons = [
+            [
+                'text' => 'Add ' . $this->service->model->singleTitle,
+                'class' => 'open-create-modal btn-sm btn-success',
+                'attr' => [
+                    'data-modal-link' => route('landlord.provinces.create'),
+                    'data-modal-title' => "Create " . $this->service->model->singleTitle,
+                ]
+            ],
+        ];
+
+        return view('landlord.geography.provinces.index', compact('breadcrumbs', 'title', 'actionButtons'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        return view('geography::create');
+        $countries = $this->countryService->getAll();
+        return view('landlord.geography.provinces.editor', compact('countries'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        $this->service->create($data);
+        return $this->return(200, "Created successfully");
     }
 
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('geography::show');
-    }
+    public function show($id) {}
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($id)
     {
-        return view('geography::edit');
+        $countries = $this->countryService->getAll();
+        $row = $this->service->get($id);
+        return view('landlord.geography.provinces.editor', compact('row', 'countries'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
-        //
+        $data = $request->all();
+        $this->service->update($id, $data);
+        return $this->return(200, "Updated successfully");
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
-        //
+        $this->service->delete($id);
+        return $this->return(200, "Deleted successfully");
     }
 }

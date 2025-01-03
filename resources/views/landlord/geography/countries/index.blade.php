@@ -10,8 +10,8 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">@translate('name')</th>
+                        <th scope="col">@translate('capital_province')</th>
                         <th scope="col">@translate('code')</th>
-                        <th scope="col">@translate('capital_city_id')</th>
                         <th scope="col">@translate('region')</th>
                         <th scope="col">@translate('flag')</th>
                         <th scope="col">@translate('phone_code')</th>
