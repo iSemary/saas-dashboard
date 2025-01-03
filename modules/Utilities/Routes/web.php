@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Utilities\Http\Controllers\UtilitiesController;
+use Modules\Utilities\Http\Controllers\CurrencyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +17,7 @@ use Modules\Utilities\Http\Controllers\UtilitiesController;
 
 Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:landlord', '2fa'])->group(function () {
     Route::resource('categories', UtilitiesController::class)->names('categories');
-    Route::resource('currencies', UtilitiesController::class)->names('currencies');
+    Route::resource('currencies', CurrencyController::class)->names('currencies');
     Route::resource('tags', UtilitiesController::class)->names('tags');
     Route::resource('announcements', UtilitiesController::class)->names('announcements');
     Route::resource('modules', UtilitiesController::class)->names('modules');
