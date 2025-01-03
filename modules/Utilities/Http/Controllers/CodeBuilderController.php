@@ -11,6 +11,7 @@ class CodeBuilderController extends ApiController
 {
     public function show()
     {
+        if(env("APP_ENV") != "local") {abort(404);}
         $breadcrumbs = [
             ['text' => 'Home', 'link' => route('home')],
             ['text' => "Code Builder"],
@@ -24,58 +25,116 @@ class CodeBuilderController extends ApiController
 
     public function submit(Request $request)
     {
+        if(env("APP_ENV") != "local") {abort(404);}
         try {
             // Get stubs and their content
             $result = $this->scanStubs();
             $files = $result['files'];
-
+            
             // Get all form inputs which correspond to our variables
             $replacements = $request->except('_token');
-
-            // Create new files based on stubs
-            foreach ($files as $file) {
-                // Get the content and replace all variables
-                $content = $file['content'];
-
-                foreach ($replacements as $key => $value) {
-                    $content = str_replace('$' . $key . '$', $value, $content);
+            
+            // First check if Modules directory exists and is writable
+            $modulesPath = base_path('Modules');
+            if (!File::exists($modulesPath)) {
+                // Try to create Modules directory if it doesn't exist
+                if (!File::makeDirectory($modulesPath, 0755, true)) {
+                    return $this->return(500, "Cannot create Modules directory. Please check permissions on: " . $modulesPath);
                 }
-
-                // Determine the new file path
-                $newPath = $this->determineNewPath($file['path'], $replacements);
-
-                // Create directories if they don't exist
-                $directory = dirname($newPath);
-                if (!File::isDirectory($directory)) {
-                    File::makeDirectory($directory, 0755, true);
-                }
-
-                // Write the new file
-                File::put($newPath, $content);
             }
 
-            return $this->return(200, "Files generated successfully");
+            if (!is_writable($modulesPath)) {
+                return $this->return(500, "Modules directory is not writable. Please check permissions on: " . $modulesPath);
+            }
+
+            // Check/Create module directory
+            $moduleDir = $modulesPath . '/' . $replacements['MODULE_NAME'];
+            if (!File::exists($moduleDir)) {
+                if (!File::makeDirectory($moduleDir, 0755, true)) {
+                    return $this->return(500, "Cannot create module directory. Please check permissions on: " . $moduleDir);
+                }
+            }
+
+            $generatedFiles = [];
+            // Create new files based on stubs
+            foreach ($files as $file) {
+                try {
+                    // Get the content and replace all variables
+                    $content = $file['content'];
+                    
+                    foreach ($replacements as $key => $value) {
+                        $content = str_replace('$' . $key . '$', $value, $content);
+                    }
+                    
+                    // Determine the new file path
+                    $newPath = $this->determineNewPath($file['path'], $replacements);
+                    
+                    // Create directories if they don't exist
+                    $directory = dirname($newPath);
+                    if (!File::isDirectory($directory)) {
+                        if (!File::makeDirectory($directory, 0755, true)) {
+                            throw new \Exception("Failed to create directory: " . $directory);
+                        }
+                    }
+                    
+                    // Check if directory is writable
+                    if (!is_writable($directory)) {
+                        throw new \Exception("Directory not writable: " . $directory);
+                    }
+                    
+                    // Write the new file
+                    if (File::put($newPath, $content) !== false) {
+                        $generatedFiles[] = $newPath;
+                    } else {
+                        throw new \Exception("Failed to write file: " . $newPath);
+                    }
+                    
+                } catch (\Exception $e) {
+                    // Clean up any files we created if there's an error
+                    foreach ($generatedFiles as $generatedFile) {
+                        if (File::exists($generatedFile)) {
+                            File::delete($generatedFile);
+                        }
+                    }
+                    throw $e;
+                }
+            }
+            
+            return $this->return(200, "Files generated successfully", [
+                'files' => $generatedFiles
+            ]);
+            
         } catch (\Exception $e) {
-            return $this->return(500, "Error generating files: " . $e->getMessage());
+            // Get current user and process information for debugging
+            $user = posix_getpwuid(posix_geteuid());
+            $debug = [
+                'user' => $user['name'],
+                'php_user' => get_current_user(),
+                'modules_path' => base_path('Modules'),
+                'modules_perms' => decoct(fileperms(base_path('Modules')) & 0777),
+            ];
+            
+            return $this->return(500, "Error generating files: " . $e->getMessage(), [
+                'debug' => $debug
+            ]);
         }
     }
 
     private function determineNewPath(string $stubPath, array $replacements): string
     {
         $newPath = $stubPath;
-
+        
         // Remove .stub extension if it exists
         $newPath = str_replace('.stub', '', $newPath);
-
+        
         // Replace variables in the path itself
         foreach ($replacements as $key => $value) {
             $newPath = str_replace('$' . $key . '$', $value, $newPath);
         }
-
+        
         // Determine the base path for new files
-        // You might want to adjust this based on your needs
         $basePath = base_path('Modules/' . $replacements['MODULE_NAME']);
-
+        
         return $basePath . '/' . $newPath;
     }
 
