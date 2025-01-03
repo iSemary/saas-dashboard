@@ -2,7 +2,7 @@
 
 namespace Modules\Auth\Services;
 
-use Modules\Auth\Repositories\PermissionInterface;
+use Modules\Auth\Repositories\RoleInterface;
 use Spatie\Permission\Models\Role;
 
 class RoleService
@@ -10,7 +10,7 @@ class RoleService
     protected $repository;
     public $model;
 
-    public function __construct(PermissionInterface $repository, Role $role)
+    public function __construct(RoleInterface $repository, Role $role)
     {
         $this->model = $role;
         $this->repository = $repository;

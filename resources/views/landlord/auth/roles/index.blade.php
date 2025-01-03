@@ -11,6 +11,7 @@
                         <th scope="col">#</th>
                         <th scope="col">@translate('name')</th>
                         <th scope="col">@translate('guard_name')</th>
+                        <th scope="col">@translate('total_permissions')</th>
                         <th scope="col">@translate('action')</th>
                     </tr>
                 </thead>

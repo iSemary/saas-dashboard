@@ -23,15 +23,26 @@ class RoleRepository implements RoleInterface
 
     public function datatables()
     {
-        $rows =  $this->model->query()->where(
-            function ($q) {
-                if (request()->from_date && request()->to_date) {
-                    TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
+        $rows =  $this->model->query()
+            ->select([
+                'roles.*',
+                DB::raw('COUNT(role_has_permissions.permission_id) as total_permissions')
+            ])
+            ->leftJoin('role_has_permissions', 'roles.id', '=', 'role_has_permissions.role_id')
+            ->groupBy('roles.id')->where(
+                function ($q) {
+                    if (request()->from_date && request()->to_date) {
+                        TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
+                    }
                 }
-            }
-        );
+            );
 
         return DataTables::of($rows)
+            ->editColumn('name', function ($row) {
+                return translate($row->name);
+            })->editColumn('guard_name', function ($row) {
+                return translate($row->name);
+            })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
                     $row,
@@ -52,18 +63,34 @@ class RoleRepository implements RoleInterface
 
     public function create(array $data)
     {
-        return $this->model->create($data);
+        $permissions = $data['permissions'] ?? [];
+        unset($data['permissions']);
+
+        $role = $this->model->create($data);
+
+        if ($role && !empty($permissions)) {
+            $role->permissions()->sync($permissions);
+        }
+
+        return $role;
     }
 
     public function update($id, array $data)
     {
-        $row = $this->model->find($id);
-        if ($row) {
-            $row->update($data);
-            return $row;
+        $permissions = $data['permissions'] ?? [];
+        unset($data['permissions']);
+
+        $role = $this->model->find($id);
+
+        if ($role) {
+            $role->update($data);
+            $role->permissions()->sync($permissions);
+            return $role;
         }
+
         return null;
     }
+
 
     public function delete($id)
     {

@@ -14,6 +14,10 @@ let cols = [
         name: "guard_name",
     },
     {
+        data: "total_permissions",
+        name: "total_permissions",
+    },
+    {
         data: "actions",
         name: "actions",
         orderable: false,

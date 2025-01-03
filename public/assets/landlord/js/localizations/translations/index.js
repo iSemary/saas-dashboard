@@ -6,8 +6,8 @@ let cols = [
         name: "id",
     },
     {
-        data: "language_id",
-        name: "language_id",
+        data: "language",
+        name: "language",
     },
     {
         data: "translation_key",

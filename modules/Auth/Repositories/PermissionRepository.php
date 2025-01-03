@@ -32,6 +32,11 @@ class PermissionRepository implements PermissionInterface
         );
 
         return DataTables::of($rows)
+            ->editColumn('name', function ($row) {
+                return translate($row->name);
+            })->editColumn('guard_name', function ($row) {
+                return translate($row->name);
+            })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
                     $row,

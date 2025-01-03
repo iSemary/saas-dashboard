@@ -5,14 +5,17 @@ namespace Modules\Auth\Http\Controllers;
 use App\Http\Controllers\ApiController;
 use Modules\Auth\Services\RoleService;
 use Illuminate\Http\Request;
+use Modules\Auth\Services\PermissionService;
 
 class RoleController extends ApiController
 {
     protected $service;
+    protected $permissionService;
 
-    public function __construct(RoleService $roleService)
+    public function __construct(RoleService $roleService, PermissionService $permissionService)
     {
         $this->service = $roleService;
+        $this->permissionService = $permissionService;
     }
 
     public function index()
@@ -42,7 +45,8 @@ class RoleController extends ApiController
 
     public function create()
     {
-        return view('landlord.auth.roles.editor');
+        $permissions = $this->permissionService->getAll();
+        return view('landlord.auth.roles.editor', compact('permissions'));
     }
 
     public function store(Request $request)
@@ -56,8 +60,9 @@ class RoleController extends ApiController
 
     public function edit($id)
     {
+        $permissions = $this->permissionService->getAll();
         $row = $this->service->get($id);
-        return view('landlord.auth.roles.editor', compact('row'));
+        return view('landlord.auth.roles.editor', compact('row', 'permissions'));
     }
 
     public function update(Request $request, $id)

@@ -21,6 +21,39 @@ class TranslationRepository implements TranslationInterface
         return $this->model->all();
     }
 
+    public function datatables()
+    {
+        $rows =  $this->model->query()
+            ->leftJoin("languages", function ($join) {
+                $join->on("languages.id", "=", "translations.language_id");
+            })->select([
+                'translations.*',
+                'languages.name as language'
+            ])->where(
+                function ($q) {
+                    if (request()->from_date && request()->to_date) {
+                        TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
+                    }
+                }
+            );
+
+        return DataTables::of($rows)
+            ->filterColumn('language', function ($query, $keyword) {
+                $query->whereRaw('LOWER(languages.name) LIKE ?', ["%{$keyword}%"]);
+            })
+            ->addColumn('actions', function ($row) {
+                return TableHelper::actionButtons(
+                    $row,
+                    'landlord.translations.edit',
+                    'landlord.translations.destroy',
+                    $this->model->pluralTitle,
+                    $this->model->singleTitle,
+                );
+            })
+            ->rawColumns(['actions'])
+            ->make(true);
+    }
+
     public function getByKey($key)
     {
         $cacheValue = $this->getByKeyByCache($key);
@@ -40,10 +73,10 @@ class TranslationRepository implements TranslationInterface
 
     private function generateTranslation($key)
     {
-        $value = str_replace('_', ' ', $key);
+        $value = str_replace(['_', '.'], ' ', $key);
         $value = ucwords($value);
         $value = trim($value);
-        
+
         $data = [
             'language_id' => 1, // as english language
             'translation_key' => $key,
@@ -64,30 +97,6 @@ class TranslationRepository implements TranslationInterface
     private function getByKeyByCache($key)
     {
         return CacheService::get("translation_{$key}");
-    }
-
-    public function datatables()
-    {
-        $rows =  $this->model->query()->where(
-            function ($q) {
-                if (request()->from_date && request()->to_date) {
-                    TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
-                }
-            }
-        );
-
-        return DataTables::of($rows)
-            ->addColumn('actions', function ($row) {
-                return TableHelper::actionButtons(
-                    $row,
-                    'landlord.translations.edit',
-                    'landlord.translations.destroy',
-                    $this->model->pluralTitle,
-                    $this->model->singleTitle,
-                );
-            })
-            ->rawColumns(['actions'])
-            ->make(true);
     }
 
     public function find($id)

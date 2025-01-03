@@ -39,6 +39,9 @@ class CountryRepository implements CountryInterface
             );
 
         return DataTables::of($rows)
+            ->filterColumn('capital_province', function ($query, $keyword) {
+                $query->whereRaw('LOWER(provinces.name) LIKE ?', ["%{$keyword}%"]);
+            })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
                     $row,

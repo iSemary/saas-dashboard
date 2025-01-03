@@ -5,15 +5,37 @@
         @method('PUT')
     @endif
     <div class="form-group">
-        <label for="name" class="form-label">name</label>
+        <label for="name" class="form-label">@translate('name')</label>
         <input type="text" name="name" id="name" class="form-control"
             value="{{ isset($row) ? $row->name : '' }}" required>
     </div>
 
     <div class="form-group">
-        <label for="guard_name" class="form-label">guard_name</label>
+        <label for="guard_name" class="form-label">@translate('guard_name')</label>
         <input type="text" name="guard_name" id="guard_name" class="form-control"
             value="{{ isset($row) ? $row->guard_name : '' }}" required>
+    </div>
+
+    <div class="form-group">
+        <label for="permissions" class="form-label">@translate('permissions')</label>
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    @foreach ($permissions as $permission)
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input type="checkbox" name="permissions[]" id="permission_{{ $permission->id }}"
+                                    class="form-check-input" value="{{ $permission->id }}"
+                                    {{ isset($row) && $row->permissions->contains($permission) ? 'checked' : '' }}>
+                                <label for="permission_{{ $permission->id }}" class="form-check-label">
+                                    {{ translate($permission->name) }}
+                                </label>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="form-group">
