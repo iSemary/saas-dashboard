@@ -1,11 +1,18 @@
 <?php
 
-namespace $NAMESPACE$;
+namespace Modules\$MODULE_NAME$\Entities;
 
-class $CLASS$
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class $MODEL_NAME$
 {
-    public function __construct()
-    {
-        //
-    }
+    use HasFactory, SoftDeletes;
+
+    protected $connection = "$CONNECTION_NAME$";
+
+    public $singleTitle = "$SINGLE_TITLE$";
+    public $pluralTitle = "$PLURAL_TITLE$";
+
 }

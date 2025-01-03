@@ -25,7 +25,7 @@
 
     <div class="form-group">
         <label class="checkbox-inline">
-            <input type="checkbox" name="is_capital" class="form-toggle" data-toggle="toggle"> @translate('is_capital')
+            <input type="checkbox" name="is_capital" class="form-toggle" {{ isset($row) && $row->is_capital ? 'checked' : '' }} data-toggle="toggle"> @translate('is_capital')
         </label>
     </div>
 

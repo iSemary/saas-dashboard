@@ -10,6 +10,14 @@ let cols = [
         name: "name",
     },
     {
+        data: "code",
+        name: "code",
+    },
+    {
+        data: "symbol",
+        name: "symbol",
+    },
+    {
         data: "actions",
         name: "actions",
         orderable: false,

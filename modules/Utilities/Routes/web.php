@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Utilities\Http\Controllers\UtilitiesController;
 use Modules\Utilities\Http\Controllers\CurrencyController;
+use Modules\Utilities\Http\Controllers\CodeBuilderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,4 +22,8 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:land
     Route::resource('tags', UtilitiesController::class)->names('tags');
     Route::resource('announcements', UtilitiesController::class)->names('announcements');
     Route::resource('modules', UtilitiesController::class)->names('modules');
+
+    // DEVELOPERS ONLY
+    Route::get("code-builder", [CodeBuilderController::class, "show"])->name("code-builder.show");
+    Route::post("code-builder", [CodeBuilderController::class, "submit"])->name("code-builder.submit");
 });

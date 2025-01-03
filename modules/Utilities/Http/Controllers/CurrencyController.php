@@ -2,64 +2,73 @@
 
 namespace Modules\Utilities\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
+use Modules\Utilities\Services\CurrencyService;
 use Illuminate\Http\Request;
 
-class CurrencyController extends Controller
+class CurrencyController extends ApiController
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $service;
+
+    public function __construct(CurrencyService $service)
+    {
+        $this->service = $service;
+    }
     public function index()
     {
-        return view('utilities::index');
+        if (request()->ajax()) {
+            return $this->service->getDataTables();
+        }
+        $title = $this->service->model->pluralTitle;
+        $breadcrumbs = [
+            ['text' => 'Home', 'link' => route('home')],
+            ['text' => $this->service->model->pluralTitle],
+        ];
+
+        $actionButtons = [
+            [
+                'text' => 'Add ' . $this->service->model->singleTitle,
+                'class' => 'open-create-modal btn-sm btn-success',
+                'attr' => [
+                    'data-modal-link' => route('landlord.currencies.create'),
+                    'data-modal-title' => "Create " . $this->service->model->singleTitle,
+                ]
+            ],
+        ];
+
+        return view('landlord.utilities.currencies.index', compact('breadcrumbs', 'title', 'actionButtons'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        return view('utilities::create');
+        return view('landlord.utilities.currencies.editor');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        $this->service->create($data);
+        return $this->return(200, "Created successfully");
     }
 
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('utilities::show');
-    }
+    public function show($id) {}
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($id)
     {
-        return view('utilities::edit');
+        $row = $this->service->get($id);
+        return view('landlord.utilities.currencies.editor', compact('row'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
-        //
+        $data = $request->all();
+        $this->service->update($id, $data);
+        return $this->return(200, "Updated successfully");
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
-        //
+        $this->service->delete($id);
+        return $this->return(200, "Deleted successfully");
     }
 }

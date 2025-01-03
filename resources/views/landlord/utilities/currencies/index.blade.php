@@ -5,11 +5,13 @@
             @include('layouts.shared.filter-date')
         </div>
         <div class="card-body">
-            <table id="table" data-route="{{ route("landlord.$PLURAL_TITLE$.index") }}" class="table table-bordered table-striped table-hover">
+            <table id="table" data-route="{{ route("landlord.currencies.index") }}" class="table table-bordered table-striped table-hover">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">@translate('name')</th>
+                        <th scope="col">@translate('code')</th>
+                        <th scope="col">@translate('symbol')</th>
                         <th scope="col">@translate('action')</th>
                     </tr>
                 </thead>
@@ -20,5 +22,5 @@
     </div>
 @endsection
 @section("scripts")
-<script src="{{ asset("assets/landlord/js/$MODULE_PLURAL_TITLE$/$PLURAL_TITLE$/index.js") }}"></script>
+<script src="{{ asset("assets/landlord/js/utilities/currencies/index.js") }}"></script>
 @endsection

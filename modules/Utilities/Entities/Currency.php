@@ -10,6 +10,11 @@ class Currency extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $connection = 'landlord';
+
+    public $singleTitle = "currency";
+    public $pluralTitle = "currencies";
+
     /**
      * The attributes that are mass assignable.
      *
@@ -22,12 +27,11 @@ class Currency extends Model
         'decimal_places',
         'exchange_rate',
         'exchange_rate_last_updated',
-        'country',
         'symbol_position',
         'base_currency',
         'priority',
         'note',
-        'is_active',
+        'status',
     ];
 
     /**
