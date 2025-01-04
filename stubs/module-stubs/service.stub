@@ -10,7 +10,7 @@ class $MODEL_NAME$Service
     protected $repository;
     public $model;
 
-    public function __construct(CountryInterface $repository, $MODEL_NAME$ $$SINGLE_TITLE$)
+    public function __construct($MODEL_NAME$Interface $repository, $MODEL_NAME$ $$SINGLE_TITLE$)
     {
         $this->model = $$SINGLE_TITLE$;
         $this->repository = $repository;

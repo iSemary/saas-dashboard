@@ -35,7 +35,7 @@ class CodeBuilderController extends ApiController
             $replacements = $request->except('_token');
             
             // First check if Modules directory exists and is writable
-            $modulesPath = base_path('Modules');
+            $modulesPath = base_path('Builder');
             if (!File::exists($modulesPath)) {
                 // Try to create Modules directory if it doesn't exist
                 if (!File::makeDirectory($modulesPath, 0755, true)) {
@@ -105,17 +105,7 @@ class CodeBuilderController extends ApiController
             ]);
             
         } catch (\Exception $e) {
-            // Get current user and process information for debugging
-            $user = posix_getpwuid(posix_geteuid());
-            $debug = [
-                'user' => $user['name'],
-                'php_user' => get_current_user(),
-                'modules_path' => base_path('Modules'),
-                'modules_perms' => decoct(fileperms(base_path('Modules')) & 0777),
-            ];
-            
             return $this->return(500, "Error generating files: " . $e->getMessage(), [
-                'debug' => $debug
             ]);
         }
     }
@@ -133,7 +123,7 @@ class CodeBuilderController extends ApiController
         }
         
         // Determine the base path for new files
-        $basePath = base_path('Modules/' . $replacements['MODULE_NAME']);
+        $basePath = base_path('Builder/' . $replacements['MODULE_NAME']);
         
         return $basePath . '/' . $newPath;
     }
