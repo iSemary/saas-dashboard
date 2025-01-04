@@ -9,8 +9,8 @@ use Illuminate\Support\Str;
 
 class CodeBuilderController extends ApiController
 {
-    protected $modulesFolder = "Builder";
-    // protected $modulesFolder = "modules";
+    // protected $modulesFolder = "Builder";
+    protected $modulesFolder = "modules";
 
     public function show()
     {
