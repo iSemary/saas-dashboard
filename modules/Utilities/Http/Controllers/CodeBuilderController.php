@@ -9,9 +9,13 @@ use Illuminate\Support\Str;
 
 class CodeBuilderController extends ApiController
 {
+    protected $modulesFolder = "modules";
+
     public function show()
     {
-        if(env("APP_ENV") != "local") {abort(404);}
+        if (env("APP_ENV") != "local") {
+            abort(404);
+        }
         $breadcrumbs = [
             ['text' => 'Home', 'link' => route('home')],
             ['text' => "Code Builder"],
@@ -25,17 +29,19 @@ class CodeBuilderController extends ApiController
 
     public function submit(Request $request)
     {
-        if(env("APP_ENV") != "local") {abort(404);}
+        if (env("APP_ENV") != "local") {
+            abort(404);
+        }
         try {
             // Get stubs and their content
             $result = $this->scanStubs();
             $files = $result['files'];
-            
+
             // Get all form inputs which correspond to our variables
             $replacements = $request->except('_token');
-            
+
             // First check if Modules directory exists and is writable
-            $modulesPath = base_path('Builder');
+            $modulesPath = base_path($this->modulesFolder);
             if (!File::exists($modulesPath)) {
                 // Try to create Modules directory if it doesn't exist
                 if (!File::makeDirectory($modulesPath, 0755, true)) {
@@ -61,14 +67,14 @@ class CodeBuilderController extends ApiController
                 try {
                     // Get the content and replace all variables
                     $content = $file['content'];
-                    
+
                     foreach ($replacements as $key => $value) {
                         $content = str_replace('$' . $key . '$', $value, $content);
                     }
-                    
+
                     // Determine the new file path
                     $newPath = $this->determineNewPath($file['path'], $replacements);
-                    
+
                     // Create directories if they don't exist
                     $directory = dirname($newPath);
                     if (!File::isDirectory($directory)) {
@@ -76,19 +82,18 @@ class CodeBuilderController extends ApiController
                             throw new \Exception("Failed to create directory: " . $directory);
                         }
                     }
-                    
+
                     // Check if directory is writable
                     if (!is_writable($directory)) {
                         throw new \Exception("Directory not writable: " . $directory);
                     }
-                    
+
                     // Write the new file
                     if (File::put($newPath, $content) !== false) {
                         $generatedFiles[] = $newPath;
                     } else {
                         throw new \Exception("Failed to write file: " . $newPath);
                     }
-                    
                 } catch (\Exception $e) {
                     // Clean up any files we created if there's an error
                     foreach ($generatedFiles as $generatedFile) {
@@ -99,32 +104,30 @@ class CodeBuilderController extends ApiController
                     throw $e;
                 }
             }
-            
+
             return $this->return(200, "Files generated successfully", [
                 'files' => $generatedFiles
             ]);
-            
         } catch (\Exception $e) {
-            return $this->return(500, "Error generating files: " . $e->getMessage(), [
-            ]);
+            return $this->return(500, "Error generating files: " . $e->getMessage(), []);
         }
     }
 
     private function determineNewPath(string $stubPath, array $replacements): string
     {
         $newPath = $stubPath;
-        
+
         // Remove .stub extension if it exists
         $newPath = str_replace('.stub', '', $newPath);
-        
+
         // Replace variables in the path itself
         foreach ($replacements as $key => $value) {
             $newPath = str_replace('$' . $key . '$', $value, $newPath);
         }
-        
+
         // Determine the base path for new files
-        $basePath = base_path('Builder/' . $replacements['MODULE_NAME']);
-        
+        $basePath = base_path($this->modulesFolder . '/' . $replacements['MODULE_NAME']);
+
         return $basePath . '/' . $newPath;
     }
 
