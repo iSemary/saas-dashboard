@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 class CodeBuilderController extends ApiController
 {
-    protected $modulesFolder = "modules";
+    protected $modulesFolder = "Builder";
 
     public function show()
     {
@@ -120,15 +120,100 @@ class CodeBuilderController extends ApiController
         // Remove .stub extension if it exists
         $newPath = str_replace('.stub', '', $newPath);
 
-        // Replace variables in the path itself
+        // Get the base filename without path
+        $filename = basename($newPath);
+
+        // Generate the new filename based on the type
+        $newFilename = $this->generateFileName($filename, $replacements);
+
+        // Replace the old filename with the new one in the path
+        $newPath = str_replace($filename, $newFilename, $newPath);
+
+        // Replace remaining variables in the path
         foreach ($replacements as $key => $value) {
             $newPath = str_replace('$' . $key . '$', $value, $newPath);
         }
 
-        // Determine the base path for new files
-        $basePath = base_path($this->modulesFolder . '/' . $replacements['MODULE_NAME']);
+        // Handle file paths based on file types or special cases
+        if (str_contains($filename, 'controller')) {
+            // Example: Place controllers in the app/Http/Controllers directory
+            $basePath = base_path('app/Http/Controllers/' . $replacements['MODULE_NAME']);
+        } elseif (str_contains($filename, 'model')) {
+            // Example: Place models in the app/Models directory
+            $basePath = base_path('app/Models/' . $replacements['MODULE_NAME']);
+        } elseif (str_contains($filename, 'migration')) {
+            // Example: Migrations should go to the database/migrations directory
+            $basePath = base_path('database/migrations');
+        } elseif (str_contains($filename, 'seeder')) {
+            // Example: Seeders go to the database/seeders directory
+            $basePath = base_path('database/seeders');
+        } elseif (str_contains($filename, 'test')) {
+            // Example: Tests should go in the tests directory
+            $basePath = base_path('tests/Feature/' . $replacements['MODULE_NAME']);
+        } else {
+            // Default to modules folder
+            $basePath = base_path($this->modulesFolder . '/' . $replacements['MODULE_NAME']);
+        }
 
         return $basePath . '/' . $newPath;
+    }
+
+
+
+    private function generateFileName(string $filename, array $replacements): string
+    {
+        // Extract the base name without extension
+        $baseName = pathinfo($filename, PATHINFO_FILENAME);
+        $extension = pathinfo($filename, PATHINFO_EXTENSION) ?: 'php';
+
+        // Special handling for blade files
+        if (str_contains($filename, '.blade')) {
+            // Extract the view type (index, editor, show, etc.)
+            $viewType = str_replace('.blade', '', $baseName);
+            return strtolower($viewType) . '.blade.php';
+        }
+
+        // Convert to lowercase for consistent matching
+        $type = strtolower($baseName);
+
+        switch ($type) {
+            case 'controller':
+                return $replacements['MODEL_NAME'] . 'Controller.' . $extension;
+
+            case 'model':
+                return $replacements['MODEL_NAME'] . '.' . $extension;
+
+            case 'repository':
+                return $replacements['MODEL_NAME'] . 'Repository.' . $extension;
+
+            case 'interface':
+                return $replacements['MODEL_NAME'] . 'Interface.' . $extension;
+
+            case 'service':
+                return $replacements['MODEL_NAME'] . 'Service.' . $extension;
+
+            case 'request':
+                return $replacements['MODEL_NAME'] . 'Request.' . $extension;
+
+            case 'resource':
+                return $replacements['MODEL_NAME'] . 'Resource.' . $extension;
+
+            case 'migration':
+                $timestamp = date('Y_m_d_His');
+                return $timestamp . '_create_' . strtolower($replacements['PLURAL_TITLE']) . '_table.' . $extension;
+
+            case 'seeder':
+                return $replacements['MODEL_NAME'] . 'Seeder.' . $extension;
+
+            case 'factory':
+                return $replacements['MODEL_NAME'] . 'Factory.' . $extension;
+
+            case 'test':
+                return $replacements['MODEL_NAME'] . 'Test.' . $extension;
+
+            default:
+                return $filename;
+        }
     }
 
     private function scanStubs(): array
