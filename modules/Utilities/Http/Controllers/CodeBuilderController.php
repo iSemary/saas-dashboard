@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 class CodeBuilderController extends ApiController
 {
     protected $modulesFolder = "Builder";
+    // protected $modulesFolder = "modules";
 
     public function show()
     {
@@ -134,25 +135,24 @@ class CodeBuilderController extends ApiController
             $newPath = str_replace('$' . $key . '$', $value, $newPath);
         }
 
-        // Handle file paths based on file types or special cases
         if (str_contains($filename, 'controller')) {
-            // Example: Place controllers in the app/Http/Controllers directory
-            $basePath = base_path('app/Http/Controllers/' . $replacements['MODULE_NAME']);
+            $basePath = base_path($this->modulesFolder . '/' . $replacements['MODULE_NAME'] . '/' . '/Http/Controllers/');
         } elseif (str_contains($filename, 'model')) {
-            // Example: Place models in the app/Models directory
-            $basePath = base_path('app/Models/' . $replacements['MODULE_NAME']);
+            $basePath = base_path($this->modulesFolder . '/' . $replacements['MODULE_NAME'] . '/' . 'Entities/');
         } elseif (str_contains($filename, 'migration')) {
-            // Example: Migrations should go to the database/migrations directory
-            $basePath = base_path('database/migrations');
-        } elseif (str_contains($filename, 'seeder')) {
-            // Example: Seeders go to the database/seeders directory
-            $basePath = base_path('database/seeders');
-        } elseif (str_contains($filename, 'test')) {
-            // Example: Tests should go in the tests directory
-            $basePath = base_path('tests/Feature/' . $replacements['MODULE_NAME']);
+            $basePath = base_path($this->modulesFolder . '/' . $replacements['MODULE_NAME'] . '/' . 'Database/migrations');
+        } elseif (str_contains($filename, 'repository')) {
+            $basePath = base_path($this->modulesFolder . '/' . $replacements['MODULE_NAME'] . '/' . 'Repositories/');
+        } elseif (str_contains($filename, 'interface')) {
+            $basePath = base_path($this->modulesFolder . '/' . $replacements['MODULE_NAME'] . '/' . 'Repositories/');
+        } elseif (str_contains($filename, 'service')) {
+            $basePath = base_path($this->modulesFolder . '/' . $replacements['MODULE_NAME'] . '/' . 'Service/');
+        } elseif (str_contains($filename, 'index.blade') || str_contains($filename, 'editor.blade')) {
+            $basePath = base_path('resources/views/landlord/'. $replacements['MODULE_PLURAL_TITLE'] . '/'. $replacements['PLURAL_TITLE']);
+        } elseif (str_contains($filename, 'index.js')) {
+            $basePath = base_path('public/assets/landlord/js/'. $replacements['MODULE_PLURAL_TITLE'] . '/'. $replacements['PLURAL_TITLE']);
         } else {
-            // Default to modules folder
-            $basePath = base_path($this->modulesFolder . '/' . $replacements['MODULE_NAME']);
+            $basePath = base_path($this->modulesFolder . '/' . $replacements['MODULE_NAME'] . '/' . $replacements['MODULE_NAME']);
         }
 
         return $basePath . '/' . $newPath;
