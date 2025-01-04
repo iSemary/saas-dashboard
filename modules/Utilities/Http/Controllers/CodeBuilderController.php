@@ -146,7 +146,7 @@ class CodeBuilderController extends ApiController
         } elseif (str_contains($filename, 'interface')) {
             $basePath = base_path($this->modulesFolder . '/' . $replacements['MODULE_NAME'] . '/' . 'Repositories/');
         } elseif (str_contains($filename, 'service')) {
-            $basePath = base_path($this->modulesFolder . '/' . $replacements['MODULE_NAME'] . '/' . 'Service/');
+            $basePath = base_path($this->modulesFolder . '/' . $replacements['MODULE_NAME'] . '/' . 'Services/');
         } elseif (str_contains($filename, 'index.blade') || str_contains($filename, 'editor.blade')) {
             $basePath = base_path('resources/views/landlord/'. $replacements['MODULE_PLURAL_TITLE'] . '/'. $replacements['PLURAL_TITLE']);
         } elseif (str_contains($filename, 'index.js')) {

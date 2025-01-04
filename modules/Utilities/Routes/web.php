@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Utilities\Http\Controllers\UtilitiesController;
 use Modules\Utilities\Http\Controllers\CurrencyController;
+use Modules\Utilities\Http\Controllers\CategoryController;
 use Modules\Utilities\Http\Controllers\CodeBuilderController;
 
 /*
@@ -17,7 +18,7 @@ use Modules\Utilities\Http\Controllers\CodeBuilderController;
 */
 
 Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:landlord', '2fa'])->group(function () {
-    Route::resource('categories', UtilitiesController::class)->names('categories');
+    Route::resource('categories', CategoryController::class)->names('categories');
     Route::resource('currencies', CurrencyController::class)->names('currencies');
     Route::resource('tags', UtilitiesController::class)->names('tags');
     Route::resource('announcements', UtilitiesController::class)->names('announcements');
