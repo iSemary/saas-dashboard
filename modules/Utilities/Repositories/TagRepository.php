@@ -3,17 +3,16 @@
 namespace Modules\Utilities\Repositories;
 
 use App\Helpers\TableHelper;
-use Illuminate\Support\Facades\DB;
-use Modules\Utilities\Entities\Category;
+use Modules\Utilities\Entities\Tag;
 use Yajra\DataTables\DataTables;
 
-class CategoryRepository implements CategoryInterface
+class TagRepository implements TagInterface
 {
     protected $model;
 
-    public function __construct(Category $category)
+    public function __construct(Tag $tag)
     {
-        $this->model = $category;
+        $this->model = $tag;
     }
 
     public function all()
@@ -23,11 +22,7 @@ class CategoryRepository implements CategoryInterface
 
     public function datatables()
     {
-        $rows = $this->model->query()
-            ->select([
-                'categories.*',
-                DB::raw('(SELECT name FROM categories AS parent WHERE parent.id = categories.parent_id) AS parent_name')
-            ])->where(
+        $rows = $this->model->query()->where(
                 function ($q) {
                     if (request()->from_date && request()->to_date) {
                         TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
@@ -36,26 +31,16 @@ class CategoryRepository implements CategoryInterface
             );
 
         return DataTables::of($rows)
-            ->filterColumn('parent_name', function ($query, $keyword) {
-                $query->whereRaw('LOWER(categories.name) LIKE ?', ["%{$keyword}%"]);
-            })
-            ->editColumn('icon', function ($row) {
-                return '<img src="' . $row->icon . '" width="50px" height="50px" alt="category" />';
-            })
-            ->editColumn('status', function ($row) {
-                return translate($row->status);
-            })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
                     $row,
-                    'landlord.categories.edit',
-                    'landlord.categories.destroy',
+                    'landlord.tags.edit',
+                    'landlord.tags.destroy',
                     $this->model->pluralTitle,
                     $this->model->singleTitle,
-                    true
                 );
             })
-            ->rawColumns(['icon', 'actions'])
+            ->rawColumns(['actions'])
             ->make(true);
     }
 

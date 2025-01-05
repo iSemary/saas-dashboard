@@ -5,6 +5,7 @@ use Modules\Utilities\Http\Controllers\UtilitiesController;
 use Modules\Utilities\Http\Controllers\CurrencyController;
 use Modules\Utilities\Http\Controllers\CategoryController;
 use Modules\Utilities\Http\Controllers\CodeBuilderController;
+use Modules\Utilities\Http\Controllers\AnalysisController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +26,9 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:land
     Route::resource('modules', UtilitiesController::class)->names('modules');
 
     // DEVELOPERS ONLY
-    Route::get("code-builder", [CodeBuilderController::class, "show"])->name("code-builder.show");
-    Route::post("code-builder", [CodeBuilderController::class, "submit"])->name("code-builder.submit");
+    Route::prefix('development')->name('development.')->group(function () {
+        Route::get("code-builder", [CodeBuilderController::class, "show"])->name("code-builder.show");
+        Route::post("code-builder", [CodeBuilderController::class, "submit"])->name("code-builder.submit");
+        Route::get("env-diff", [AnalysisController::class, "showEnvDiff"])->name("env-diff.show");
+    });
 });

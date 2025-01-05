@@ -25,7 +25,7 @@ class CodeBuilderController extends ApiController
         $result = $this->scanStubs();
         $vars = $result['vars'];
         $files = $result['files'];
-        return view('landlord.utilities.code-builder.index', compact('breadcrumbs', 'vars', 'files'));
+        return view('landlord.development.code-builder.index', compact('breadcrumbs', 'vars', 'files'));
     }
 
     public function submit(Request $request)
@@ -37,10 +37,10 @@ class CodeBuilderController extends ApiController
             // Get stubs and their content
             $result = $this->scanStubs();
             $files = $result['files'];
-
+    
             // Get all form inputs which correspond to our variables
             $replacements = $request->except('_token');
-
+    
             // First check if Modules directory exists and is writable
             $modulesPath = base_path($this->modulesFolder);
             if (!File::exists($modulesPath)) {
@@ -49,11 +49,11 @@ class CodeBuilderController extends ApiController
                     return $this->return(500, "Cannot create Modules directory. Please check permissions on: " . $modulesPath);
                 }
             }
-
+    
             if (!is_writable($modulesPath)) {
                 return $this->return(500, "Modules directory is not writable. Please check permissions on: " . $modulesPath);
             }
-
+    
             // Check/Create module directory
             $moduleDir = $modulesPath . '/' . $replacements['MODULE_NAME'];
             if (!File::exists($moduleDir)) {
@@ -61,21 +61,21 @@ class CodeBuilderController extends ApiController
                     return $this->return(500, "Cannot create module directory. Please check permissions on: " . $moduleDir);
                 }
             }
-
+    
             $generatedFiles = [];
             // Create new files based on stubs
             foreach ($files as $file) {
                 try {
                     // Get the content and replace all variables
                     $content = $file['content'];
-
+    
                     foreach ($replacements as $key => $value) {
                         $content = str_replace('$' . $key . '$', $value, $content);
                     }
-
+    
                     // Determine the new file path
                     $newPath = $this->determineNewPath($file['path'], $replacements);
-
+    
                     // Create directories if they don't exist
                     $directory = dirname($newPath);
                     if (!File::isDirectory($directory)) {
@@ -83,14 +83,17 @@ class CodeBuilderController extends ApiController
                             throw new \Exception("Failed to create directory: " . $directory);
                         }
                     }
-
+    
                     // Check if directory is writable
                     if (!is_writable($directory)) {
                         throw new \Exception("Directory not writable: " . $directory);
                     }
-
+    
                     // Write the new file
                     if (File::put($newPath, $content) !== false) {
+                        // Set the permissions to rw-rw-r-- (664)
+                        chmod($newPath, 0664);
+    
                         $generatedFiles[] = $newPath;
                     } else {
                         throw new \Exception("Failed to write file: " . $newPath);
@@ -105,7 +108,7 @@ class CodeBuilderController extends ApiController
                     throw $e;
                 }
             }
-
+    
             return $this->return(200, "Files generated successfully", [
                 'files' => $generatedFiles
             ]);
@@ -113,6 +116,7 @@ class CodeBuilderController extends ApiController
             return $this->return(500, "Error generating files: " . $e->getMessage(), []);
         }
     }
+    
 
     private function determineNewPath(string $stubPath, array $replacements): string
     {
@@ -140,7 +144,7 @@ class CodeBuilderController extends ApiController
         } elseif (str_contains($filename, 'model')) {
             $basePath = base_path($this->modulesFolder . '/' . $replacements['MODULE_NAME'] . '/' . 'Entities/');
         } elseif (str_contains($filename, 'migration')) {
-            $basePath = base_path($this->modulesFolder . '/' . $replacements['MODULE_NAME'] . '/' . 'Database/migrations');
+            $basePath = base_path($this->modulesFolder . '/' . $replacements['MODULE_NAME'] . '/' . 'Database/migrations/landlord');
         } elseif (str_contains($filename, 'repository')) {
             $basePath = base_path($this->modulesFolder . '/' . $replacements['MODULE_NAME'] . '/' . 'Repositories/');
         } elseif (str_contains($filename, 'interface')) {
@@ -157,8 +161,6 @@ class CodeBuilderController extends ApiController
 
         return $basePath . '/' . $newPath;
     }
-
-
 
     private function generateFileName(string $filename, array $replacements): string
     {

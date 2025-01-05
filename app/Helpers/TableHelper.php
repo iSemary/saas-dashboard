@@ -39,16 +39,22 @@ class TableHelper
         }
     }
 
-    public static function actionButtons($row, $editRoute, $deleteRoute, $type, $titleType)
+    public static function actionButtons($row, $editRoute, $deleteRoute, $type, $titleType, $showIconsOnly = false)
     {
         $btn = '';
 
-        if (Gate::allows('update.'.$type)) {
-            $btn .= '<button type="button" data-modal-title="Edit '.$titleType.'" data-modal-link="' . route($editRoute, $row->id) . '" class="btn-info btn-sm open-edit-modal"><i class="far fa-edit"></i> ' . translate('edit') . '</button>';
+        // Edit button
+        if (Gate::allows('update.' . $type)) {
+            $btn .= '<button type="button" data-modal-title="Edit ' . $titleType . '" data-modal-link="' . route($editRoute, $row->id) . '" class="btn-info btn-sm open-edit-modal">';
+            $btn .= $showIconsOnly ? '<i class="far fa-edit"></i>' : '<i class="far fa-edit"></i> ' . translate('edit');
+            $btn .= '</button>';
         }
 
-        if (Gate::allows('delete.'.$type)) {
-            $btn .= '<button type="button" data-delete-type="' . __($titleType) . '" data-url="' . route($deleteRoute, $row->id) . '" class="btn btn-danger btn-sm delete-btn"><i class="fa fa-trash"></i> ' . translate('delete') . '</button>';
+        // Delete button
+        if (Gate::allows('delete.' . $type)) {
+            $btn .= '<button type="button" data-delete-type="' . __($titleType) . '" data-url="' . route($deleteRoute, $row->id) . '" class="btn btn-danger btn-sm delete-btn">';
+            $btn .= $showIconsOnly ? '<i class="fa fa-trash"></i>' : '<i class="fa fa-trash"></i> ' . translate('delete');
+            $btn .= '</button>';
         }
 
         return $btn;

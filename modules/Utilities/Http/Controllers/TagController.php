@@ -2,16 +2,15 @@
 
 namespace Modules\Utilities\Http\Controllers;
 
-use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
-use Modules\Utilities\Services\CategoryService;
+use Modules\Utilities\Services\TagService;
 use Illuminate\Http\Request;
 
-class CategoryController extends ApiController
+class TagController extends ApiController
 {
     protected $service;
 
-    public function __construct(CategoryService $service)
+    public function __construct(TagService $service)
     {
         $this->service = $service;
     }
@@ -31,20 +30,18 @@ class CategoryController extends ApiController
                 'text' => 'Add ' . $this->service->model->singleTitle,
                 'class' => 'open-create-modal btn-sm btn-success',
                 'attr' => [
-                    'data-modal-link' => route('landlord.categories.create'),
+                    'data-modal-link' => route('landlord.tags.create'),
                     'data-modal-title' => "Create " . $this->service->model->singleTitle,
                 ]
             ],
         ];
 
-        return view('landlord.utilities.categories.index', compact('breadcrumbs', 'title', 'actionButtons'));
+        return view('landlord.utilities.tags.index', compact('breadcrumbs', 'title', 'actionButtons'));
     }
 
     public function create()
     {
-        $categories = $this->service->getAll();
-        $statusOptions = EnumHelper::getEnumFromTable("categories", "status");
-        return view('landlord.utilities.categories.editor', compact('categories', 'statusOptions'));
+        return view('landlord.utilities.tags.editor');
     }
 
     public function store(Request $request)
@@ -59,9 +56,7 @@ class CategoryController extends ApiController
     public function edit($id)
     {
         $row = $this->service->get($id);
-        $categories = $this->service->getAll();
-        $statusOptions = EnumHelper::getEnumFromTable("categories", "status");
-        return view('landlord.utilities.categories.editor', compact('row', 'categories', 'statusOptions'));
+        return view('landlord.utilities.tags.editor', compact('row'));
     }
 
     public function update(Request $request, $id)

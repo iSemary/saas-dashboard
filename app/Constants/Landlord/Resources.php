@@ -127,6 +127,14 @@ class Resources
                 'name' => 'commands',
                 'actions' => ['read']
             ],
+            [
+                'name' => 'code_builder',
+                'actions' => ['read']
+            ],
+            [
+                'name' => 'env_diff',
+                'actions' => ['read']
+            ],
         ];
     }
 }

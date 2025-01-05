@@ -179,7 +179,8 @@
                                         'index' => 'landlord.towns.index',
                                         'create' => 'landlord.towns.create',
                                     ],
-                                ],'streets' => [
+                                ],
+                                'streets' => [
                                     'icon' => 'fas fa-road',
                                     'permission' => [
                                         'read' => 'read.streets',
@@ -351,11 +352,26 @@
                                         'read' => 'read.telescope',
                                         'create' => false,
                                     ],
-                                    'routes' => [
-                                        'index' => 'telescope.index',
-                                    ],
                                     'external' => true,
                                     'path' => env('TELESCOPE_PATH'),
+                                ],
+                            ],
+                        ],
+                        'development' => [
+                            'icon' => 'fas fa-server',
+                            'label' => 'development',
+                            'items' => [
+                                'code_builder' => [
+                                    'icon' => 'fas fa-code',
+                                    'permission' => 'read.code_builder',
+                                    'route' => 'landlord.development.code-builder.show',
+                                    'single' => true,
+                                ],
+                                'env_diff' => [
+                                    'icon' => 'fas fa-file-alt',
+                                    'permission' => 'read.env_diff',
+                                    'route' => 'landlord.development.env-diff.show',
+                                    'single' => true,
                                 ],
                             ],
                         ],
