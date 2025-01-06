@@ -219,6 +219,28 @@
                                         'create' => 'landlord.tags.create',
                                     ],
                                 ],
+                                'types' => [
+                                    'icon' => 'fas fa-icons',
+                                    'permission' => [
+                                        'read' => 'read.types',
+                                        'create' => 'create.types',
+                                    ],
+                                    'routes' => [
+                                        'index' => 'landlord.types.index',
+                                        'create' => 'landlord.types.create',
+                                    ],
+                                ],
+                                'industries' => [
+                                    'icon' => 'fas fa-building',
+                                    'permission' => [
+                                        'read' => 'read.industries',
+                                        'create' => 'create.industries',
+                                    ],
+                                    'routes' => [
+                                        'index' => 'landlord.industries.index',
+                                        'create' => 'landlord.industries.create',
+                                    ],
+                                ],
                                 'currencies' => [
                                     'icon' => 'fas fa-dollar-sign',
                                     'permission' => [

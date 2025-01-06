@@ -3,16 +3,16 @@
 namespace Modules\Utilities\Repositories;
 
 use App\Helpers\TableHelper;
-use Modules\Utilities\Entities\Tag;
+use Modules\Utilities\Entities\Industry;
 use Yajra\DataTables\DataTables;
 
-class TagRepository implements TagInterface
+class IndustryRepository implements IndustryInterface
 {
     protected $model;
 
-    public function __construct(Tag $tag)
+    public function __construct(Industry $industry)
     {
-        $this->model = $tag;
+        $this->model = $industry;
     }
 
     public function all()
@@ -23,30 +23,24 @@ class TagRepository implements TagInterface
     public function datatables()
     {
         $rows = $this->model->query()->where(
-            function ($q) {
-                if (request()->from_date && request()->to_date) {
-                    TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
+                function ($q) {
+                    if (request()->from_date && request()->to_date) {
+                        TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
+                    }
                 }
-            }
-        );
+            );
 
         return DataTables::of($rows)
-            ->editColumn('icon', function ($row) {
-                return '<img src="' . $row->icon . '" width="50px" height="50px" alt="tag" />';
-            })
-            ->editColumn('status', function ($row) {
-                return translate($row->status);
-            })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
                     $row,
-                    'landlord.tags.edit',
-                    'landlord.tags.destroy',
+                    'landlord.industries.edit',
+                    'landlord.industries.destroy',
                     $this->model->pluralTitle,
                     $this->model->singleTitle,
                 );
             })
-            ->rawColumns(['icon', 'actions'])
+            ->rawColumns(['actions'])
             ->make(true);
     }
 

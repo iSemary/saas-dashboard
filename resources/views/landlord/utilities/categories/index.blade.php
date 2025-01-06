@@ -15,7 +15,6 @@
                         <th scope="col">@translate('description')</th>
                         <th scope="col">@translate('parent_name')</th>
                         <th scope="col">@translate('icon')</th>
-                        <th scope="col">@translate('type')</th>
                         <th scope="col">@translate('priority')</th>
                         <th scope="col">@translate('status')</th>
                         <th scope="col">@translate('action')</th>

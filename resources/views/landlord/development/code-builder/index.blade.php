@@ -5,7 +5,7 @@
             <form action="{{ route('landlord.development.code-builder.submit') }}" id="createForm" method="POST"
                 enctype="multipart/form-data">
                 @csrf
-                
+
                 <div class="row">
 
                     @foreach ($vars as $var)
@@ -18,13 +18,22 @@
                 </div>
 
                 <div class="form-group">
-                    
+                    <label>@translate('module_type')</label>
+                    <select name="module_type" class="form-control">
+                        <option value="landlord">Landlord</option>
+                        <option value="tenant">Tenant</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
                     <ul>
                         @foreach ($files as $file)
                             <li>{!! $file['name'] !!}</li>
                         @endforeach
                     </ul>
                 </div>
+
+
 
                 <div class="form-group">
                     <div class="form-status"></div>

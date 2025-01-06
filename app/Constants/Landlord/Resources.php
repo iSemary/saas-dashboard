@@ -116,6 +116,14 @@ class Resources
                 'actions' => ['read', 'create', 'update', 'delete']
             ],
             [
+                'name' => 'types',
+                'actions' => ['read', 'create', 'update', 'delete']
+            ],
+            [
+                'name' => 'industries',
+                'actions' => ['read', 'create', 'update', 'delete']
+            ],
+            [
                 'name' => 'telescope',
                 'actions' => ['read']
             ],

@@ -20,6 +20,7 @@ class Tag extends Model
         'slug',
         'description',
         'status',
-        'image',
+        'icon',
+        'priority'
     ];
 }

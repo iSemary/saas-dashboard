@@ -6,14 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Category extends Model
+class Type extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $connection = "landlord";
 
-    public $singleTitle = "category";
-    public $pluralTitle = "categories";
+    public $singleTitle = "type";
+    public $pluralTitle = "types";
 
-    protected $fillable = ['name', 'slug', 'description', 'parent_id', 'icon', 'priority', 'status'];
 }

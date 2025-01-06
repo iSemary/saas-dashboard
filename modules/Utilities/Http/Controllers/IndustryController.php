@@ -2,16 +2,15 @@
 
 namespace Modules\Utilities\Http\Controllers;
 
-use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
-use Modules\Utilities\Services\TagService;
+use Modules\Utilities\Services\IndustryService;
 use Illuminate\Http\Request;
 
-class TagController extends ApiController
+class IndustryController extends ApiController
 {
     protected $service;
 
-    public function __construct(TagService $service)
+    public function __construct(IndustryService $service)
     {
         $this->service = $service;
     }
@@ -31,19 +30,18 @@ class TagController extends ApiController
                 'text' => 'Add ' . $this->service->model->singleTitle,
                 'class' => 'open-create-modal btn-sm btn-success',
                 'attr' => [
-                    'data-modal-link' => route('landlord.tags.create'),
+                    'data-modal-link' => route('landlord.industries.create'),
                     'data-modal-title' => "Create " . $this->service->model->singleTitle,
                 ]
             ],
         ];
 
-        return view('landlord.utilities.tags.index', compact('breadcrumbs', 'title', 'actionButtons'));
+        return view('landlord.utilities.industries.index', compact('breadcrumbs', 'title', 'actionButtons'));
     }
 
     public function create()
     {
-        $statusOptions = EnumHelper::getEnumFromTable("categories", "status");
-        return view('landlord.utilities.tags.editor', compact("statusOptions"));
+        return view('landlord.utilities.industries.editor');
     }
 
     public function store(Request $request)
@@ -57,9 +55,8 @@ class TagController extends ApiController
 
     public function edit($id)
     {
-        $statusOptions = EnumHelper::getEnumFromTable("categories", "status");
         $row = $this->service->get($id);
-        return view('landlord.utilities.tags.editor', compact('row', 'statusOptions'));
+        return view('landlord.utilities.industries.editor', compact('row'));
     }
 
     public function update(Request $request, $id)

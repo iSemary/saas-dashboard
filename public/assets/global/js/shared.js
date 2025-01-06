@@ -20,3 +20,14 @@ $(document).on("click", ".remove-locale", function(e) {
     $("#LangSelect option[value='"+RemovedLocale+"']").attr("disabled",false);
     $(this).parent().remove();
 });
+
+
+$(document).on('input', '.slug-input', function() {
+    var inputValue = $(this).val();
+    inputValue = inputValue.replace(/\s+/g, '-');
+    inputValue = inputValue.replace(/[٠-٩]/g, function(digit) {
+        return String.fromCharCode(digit.charCodeAt(0) - 1632 + 48);
+    });
+    inputValue = inputValue.replace(/[^a-zA-Z0-9\-]/g, '');
+    $(this).val(inputValue);
+});

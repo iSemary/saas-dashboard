@@ -10,24 +10,6 @@ let cols = [
         name: "name",
     },
     {
-        data: "slug",
-        name: "slug",
-    },
-    {
-        data: "description",
-        name: "description",
-    },
-    {
-        data: "status",
-        name: "status",
-    },
-    {
-        data: "icon",
-        name: "icon",
-        orderable: false,
-        searchable: false,
-    },
-    {
         data: "actions",
         name: "actions",
         orderable: false,

@@ -50,3 +50,15 @@ Please read this README.md file for files structure public/assets/global/images/
 
 ## Modules Stubs
 
+
+
+## Global Classes
+
+.slug-input
+
+
+## Global Functions
+
+translate() OR @translate : for translating dashboard items
+
+translateModel() OR @translateModel() : for translating models items (name, description, etc...)

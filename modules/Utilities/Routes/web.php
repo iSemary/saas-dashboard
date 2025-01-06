@@ -6,6 +6,11 @@ use Modules\Utilities\Http\Controllers\CurrencyController;
 use Modules\Utilities\Http\Controllers\CategoryController;
 use Modules\Utilities\Http\Controllers\CodeBuilderController;
 use Modules\Utilities\Http\Controllers\AnalysisController;
+use Modules\Utilities\Http\Controllers\AnnouncementController;
+use Modules\Utilities\Http\Controllers\IndustryController;
+use Modules\Utilities\Http\Controllers\ModuleController;
+use Modules\Utilities\Http\Controllers\TagController;
+use Modules\Utilities\Http\Controllers\TypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,9 +26,12 @@ use Modules\Utilities\Http\Controllers\AnalysisController;
 Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:landlord', '2fa'])->group(function () {
     Route::resource('categories', CategoryController::class)->names('categories');
     Route::resource('currencies', CurrencyController::class)->names('currencies');
-    Route::resource('tags', UtilitiesController::class)->names('tags');
-    Route::resource('announcements', UtilitiesController::class)->names('announcements');
-    Route::resource('modules', UtilitiesController::class)->names('modules');
+    Route::resource('tags', TagController::class)->names('tags');
+    
+    Route::resource('announcements', AnnouncementController::class)->names('announcements');
+    Route::resource('modules', ModuleController::class)->names('modules');
+    Route::resource('types', TypeController::class)->names('types');
+    Route::resource('industries', IndustryController::class)->names('industries');
 
     // DEVELOPERS ONLY
     Route::prefix('development')->name('development.')->group(function () {

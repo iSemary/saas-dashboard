@@ -13,7 +13,7 @@
 
     <div class="form-group">
         <label for="slug" class="form-label">@translate('slug')</label>
-        <input type="text" name="slug" id="slug" class="form-control"
+        <input type="text" name="slug" id="slug" class="form-control slug-input"
             value="{{ isset($row) ? $row->slug : '' }}" required>
     </div>
 
@@ -41,12 +41,6 @@
         @if (isset($row) && $row->icon)
             <img src="{{ asset('path/to/icons/' . $row->icon) }}" alt="@translate('icon')" width="50">
         @endif
-    </div>
-
-    <div class="form-group">
-        <label for="type" class="form-label">@translate('type')</label>
-        <input type="number" name="type" id="type" class="form-control"
-            value="{{ isset($row) ? $row->type : '' }}">
     </div>
 
     <div class="form-group">

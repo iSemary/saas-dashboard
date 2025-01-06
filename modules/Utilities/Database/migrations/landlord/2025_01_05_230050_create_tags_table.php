@@ -8,9 +8,16 @@ return new class extends Migration {
     /**
      * Run the migrations.
      */
-    public function up(): void {
+    public function up(): void
+    {
         Schema::create('tags', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->text('description')->nullable();
+            $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->integer('priority')->default(0);
+            $table->string('icon')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
@@ -19,7 +26,8 @@ return new class extends Migration {
     /**
      * Reverse the migrations.
      */
-    public function down(): void {
+    public function down(): void
+    {
         Schema::dropIfExists('tags');
     }
 };
