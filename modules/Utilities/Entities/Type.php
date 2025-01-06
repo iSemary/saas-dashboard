@@ -15,4 +15,12 @@ class Type extends Model
     public $singleTitle = "type";
     public $pluralTitle = "types";
 
+    protected $fillable = [
+        'name',
+        'slug',
+        'description',
+        'status',
+        'icon',
+        'priority'
+    ];
 }

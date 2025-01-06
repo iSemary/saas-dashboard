@@ -2,6 +2,7 @@
 
 namespace Modules\Utilities\Http\Controllers;
 
+use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
 use Modules\Utilities\Services\TypeService;
 use Illuminate\Http\Request;
@@ -41,7 +42,8 @@ class TypeController extends ApiController
 
     public function create()
     {
-        return view('landlord.utilities.types.editor');
+        $statusOptions = EnumHelper::getEnumFromTable("types", "status");
+        return view('landlord.utilities.types.editor', compact('statusOptions'));
     }
 
     public function store(Request $request)
@@ -55,8 +57,9 @@ class TypeController extends ApiController
 
     public function edit($id)
     {
+        $statusOptions = EnumHelper::getEnumFromTable("types", "status");
         $row = $this->service->get($id);
-        return view('landlord.utilities.types.editor', compact('row'));
+        return view('landlord.utilities.types.editor', compact('row', 'statusOptions'));
     }
 
     public function update(Request $request, $id)

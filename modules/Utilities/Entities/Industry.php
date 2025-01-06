@@ -15,4 +15,12 @@ class Industry extends Model
     public $singleTitle = "industry";
     public $pluralTitle = "industries";
 
+    protected $fillable = [
+        'name',
+        'slug',
+        'description',
+        'status',
+        'icon',
+        'priority'
+    ];
 }

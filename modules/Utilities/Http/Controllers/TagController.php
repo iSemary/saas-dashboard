@@ -42,7 +42,7 @@ class TagController extends ApiController
 
     public function create()
     {
-        $statusOptions = EnumHelper::getEnumFromTable("categories", "status");
+        $statusOptions = EnumHelper::getEnumFromTable("tags", "status");
         return view('landlord.utilities.tags.editor', compact("statusOptions"));
     }
 
@@ -57,7 +57,7 @@ class TagController extends ApiController
 
     public function edit($id)
     {
-        $statusOptions = EnumHelper::getEnumFromTable("categories", "status");
+        $statusOptions = EnumHelper::getEnumFromTable("tags", "status");
         $row = $this->service->get($id);
         return view('landlord.utilities.tags.editor', compact('row', 'statusOptions'));
     }

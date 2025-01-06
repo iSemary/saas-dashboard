@@ -62,3 +62,52 @@ Please read this README.md file for files structure public/assets/global/images/
 translate() OR @translate : for translating dashboard items
 
 translateModel() OR @translateModel() : for translating models items (name, description, etc...)
+
+## Model and Data Structure
+
+### Geography
+- **Countries**
+  - Provinces
+    - Cities
+      - Towns
+        - Streets
+
+---
+
+### Utilities
+
+#### Tag
+- **Size**
+  - Small
+  - Medium
+  - Large
+- **Color**
+  - Red
+  - Blue
+  - Green
+- **Material**
+  - Cotton
+  - Polyester
+  - Metal
+
+#### Type
+- **Music**
+  - Jazz
+  - Rock
+  - Classical
+- **Strategy**
+  - Real-time
+  - Turn-based
+- **Format**
+  - Digital
+  - Physical
+
+#### Category
+- Books
+- Movies
+- Games
+
+#### Industry
+- Technology
+- Healthcare
+- Education

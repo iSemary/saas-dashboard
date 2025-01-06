@@ -10,6 +10,10 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">@translate('name')</th>
+                        <th scope="col">@translate('slug')</th>
+                        <th scope="col">@translate('description')</th>
+                        <th scope="col">@translate('status')</th>
+                        <th scope="col">@translate('icon')</th>
                         <th scope="col">@translate('action')</th>
                     </tr>
                 </thead>
