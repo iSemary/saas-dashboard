@@ -8,6 +8,7 @@ use Modules\Utilities\Http\Controllers\AnalysisController;
 use Modules\Utilities\Http\Controllers\AnnouncementController;
 use Modules\Utilities\Http\Controllers\IndustryController;
 use Modules\Utilities\Http\Controllers\ModuleController;
+use Modules\Utilities\Http\Controllers\ReleaseController;
 use Modules\Utilities\Http\Controllers\TagController;
 use Modules\Utilities\Http\Controllers\TypeController;
 
@@ -31,6 +32,7 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:land
 
     Route::resource('modules', ModuleController::class)->names('modules');
     Route::resource('announcements', AnnouncementController::class)->names('announcements');
+    Route::resource('releases', ReleaseController::class)->names('releases');
     Route::resource('types', TypeController::class)->names('types');
     Route::resource('industries', IndustryController::class)->names('industries');
 

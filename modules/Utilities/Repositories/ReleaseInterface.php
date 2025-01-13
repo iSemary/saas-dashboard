@@ -2,7 +2,7 @@
 
 namespace Modules\Utilities\Repositories;
 
-interface TagValueInterface
+interface ReleaseInterface
 {
     public function all();
     public function datatables();

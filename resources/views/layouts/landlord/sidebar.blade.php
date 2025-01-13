@@ -339,6 +339,17 @@
                                         'create' => 'landlord.announcements.create',
                                     ],
                                 ],
+                                'releases' => [
+                                    'icon' => 'fas fa-rocket',
+                                    'permission' => [
+                                        'read' => 'read.releases',
+                                        'create' => 'create.releases',
+                                    ],
+                                    'routes' => [
+                                        'index' => 'landlord.releases.index',
+                                        'create' => 'landlord.releases.create',
+                                    ],
+                                ],
                                 'modules' => [
                                     'icon' => 'fas fa-puzzle-piece',
                                     'permission' => [

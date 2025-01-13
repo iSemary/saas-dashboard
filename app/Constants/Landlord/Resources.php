@@ -36,10 +36,6 @@ class Resources
                 'actions' => ['read', 'create', 'update', 'delete']
             ],
             [
-                'name' => 'tag_values',
-                'actions' => ['read', 'create', 'update', 'delete']
-            ],
-            [
                 'name' => 'languages',
                 'actions' => ['read', 'create', 'update', 'delete']
             ],
@@ -113,6 +109,10 @@ class Resources
             ],
             [
                 'name' => 'announcements',
+                'actions' => ['read', 'create', 'update', 'delete']
+            ],
+            [
+                'name' => 'releases',
                 'actions' => ['read', 'create', 'update', 'delete']
             ],
             [

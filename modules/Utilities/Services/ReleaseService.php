@@ -2,17 +2,17 @@
 
 namespace Modules\Utilities\Services;
 
-use Modules\Utilities\Entities\TagValue;
-use Modules\Utilities\Repositories\TagValueInterface;
+use Modules\Utilities\Entities\Release;
+use Modules\Utilities\Repositories\ReleaseInterface;
 
-class TagValueService
+class ReleaseService
 {
     protected $repository;
     public $model;
 
-    public function __construct(TagValueInterface $repository, TagValue $tagValue)
+    public function __construct(ReleaseInterface $repository, Release $release)
     {
-        $this->model = $tagValue;
+        $this->model = $release;
         $this->repository = $repository;
     }
 
