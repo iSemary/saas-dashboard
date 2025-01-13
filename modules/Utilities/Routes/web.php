@@ -26,11 +26,11 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:land
     Route::resource('categories', CategoryController::class)->names('categories');
     Route::resource('currencies', CurrencyController::class)->names('currencies');
 
-    // Tags
+    // Tags and Tag Values
     Route::resource('tags', TagController::class)->names('tags');
 
-    Route::resource('announcements', AnnouncementController::class)->names('announcements');
     Route::resource('modules', ModuleController::class)->names('modules');
+    Route::resource('announcements', AnnouncementController::class)->names('announcements');
     Route::resource('types', TypeController::class)->names('types');
     Route::resource('industries', IndustryController::class)->names('industries');
 

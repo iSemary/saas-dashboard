@@ -11,6 +11,7 @@
   - [Seed Role and Permissions (Landlord)](#seed-role-and-permissions-landlord)
   - [Landlord Tenant Seeder (Landlord)](#landlord-tenant-seeder-landlord)
   - [Seed Default Landlord User (Landlord)](#seed-default-landlord-user-landlord)
+  - [Seed Modules (Landlord)](#seed-modules-landlord)
 - [Logo Files](#logo-files)
 - [Modules Stubs](#modules-stubs)
 - [Global Classes](#global-classes)
@@ -81,6 +82,13 @@ Creates a user row in the landlord tenant table:
 
 ```bash
 php artisan db:seed --class=Modules\\Auth\\Database\\Seeders\\LandlordUserSeeder
+```
+
+### Seed Modules (Landlord)
+
+
+```bash
+php artisan db:seed --class=Modules\\Utilities\\Database\\Seeders\\ModulesSeeder
 ```
 
 ---

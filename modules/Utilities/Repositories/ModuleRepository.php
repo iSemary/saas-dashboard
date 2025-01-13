@@ -23,14 +23,20 @@ class ModuleRepository implements ModuleInterface
     public function datatables()
     {
         $rows = $this->model->query()->where(
-                function ($q) {
-                    if (request()->from_date && request()->to_date) {
-                        TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
-                    }
+            function ($q) {
+                if (request()->from_date && request()->to_date) {
+                    TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
                 }
-            );
+            }
+        );
 
         return DataTables::of($rows)
+            ->editColumn('icon', function ($row) {
+                return '<img src="' . $row->icon . '" width="50px" height="50px" alt="module" />';
+            })
+            ->editColumn('status', function ($row) {
+                return translate($row->status);
+            })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
                     $row,
@@ -40,7 +46,7 @@ class ModuleRepository implements ModuleInterface
                     $this->model->singleTitle,
                 );
             })
-            ->rawColumns(['actions'])
+            ->rawColumns(['icon', 'actions'])
             ->make(true);
     }
 

@@ -10,6 +10,30 @@ let cols = [
         name: "name",
     },
     {
+        data: "module_key",
+        name: "module_key",
+    },
+    {
+        data: "description",
+        name: "description",
+    },
+    {
+        data: "route",
+        name: "route",
+    },
+    {
+        data: "icon",
+        name: "icon",
+    },
+    {
+        data: "slogan",
+        name: "slogan",
+    },
+    {
+        data: "status",
+        name: "status",
+    },
+    {
         data: "actions",
         name: "actions",
         orderable: false,

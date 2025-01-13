@@ -11,6 +11,47 @@
     </div>
 
     <div class="form-group">
+        <label for="module_key" class="form-label">@translate('module_key')</label>
+        <input type="text" name="module_key" id="module_key" class="form-control slug-input"
+            value="{{ isset($row) ? $row->module_key : '' }}" required>
+    </div>
+
+    <div class="form-group">
+        <label for="route" class="form-label">@translate('route')</label>
+        <input type="text" name="route" id="route" class="form-control slug-input"
+            value="{{ isset($row) ? $row->route : '' }}" required>
+    </div>
+
+    <div class="form-group">
+        <label for="description" class="form-label">@translate('description')</label>
+        <textarea name="description" id="description" class="form-control">{{ isset($row) ? $row->description : '' }}</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="slogan" class="form-label">@translate('slogan')</label>
+        <textarea name="slogan" id="slogan" class="form-control">{{ isset($row) ? $row->slogan : '' }}</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="icon" class="form-label">@translate('icon')</label><br />
+        <input type="file" name="icon" id="icon" class="">
+        @if (isset($row) && $row->icon)
+            <img src="{{ asset('path/to/icons/' . $row->icon) }}" alt="@translate('icon')" width="50">
+        @endif
+    </div>
+
+    <div class="form-group">
+        <label for="status" class="form-label">@translate('status')</label>
+        <select name="status" id="status" class="form-control">
+            @foreach ($statusOptions as $status)
+                <option value="{{ $status }}" {{ isset($row) && $row->status == $status ? 'selected' : '' }}>
+                    @translate($status)
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+    <div class="form-group">
         <div class="form-status"></div>
     </div>
 

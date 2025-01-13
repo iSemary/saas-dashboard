@@ -16,4 +16,13 @@ class Module extends Model implements Auditable
     public $singleTitle = "module";
     public $pluralTitle = "modules";
 
+    protected $fillable = [
+        'module_key',
+        'name',
+        'description',
+        'route',
+        'icon',
+        'slogan',
+        'status',
+    ];
 }

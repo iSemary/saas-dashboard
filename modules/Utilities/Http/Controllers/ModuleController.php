@@ -2,6 +2,7 @@
 
 namespace Modules\Utilities\Http\Controllers;
 
+use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
 use Modules\Utilities\Services\ModuleService;
 use Illuminate\Http\Request;
@@ -21,17 +22,17 @@ class ModuleController extends ApiController
         }
         $title = $this->service->model->pluralTitle;
         $breadcrumbs = [
-            ['text' => 'Home', 'link' => route('home')],
-            ['text' => $this->service->model->pluralTitle],
+            ['text' => translate('home'), 'link' => route('home')],
+            ['text' => translate($this->service->model->pluralTitle)],
         ];
 
         $actionButtons = [
             [
-                'text' => 'Add ' . $this->service->model->singleTitle,
+                'text' => translate("create") . " " . translate($this->service->model->singleTitle),
                 'class' => 'open-create-modal btn-sm btn-success',
                 'attr' => [
                     'data-modal-link' => route('landlord.modules.create'),
-                    'data-modal-title' => "Create " . $this->service->model->singleTitle,
+                    'data-modal-title' => translate("create") . " " . translate($this->service->model->singleTitle),
                 ]
             ],
         ];
@@ -41,7 +42,8 @@ class ModuleController extends ApiController
 
     public function create()
     {
-        return view('landlord.utilities.modules.editor');
+        $statusOptions = EnumHelper::getEnumFromTable("modules", "status");
+        return view('landlord.utilities.modules.editor', compact('statusOptions'));
     }
 
     public function store(Request $request)
@@ -56,7 +58,8 @@ class ModuleController extends ApiController
     public function edit($id)
     {
         $row = $this->service->get($id);
-        return view('landlord.utilities.modules.editor', compact('row'));
+        $statusOptions = EnumHelper::getEnumFromTable("modules", "status");
+        return view('landlord.utilities.modules.editor', compact('row', 'statusOptions'));
     }
 
     public function update(Request $request, $id)
