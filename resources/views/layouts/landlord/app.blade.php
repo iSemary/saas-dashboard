@@ -9,7 +9,8 @@
     <meta name="_token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {{-- Font Awesome --}}
-    <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/fontawesome-free/css/all.min.css') }}" media="screen">
+    <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/fontawesome-free/css/all.min.css') }}"
+        media="screen">
     {{-- Bootstrap --}}
     <link rel="stylesheet" href="{{ asset('assets/landlord/css/bootstrap.min.css') }}" media="screen">
     {{-- Theme style --}}
@@ -29,7 +30,8 @@
     {{-- flickity --}}
     <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/flickity/flickity.css') }}" media="screen">
     {{-- Bootstrap Toggle --}}
-    <link rel="stylesheet" href="{{ asset('assets/global/plugins/bootstrap-toggle/css/bootstrap-toggle.min.css') }}" media="screen">
+    <link rel="stylesheet" href="{{ asset('assets/global/plugins/bootstrap-toggle/css/bootstrap-toggle.min.css') }}"
+        media="screen">
     @if (app()->getLocale() == 'ar')
         <link rel="stylesheet" href="{{ asset('assets/landlord/css/custom.css') . '?v=1.2.1' }}" media="screen">
         <link rel="stylesheet" href="{{ asset('assets/landlord/css/bootstrap-rtl.min.css') }}" media="screen">
@@ -67,18 +69,17 @@
         {{-- Content --}}
         <div class="content-wrapper mt-2">
             <section class="content">
-            @include('layouts.landlord.breadcrumb', isset($breadcrumbs) ? $breadcrumbs : [])
-            @yield('content')
-        </section>
+                @include('layouts.landlord.breadcrumb', isset($breadcrumbs) ? $breadcrumbs : [])
+                @yield('content')
+            </section>
         </div>
-        {{-- Image Modal --}}
-        {{-- @include('layouts.utilities.image-modal')
-        @include('layouts.utilities.edit-modal')
-        @include('layouts.utilities.create-modal') --}}
 
-        @include("layouts.landlord.modals.edit")
-        @include("layouts.landlord.modals.create")
+        {{-- Modals --}}
+        @include('layouts.shared.modals.edit')
+        @include('layouts.shared.modals.create')
+        @include('layouts.shared.modals.show')
 
+        {{-- Footer --}}
         @include('layouts.landlord.footer')
     </div>
     {{-- Jquery --}}

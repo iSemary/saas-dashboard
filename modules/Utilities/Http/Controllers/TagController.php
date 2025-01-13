@@ -53,7 +53,14 @@ class TagController extends ApiController
         return $this->return(200, "Created successfully");
     }
 
-    public function show($id) {}
+    public function show($id)
+    {
+        if (request()->ajax() && request()->get('table')) {
+            return $this->service->getDataTables($id);
+        }
+
+        return view("landlord.utilities.tags.show", compact('id'));
+    }
 
     public function edit($id)
     {

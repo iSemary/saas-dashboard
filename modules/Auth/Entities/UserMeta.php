@@ -4,12 +4,12 @@ namespace Modules\Auth\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-// use Modules\Auth\Database\Factories\UserMetaFactory;
-
-class UserMeta extends Model
+class UserMeta extends Model implements Auditable
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable;
 
     protected $fillable = ['user_id', 'meta_key', 'meta_value'];
 

@@ -938,6 +938,7 @@ function filterTable(
     let data = {
         from_date: from_date ?? null,
         to_date: to_date ?? null,
+        table: true,
     };
     if (dataExtra) {
         $.extend(data, dataExtra);
@@ -994,44 +995,25 @@ $(document).on("change", "#country_id", function (e) {
     });
 });
 
-$(document).on("click", ".open-create-modal", function (e) {
+$(document).on("click", ".open-create-modal, .open-edit-modal, .open-details-btn", function (e) {
     e.preventDefault();
 
-    // Get the URL from the button's data-link attribute
+    // Determine the modal ID based on the button's class
+    let modalId;
+    if ($(this).hasClass("open-create-modal")) {
+        modalId = "createModal";
+    } else if ($(this).hasClass("open-edit-modal")) {
+        modalId = "editModal";
+    } else if ($(this).hasClass("open-details-btn")) {
+        modalId = "showModal";
+    }
+
+    // Get the data attributes from the button
     const url = $(this).data("modal-link");
     const title = $(this).data("modal-title");
 
     // Show the modal and set a loading message
-    const $modal = $("#createModal");
-    $modal.find(".modal-title").html(title);
-    $modal.find(".modal-body").html("<p>Loading...</p>");
-    $modal.modal("show");
-
-    // Make the AJAX request
-    $.ajax({
-        url: url,
-        method: "GET",
-        success: function (response) {
-            $modal.find(".modal-body").html(response);
-            fireDependency();
-        },
-        error: function () {
-            $modal
-                .find(".modal-body")
-                .html("<p>Failed to load content. Please try again.</p>");
-        },
-    });
-});
-
-$(document).on("click", ".open-edit-modal", function (e) {
-    e.preventDefault();
-
-    // Get the URL from the button's data-link attribute
-    const url = $(this).data("modal-link");
-    const title = $(this).data("modal-title");
-
-    // Show the modal and set a loading message
-    const $modal = $("#editModal");
+    const $modal = $(`#${modalId}`);
     $modal.find(".modal-title").html(title);
     $modal.find(".modal-body").html("<p>Loading...</p>");
     $modal.modal("show");
@@ -1065,9 +1047,7 @@ $(document).on("change", ".upload-image", function (e) {
     }
 });
 
-
-
-function fireDependency(){
+function fireDependency() {
     $(".form-toggle").bootstrapToggle();
-    $(".select2").select2();   
+    $(".select2").select2();
 }

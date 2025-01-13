@@ -13,6 +13,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('locale')->unique();
+            $table->enum('direction', ['ltr', 'rtl'])->default('rtl');
             $table->softDeletes();
             $table->timestamps();
         });

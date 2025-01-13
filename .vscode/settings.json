@@ -11,15 +11,18 @@
         "endcan",
         "endforeach",
         "endphp",
+        "endpush",
         "endsection",
         "flickity",
         "fontawesome",
         "isset",
+        "jenssegers",
         "Jquery",
         "Laravel",
         "Laravolt",
         "mcamara",
         "metas",
+        "multitenancy",
         "nwidart",
         "pkgd",
         "pragmarx",
@@ -34,8 +37,6 @@
         "Sweetalert",
         "treeview",
         "ucfirst",
-        "Yajra",
-        "jenssegers",
-        "multitenancy"
+        "Yajra"
     ]
 }

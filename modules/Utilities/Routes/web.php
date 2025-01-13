@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Utilities\Http\Controllers\UtilitiesController;
 use Modules\Utilities\Http\Controllers\CurrencyController;
 use Modules\Utilities\Http\Controllers\CategoryController;
 use Modules\Utilities\Http\Controllers\CodeBuilderController;
@@ -26,8 +25,10 @@ use Modules\Utilities\Http\Controllers\TypeController;
 Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:landlord', '2fa'])->group(function () {
     Route::resource('categories', CategoryController::class)->names('categories');
     Route::resource('currencies', CurrencyController::class)->names('currencies');
+
+    // Tags
     Route::resource('tags', TagController::class)->names('tags');
-    
+
     Route::resource('announcements', AnnouncementController::class)->names('announcements');
     Route::resource('modules', ModuleController::class)->names('modules');
     Route::resource('types', TypeController::class)->names('types');

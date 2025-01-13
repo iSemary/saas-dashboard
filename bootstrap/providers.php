@@ -7,4 +7,5 @@ return [
     App\Providers\TelescopeServiceProvider::class,
     Laravolt\Avatar\ServiceProvider::class,
     Yajra\DataTables\DataTablesServiceProvider::class,
+    OwenIt\Auditing\AuditingServiceProvider::class,
 ];

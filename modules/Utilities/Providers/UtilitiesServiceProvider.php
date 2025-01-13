@@ -9,6 +9,8 @@ use Modules\Utilities\Repositories\CategoryInterface;
 use Modules\Utilities\Repositories\CategoryRepository;
 use Modules\Utilities\Repositories\TagInterface;
 use Modules\Utilities\Repositories\TagRepository;
+use Modules\Utilities\Repositories\TagValueInterface;
+use Modules\Utilities\Repositories\TagValueRepository;
 use Modules\Utilities\Repositories\AnnouncementInterface;
 use Modules\Utilities\Repositories\AnnouncementRepository;
 use Modules\Utilities\Repositories\ModuleInterface;
@@ -25,6 +27,7 @@ class UtilitiesServiceProvider extends ServiceProvider
         $this->app->bind(CurrencyInterface::class, CurrencyRepository::class);
         $this->app->bind(CategoryInterface::class, CategoryRepository::class);
         $this->app->bind(TagInterface::class, TagRepository::class);
+        $this->app->bind(TagValueInterface::class, TagValueRepository::class);
         $this->app->bind(AnnouncementInterface::class, AnnouncementRepository::class);
         $this->app->bind(ModuleInterface::class, ModuleRepository::class);
         $this->app->bind(TypeInterface::class, TypeRepository::class);

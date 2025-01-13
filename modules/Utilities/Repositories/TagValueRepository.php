@@ -4,16 +4,16 @@ namespace Modules\Utilities\Repositories;
 
 use App\Helpers\TableHelper;
 use Illuminate\Support\Facades\Gate;
-use Modules\Utilities\Entities\Tag;
+use Modules\Utilities\Entities\TagValue;
 use Yajra\DataTables\DataTables;
 
-class TagRepository implements TagInterface
+class TagValueRepository implements TagValueInterface
 {
     protected $model;
 
-    public function __construct(Tag $tag)
+    public function __construct(TagValue $tagValue)
     {
-        $this->model = $tag;
+        $this->model = $tagValue;
     }
 
     public function all()
@@ -21,19 +21,15 @@ class TagRepository implements TagInterface
         return $this->model->all();
     }
 
-    public function datatables(int $id = null)
+    public function datatables()
     {
-        $rows = $this->model->query()
-            ->where(function ($q) use ($id) {
-                if ($id) {
-                    $q->where('parent_id', $id);
-                } else {
-                    $q->where('parent_id', null);
-                }
+        $rows = $this->model->query()->where(
+            function ($q) {
                 if (request()->from_date && request()->to_date) {
                     TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
                 }
-            });
+            }
+        );
 
         return DataTables::of($rows)
             ->editColumn('icon', function ($row) {
@@ -51,8 +47,8 @@ class TagRepository implements TagInterface
                     $this->model->singleTitle,
                 );
                 // Show Button
-                if (Gate::allows('update.tag_values')) {
-                    $actionButtons .= '<button type="button" data-modal-title="' . translate("tag_values") . '" data-modal-link="' . route('landlord.tags.show', $row->id) . '" class="btn-info btn-sm open-details-btn">';
+                if (Gate::allows('update.' . $this->model->pluralTitle)) {
+                    $actionButtons .= '<button type="button" data-modal-title="'.translate("tag_values").'" data-modal-link="' . route('landlord.tags.show', $row->id) . '" class="btn-info btn-sm open-details-btn">';
                     $actionButtons .=  '<i class="fas fa-info-circle"></i> ' . translate('values');
                     $actionButtons .= '</button>';
                 }

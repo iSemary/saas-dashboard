@@ -2,10 +2,10 @@
 
 namespace Modules\Utilities\Repositories;
 
-interface TagInterface
+interface TagValueInterface
 {
     public function all();
-    public function datatables(int $id = null);
+    public function datatables();
     public function find($id);
     public function create(array $data);
     public function update($id, array $data);

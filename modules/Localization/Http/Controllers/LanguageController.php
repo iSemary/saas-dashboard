@@ -2,6 +2,7 @@
 
 namespace Modules\Localization\Http\Controllers;
 
+use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
 use Modules\Localization\Services\LanguageService;
 use Illuminate\Http\Request;
@@ -41,7 +42,8 @@ class LanguageController extends ApiController
 
     public function create()
     {
-        return view('landlord.localizations.languages.editor');
+        $directionOptions = EnumHelper::getEnumFromTable("languages", "direction");
+        return view('landlord.localizations.languages.editor', compact('directionOptions'));
     }
 
     public function store(Request $request)
@@ -55,8 +57,9 @@ class LanguageController extends ApiController
 
     public function edit($id)
     {
+        $directionOptions = EnumHelper::getEnumFromTable("languages", "direction");
         $row = $this->service->get($id);
-        return view('landlord.localizations.languages.editor', compact('row'));
+        return view('landlord.localizations.languages.editor', compact('row', 'directionOptions'));
     }
 
     public function update(Request $request, $id)

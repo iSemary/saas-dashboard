@@ -14,6 +14,10 @@ let cols = [
         name: "locale",
     },
     {
+        data: "direction",
+        name: "direction",
+    },
+    {
         data: "actions",
         name: "actions",
         orderable: false,

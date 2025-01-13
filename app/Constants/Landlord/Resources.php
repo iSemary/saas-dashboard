@@ -36,6 +36,10 @@ class Resources
                 'actions' => ['read', 'create', 'update', 'delete']
             ],
             [
+                'name' => 'tag_values',
+                'actions' => ['read', 'create', 'update', 'delete']
+            ],
+            [
                 'name' => 'languages',
                 'actions' => ['read', 'create', 'update', 'delete']
             ],

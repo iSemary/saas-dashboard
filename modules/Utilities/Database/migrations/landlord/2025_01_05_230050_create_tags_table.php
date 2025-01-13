@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('tags', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->unsignedBigInteger('parent_id')->nullable();
             $table->string('slug')->unique();
             $table->text('description')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');

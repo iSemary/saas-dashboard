@@ -17,6 +17,17 @@
     </div>
 
     <div class="form-group">
+        <label for="direction" class="form-label">@translate('direction')</label>
+        <select name="direction" id="direction" class="form-control">
+            @foreach ($directionOptions as $directionOption)
+                <option value="{{ $directionOption }}" {{ isset($row) && $row->direction == $directionOption ? 'selected' : '' }}>
+                    @translate($directionOption)
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+    <div class="form-group">
         <div class="form-status"></div>
     </div>
 

@@ -2,17 +2,17 @@
 
 namespace Modules\Utilities\Services;
 
-use Modules\Utilities\Entities\Tag;
-use Modules\Utilities\Repositories\TagInterface;
+use Modules\Utilities\Entities\TagValue;
+use Modules\Utilities\Repositories\TagValueInterface;
 
-class TagService
+class TagValueService
 {
     protected $repository;
     public $model;
 
-    public function __construct(TagInterface $repository, Tag $tag)
+    public function __construct(TagValueInterface $repository, TagValue $tagValue)
     {
-        $this->model = $tag;
+        $this->model = $tagValue;
         $this->repository = $repository;
     }
 
@@ -21,9 +21,9 @@ class TagService
         return $this->repository->all();
     }
 
-    public function getDataTables(int $id = null)
+    public function getDataTables()
     {
-        return $this->repository->datatables($id);
+        return $this->repository->datatables();
     }
 
     public function get($id)

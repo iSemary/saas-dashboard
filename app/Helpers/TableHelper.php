@@ -45,7 +45,7 @@ class TableHelper
 
         // Edit button
         if (Gate::allows('update.' . $type)) {
-            $btn .= '<button type="button" data-modal-title="Edit ' . $titleType . '" data-modal-link="' . route($editRoute, $row->id) . '" class="btn-info mx-1 btn-sm open-edit-modal">';
+            $btn .= '<button type="button" data-modal-title="Edit ' . $titleType . '" data-modal-link="' . route($editRoute, $row->id) . '" class="btn-primary mx-1 btn-sm open-edit-modal">';
             $btn .= $showIconsOnly ? '<i class="far fa-edit"></i>' : '<i class="far fa-edit fa-fw"></i> ' . translate('edit');
             $btn .= '</button>';
         }

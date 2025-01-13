@@ -47,7 +47,7 @@ class CodeBuilderController extends ApiController
             $modulesPath = base_path($this->modulesFolder);
             if (!File::exists($modulesPath)) {
                 // Try to create Modules directory if it doesn't exist
-                if (!File::makeDirectory($modulesPath, 0755, true)) {
+                if (!File::makeDirectory($modulesPath, 0775, true)) {
                     return $this->return(500, "Cannot create Modules directory. Please check permissions on: " . $modulesPath);
                 }
             }
@@ -59,7 +59,7 @@ class CodeBuilderController extends ApiController
             // Check/Create module directory
             $moduleDir = $modulesPath . '/' . $replacements['MODULE_NAME'];
             if (!File::exists($moduleDir)) {
-                if (!File::makeDirectory($moduleDir, 0755, true)) {
+                if (!File::makeDirectory($moduleDir, 0775, true)) {
                     return $this->return(500, "Cannot create module directory. Please check permissions on: " . $moduleDir);
                 }
             }
@@ -81,7 +81,7 @@ class CodeBuilderController extends ApiController
                     // Create directories if they don't exist
                     $directory = dirname($newPath);
                     if (!File::isDirectory($directory)) {
-                        if (!File::makeDirectory($directory, 0755, true)) {
+                        if (!File::makeDirectory($directory, 0775, true)) {
                             throw new \Exception("Failed to create directory: " . $directory);
                         }
                     }
