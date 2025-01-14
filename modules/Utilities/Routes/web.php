@@ -11,6 +11,7 @@ use Modules\Utilities\Http\Controllers\ModuleController;
 use Modules\Utilities\Http\Controllers\ReleaseController;
 use Modules\Utilities\Http\Controllers\TagController;
 use Modules\Utilities\Http\Controllers\TypeController;
+use Modules\Utilities\Http\Controllers\UnitController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +36,7 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:land
     Route::resource('releases', ReleaseController::class)->names('releases');
     Route::resource('types', TypeController::class)->names('types');
     Route::resource('industries', IndustryController::class)->names('industries');
+    Route::resource('units', UnitController::class)->names('units');
 
     // DEVELOPERS ONLY
     Route::prefix('development')->name('development.')->group(function () {

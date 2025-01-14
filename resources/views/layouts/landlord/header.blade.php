@@ -7,46 +7,43 @@
     </ul>
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto icons-nav-section">
-        <li class="nav-item dropdown">
-            <a class="nav-link" href="#">
-                <i class="fas fa-arrow-left" onclick="window.history.back()"></i>
-            </a>
-        </li>
-        @if (Auth::user()->hasRole(['super_admin', 'admin']))
-            <li class="nav-item dropdown">
-                <a class="nav-link" href="{{ route('admin.index') }}">
-                    <i class="fas fa-tachometer-alt"></i>
-                </a>
-            </li>
-        @endif
         <li class="nav-item dropdown ">
-            <a class="nav-link" id="FullScreen" href="#">
-                <i class="fas fa-expand"></i>
+            <a class="nav-link" href="#">
+                <i class="fas fa-bell"></i>
             </a>
         </li>
         <li class="nav-item dropdown">
-            <a class="nav-link" href="#">
-                <i class="fas fa-sync-alt" onClick="window.location.reload();"></i>
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-desktop"></i>
             </a>
-        </li>
-        @if (Auth::user()->hasRole(['super_admin', 'admin']))
-            <li class="nav-item dropdown">
-                <a class="nav-link" href="{{ route('admin.users-activity') }}">
-                    <i class="fas fa-user-lock"></i>
-                </a>
-            </li>
-        @endif
-        <!-- Settings Dropdown Menu -->
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li>
+                    <a class="dropdown-item" href="{{ route('home') }}">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#" onclick="window.history.back()">
+                        <i class="fas fa-arrow-left"></i> Go Back
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" id="FullScreen" href="#">
+                        <i class="fas fa-expand"></i> Full Screen
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#" onclick="window.location.reload();">
+                        <i class="fas fa-sync-alt"></i> Reload
+                    </a>
+                </li>
+            </ul>
+        </li>        
         <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
-                <i class="fas fa-cog"></i>
+                <i class="fas fa-user-circle"></i> {{ auth()->user()->name }}
             </a>
             <div class="dropdown-menu dropdown-menu-right">
-                @if (Auth::user()->hasRole(['super_admin']))
-                    <a class="dropdown-item" href="{{ route('admin.settings.edit', \Auth::id()) }}">
-                        <i class="fas fa-sliders-h"></i> @translate('settings')
-                    </a>
-                @endif
                 <div class="dropdown-divider"></div>
                 <a style="cursor: pointer" data-form="logout-form" class="logout-btn dropdown-item">
                     <i class="fas fa-sign-out-alt"></i> @translate('logout')

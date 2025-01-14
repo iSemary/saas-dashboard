@@ -252,6 +252,17 @@
                                         'create' => 'landlord.currencies.create',
                                     ],
                                 ],
+                                'units' => [
+                                    'icon' => 'fas fa-ruler',
+                                    'permission' => [
+                                        'read' => 'read.units',
+                                        'create' => 'create.units',
+                                    ],
+                                    'routes' => [
+                                        'index' => 'landlord.units.index',
+                                        'create' => 'landlord.units.create',
+                                    ],
+                                ],
                             ],
                         ],
                         'payments' => [

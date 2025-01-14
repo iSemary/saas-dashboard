@@ -1,4 +1,4 @@
-$(document).on("change", "#LangSelect", function(e) {
+$(document).on("change", "#LangSelect", function (e) {
     let Locale = $(this).val();
     let FullLocale = $("#LangSelect option:selected").text();
 
@@ -12,22 +12,55 @@ $(document).on("change", "#LangSelect", function(e) {
 `;
 
     $("#Translations").append(SelectedLangForm);
-    $("#LangSelect option:selected").attr("disabled",true);
-
+    $("#LangSelect option:selected").attr("disabled", true);
 });
-$(document).on("click", ".remove-locale", function(e) {
-    let RemovedLocale = $(this).attr('data-locale');
-    $("#LangSelect option[value='"+RemovedLocale+"']").attr("disabled",false);
+$(document).on("click", ".remove-locale", function (e) {
+    let RemovedLocale = $(this).attr("data-locale");
+    $("#LangSelect option[value='" + RemovedLocale + "']").attr(
+        "disabled",
+        false
+    );
     $(this).parent().remove();
 });
 
-
-$(document).on('input', '.slug-input', function() {
+$(document).on("input", ".slug-input", function () {
     var inputValue = $(this).val();
-    inputValue = inputValue.replace(/\s+/g, '-');
-    inputValue = inputValue.replace(/[٠-٩]/g, function(digit) {
+    inputValue = inputValue.replace(/\s+/g, "-");
+    inputValue = inputValue.replace(/[٠-٩]/g, function (digit) {
         return String.fromCharCode(digit.charCodeAt(0) - 1632 + 48);
     });
-    inputValue = inputValue.replace(/[^a-zA-Z0-9\-]/g, '');
+    inputValue = inputValue.replace(/[^a-zA-Z0-9\-]/g, "");
     $(this).val(inputValue);
+});
+
+$(".decimal-input").on("input", function (e) {
+    // Remove any non-numeric characters except decimal point
+    let value = $(this)
+        .val()
+        .replace(/[^0-9.]/g, "");
+
+    // Ensure only one decimal point
+    let decimalCount = (value.match(/\./g) || []).length;
+    if (decimalCount > 1) {
+        value = value.replace(/\.(?=.*\.)/g, "");
+    }
+
+    // Limit to 5 decimal places
+    if (value.includes(".")) {
+        let parts = value.split(".");
+        if (parts[1].length > 5) {
+            parts[1] = parts[1].substring(0, 5);
+            value = parts.join(".");
+        }
+    }
+
+    // Update input value
+    $(this).val(value);
+});
+
+$(".decimal-input").on("blur", function () {
+    let value = $(this).val();
+    if (value !== "") {
+        $(this).val(parseFloat(value).toFixed(5));
+    }
 });

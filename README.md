@@ -107,6 +107,7 @@ Please refer to the README file for the file structure:
 ## Global Classes
 
 - `.slug-input`
+- `.decimal-input`
 - `.open-create-modal`
 - `.open-edit-modal`
 - `.open-details-btn`

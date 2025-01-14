@@ -6,7 +6,7 @@
     @endif
 
     <div class="form-group">
-        <label for="country" class="form-label">@translate('country')</label>
+        <label for="country_id" class="form-label">@translate('country')</label>
         <select class="select2 form-control" name="country_id" required>
             <option value="">@translate('select')</option>
             @foreach ($countries as $country)

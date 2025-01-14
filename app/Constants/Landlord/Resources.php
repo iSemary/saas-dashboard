@@ -128,6 +128,10 @@ class Resources
                 'actions' => ['read', 'create', 'update', 'delete']
             ],
             [
+                'name' => 'units',
+                'actions' => ['read', 'create', 'update', 'delete']
+            ],
+            [
                 'name' => 'telescope',
                 'actions' => ['read']
             ],
