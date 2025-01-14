@@ -333,12 +333,6 @@
                             'icon' => 'fas fa-cogs',
                             'label' => 'system_settings',
                             'items' => [
-                                'settings' => [
-                                    'icon' => 'fas fa-sliders-h',
-                                    'permission' => 'read.settings',
-                                    'route' => 'landlord.settings.index',
-                                    'single' => true,
-                                ],
                                 'announcements' => [
                                     'icon' => 'fas fa-bullhorn',
                                     'permission' => [
@@ -405,6 +399,12 @@
                             'icon' => 'fas fa-server',
                             'label' => 'development',
                             'items' => [
+                                'configurations' => [
+                                    'icon' => 'fas fa-cogs',
+                                    'permission' => 'read.configurations',
+                                    'route' => 'landlord.development.configurations.index',
+                                    'single' => true,
+                                ],
                                 'code_builder' => [
                                     'icon' => 'fas fa-code',
                                     'permission' => 'read.code_builder',

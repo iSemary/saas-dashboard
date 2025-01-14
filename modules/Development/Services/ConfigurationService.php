@@ -1,18 +1,18 @@
 <?php
 
-namespace Modules\Localization\Services;
+namespace Modules\Development\Services;
 
-use Modules\Localization\Entities\Translation;
-use Modules\Localization\Repositories\TranslationInterface;
+use Modules\Development\Entities\Configuration;
+use Modules\Development\Repositories\ConfigurationInterface;
 
-class TranslationService
+class ConfigurationService
 {
     protected $repository;
     public $model;
 
-    public function __construct(TranslationInterface $repository, Translation $translation)
+    public function __construct(ConfigurationInterface $repository, Configuration $configuration)
     {
-        $this->model = $translation;
+        $this->model = $configuration;
         $this->repository = $repository;
     }
 

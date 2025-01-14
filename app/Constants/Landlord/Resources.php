@@ -104,7 +104,7 @@ class Resources
                 'actions' => ['read', 'create', 'update', 'delete']
             ],
             [
-                'name' => 'settings',
+                'name' => 'configurations',
                 'actions' => ['read', 'create', 'update', 'delete']
             ],
             [

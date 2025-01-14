@@ -32,6 +32,23 @@ $(document).on("input", ".slug-input", function () {
     inputValue = inputValue.replace(/[^a-zA-Z0-9\-]/g, "");
     $(this).val(inputValue);
 });
+$(document).on("input", ".snake-input", function () {
+    let inputValue = $(this).val();
+
+    // Replace spaces with underscores
+    inputValue = inputValue.replace(/\s+/g, "_");
+
+    // Convert Arabic numerals to English numerals
+    inputValue = inputValue.replace(/[\u0660-\u0669]/g, function (digit) {
+        return String.fromCharCode(digit.charCodeAt(0) - 0x0660 + 48);
+    });
+
+    // Remove any characters that are not alphanumeric, hyphens, or underscores
+    inputValue = inputValue.replace(/[^a-zA-Z0-9\-_]/g, "");
+
+    // Update the input value
+    $(this).val(inputValue);
+});
 
 $(".decimal-input").on("input", function (e) {
     // Remove any non-numeric characters except decimal point

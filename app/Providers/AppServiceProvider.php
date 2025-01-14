@@ -23,6 +23,11 @@ class AppServiceProvider extends ServiceProvider
             return "<?php echo translate($expression); ?>";
         });
 
+        // Translate dashboard content global function
+        Blade::directive('configuration', function ($expression) {
+            return "<?php echo configuration($expression); ?>";
+        });
+
         // if app is production then it will prohibits these commands:
         // db:wipe, migrate:refresh, migrate:fresh, migrate:reset
         DB::prohibitDestructiveCommands((env("APP_ENV") == "production"));

@@ -1,11 +1,20 @@
 <?php
 
 use App\Helpers\TranslateHelper;
+use Modules\Development\Services\ConfigurationService;
 
 if (!function_exists('translate')) {
     function translate($key)
     {
         return app(TranslateHelper::class)->translate($key);
+    }
+}
+
+
+if (!function_exists('configuration')) {
+    function configuration($key)
+    {
+        return app(ConfigurationService::class)->getByKey($key);
     }
 }
 

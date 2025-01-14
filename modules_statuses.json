@@ -8,5 +8,6 @@
     "Email": true,
     "Utilities": true,
     "Subscription": true,
-    "Payment": true
+    "Payment": true,
+    "Development": true
 }

@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Configuration\Http\Controllers\ConfigurationController;
+use Modules\Development\Http\Controllers\ConfigurationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,5 +15,8 @@ use Modules\Configuration\Http\Controllers\ConfigurationController;
 */
 
 Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:landlord', '2fa'])->group(function () {
-    Route::resource('settings', ConfigurationController::class)->names('settings');
+    // DEVELOPERS ONLY
+    Route::prefix('development')->name('development.')->group(function () {
+        Route::resource('configurations', ConfigurationController::class)->names('configurations');
+    });
 });

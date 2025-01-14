@@ -107,6 +107,7 @@ Please refer to the README file for the file structure:
 ## Global Classes
 
 - `.slug-input`
+- `.snake-input`
 - `.decimal-input`
 - `.open-create-modal`
 - `.open-edit-modal`
@@ -121,7 +122,9 @@ Please refer to the README file for the file structure:
 ## Global Functions
 
 - `translate()` OR `@translate`: For translating dashboard items.
-- `translateModel()` OR `@translateModel()`: For translating model items (e.g., name, description).
+- // TODO `translateModel()` OR `@translateModel()`: For translating model items (e.g., name, description).
+
+- `configuration()` OR `@configuration`: For fetching configuration values from configurations table.
 
 ---
 
