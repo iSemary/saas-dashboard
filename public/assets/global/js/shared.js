@@ -14,6 +14,7 @@ $(document).on("change", "#LangSelect", function (e) {
     $("#Translations").append(SelectedLangForm);
     $("#LangSelect option:selected").attr("disabled", true);
 });
+
 $(document).on("click", ".remove-locale", function (e) {
     let RemovedLocale = $(this).attr("data-locale");
     $("#LangSelect option[value='" + RemovedLocale + "']").attr(
@@ -32,6 +33,7 @@ $(document).on("input", ".slug-input", function () {
     inputValue = inputValue.replace(/[^a-zA-Z0-9\-]/g, "");
     $(this).val(inputValue);
 });
+
 $(document).on("input", ".snake-input", function () {
     let inputValue = $(this).val();
 
@@ -50,7 +52,7 @@ $(document).on("input", ".snake-input", function () {
     $(this).val(inputValue);
 });
 
-$(".decimal-input").on("input", function (e) {
+$(document).on("input", ".decimal-input", function (e) {
     // Remove any non-numeric characters except decimal point
     let value = $(this)
         .val()
@@ -75,9 +77,114 @@ $(".decimal-input").on("input", function (e) {
     $(this).val(value);
 });
 
-$(".decimal-input").on("blur", function () {
+$(document).on("blur", ".decimal-input", function (e) {
     let value = $(this).val();
     if (value !== "") {
         $(this).val(parseFloat(value).toFixed(5));
     }
+});
+
+/**
+ * Initializes the CKEditor on the element with the ID "ckInput" if it exists.
+ * Configures the toolbar with various groups and items.
+ * Logs a warning to the console if the element is not found.
+ */
+function fireCKEditor() {
+    // Check if the element exists
+    if (document.getElementById("ckInput")) {
+        CKEDITOR.replace("ckInput", {
+            toolbar: [
+                {
+                    name: "document",
+                    groups: ["mode", "document", "doctools"],
+                    items: [
+                        "Source",
+                        "-",
+                        "Save",
+                        "NewPage",
+                        "Preview",
+                        "-",
+                        "Templates",
+                    ],
+                },
+                {
+                    name: "clipboard",
+                    groups: ["undo"],
+                    items: ["Cut", "Copy", "Paste", "-", "Undo", "Redo"],
+                },
+                {
+                    name: "editing",
+                    groups: ["find", "selection"],
+                    items: ["Find", "-", "SelectAll", "-", "Scayt"],
+                },
+                { name: "forms", items: [] },
+                "/",
+                {
+                    name: "basicstyles",
+                    groups: ["basicstyles"],
+                    items: [
+                        "Bold",
+                        "Italic",
+                        "Underline",
+                        "Strike",
+                        "Subscript",
+                        "Superscript",
+                        "-",
+                    ],
+                },
+                {
+                    name: "paragraph",
+                    groups: ["list", "indent", "blocks", "align", "bidi"],
+                    items: [
+                        "NumberedList",
+                        "BulletedList",
+                        "-",
+                        "Outdent",
+                        "Indent",
+                        "-",
+                        "Blockquote",
+                        "CreateDiv",
+                        "-",
+                        "JustifyLeft",
+                        "JustifyCenter",
+                        "JustifyRight",
+                        "JustifyBlock",
+                        "-",
+                        "BidiLtr",
+                        "BidiRtl",
+                        "Language",
+                    ],
+                },
+                { name: "links", items: [] },
+                {
+                    name: "insert",
+                    items: ["Table", "HorizontalRule", "SpecialChar"],
+                },
+                "/",
+                {
+                    name: "styles",
+                    items: ["Styles", "Format", "Font", "FontSize"],
+                },
+                { name: "colors", items: ["TextColor", "BGColor"] },
+                { name: "tools", items: ["Maximize"] },
+                { name: "others", items: ["-"] },
+                { name: "about", items: [] },
+            ],
+        });
+    } else {
+        console.warn("CKEditor element not found");
+    }
+}
+
+/**
+ * Image Modal Previewer
+ */
+$(document).on("click", ".view-image", function () {
+    const imgSrc = $(this).attr("src");
+    $("#modalImage").attr("src", imgSrc);
+    $("#imageModal").modal("show");
+});
+
+$(document).on("click", "#modalImage", function () {
+    $(this).toggleClass("zoomed");
 });

@@ -10,6 +10,9 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">@translate('name')</th>
+                        <th scope="col">@translate('description')</th>
+                        <th scope="col">@translate('start_at')</th>
+                        <th scope="col">@translate('end_at')</th>
                         <th scope="col">@translate('action')</th>
                     </tr>
                 </thead>

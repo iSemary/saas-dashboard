@@ -1024,7 +1024,7 @@ $(document).on("click", ".open-create-modal, .open-edit-modal, .open-details-btn
         method: "GET",
         success: function (response) {
             $modal.find(".modal-body").html(response);
-            fireDependency();
+            fireDependencies();
         },
         error: function () {
             $modal
@@ -1047,7 +1047,10 @@ $(document).on("change", ".upload-image", function (e) {
     }
 });
 
-function fireDependency() {
+function fireDependencies() {
     $(".form-toggle").bootstrapToggle();
     $(".select2").select2();
+    fireCKEditor();
 }
+
+fireDependencies();

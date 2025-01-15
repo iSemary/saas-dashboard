@@ -11,6 +11,11 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('announcements', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->text('body')->nullable();
+            $table->dateTime('start_at')->nullable();
+            $table->dateTime('end_at')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

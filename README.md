@@ -115,8 +115,8 @@ Please refer to the README file for the file structure:
 - `.upload-image`
 
 ## Global IDs
-- `#table`
-
+- `#table` for datatables inputs
+- `#ckInput` for ck-editor inputs
 ---
 
 ## Global Functions

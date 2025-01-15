@@ -44,8 +44,10 @@
         </style>
     @endif
     {{-- Main Style --}}
-    <link rel="stylesheet" href="{{ asset('assets/landlord/css/main.css') . '?v=1.2.1' }}" media="screen">
-    <link rel="stylesheet" href="{{ asset('assets/landlord/css/style.css') . '?v=1.2.1' }}" media="screen">
+    <link rel="stylesheet" href="{{ asset('assets/landlord/css/main.css') . '?v=' . filemtime(public_path('assets/landlord/css/main.css')) }}" media="screen">
+    <link rel="stylesheet" href="{{ asset('assets/landlord/css/style.css') . '?v=' . filemtime(public_path('assets/landlord/css/style.css')) }}" media="screen">
+    <link rel="stylesheet" href="{{ asset('assets/global/css/style.css') . '?v=' . filemtime(public_path('assets/global/css/style.css')) }}" media="screen">
+
     {{-- Dark Mode --}}
     {{-- @if (!is_null(\App\Models\Setting::where('user_id', Auth::id())->first()) && \App\Models\Setting::where('user_id', auth::id())->first()->theme_mode == 0)
         <link rel="stylesheet" id="DarkModeSheet" href="{{ asset('assets/landlord/css/darkmode-bootstrap.css') }}">
@@ -78,6 +80,7 @@
         @include('layouts.shared.modals.edit')
         @include('layouts.shared.modals.create')
         @include('layouts.shared.modals.show')
+        @include('layouts.shared.modals.image-preview')
 
         {{-- Footer --}}
         @include('layouts.landlord.footer')
@@ -105,8 +108,7 @@
     {{-- Sweet Alert --}}
     <script src="{{ asset('assets/landlord/js/sweetalert2.all.min.js') }}"></script>
     {{-- CKEDITOR --}}
-    <script src="{{ asset('assets/landlord/plugins/ckeditor/ckeditor.js') }}"></script>
-    <script src="{{ asset('assets/landlord/plugins/ckeditor/config.js') }}"></script>
+    <script src="{{ asset('assets/global/plugins/ckeditor/ckeditor.js') }}"></script>
     <script>
         CKEDITOR.config.language = "{{ app()->getLocale() }}";
     </script>
@@ -120,10 +122,9 @@
     <script src="{{ asset('assets/landlord/plugins/flickity/flickity.pkgd.min.js') }}"></script>
     {{-- Bootstrap Toggle --}}
     <script src="{{ asset('assets/global/plugins/bootstrap-toggle/js/bootstrap-toggle.min.js') }}"></script>
-    {{-- Main Script --}}
-    <script src="{{ asset('assets/landlord/js/main.js') . '?v=1.2.1' }}" {{-- theme="{{ auth()->user()->getUserTheme() }}" --}} {{-- env="{{ env('APP_ENV') }}" --}}>
-    </script>
-    <script src="{{ asset('assets/global/js/shared.js') . '?v=1.2.1' }}"></script>
+    {{-- Main Scripts --}}
+    <script src="{{ asset('assets/global/js/shared.js') . '?v=' . filemtime(public_path('assets/global/js/shared.js')) }}"></script>
+    <script src="{{ asset('assets/landlord/js/main.js') . '?v=' . filemtime(public_path('assets/landlord/js/main.js')) }}"></script>
 
     @yield('scripts')
     @stack('scripts')

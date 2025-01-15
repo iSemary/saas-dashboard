@@ -13,6 +13,7 @@
         "endphp",
         "endpush",
         "endsection",
+        "filemtime",
         "flickity",
         "fontawesome",
         "isset",
@@ -37,6 +38,7 @@
         "Sweetalert",
         "treeview",
         "ucfirst",
-        "Yajra"
+        "Yajra",
+        "Zoomable"
     ]
 }

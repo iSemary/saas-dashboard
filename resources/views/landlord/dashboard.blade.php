@@ -1,5 +1,7 @@
 @extends('layouts.landlord.app')
 @section("content")
-{{-- {{ app(\Modules\Development\Services\ConfigurationService::class)->getByKey('site_name') }} --}}
-{{ configuration('site_name') }}
+
+
+<img src="{{ asset('assets/global/images/icons/logo/favicon.svg') }}" alt="logo"
+class="view-image">
 @endsection

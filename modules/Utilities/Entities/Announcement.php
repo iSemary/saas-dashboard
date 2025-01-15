@@ -16,4 +16,12 @@ class Announcement extends Model implements Auditable
     public $singleTitle = "announcement";
     public $pluralTitle = "announcements";
 
+
+    protected $fillable = [
+        'name',
+        'description',
+        'body',
+        'start_at',
+        'end_at',
+    ];
 }
