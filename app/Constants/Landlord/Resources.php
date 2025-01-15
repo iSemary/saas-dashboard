@@ -12,6 +12,10 @@ class Resources
                 'actions' => ['read', 'create', 'update', 'delete']
             ],
             [
+                'name' => 'system_users',
+                'actions' => ['read', 'create', 'update', 'delete']
+            ],
+            [
                 'name' => 'clients',
                 'actions' => ['read', 'create', 'update', 'delete']
             ],

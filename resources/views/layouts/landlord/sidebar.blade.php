@@ -57,10 +57,10 @@
                             'icon' => 'fas fa-user-cog',
                             'label' => 'account_management',
                             'items' => [
-                                'users' => [
-                                    'icon' => 'fas fa-users',
-                                    'permission' => 'read.users',
-                                    'route' => 'landlord.users.index',
+                                'system_users' => [
+                                    'icon' => 'fas fa-user-cog',
+                                    'permission' => 'read.system_users',
+                                    'route' => 'landlord.system-users.index',
                                     'single' => true,
                                     'external' => false,
                                 ],
