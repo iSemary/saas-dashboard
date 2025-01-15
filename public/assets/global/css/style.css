@@ -9,3 +9,133 @@
     cursor: zoom-out;
     transition: transform 0.3s ease-in-out;
 }
+
+.btn-purple {
+    background-color: #7c38bc;
+    color: #fff;
+}
+.btn-purple:hover,
+.btn-purple:focus {
+    background-color: #5a278a;
+    border-color: #5a278a;
+    color: #fff;
+}
+
+.btn-red {
+    background-color: #d9534f;
+    color: #fff;
+}
+
+.btn-red:hover,
+.btn-red:focus {
+    background-color: #c9302c;
+    border-color: #ac2925;
+    color: #fff;
+}
+
+.btn-green {
+    background-color: #5cb85c;
+    color: #fff;
+}
+
+.btn-green:hover,
+.btn-green:focus {
+    background-color: #449d44;
+    border-color: #398439;
+    color: #fff;
+}
+
+.btn-blue {
+    background-color: #337ab7;
+    color: #fff;
+}
+
+.btn-blue:hover,
+.btn-blue:focus {
+    background-color: #286090;
+    border-color: #204d74;
+    color: #fff;
+}
+
+.btn-orange {
+    background-color: #f0ad4e;
+    color: #fff;
+}
+
+.btn-orange:hover,
+.btn-orange:focus {
+    background-color: #ec971f;
+    border-color: #d58512;
+    color: #fff;
+}
+
+.btn-teal {
+    background-color: #20c997;
+    color: #fff;
+}
+
+.btn-teal:hover,
+.btn-teal:focus {
+    background-color: #17a589;
+    border-color: #148f77;
+    color: #fff;
+}
+.btn-yellow {
+    background-color: #ffc107;
+    color: #fff;
+}
+
+.btn-yellow:hover,
+.btn-yellow:focus {
+    background-color: #e0a800;
+    border-color: #d39e00;
+    color: #fff;
+}
+
+.btn-pink {
+    background-color: #e83e8c;
+    color: #fff;
+}
+
+.btn-pink:hover,
+.btn-pink:focus {
+    background-color: #d63384;
+    border-color: #c82379;
+    color: #fff;
+}
+
+.btn-gray {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+.btn-gray:hover,
+.btn-gray:focus {
+    background-color: #5a6268;
+    border-color: #545b62;
+    color: #fff;
+}
+
+.btn-brown {
+    background-color: #795548;
+    color: #fff;
+}
+
+.btn-brown:hover,
+.btn-brown:focus {
+    background-color: #6d4c41;
+    border-color: #5d4037;
+    color: #fff;
+}
+
+.btn-lime {
+    background-color: #cddc39;
+    color: #fff;
+}
+
+.btn-lime:hover,
+.btn-lime:focus {
+    background-color: #c0ca33;
+    border-color: #afb42b;
+    color: #fff;
+}

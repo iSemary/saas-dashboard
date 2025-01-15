@@ -399,6 +399,12 @@
                             'icon' => 'fas fa-server',
                             'label' => 'development',
                             'items' => [
+                                'files' => [
+                                    'icon' => 'fas fa-photo-video',
+                                    'permission' => 'read.files',
+                                    'route' => 'landlord.development.files.index',
+                                    'single' => true,
+                                ],
                                 'configurations' => [
                                     'icon' => 'fas fa-cogs',
                                     'permission' => 'read.configurations',

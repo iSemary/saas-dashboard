@@ -12,7 +12,19 @@ class Resources
                 'actions' => ['read', 'create', 'update', 'delete']
             ],
             [
+                'name' => 'files',
+                'actions' => ['read', 'create', 'update', 'delete']
+            ],
+            [
                 'name' => 'system_users',
+                'actions' => ['read', 'create', 'update', 'delete']
+            ],
+            [
+                'name' => 'activity_logs',
+                'actions' => ['read', 'create', 'update', 'delete']
+            ],
+            [
+                'name' => 'login_attempts',
                 'actions' => ['read', 'create', 'update', 'delete']
             ],
             [

@@ -9,5 +9,6 @@
     "Utilities": true,
     "Subscription": true,
     "Payment": true,
-    "Development": true
+    "Development": true,
+    "FileManager": true
 }

@@ -3,6 +3,7 @@
 namespace Modules\Tenant\Repositories;
 
 use App\Helpers\TableHelper;
+use Illuminate\Support\Facades\Gate;
 use Modules\Auth\Entities\User;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\DataTables;
@@ -36,7 +37,7 @@ class SystemUserRepository implements SystemUserInterface
                 return $row->role()?->name ? translate($row->role()?->name) : translate('unset');
             })
             ->addColumn('actions', function ($row) {
-                return TableHelper::actionButtons(
+                $actionButtons = TableHelper::actionButtons(
                     $row,
                     'landlord.system-users.edit',
                     'landlord.system-users.destroy',
@@ -44,6 +45,20 @@ class SystemUserRepository implements SystemUserInterface
                     "system_user",
                     true
                 );
+
+                if (Gate::allows('read.activity_logs')) {
+                    $actionButtons .= '<button type="button" title="' . translate("activity_logs") . '" data-modal-title="' . translate("activity_logs") . '" data-modal-link="' . route('landlord.tags.show', $row->id) . '" class="btn-blue mx-1 btn-sm open-details-btn">';
+                    $actionButtons .=  '<i class="fas fa-user-clock"></i>';
+                    $actionButtons .= '</button>';
+                }
+
+                if (Gate::allows('read.login_attempts')) {
+                    $actionButtons .= '<button type="button" title="' . translate("login_attempts") . '" data-modal-title="' . translate("login_attempts") . '" data-modal-link="' . route('landlord.tags.show', $row->id) . '" class="btn-teal ms-1 btn-sm open-details-btn">';
+                    $actionButtons .=  '<i class="fas fa-fingerprint"></i>';
+                    $actionButtons .= '</button>';
+                }
+
+                return $actionButtons;
             })
             ->rawColumns(['actions'])
             ->make(true);
