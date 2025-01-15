@@ -37,11 +37,11 @@ class AnalysisController extends ApiController
         $data['message'] = $message;
 
         $breadcrumbs = [
-            ['text' => 'Home', 'link' => route('home')],
+            ['text' => translate('home'), 'link' => route('home')],
             ['text' => "Code Builder"],
         ];
 
-        return view('landlord.development.env-diff.index', compact('breadcrumbs', 'data'));
+        return view('landlord.developments.env-diff.index', compact('breadcrumbs', 'data'));
     }
 
     private function getEnvKeys($filePath)

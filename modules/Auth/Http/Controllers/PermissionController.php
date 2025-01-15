@@ -22,7 +22,7 @@ class PermissionController extends ApiController
         }
         $title = "permissions";
         $breadcrumbs = [
-            ['text' => 'Home', 'link' => route('home')],
+            ['text' => translate('home'), 'link' => route('home')],
             ['text' => "permissions"],
         ];
 

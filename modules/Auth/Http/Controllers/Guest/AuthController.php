@@ -21,7 +21,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Modules\Auth\Entities\FactorAuthenticateToken;
 use Modules\Tenant\Helper\TenantHelper;
-use Spatie\Multitenancy\Models\Tenant;
+use Modules\Tenant\Entities\Tenant;
 use Illuminate\Support\Facades\Auth;
 use Modules\Customer\Entities\Customer;
 use Carbon\Carbon;

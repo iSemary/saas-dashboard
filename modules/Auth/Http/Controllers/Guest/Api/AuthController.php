@@ -25,7 +25,7 @@ use stdClass;
 use Exception;
 use Modules\Auth\Entities\FactorAuthenticateToken;
 use Modules\Tenant\Helper\TenantHelper;
-use Spatie\Multitenancy\Models\Tenant;
+use Modules\Tenant\Entities\Tenant;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends ApiController

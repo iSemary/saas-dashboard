@@ -12,7 +12,7 @@ use Modules\Auth\Http\Requests\ForgetPasswordRequest;
 use Modules\Auth\Http\Requests\ResetPasswordRequest;
 use Modules\Auth\Jobs\ForgetPasswordMailJob;
 use Modules\Tenant\Helper\TenantHelper;
-use Spatie\Multitenancy\Models\Tenant;
+use Modules\Tenant\Entities\Tenant;
 
 class PasswordController extends ApiController
 {

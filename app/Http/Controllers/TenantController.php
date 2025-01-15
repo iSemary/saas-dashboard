@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Modules\Tenant\Helper\TenantHelper;
-use Spatie\Multitenancy\Models\Tenant;
+use Modules\Tenant\Entities\Tenant;
 
 class TenantController extends Controller
 {

@@ -18,14 +18,14 @@ class CodeBuilderController extends ApiController
             abort(404);
         }
         $breadcrumbs = [
-            ['text' => 'Home', 'link' => route('home')],
+            ['text' => translate('home'), 'link' => route('home')],
             ['text' => "Code Builder"],
         ];
 
         $result = $this->scanStubs();
         $vars = $result['vars'];
         $files = $result['files'];
-        return view('landlord.development.code-builder.index', compact('breadcrumbs', 'vars', 'files'));
+        return view('landlord.developments.code-builder.index', compact('breadcrumbs', 'vars', 'files'));
     }
 
     public function submit(Request $request)

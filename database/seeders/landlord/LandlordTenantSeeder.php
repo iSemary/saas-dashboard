@@ -3,7 +3,7 @@
 namespace Database\Seeders\landlord;
 
 use Illuminate\Database\Seeder;
-use Spatie\Multitenancy\Models\Tenant;
+use Modules\Tenant\Entities\Tenant;
 
 class LandlordTenantSeeder extends Seeder
 {

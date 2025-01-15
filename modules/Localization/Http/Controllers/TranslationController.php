@@ -24,8 +24,8 @@ class TranslationController extends ApiController
         }
         $title = $this->service->model->pluralTitle;
         $breadcrumbs = [
-            ['text' => 'Home', 'link' => route('home')],
-            ['text' => $this->service->model->pluralTitle],
+            ['text' => translate('home'), 'link' => route('home')],
+            ['text' => translate($this->service->model->pluralTitle)],
         ];
 
         $actionButtons = [

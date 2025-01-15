@@ -113,6 +113,7 @@ Please refer to the README file for the file structure:
 - `.open-edit-modal`
 - `.open-details-btn`
 - `.upload-image`
+- `.view-image`
 
 ## Global IDs
 - `#table` for datatables inputs

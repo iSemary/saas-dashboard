@@ -3,7 +3,7 @@
 namespace Modules\Tenant\Helper;
 
 use Modules\Auth\Entities\User;
-use Spatie\Multitenancy\Models\Tenant;
+use Modules\Tenant\Entities\Tenant;
 
 class TenantHelper
 {

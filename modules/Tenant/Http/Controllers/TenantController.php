@@ -1,58 +1,55 @@
 <?php
 
-namespace Modules\Auth\Http\Controllers;
+namespace Modules\Tenant\Http\Controllers;
 
 use App\Http\Controllers\ApiController;
-use Modules\Auth\Services\RoleService;
+use Modules\Tenant\Services\TenantService;
 use Illuminate\Http\Request;
-use Modules\Auth\Services\PermissionService;
 
-class RoleController extends ApiController
+class TenantController extends ApiController
 {
     protected $service;
-    protected $permissionService;
 
-    public function __construct(RoleService $roleService, PermissionService $permissionService)
+    public function __construct(TenantService $service)
     {
-        $this->service = $roleService;
-        $this->permissionService = $permissionService;
+        $this->service = $service;
     }
-
     public function index()
     {
         if (request()->ajax()) {
             return $this->service->getDataTables();
         }
-        $title = "roles";
+        $title = translate("tenants");
         $breadcrumbs = [
             ['text' => translate('home'), 'link' => route('home')],
-            ['text' => "roles"],
+            ['text' => translate("tenants")],
         ];
 
         $actionButtons = [
             [
-                'text' => 'Add ' . "role",
+                'text' => translate("create") . " ". translate("tenant"),
                 'class' => 'open-create-modal btn-sm btn-success',
                 'attr' => [
-                    'data-modal-link' => route('landlord.roles.create'),
-                    'data-modal-title' => "Create " . "roles",
+                    'data-modal-link' => route('landlord.tenants.create'),
+                    'data-modal-title' => translate("create") . " ". translate("tenant"),
                 ]
             ],
         ];
 
-        return view('landlord.auth.roles.index', compact('breadcrumbs', 'title', 'actionButtons'));
+        return view('landlord.tenant.tenants.index', compact('breadcrumbs', 'title', 'actionButtons'));
     }
 
     public function create()
     {
-        $permissions = $this->permissionService->getAll();
-        return view('landlord.auth.roles.editor', compact('permissions'));
+        return view('landlord.tenant.tenants.editor');
     }
 
     public function store(Request $request)
     {
         $data = $request->all();
-        $this->service->create($data);
+        $customerUsername = $data['customer_username'];
+
+        $this->service->init($customerUsername);
         return $this->return(200, "Created successfully");
     }
 
@@ -60,9 +57,8 @@ class RoleController extends ApiController
 
     public function edit($id)
     {
-        $permissions = $this->permissionService->getAll();
         $row = $this->service->get($id);
-        return view('landlord.auth.roles.editor', compact('row', 'permissions'));
+        return view('landlord.tenant.tenants.editor', compact('row'));
     }
 
     public function update(Request $request, $id)
