@@ -4,6 +4,8 @@
 
 -   [Installation](#installation)
 -   [Modules Requirements](#modules-requirements)
+-   [Commands](#commands)
+    -   [Sync Missing Language Translations](#)
 -   [Databases](#databases)
 -   [Running Landlord-Specific Migrations](#running-landlord-specific-migrations)
     -   [Option 1: Direct Migration Commands](#option-1-direct-migration-commands)
@@ -41,6 +43,16 @@ php artisan storage:link
 -   **POS**: Laravel - jQuery - Node.js
 -   **Learning**: Laravel - Next.js - Node.js
 -   **Surveys**: Laravel - jQuery - Node.js
+
+---
+
+## Commands
+
+### Sync Missing Language Translations
+
+```bash
+php artisan translations:translate-missing
+```
 
 ---
 

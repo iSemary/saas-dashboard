@@ -30,6 +30,8 @@ class LanguageRepository implements LanguageInterface
                 }
             });
 
+        $totalEnglishTranslations = $this->model->where('locale', 'en')->withCount('translations')->first()->translations_count;
+
         return DataTables::of($rows)
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
@@ -40,10 +42,10 @@ class LanguageRepository implements LanguageInterface
                     $this->model->singleTitle,
                 );
             })
-            ->addColumn('total_translations', function ($row) {
-                return $row->translations_count;
+            ->addColumn('total_translations', function ($row) use ($totalEnglishTranslations) {
+                return '<span class="' . ($totalEnglishTranslations == $row->translations_count ? 'text-success' : 'text-danger') . '">' .$row->translations_count . '</span>';
             })
-            ->rawColumns(['actions'])
+            ->rawColumns(['actions', 'total_translations'])
             ->make(true);;
     }
 

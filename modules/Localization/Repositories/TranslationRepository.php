@@ -63,6 +63,7 @@ class TranslationRepository implements TranslationInterface
         }
         $databaseRow = $this->getByKeyByDatabase($key);
         if ($databaseRow) {
+            // TODO Add locale in the cache key
             CacheService::forever("translation_{$databaseRow->translation_key}", $databaseRow->translation_value);
             app('log')->info(self::class . "|DB Got translation key: $key value: $databaseRow->translation_value");
             return $databaseRow->translation_value;
@@ -107,6 +108,7 @@ class TranslationRepository implements TranslationInterface
     public function create(array $data)
     {
         $translation = $this->model->create($data);
+        // TODO Add locale in the cache key
         CacheService::forever("translation_{$translation->translation_key}", $translation->translation_value);
         return $translation;
     }
@@ -116,6 +118,7 @@ class TranslationRepository implements TranslationInterface
         $row = $this->model->find($id);
         if ($row) {
             $row->update($data);
+            // TODO Add locale in the cache key
             CacheService::forget("translation_{$row->translation_key}");
             CacheService::forever("translation_{$row->translation_key}", $row->translation_value);
             return $row;
@@ -127,6 +130,7 @@ class TranslationRepository implements TranslationInterface
     {
         $row = $this->model->find($id);
         if ($row) {
+            // TODO Add locale in the cache key
             CacheService::forget("translation_{$row->translation_key}");
             $row->delete();
             return true;
