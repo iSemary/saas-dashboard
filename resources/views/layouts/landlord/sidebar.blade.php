@@ -378,9 +378,6 @@
                                         'read' => 'read.horizon',
                                         'create' => false,
                                     ],
-                                    'routes' => [
-                                        'index' => 'horizon.index',
-                                    ],
                                     'external' => true,
                                     'path' => env('HORIZON_PATH'),
                                 ],
@@ -392,6 +389,15 @@
                                     ],
                                     'external' => true,
                                     'path' => env('TELESCOPE_PATH'),
+                                ],
+                                'log_viewer' => [
+                                    'icon' => 'fas fa-file-alt',
+                                    'permission' => [
+                                        'read' => 'read.log_viewer',
+                                        'create' => false,
+                                    ],
+                                    'external' => true,
+                                    'path' => env('LOG_VIEWER_PATH'),
                                 ],
                             ],
                         ],

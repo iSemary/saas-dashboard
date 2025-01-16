@@ -110,6 +110,7 @@ class ConfigurationRepository implements ConfigurationInterface
 
         $row = $this->model->find($id);
         if ($row) {
+            CacheService::forget("configuration_{$row->configuration_key}");
             CacheService::forever("configuration_{$row->configuration_key}", $row->configuration_value);
             $row->update($data);
             return $row;

@@ -21,4 +21,12 @@ class Folder extends Model implements Auditable
         'parent_id',
         'status',
     ];
+
+    /**
+     * Get the files associated with the folder.
+     */
+    public function files()
+    {
+        return $this->hasMany(File::class);
+    }
 }

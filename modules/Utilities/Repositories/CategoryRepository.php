@@ -27,7 +27,7 @@ class CategoryRepository implements CategoryInterface
             ->select([
                 'categories.*',
                 DB::raw('(SELECT name FROM categories AS parent WHERE parent.id = categories.parent_id) AS parent_name')
-            ])->where(
+            ])->whereNull("deleted_at")->where(
                 function ($q) {
                     if (request()->from_date && request()->to_date) {
                         TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
@@ -66,6 +66,11 @@ class CategoryRepository implements CategoryInterface
 
     public function create(array $data)
     {
+        if (isset($data['icon']) && $data['icon'] instanceof \Illuminate\Http\UploadedFile) {
+            $model = new $this->model;
+            $media = $model->upload($data['icon']);
+            $data['icon'] = $media->id;
+        }
         return $this->model->create($data);
     }
 

@@ -152,6 +152,10 @@ class Resources
                 'actions' => ['read']
             ],
             [
+                'name' => 'log_viewer',
+                'actions' => ['read']
+            ],
+            [
                 'name' => 'horizon',
                 'actions' => ['read']
             ],

@@ -28,4 +28,12 @@ class File extends Model implements Auditable
         'metadata',
         'is_encrypted'
     ];
+
+    /**
+     * Get the folder that owns the file.
+     */
+    public function folder()
+    {
+        return $this->belongsTo(Folder::class);
+    }
 }

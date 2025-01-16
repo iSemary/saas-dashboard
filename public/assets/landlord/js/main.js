@@ -1034,18 +1034,6 @@ $(document).on("click", ".open-create-modal, .open-edit-modal, .open-details-btn
     });
 });
 
-$(document).on("change", ".upload-image", function (e) {
-    if (this.files && this.files[0]) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            $(e.target)
-                .closest(".upload-image")
-                .siblings(".preview-image")
-                .attr("src", e.target.result);
-        };
-        reader.readAsDataURL(this.files[0]);
-    }
-});
 
 function fireDependencies() {
     $(".form-toggle").bootstrapToggle();

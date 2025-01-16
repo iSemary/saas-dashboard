@@ -116,6 +116,7 @@ class TranslationRepository implements TranslationInterface
         $row = $this->model->find($id);
         if ($row) {
             $row->update($data);
+            CacheService::forget("translation_{$row->translation_key}");
             CacheService::forever("translation_{$row->translation_key}", $row->translation_value);
             return $row;
         }

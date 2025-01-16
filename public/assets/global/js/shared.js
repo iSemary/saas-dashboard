@@ -46,7 +46,7 @@ $(document).on("input", ".snake-input", function () {
     });
 
     // Remove any characters that are not alphanumeric, hyphens, or underscores
-    inputValue = inputValue.replace(/[^a-zA-Z0-9\-_]/g, "");
+    inputValue = inputValue.replace(/[^a-zA-Z0-9\-_.]/g, "");
 
     // Update the input value
     $(this).val(inputValue);
@@ -329,3 +329,18 @@ const debouncedEmailCheck = debounce(function (input, formGroup) {
 function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
+
+// Image previewer
+$(document).on("change", ".upload-image", function (e) {
+    var input = $(this);
+    if (this.files && this.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            input
+                .parents(".form-group")
+                .find(".preview-image")
+                .attr("src", e.target.result);
+        };
+        reader.readAsDataURL(this.files[0]);
+    }
+});
