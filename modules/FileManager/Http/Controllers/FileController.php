@@ -26,18 +26,18 @@ class FileController extends ApiController
             ['text' => translate($this->service->model->pluralTitle)],
         ];
 
-        $actionButtons = [
-            [
-                'text' => translate("create") . " " . translate($this->service->model->singleTitle),
-                'class' => 'open-create-modal btn-sm btn-success',
-                'attr' => [
-                    'data-modal-link' => route('landlord.development.files.create'),
-                    'data-modal-title' => translate("create") . " " . translate($this->service->model->singleTitle),
-                ]
-            ],
-        ];
+        // $actionButtons = [
+        //     [
+        //         'text' => translate("create") . " " . translate($this->service->model->singleTitle),
+        //         'class' => 'open-create-modal btn-sm btn-success',
+        //         'attr' => [
+        //             'data-modal-link' => route('landlord.development.files.create'),
+        //             'data-modal-title' => translate("create") . " " . translate($this->service->model->singleTitle),
+        //         ]
+        //     ],
+        // ];
 
-        return view('landlord.file-managers.files.index', compact('breadcrumbs', 'title', 'actionButtons'));
+        return view('landlord.file-managers.files.index', compact('breadcrumbs', 'title'));
     }
 
     public function create()

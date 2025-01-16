@@ -2,6 +2,7 @@
 
 namespace Modules\FileManager\Repositories;
 
+use App\Helpers\FileHelper;
 use App\Helpers\TableHelper;
 use Modules\FileManager\Entities\File;
 use Yajra\DataTables\DataTables;
@@ -22,25 +23,54 @@ class FileRepository implements FileInterface
 
     public function datatables()
     {
-        $rows = $this->model->query()->where(
-                function ($q) {
-                    if (request()->from_date && request()->to_date) {
-                        TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
-                    }
+        $rows = $this->model->query()->withTrashed()->where(
+            function ($q) {
+                if (request()->from_date && request()->to_date) {
+                    TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
                 }
-            );
+            }
+        );
 
         return DataTables::of($rows)
+            ->filterColumn('folder', function ($query, $keyword) {
+                $query->whereHas('folder', function ($q) use ($keyword) {
+                    $q->where('name', 'like', "%$keyword%");
+                });
+            })
+            ->editColumn('folder', function ($row) {
+                return $row->folder->name;
+            })
+            ->editColumn('size', function ($row) {
+                return FileHelper::returnSizeString($row->size);
+            })
+            ->editColumn('status', function ($row) {
+                return translate($row->status);
+            })
+            ->editColumn('access_level', function ($row) {
+                if ($row->access_level == 'private') {
+                    return '<i class="fa fa-lock text-danger" title="'.$row->access_level.'"></i>';
+                }
+                return '<i class="fa fa-unlock text-success" title="'.$row->access_level.'"></i>';
+                
+            })
+            ->editColumn('host', function ($row) {
+                if ($row->host == 'aws') {
+                    return '<i class="fab fa-aws text-orange" title="'.$row->host.'"></i>';
+                }
+                return '<i class="fas fa-warehouse text-primary" title="'.$row->host.'"></i>';
+                
+            })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
                     $row,
-                    'landlord.development.files.edit',
+                    null,
                     'landlord.development.files.destroy',
                     $this->model->pluralTitle,
                     $this->model->singleTitle,
+                    true
                 );
             })
-            ->rawColumns(['actions'])
+            ->rawColumns(['folder', 'host', 'access_level', 'actions'])
             ->make(true);
     }
 
