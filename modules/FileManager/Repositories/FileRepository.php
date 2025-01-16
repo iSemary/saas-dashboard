@@ -51,7 +51,6 @@ class FileRepository implements FileInterface
                     return '<i class="fa fa-lock text-danger" title="'.$row->access_level.'"></i>';
                 }
                 return '<i class="fa fa-unlock text-success" title="'.$row->access_level.'"></i>';
-                
             })
             ->editColumn('host', function ($row) {
                 if ($row->host == 'aws') {

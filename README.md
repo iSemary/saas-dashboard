@@ -12,6 +12,7 @@
     -   [Landlord Tenant Seeder (Landlord)](#landlord-tenant-seeder-landlord)
     -   [Seed Default Landlord User (Landlord)](#seed-default-landlord-user-landlord)
     -   [Seed Modules (Landlord)](#seed-modules-landlord)
+    -   [Seed Configurations (Landlord)](#seed-configurations-landlord)
 -   [Logo Files](#logo-files)
 -   [Modules Stubs](#modules-stubs)
 -   [Global Classes](#global-classes)
@@ -95,6 +96,12 @@ php artisan db:seed --class=Modules\\Auth\\Database\\Seeders\\LandlordUserSeeder
 
 ```bash
 php artisan db:seed --class=Modules\\Utilities\\Database\\Seeders\\ModulesSeeder
+```
+
+### Seed Configurations (Landlord)
+
+```bash
+php artisan db:seed --class=Modules\\Development\\Database\\Seeders\\ConfigurationsSeeder
 ```
 
 ---
