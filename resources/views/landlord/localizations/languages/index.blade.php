@@ -12,6 +12,7 @@
                         <th scope="col">@translate('name')</th>
                         <th scope="col">@translate('locale')</th>
                         <th scope="col">@translate('direction')</th>
+                        <th scope="col">@translate('total_translations')</th>
                         <th scope="col">@translate('action')</th>
                     </tr>
                 </thead>

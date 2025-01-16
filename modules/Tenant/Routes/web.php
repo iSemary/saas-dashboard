@@ -8,6 +8,7 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:land
     Route::resource('tenants', TenantController::class)->names('tenants');
 
     Route::resource('system-users', SystemUserController::class)->names('system-users');
+    Route::post('system-users/check-email', [SystemUserController::class, 'checkEmail'])->name('system-users.check-email');
 
     Route::resource('clients', TenantController::class)->names('clients');
 });

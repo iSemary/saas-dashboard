@@ -47,13 +47,13 @@ class SystemUserRepository implements SystemUserInterface
                 );
 
                 if (Gate::allows('read.activity_logs')) {
-                    $actionButtons .= '<button type="button" title="' . translate("activity_logs") . '" data-modal-title="' . translate("activity_logs") . '" data-modal-link="' . route('landlord.tags.show', $row->id) . '" class="btn-blue mx-1 btn-sm open-details-btn">';
+                    $actionButtons .= '<button type="button" title="' . translate("activity_logs") . '" data-modal-title="' . translate("activity_logs") . '" data-modal-link="' . route('landlord.attempts.index', $row->id) . '" class="btn-blue mx-1 btn-sm open-details-btn">';
                     $actionButtons .=  '<i class="fas fa-user-clock"></i>';
                     $actionButtons .= '</button>';
                 }
 
                 if (Gate::allows('read.login_attempts')) {
-                    $actionButtons .= '<button type="button" title="' . translate("login_attempts") . '" data-modal-title="' . translate("login_attempts") . '" data-modal-link="' . route('landlord.tags.show', $row->id) . '" class="btn-teal ms-1 btn-sm open-details-btn">';
+                    $actionButtons .= '<button type="button" title="' . translate("login_attempts") . '" data-modal-title="' . translate("login_attempts") . '" data-modal-link="' . route('landlord.attempts.index', $row->id) . '" class="btn-teal ms-1 btn-sm open-details-btn">';
                     $actionButtons .=  '<i class="fas fa-fingerprint"></i>';
                     $actionButtons .= '</button>';
                 }
@@ -77,6 +77,11 @@ class SystemUserRepository implements SystemUserInterface
             return null;
         }
 
+        if (isset($data['password'])) {
+            $data['password'] = bcrypt($data['password']);
+        } else {
+            unset($data['password']);
+        }
         $user->update($data);
 
         if (isset($data['permissions'])) {
@@ -107,5 +112,14 @@ class SystemUserRepository implements SystemUserInterface
             return true;
         }
         return false;
+    }
+
+    public function checkEmail($email, $id = null)
+    {
+        $query = $this->model->where('email', $email);
+        if ($id) {
+            $query->where('id', '!=', $id);
+        }
+        return $query->exists();
     }
 }

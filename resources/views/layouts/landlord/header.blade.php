@@ -13,7 +13,8 @@
             </a>
         </li>
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                aria-expanded="false">
                 <i class="fas fa-desktop"></i>
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -38,19 +39,26 @@
                     </a>
                 </li>
             </ul>
-        </li>        
+        </li>
         <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
                 <i class="fas fa-user-circle"></i> {{ auth()->user()->name }}
             </a>
             <div class="dropdown-menu dropdown-menu-right">
                 <div class="dropdown-divider"></div>
-                <a style="cursor: pointer" data-form="logout-form" class="logout-btn dropdown-item">
-                    <i class="fas fa-sign-out-alt"></i> @translate('logout')
+
+                <a class="dropdown-item" href="{{ route('landlord.profile.index') }}">
+                    <i class="fas fa-user"></i> @translate('my_account')
                 </a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                    @csrf
-                </form>
+
+                <div class="logout-container">
+                    <a style="cursor: pointer" data-form="logout-form" class="logout-btn dropdown-item">
+                        <i class="fas fa-sign-out-alt"></i> @translate('logout')
+                    </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                </div>
                 @if (Auth::user()->hasRole(['super_admin', 'admin']))
                     <a style="cursor: pointer" data-form="logout-all-form" class="logout-btn dropdown-item">
                         <i class="fas fa-sign-out-alt"></i> @translate('logout_all')

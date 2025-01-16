@@ -114,6 +114,7 @@ Please refer to the README file for the file structure:
 - `.open-details-btn`
 - `.upload-image`
 - `.view-image`
+- `.generate-password-input`
 
 ## Global IDs
 - `#table` for datatables inputs

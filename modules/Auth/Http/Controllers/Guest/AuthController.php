@@ -2,6 +2,8 @@
 
 namespace Modules\Auth\Http\Controllers\Guest;
 
+use App\Helpers\TableHelper;
+use App\Helpers\IconHelper;
 use App\Http\Controllers\ApiController;
 use Modules\Auth\Services\RegistrationService;
 use Modules\Auth\Services\ActivityLogService;
@@ -27,16 +29,17 @@ use Modules\Customer\Entities\Customer;
 use Carbon\Carbon;
 use stdClass;
 use Exception;
+use Yajra\DataTables\Facades\DataTables;
 
 class AuthController extends ApiController
 {
     protected $registrationService;
     protected $activityLogService;
 
-    public function __construct(RegistrationService $registrationService, ActivityLogService $activityLogService)
+    public function __construct(RegistrationService $registrationService)
     {
         $this->registrationService = $registrationService;
-        $this->activityLogService = $activityLogService;
+        // $this->activityLogService = $activityLogService;
     }
     public function showLoginForm(Request $request)
     {
@@ -375,13 +378,45 @@ class AuthController extends ApiController
         return $this->return(400, "Session expired");
     }
 
+    public function showAttempts(int $id = null)
+    {
+        if (request()->ajax() && request()->get('table')) {
+            return $this->attemptsDatatables($id);
+        }
+
+        $route = $id ? route('landlord.attempts.index', $id) : route('attempts.index');
+        return view('user.login-attempts.index', compact('route'));
+    }
+
+    public function attemptsDatatables($id = null)
+    {
+        $rows = LoginAttempt::query()
+            ->when($id, function ($query) use ($id) {
+                return $query->where('user_id', $id);
+            })->where(
+                function ($q) {
+                    if (request()->from_date && request()->to_date) {
+                        TableHelper::loopOverDates(5, $q, app(LoginAttempt::class)->getTable(), [request()->from_date, request()->to_date]);
+                    }
+                }
+            );
+
+        return DataTables::of($rows)
+            ->addColumn('agent', function ($row) {
+                // TODO always add the agent as a title to the icons
+                return IconHelper::formatAgentIcons($row->agent);
+            })
+            ->rawColumns(['agent'])
+            ->make(true);
+    }
+
     /**
      * The function "attempts" retrieves login attempts made by the authenticated user and returns them as
      * a JSON response.
      * 
      * @return JsonResponse A JsonResponse object is being returned.
      */
-    public function attempts(): JsonResponse
+    public function attempts(int $id = null): JsonResponse
     {
         $attempts = LoginAttempt::select(['id', 'ip', 'agent', 'created_at'])->where('user_id', auth()->guard('api')->id())->orderBy('id', 'DESC')->paginate(25);
         return $this->return(200, 'Attempts fetched successfully', ['attempts' => $attempts]);

@@ -188,3 +188,144 @@ $(document).on("click", ".view-image", function () {
 $(document).on("click", "#modalImage", function () {
     $(this).toggleClass("zoomed");
 });
+
+// Password generator
+$(document).on("input", ".generate-password-input", function () {
+    const password = $(this);
+    const progressBar = $(".progress-bar");
+    const requirements = {
+        length: /.{8,}/,
+        lowercase: /[a-z]/,
+        uppercase: /[A-Z]/,
+        number: /[0-9]/,
+        special: /[^A-Za-z0-9]/,
+    };
+
+    const value = password.val();
+    let strength = 0;
+
+    // Check each requirement
+    Object.keys(requirements).forEach((req) => {
+        const li = $(`.requirement-list .${req}`);
+        const isValid = requirements[req].test(value);
+
+        // Update requirement status
+        li.find("i")
+            .removeClass("fa-hourglass-end fa-check fa-times")
+            .addClass(isValid ? "fa-check valid" : "fa-times invalid");
+
+        if (isValid) {
+            strength += 20;
+            li.find("i").removeClass("invalid");
+        }
+    });
+
+    // Update progress bar
+    progressBar
+        .css("width", `${strength}%`)
+        .removeClass("bg-danger bg-warning bg-success")
+        .addClass(
+            strength <= 40
+                ? "bg-danger"
+                : strength <= 80
+                ? "bg-warning"
+                : "bg-success"
+        );
+});
+
+// Email availability checker
+// Debounce function to limit API calls
+function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
+$(document).on("input", ".email-checker", function () {
+    let input = $(this);
+    let formGroup = input.closest(".form-group");
+    let loaderImage = formGroup.data("loader-image");
+    let loadingHtml =
+        '<div class="loading-spinner position-absolute" style="right: 10px; top: 38px;"><img src="' +
+        loaderImage +
+        '" width="20" height="20"></div>';
+
+    // Remove previous feedback and add loading spinner
+    formGroup.find(".invalid-feedback").remove();
+    input.removeClass("is-invalid is-valid");
+    formGroup.find(".loading-spinner").remove();
+    formGroup.append(loadingHtml);
+
+    // Call the debounced email checker
+    debouncedEmailCheck(input, formGroup);
+});
+
+const debouncedEmailCheck = debounce(function (input, formGroup) {
+    let email = input.val();
+    let userId = formGroup.data("id");
+    let checkRoute = formGroup.data("email-check-route");
+    let invalidEmailFormatMessage = formGroup.data(
+        "invalid-email-format-message"
+    );
+
+    // If email is empty, remove loading and return
+    if (!email) {
+        formGroup.find(".loading-spinner").remove();
+        return;
+    }
+
+    // Check if email has valid format
+    if (isValidEmail(email)) {
+        $.ajax({
+            url: checkRoute,
+            type: "POST",
+            data: {
+                email: email,
+                user_id: userId,
+                _token: $('meta[name="_token"]').attr("content"),
+            },
+            success: function (response) {
+                formGroup.find(".loading-spinner").remove();
+                if (!response.success) {
+                    input.addClass("is-invalid");
+                    formGroup.append(
+                        '<div class="invalid-feedback">' +
+                            response.message +
+                            "</div>"
+                    );
+                } else {
+                    input.addClass("is-valid");
+                }
+            },
+            error: function (xhr) {
+                formGroup.find(".loading-spinner").remove();
+                let response = xhr.responseJSON;
+                if (!response.success) {
+                    input.addClass("is-invalid");
+                    formGroup.append(
+                        '<div class="invalid-feedback">' +
+                            response.message +
+                            "</div>"
+                    );
+                } else {
+                    input.addClass("is-valid");
+                }
+            },
+        });
+    } else {
+        formGroup.find(".loading-spinner").remove();
+        input.addClass("is-invalid");
+        formGroup.append(
+            '<div class="invalid-feedback">' +
+                invalidEmailFormatMessage +
+                "</div>"
+        );
+    }
+}, 2000); // 2 seconds delay
+
+// Email validation helper function
+function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}

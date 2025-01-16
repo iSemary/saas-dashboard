@@ -16,15 +16,14 @@
             <input type="text" name="username" id="username" class="form-control"
                 value="{{ isset($row) ? $row->username : '' }}" required>
         </div>
-        <div class="form-group col-6">
+        <div class="form-group col-6"
+            data-loader-image="{{ asset('assets/global/images/icons/animated/loaders/loader.gif') }}"
+            data-invalid-email-format-message="{{ translate('please_enter_a_valid_email_address') }}"
+            data-id="{{ isset($row) ? $row->id : '' }}"
+            data-email-check-route="{{ route('landlord.system-users.check-email') }}">
             <label for="email" class="form-label">@translate('email')</label>
-            <input type="email" name="email" id="email" class="form-control"
+            <input type="email" name="email" id="email" class="form-control email-checker"
                 value="{{ isset($row) ? $row->email : '' }}" required>
-        </div>
-        <div class="form-group col-6">
-            <label for="password" class="form-label">@translate('password')</label>
-            <input type="password" name="password" id="password" class="form-control"
-                value="" required>
         </div>
         <div class="form-group col-6">
             <label for="role_id" class="form-label">@translate('role')</label>
@@ -44,40 +43,78 @@
                     </option>
                 @endforeach
             </select>
-        </div>    
+        </div>
         <div class="form-group col-6">
             <label for="language_id" class="form-label">@translate('language')</label>
             <select class="select2 form-control" name="language_id" required>
                 <option value="">@translate('select')</option>
                 @foreach ($languages as $language)
                     <option value="{{ $language->id }}"
-                        {{ isset($row) && $row->language_id == $language->id ? 'selected' : '' }}>{{ $language->name }}
+                        {{ isset($row) && $row->language_id == $language->id ? 'selected' : '' }}>
+                        {{ $language->name }}
                     </option>
                 @endforeach
             </select>
-        </div>    
+        </div>
+        <div class="form-group col-6 generate-password-container">
+            <label for="password" class="form-label generate-password-field">@translate('password')</label>
+            <input type="password" name="password" id="password" class="form-control generate-password-input"
+                value="" required>
+            <!-- Password strength indicator -->
+            <div class="progress mt-2" style="height: 5px;">
+                <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+            </div>
+            <!-- Password requirements list -->
+            <ul class="requirement-list">
+                <li class="length"><i class="fas fa-hourglass-end"></i> @translate('at_least_8_characters_length')</li>
+                <li class="lowercase"><i class="fas fa-hourglass-end"></i> @translate('at_least_1_lowercase_letter')</li>
+                <li class="uppercase"><i class="fas fa-hourglass-end"></i> @translate('at_least_1_uppercase_letter')</li>
+                <li class="number"><i class="fas fa-hourglass-end"></i> @translate('at_least_1_number')</li>
+                <li class="special"><i class="fas fa-hourglass-end"></i> @translate('at_least_1_special_character')</li>
+            </ul>
+        </div>
     </div>
-
-
-
     <div class="form-group">
         <label for="permissions" class="form-label">@translate('permissions')</label>
         <div class="card">
             <div class="card-body">
-                <div class="row">
-                    @foreach ($permissions as $permission)
-                        <div class="col-md-4">
-                            <div class="form-check">
-                                <input type="checkbox" name="permissions[]" id="permission_{{ $permission->id }}"
-                                    class="form-check-input" value="{{ $permission->id }}"
-                                    {{ isset($row) ? ($row->permissions->contains($permission) ? 'checked' : '') : 'checked' }}>
-                                <label for="permission_{{ $permission->id }}" class="form-check-label">
-                                    {{ translate($permission->name) }}
-                                </label>
-                            </div>
+                @php
+                    $groupedPermissions = [];
+                    foreach ($permissions as $permission) {
+                        $parts = explode('.', $permission->name);
+                        $group = end($parts);
+                        $action = $parts[0]; // Get the action part (view, create, etc.)
+
+                        if (!isset($groupedPermissions[$group])) {
+                            $groupedPermissions[$group] = [];
+                        }
+                        $groupedPermissions[$group][] = [
+                            'action' => $action,
+                            'permission' => $permission,
+                        ];
+                    }
+                    ksort($groupedPermissions);
+                @endphp
+
+                @foreach ($groupedPermissions as $group => $groupPermissions)
+                    <div class="mb-2">
+                        <h5 class="mb-2"><b>{{ translate($group) }}</b></h5>
+                        <div class="d-flex">
+                            @foreach ($groupPermissions as $permissionData)
+                                <div class="form-check mx-3">
+                                    <input type="checkbox" name="permissions[]"
+                                        id="permission_{{ $permissionData['permission']->id }}"
+                                        class="form-check-input" value="{{ $permissionData['permission']->id }}"
+                                        {{ isset($row) ? ($row->permissions->contains($permissionData['permission']) ? 'checked' : '') : 'checked' }}>
+                                    <label for="permission_{{ $permissionData['permission']->id }}"
+                                        class="form-check-label">
+                                        {{ translate($permissionData['action']) }}
+                                    </label>
+                                </div>
+                            @endforeach
                         </div>
-                    @endforeach
-                </div>
+                    </div>
+                @endforeach
             </div>
         </div>
     </div>
@@ -91,3 +128,5 @@
             class="btn btn-{{ isset($row) ? 'primary' : 'success' }}">{{ isset($row) ? translate('update') : translate('create') }}</button>
     </div>
 </form>
+
+<script src="{{ asset('assets/landlord/js/tenant/system-users/editor.js') }}"></script>

@@ -90,4 +90,12 @@ class SystemUserController extends ApiController
         $this->service->delete($id);
         return $this->return(200, "Deleted successfully");
     }
+
+    public function checkEmail(Request $request)
+    {
+        $email = $request->email;
+        $id = $request->user_id;
+        $result = $this->service->checkEmail($email, $id);
+        return $this->return($result ? 400 : 200, $result ? translate("email_is_unavailable") : translate("email_is_available"));
+    }
 }

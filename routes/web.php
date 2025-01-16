@@ -20,6 +20,8 @@ Route::middleware('auth')->group(function () {
     Route::get('2fa/validate', [TwoFactorAuthController::class, 'showValidateForm'])->name('2fa.validate');
     Route::post('2fa/verify', [TwoFactorAuthController::class, 'verify'])->name('2fa.verify');
     Route::post('2fa/check', [TwoFactorAuthController::class, 'check'])->name('2fa.check');
+
+    Route::get('attempts', [TwoFactorAuthController::class, 'showAttempts'])->name('attempts.index');
 });
 
 // Routes for guests (no auth middleware)

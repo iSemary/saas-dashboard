@@ -15,12 +15,15 @@ class Language extends Model implements Auditable
 
     public $singleTitle = "language";
     public $pluralTitle = "languages";
-    
+
     protected $fillable = [
         'name',
         'locale',
         'direction',
     ];
 
-    protected $hidden = [];
+    public function translations()
+    {
+        return $this->hasMany(Translation::class, 'language_id');
+    }
 }

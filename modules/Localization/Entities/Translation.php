@@ -15,7 +15,7 @@ class Translation extends Model implements Auditable
 
     public $singleTitle = "translation";
     public $pluralTitle = "translations";
-    
+
     protected $fillable = [
         'language_id',
         'translation_key',
@@ -23,5 +23,4 @@ class Translation extends Model implements Auditable
         'translation_context',
     ];
 
-    protected $hidden = [];
 }

@@ -22,13 +22,13 @@ class LanguageRepository implements LanguageInterface
 
     public function datatables()
     {
-        $rows =  $this->model->query()->where(
-            function ($q) {
+        $rows = $this->model->query()
+            ->withCount('translations')
+            ->where(function ($q) {
                 if (request()->from_date && request()->to_date) {
                     TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
                 }
-            }
-        );
+            });
 
         return DataTables::of($rows)
             ->addColumn('actions', function ($row) {
@@ -40,8 +40,11 @@ class LanguageRepository implements LanguageInterface
                     $this->model->singleTitle,
                 );
             })
+            ->addColumn('total_translations', function ($row) {
+                return $row->translations_count;
+            })
             ->rawColumns(['actions'])
-            ->make(true);
+            ->make(true);;
     }
 
     public function find($id)

@@ -9,7 +9,7 @@ use Modules\Auth\Jobs\RegistrationMailJob;
 use Modules\Auth\Repositories\UserRepository;
 use Modules\Customer\Repository\CustomerRepository;
 use Modules\Tenant\Helper\TenantHelper;
-use Modules\Tenant\Repository\TenantRepository;
+use Modules\Tenant\Repositories\TenantRepository;
 
 class RegistrationService {
     protected $customerRepository;

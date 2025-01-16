@@ -18,6 +18,11 @@ let cols = [
         name: "direction",
     },
     {
+        data: "total_translations",
+        name: "total_translations",
+        searchable: false,
+    },
+    {
         data: "actions",
         name: "actions",
         orderable: false,
