@@ -59,7 +59,7 @@ class UnitRepository implements UnitInterface
                 return number_format($row->base_conversion, 5);
             })
             ->editColumn('is_base_unit', function ($row) {
-                return $row->is_base_unit ? 'Yes' : 'No';
+                return $row->is_base_unit ? translate('yes') : translate('no');
             })
             ->rawColumns(['actions'])
             ->make(true);

@@ -4,8 +4,8 @@ namespace Database\Seeders\landlord;
 
 use App\Constants\Landlord\Resources;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+use Modules\Auth\Entities\Permission;
+use Modules\Auth\Entities\Role;
 
 class RolePermissionSeeder extends Seeder
 {

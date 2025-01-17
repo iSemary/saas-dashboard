@@ -5,7 +5,7 @@ namespace Modules\Auth\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\Auth\Entities\User;
-use Spatie\Permission\Models\Role;
+use Modules\Auth\Entities\Role;
 
 class LandlordUserSeeder extends Seeder
 {

@@ -5,7 +5,7 @@ namespace Modules\Tenant\Repositories;
 use App\Helpers\TableHelper;
 use Illuminate\Support\Facades\Gate;
 use Modules\Auth\Entities\User;
-use Spatie\Permission\Models\Role;
+use Modules\Auth\Entities\Role;
 use Yajra\DataTables\DataTables;
 
 class SystemUserRepository implements SystemUserInterface

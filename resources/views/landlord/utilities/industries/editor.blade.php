@@ -22,11 +22,12 @@
     </div>
 
     <div class="form-group">
-        <label for="icon" class="form-label">@translate('icon')</label><br/>
-        <input type="file" name="icon" id="icon" class="">
-        @if (isset($row) && $row->icon)
-            <img src="{{ asset('path/to/icons/' . $row->icon) }}" alt="@translate('icon')" width="50">
-        @endif
+        <label for="icon" class="form-label">@translate('icon')</label>
+        <input type="file" name="icon" id="icon" class="border-0 form-control upload-image" accept="image/*">
+        <div class="preview-image-container mt-2">
+            <img src="{{ isset($row) && $row->icon ? $row->icon : asset('assets/global/images/icons/defaults/image.png') }}"
+                width="100px" height="100px" alt="Preview" class="preview-image" />
+        </div>
     </div>
 
     <div class="form-group">

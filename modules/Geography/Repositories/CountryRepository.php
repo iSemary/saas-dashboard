@@ -39,6 +39,9 @@ class CountryRepository implements CountryInterface
             );
 
         return DataTables::of($rows)
+            ->editColumn('flag', function ($row) {
+                return '<img src="' . $row->flag . '" class="img-thumbnail" width="50px" height="50px">';
+            })
             ->filterColumn('capital_province', function ($query, $keyword) {
                 $query->whereRaw('LOWER(provinces.name) LIKE ?', ["%{$keyword}%"]);
             })
@@ -53,7 +56,7 @@ class CountryRepository implements CountryInterface
                     showIconsOnly: false
                 );
             })
-            ->rawColumns(['actions'])
+            ->rawColumns(['flag', 'actions'])
             ->make(true);
     }
 

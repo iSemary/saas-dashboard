@@ -4,7 +4,7 @@ namespace Modules\Auth\Repositories;
 
 use App\Helpers\TableHelper;
 use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
+use Modules\Auth\Entities\Role;
 use Yajra\DataTables\DataTables;
 
 class RoleRepository implements RoleInterface
@@ -23,7 +23,7 @@ class RoleRepository implements RoleInterface
 
     public function datatables()
     {
-        $rows =  $this->model->query()
+        $rows =  $this->model->query()->withTrashed()
             ->select([
                 'roles.*',
                 DB::raw('COUNT(role_has_permissions.permission_id) as total_permissions')
@@ -41,17 +41,17 @@ class RoleRepository implements RoleInterface
             ->editColumn('name', function ($row) {
                 return translate($row->name);
             })->editColumn('guard_name', function ($row) {
-                return translate($row->name);
+                return translate($row->guard_name);
             })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
-                   row: $row,
-                   editRoute: 'landlord.roles.edit',
-                   deleteRoute: 'landlord.roles.destroy',
-                   restoreRoute: 'landlord.roles.restore',
-                   type: "roles",
-                   titleType: "role",
-                   showIconsOnly: false
+                    row: $row,
+                    editRoute: 'landlord.roles.edit',
+                    deleteRoute: 'landlord.roles.destroy',
+                    restoreRoute: 'landlord.roles.restore',
+                    type: "roles",
+                    titleType: "role",
+                    showIconsOnly: false
                 );
             })
             ->rawColumns(['actions'])
@@ -93,12 +93,11 @@ class RoleRepository implements RoleInterface
         return null;
     }
 
-
     public function delete($id)
     {
-        $row = DB::table('roles')->where("id", $id);
+        $row = $this->model->where("id", $id);
         if ($row->first()) {
-            $row->delete();
+            $row->update(['deleted_at' => now()]);
             return true;
         }
         return false;
@@ -106,9 +105,9 @@ class RoleRepository implements RoleInterface
 
     public function restore($id)
     {
-        $row = DB::table('roles')->where("id", $id);
+        $row = $this->model->withTrashed()->where("id", $id);
         if ($row->first()) {
-            $row->restore();
+            $row->update(['deleted_at' => null]);
             return true;
         }
         return false;

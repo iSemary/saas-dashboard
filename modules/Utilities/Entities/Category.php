@@ -47,7 +47,7 @@ class Category extends Model implements Auditable
     public function setIconAttribute($value)
     {
         if ($value instanceof \Illuminate\Http\UploadedFile) {
-            $media = $this->upload($value);
+            $media = $this->upload($value, 'icon');
             $this->attributes['icon'] = $media->id;
         } else {
             $this->attributes['icon'] = $value;

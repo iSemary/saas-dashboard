@@ -3,7 +3,7 @@
 namespace Modules\Auth\Services;
 
 use Modules\Auth\Repositories\RoleInterface;
-use Spatie\Permission\Models\Role;
+use Modules\Auth\Entities\Role;
 
 class RoleService
 {

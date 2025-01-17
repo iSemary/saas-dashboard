@@ -44,23 +44,28 @@ trait FileHandler
      *
      * @param  \Illuminate\Http\UploadedFile  $file
      * @param  string  $column
-     * @return File  The uploaded file instance
+     * @return File|string  The uploaded file instance or error message
      */
-    public function upload(UploadedFile $file, string $column = 'icon'): File
+    public function upload(UploadedFile $file, string $column = 'icon')
     {
-        $hashName = $file->hashName();
-        $disk = $this->getDiskFromColumn($column);
-        $host = $this->getCurrentHost();
-        $folderName = $this->getFolderNameFromColumn($column);
+        try {
 
-        // Handle file storage
-        $uploadResult = $this->storeFile($file, $folderName, $hashName, $disk, $host, $column);
+            $hashName = $file->hashName();
+            $disk = $this->getDiskFromColumn($column);
+            $host = $this->getCurrentHost();
+            $folderName = $this->getFolderNameFromColumn($column);
 
-        // Get metadata
-        $fileMetadata = $this->collectMetadata($file, $uploadResult['path'], $disk, $host, $column);
+            // Handle file storage
+            $uploadResult = $this->storeFile($file, $folderName, $hashName, $disk, $host, $column);
 
-        // Create and return media record
-        return $this->createMediaRecord($file, $hashName, $uploadResult, $host, $column, $fileMetadata, $disk);
+            // Get metadata
+            $fileMetadata = $this->collectMetadata($file, $uploadResult['path'], $disk, $host, $column);
+
+            // Create and return media record
+            return $this->createMediaRecord($file, $hashName, $uploadResult, $host, $column, $fileMetadata, $disk);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
     }
 
     /**
@@ -271,7 +276,7 @@ trait FileHandler
         $parentFolderId = null;
 
         if ($parentFolderName) {
-            $parentFolderId = $this->getOrCreateFolder($parentFolderName, null)->id;
+            return $this->getOrCreateFolder($parentFolderName, null)->id;
         }
 
         return $this->getOrCreateFolder($folderName, $parentFolderId)->id;
@@ -285,7 +290,7 @@ trait FileHandler
         return Folder::firstOrCreate(
             [
                 'name' => $name,
-                'parent_id' => $parentId
+                'parent_id' => $parentId,
             ],
             [
                 'description' => 'Auto-generated folder for storing images',
@@ -353,9 +358,16 @@ trait FileHandler
     private function getLocalFileUrl(File $file): string
     {
         if ($file->access_level === 'public') {
-            return asset("storage/{$file->folder->name}/{$file->hash_name}");
+            if ($file->folder) {
+                return asset("storage/{$file->folder->name}/{$file->hash_name}");
+            } else {
+                return asset("storage/{$file->hash_name}");
+            }
         }
 
-        return Storage::disk($file->access_level)->url("{$file->folder->name}/{$file->hash_name}");
+        if ($file->folder) {
+            return Storage::disk($file->access_level)->url("{$file->folder->name}/{$file->hash_name}");
+        }
+        return Storage::disk($file->access_level)->url("{$file->hash_name}");
     }
 }

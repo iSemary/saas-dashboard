@@ -36,6 +36,12 @@ class ProvinceRepository implements ProvinceInterface
             );
 
         return DataTables::of($rows)
+            ->editColumn('flag', function ($row) {
+                return '<img src="' . $row->flag . '" class="img-thumbnail" width="50px" height="50px">';
+            })
+            ->editColumn('is_capital', function ($row) {
+                return $row->is_capital ? translate('yes') : translate('no');
+            })
             ->filterColumn('country', function ($query, $keyword) {
                 $query->whereRaw('LOWER(countries.name) LIKE ?', ["%{$keyword}%"]);
             })
@@ -50,7 +56,7 @@ class ProvinceRepository implements ProvinceInterface
                     showIconsOnly: false
                 );
             })
-            ->rawColumns(['actions'])
+            ->rawColumns(['flag', 'actions'])
             ->make(true);
     }
 

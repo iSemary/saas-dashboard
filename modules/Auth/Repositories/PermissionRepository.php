@@ -4,7 +4,7 @@ namespace Modules\Auth\Repositories;
 
 use App\Helpers\TableHelper;
 use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Permission;
+use Modules\Auth\Entities\Permission;
 use Yajra\DataTables\DataTables;
 
 class PermissionRepository implements PermissionInterface
@@ -35,7 +35,7 @@ class PermissionRepository implements PermissionInterface
             ->editColumn('name', function ($row) {
                 return translate($row->name);
             })->editColumn('guard_name', function ($row) {
-                return translate($row->name);
+                return translate($row->guard_name);
             })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
@@ -71,12 +71,12 @@ class PermissionRepository implements PermissionInterface
         }
         return null;
     }
-
+    
     public function delete($id)
     {
-        $row = DB::table('permissions')->where("id", $id);
+        $row = $this->model->where("id", $id);
         if ($row->first()) {
-            $row->delete();
+            $row->update(['deleted_at' => now()]);
             return true;
         }
         return false;
@@ -84,9 +84,9 @@ class PermissionRepository implements PermissionInterface
 
     public function restore($id)
     {
-        $row = DB::table('permissions')->where("id", $id);
+        $row = $this->model->withTrashed()->where("id", $id);
         if ($row->first()) {
-            $row->restore();
+            $row->update(['deleted_at' => null]);
             return true;
         }
         return false;
