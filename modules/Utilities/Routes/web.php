@@ -16,6 +16,7 @@ use Modules\Utilities\Http\Controllers\UnitController;
 
 Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:landlord', '2fa'])->group(function () {
     Route::resource('categories', CategoryController::class)->names('categories');
+
     Route::resource('currencies', CurrencyController::class)->names('currencies');
 
     // Tags and Tag Values

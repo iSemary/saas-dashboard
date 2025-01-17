@@ -46,11 +46,13 @@ class CityRepository implements CityInterface
             })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
-                    $row,
-                    'landlord.cities.edit',
-                    'landlord.cities.destroy',
-                    $this->model->pluralTitle,
-                    $this->model->singleTitle,
+                    row: $row,
+                    editRoute: 'landlord.cities.edit',
+                    deleteRoute: 'landlord.cities.destroy',
+                    restoreRoute: 'landlord.cities.restore',
+                    type: $this->model->pluralTitle,
+                    titleType: $this->model->singleTitle,
+                    showIconsOnly: false
                 );
             })
             ->rawColumns(['actions'])

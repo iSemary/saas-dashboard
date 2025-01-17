@@ -41,11 +41,13 @@ class ProvinceRepository implements ProvinceInterface
             })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
-                    $row,
-                    'landlord.provinces.edit',
-                    'landlord.provinces.destroy',
-                    $this->model->pluralTitle,
-                    $this->model->singleTitle,
+                    row: $row,
+                    editRoute: 'landlord.provinces.edit',
+                    deleteRoute: 'landlord.provinces.destroy',
+                    restoreRoute: 'landlord.provinces.restore',
+                    type: $this->model->pluralTitle,
+                    titleType: $this->model->singleTitle,
+                    showIconsOnly: false
                 );
             })
             ->rawColumns(['actions'])

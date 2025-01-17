@@ -732,10 +732,71 @@ function deleteRow(link, ModelDeleteType) {
         }
     });
 }
+/**
+ *
+ * ===== Restore Function Section
+ *
+ */
+
+function restoreRow(link, ModelDeleteType) {
+    Swal.fire({
+        title: "lang.are_you_sure",
+        text: "lang.you_want_restore_this" + ModelDeleteType + " ?",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#FFD43B",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "lang.restore",
+        cancelButtonText: "lang.cancel",
+    }).then((result) => {
+        if (result.value) {
+            $.ajax({
+                url: link,
+                type: "POST",
+                data: {
+                    _token: CsrfToken,
+                },
+            })
+                .done(function (data) {
+                    if (data.status == 200) {
+                        Swal.fire({
+                            text: "lang.restored_successfully",
+                            confirmButtonText: "lang.ok",
+                            type: "success",
+                            toast: true,
+                            position: "bottom",
+                        });
+                    } else {
+                        Swal.fire({
+                            text: data.response,
+                            confirmButtonText: "lang.ok",
+                            type: "error",
+                            toast: true,
+                            position: "bottom",
+                        });
+                    }
+                    $(".dataTable").DataTable().ajax.reload();
+                })
+                .fail(function (data) {
+                    Swal.fire({
+                        text: data.response,
+                        type: "error",
+                        toast: true,
+                        position: "bottom",
+                    });
+                });
+        }
+    });
+}
 
 $(document).on("click", ".delete-btn", function (event) {
     event.preventDefault();
     deleteRow($(this).attr("data-url"), $(this).attr("data-delete-type"));
+});
+
+$(document).on("click", ".restore-btn", function (event) {
+    event.preventDefault();
+    restoreRow($(this).attr("data-url"), $(this).attr("data-restore-type"));
 });
 
 // Branch change stock script

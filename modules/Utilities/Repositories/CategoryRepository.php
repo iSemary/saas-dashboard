@@ -23,11 +23,12 @@ class CategoryRepository implements CategoryInterface
 
     public function datatables()
     {
-        $rows = $this->model->query()
+        $rows = $this->model->query()->withTrashed()
             ->select([
                 'categories.*',
                 DB::raw('(SELECT name FROM categories AS parent WHERE parent.id = categories.parent_id) AS parent_name')
-            ])->whereNull("deleted_at")->where(
+            ])
+            ->where(
                 function ($q) {
                     if (request()->from_date && request()->to_date) {
                         TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
@@ -47,12 +48,13 @@ class CategoryRepository implements CategoryInterface
             })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
-                    $row,
-                    'landlord.categories.edit',
-                    'landlord.categories.destroy',
-                    $this->model->pluralTitle,
-                    $this->model->singleTitle,
-                    true
+                    row: $row,
+                    editRoute: 'landlord.categories.edit',
+                    deleteRoute: 'landlord.categories.destroy',
+                    restoreRoute: 'landlord.categories.restore',
+                    type: $this->model->pluralTitle,
+                    titleType: $this->model->singleTitle,
+                    showIconsOnly: true
                 );
             })
             ->rawColumns(['icon', 'actions'])
@@ -66,11 +68,6 @@ class CategoryRepository implements CategoryInterface
 
     public function create(array $data)
     {
-        if (isset($data['icon']) && $data['icon'] instanceof \Illuminate\Http\UploadedFile) {
-            $model = new $this->model;
-            $media = $model->upload($data['icon']);
-            $data['icon'] = $media->id;
-        }
         return $this->model->create($data);
     }
 
@@ -89,6 +86,16 @@ class CategoryRepository implements CategoryInterface
         $row = $this->model->find($id);
         if ($row) {
             $row->delete();
+            return true;
+        }
+        return false;
+    }
+
+    public function restore($id)
+    {
+        $row = $this->model->withTrashed()->find($id);
+        if ($row) {
+            $row->restore();
             return true;
         }
         return false;

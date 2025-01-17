@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Modules\Tenant\Helper\TenantHelper;
 use Modules\Tenant\Entities\Tenant;
+use Modules\Utilities\Entities\Category;
 
 class TenantController extends Controller
 {

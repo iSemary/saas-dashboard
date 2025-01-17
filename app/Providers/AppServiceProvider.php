@@ -31,5 +31,12 @@ class AppServiceProvider extends ServiceProvider
         // if app is production then it will prohibits these commands:
         // db:wipe, migrate:refresh, migrate:fresh, migrate:reset
         DB::prohibitDestructiveCommands((env("APP_ENV") == "production"));
+
+
+        // Customized the Route::resource method to add restore method
+        $registrar = new \App\Registrar\ResourceRegistrar($this->app['router']);
+        $this->app->bind('Illuminate\Routing\ResourceRegistrar', function () use ($registrar) {
+            return $registrar;
+        });
     }
 }

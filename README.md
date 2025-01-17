@@ -246,4 +246,21 @@ public function getIconAttribute($value)
 {
     return $this->getFileUrl($value);
 }
+
+/**
+ * Set the icon attribute.
+ *
+ * @param  mixed  $value
+ * @return void
+ */
+public function setIconAttribute($value)
+{
+    if ($value instanceof \Illuminate\Http\UploadedFile) {
+        $media = $this->upload($value);
+        $this->attributes['icon'] = $media->id;
+    } else {
+        $this->attributes['icon'] = $value;
+    }
+}
+
 ```

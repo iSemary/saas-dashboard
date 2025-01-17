@@ -51,11 +51,13 @@ class TownRepository implements TownInterface
             })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
-                    $row,
-                    'landlord.towns.edit',
-                    'landlord.towns.destroy',
-                    $this->model->pluralTitle,
-                    $this->model->singleTitle,
+                    row: $row,
+                    editRoute: 'landlord.towns.edit',
+                    deleteRoute: 'landlord.towns.destroy',
+                    restoreRoute: 'landlord.towns.restore',
+                    type: $this->model->pluralTitle,
+                    titleType: $this->model->singleTitle,
+                    showIconsOnly: false
                 );
             })
             ->rawColumns(['actions'])

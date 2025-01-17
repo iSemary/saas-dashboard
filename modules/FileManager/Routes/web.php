@@ -8,6 +8,6 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:land
     // DEVELOPERS ONLY
     Route::prefix('development')->name('development.')->group(function () {
         Route::get('files/manage', [FileController::class, 'manager'])->name('files.manage');
-        Route::resource('files', FileController::class)->names('files');
+        Route::resource('files', FileController::class)->names('files')->except(['restore']);
     });
 });

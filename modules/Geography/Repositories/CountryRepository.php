@@ -44,11 +44,13 @@ class CountryRepository implements CountryInterface
             })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
-                    $row,
-                    'landlord.countries.edit',
-                    'landlord.countries.destroy',
-                    $this->model->pluralTitle,
-                    $this->model->singleTitle,
+                    row: $row,
+                    editRoute: 'landlord.countries.edit',
+                    deleteRoute: 'landlord.countries.destroy',
+                    restoreRoute: 'landlord.countries.restore',
+                    type: $this->model->pluralTitle,
+                    titleType: $this->model->singleTitle,
+                    showIconsOnly: false
                 );
             })
             ->rawColumns(['actions'])

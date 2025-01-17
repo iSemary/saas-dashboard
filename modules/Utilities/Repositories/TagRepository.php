@@ -44,11 +44,13 @@ class TagRepository implements TagInterface
             })
             ->addColumn('actions', function ($row) {
                 $actionButtons = TableHelper::actionButtons(
-                    $row,
-                    'landlord.tags.edit',
-                    'landlord.tags.destroy',
-                    $this->model->pluralTitle,
-                    $this->model->singleTitle,
+                    row: $row,
+                    editRoute: 'landlord.tags.edit',
+                    deleteRoute: 'landlord.tags.destroy',
+                    restoreRoute: 'landlord.tags.restore',
+                    type: $this->model->pluralTitle,
+                    titleType: $this->model->singleTitle,
+                    showIconsOnly: false
                 );
                 // Show Button
                 if (Gate::allows('update.tag_values')) {

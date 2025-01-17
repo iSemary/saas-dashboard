@@ -43,11 +43,13 @@ class UnitRepository implements UnitInterface
             })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
-                    $row,
-                    'landlord.units.edit',
-                    'landlord.units.destroy',
-                    $this->model->pluralTitle,
-                    $this->model->singleTitle,
+                    row: $row,
+                    editRoute: 'landlord.units.edit',
+                    deleteRoute: 'landlord.units.destroy',
+                    restoreRoute: 'landlord.units.restore',
+                    type: $this->model->pluralTitle,
+                    titleType: $this->model->singleTitle,
+                    showIconsOnly: false
                 );
             })
             ->editColumn('type', function ($row) {

@@ -39,11 +39,13 @@ class IndustryRepository implements IndustryInterface
             })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
-                    $row,
-                    'landlord.industries.edit',
-                    'landlord.industries.destroy',
-                    $this->model->pluralTitle,
-                    $this->model->singleTitle,
+                    row: $row,
+                    editRoute: 'landlord.industries.edit',
+                    deleteRoute: 'landlord.industries.destroy',
+                    restoreRoute: 'landlord.industries.restore',
+                    type: $this->model->pluralTitle,
+                    titleType: $this->model->singleTitle,
+                    showIconsOnly: false
                 );
             })
             ->rawColumns(['icon', 'actions'])

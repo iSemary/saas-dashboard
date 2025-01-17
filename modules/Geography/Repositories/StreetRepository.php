@@ -56,11 +56,13 @@ class StreetRepository implements StreetInterface
             })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
-                    $row,
-                    'landlord.streets.edit',
-                    'landlord.streets.destroy',
-                    $this->model->pluralTitle,
-                    $this->model->singleTitle,
+                    row: $row,
+                    editRoute: 'landlord.streets.edit',
+                    deleteRoute: 'landlord.streets.destroy',
+                    restoreRoute: 'landlord.streets.restore',
+                    type: $this->model->pluralTitle,
+                    titleType: $this->model->singleTitle,
+                    showIconsOnly: false,
                 );
             })
             ->rawColumns(['actions'])

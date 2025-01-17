@@ -51,12 +51,13 @@ class ConfigurationRepository implements ConfigurationInterface
             })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
-                    $row,
-                    'landlord.development.configurations.edit',
-                    'landlord.development.configurations.destroy',
-                    $this->model->pluralTitle,
-                    $this->model->singleTitle,
-                    true
+                    row: $row,
+                    editRoute: 'landlord.development.configurations.edit',
+                    deleteRoute: 'landlord.development.configurations.destroy',
+                    restoreRoute: 'landlord.development.configurations.restore',
+                    type: $this->model->pluralTitle,
+                    titleType: $this->model->singleTitle,
+                    showIconsOnly: true
                 );
             })
             ->rawColumns([

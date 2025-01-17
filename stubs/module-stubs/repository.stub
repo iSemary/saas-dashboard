@@ -22,7 +22,7 @@ class $MODEL_NAME$Repository implements $MODEL_NAME$Interface
 
     public function datatables()
     {
-        $rows = $this->model->query()->where(
+        $rows = $this->model->query()->withTrashed()->where(
                 function ($q) {
                     if (request()->from_date && request()->to_date) {
                         TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
@@ -33,11 +33,13 @@ class $MODEL_NAME$Repository implements $MODEL_NAME$Interface
         return DataTables::of($rows)
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
-                    $row,
-                    'landlord.$PLURAL_TITLE$.edit',
-                    'landlord.$PLURAL_TITLE$.destroy',
-                    $this->model->pluralTitle,
-                    $this->model->singleTitle,
+                    row: $row,
+                    editRoute: 'landlord.$PLURAL_TITLE$.edit',
+                    deleteRoute: 'landlord.$PLURAL_TITLE$.destroy',
+                    restoreRoute: 'landlord.$PLURAL_TITLE$.restore',
+                    type: $this->model->pluralTitle,
+                    titleType: $this->model->singleTitle,
+                    showIconsOnly: false
                 );
             })
             ->rawColumns(['actions'])
@@ -69,6 +71,16 @@ class $MODEL_NAME$Repository implements $MODEL_NAME$Interface
         $row = $this->model->find($id);
         if ($row) {
             $row->delete();
+            return true;
+        }
+        return false;
+    }
+
+    public function restore($id)
+    {
+        $row = $this->model->withTrashed()->find($id);
+        if ($row) {
+            $row->restore();
             return true;
         }
         return false;

@@ -33,11 +33,13 @@ class AnnouncementRepository implements AnnouncementInterface
         return DataTables::of($rows)
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
-                    $row,
-                    'landlord.announcements.edit',
-                    'landlord.announcements.destroy',
-                    $this->model->pluralTitle,
-                    $this->model->singleTitle,
+                    row: $row,
+                    editRoute: 'landlord.announcements.edit',
+                    deleteRoute: 'landlord.announcements.destroy',
+                    restoreRoute: 'landlord.announcements.restore',
+                    type: $this->model->pluralTitle,
+                    titleType: $this->model->singleTitle,
+                    showIconsOnly: false
                 );
             })
             ->rawColumns(['actions'])

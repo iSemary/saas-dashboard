@@ -61,12 +61,12 @@ class FileRepository implements FileInterface
             })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
-                    $row,
-                    null,
-                    'landlord.development.files.destroy',
-                    $this->model->pluralTitle,
-                    $this->model->singleTitle,
-                    true
+                    row:$row,
+                    editRoute:null,
+                    deleteRoute:'landlord.development.files.destroy',
+                    type:$this->model->pluralTitle,
+                    titleType:$this->model->singleTitle,
+                    showIconsOnly:true
                 );
             })
             ->rawColumns(['folder', 'host', 'access_level', 'actions'])

@@ -39,21 +39,35 @@ class TableHelper
         }
     }
 
-    public static function actionButtons($row, $editRoute = null, $deleteRoute = null, $type = null, $titleType = null, $showIconsOnly = false)
-    {
+    public static function actionButtons(
+        $row,
+        $editRoute = null,
+        $deleteRoute = null,
+        $restoreRoute = null,
+        $type = null,
+        $titleType = null,
+        $showIconsOnly = false
+    ) {
         $btn = '';
 
         // Edit button
-        if ($editRoute && Gate::allows('update.' . $type)) {
+        if (!isset($row->deleted_at) && !$row->deleted_at && $editRoute && Gate::allows('update.' . $type)) {
             $btn .= '<button type="button" data-modal-title="Edit ' . $titleType . '" data-modal-link="' . route($editRoute, $row->id) . '" class="btn-primary mx-1 btn-sm open-edit-modal">';
             $btn .= $showIconsOnly ? '<i class="far fa-edit"></i>' : '<i class="far fa-edit fa-fw"></i> ' . translate('edit');
             $btn .= '</button>';
         }
 
         // Delete button
-        if ($deleteRoute && Gate::allows('delete.' . $type)) {
-            $btn .= '<button type="button" data-delete-type="' . __($titleType) . '" data-url="' . route($deleteRoute, $row->id) . '" class="btn-danger btn-sm delete-btn">';
+        if (!isset($row->deleted_at) && !$row->deleted_at && $deleteRoute && Gate::allows('delete.' . $type)) {
+            $btn .= '<button type="button" data-delete-type="' . __($titleType) . '" data-url="' . route($deleteRoute, $row->id) . '" class="btn-danger mx-1 btn-sm delete-btn">';
             $btn .= $showIconsOnly ? '<i class="fa fa-trash"></i>' : '<i class="fa fa-trash fa-fw"></i> ' . translate('delete');
+            $btn .= '</button>';
+        }
+
+        // Restore button
+        if (isset($row->deleted_at) && $row->deleted_at && $restoreRoute && Gate::allows('restore.' . $type)) {
+            $btn .= '<button type="button" data-restore-type="' . __($titleType) . '" data-url="' . route($restoreRoute, $row->id) . '" class="btn-warning mx-1 text-white btn-sm restore-btn">';
+            $btn .= $showIconsOnly ? '<i class="fas fa-redo-alt"></i>' : '<i class="fas fa-redo-alt fa-fw"></i> ' . translate('restore');
             $btn .= '</button>';
         }
 

@@ -33,11 +33,13 @@ class CurrencyRepository implements CurrencyInterface
         return DataTables::of($rows)
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
-                    $row,
-                    'landlord.currencies.edit',
-                    'landlord.currencies.destroy',
-                    $this->model->pluralTitle,
-                    $this->model->singleTitle,
+                    row: $row,
+                    editRoute: 'landlord.currencies.edit',
+                    deleteRoute: 'landlord.currencies.destroy',
+                    restoreRoute: 'landlord.currencies.restore',
+                    type: $this->model->pluralTitle,
+                    titleType: $this->model->singleTitle,
+                    showIconsOnly: false
                 );
             })
             ->rawColumns(['actions'])

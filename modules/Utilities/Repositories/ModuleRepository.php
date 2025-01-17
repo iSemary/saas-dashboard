@@ -39,11 +39,13 @@ class ModuleRepository implements ModuleInterface
             })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
-                    $row,
-                    'landlord.modules.edit',
-                    'landlord.modules.destroy',
-                    $this->model->pluralTitle,
-                    $this->model->singleTitle,
+                    row: $row,
+                    editRoute: 'landlord.modules.edit',
+                    deleteRoute: 'landlord.modules.destroy',
+                    restoreRoute: 'landlord.modules.restore',
+                    type: $this->model->pluralTitle,
+                    titleType: $this->model->singleTitle,
+                    showIconsOnly: false
                 );
             })
             ->rawColumns(['icon', 'actions'])

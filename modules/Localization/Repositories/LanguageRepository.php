@@ -35,11 +35,13 @@ class LanguageRepository implements LanguageInterface
         return DataTables::of($rows)
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
-                    $row,
-                    'landlord.languages.edit',
-                    'landlord.languages.destroy',
-                    $this->model->pluralTitle,
-                    $this->model->singleTitle,
+                    row: $row,
+                    editRoute: 'landlord.languages.edit',
+                    deleteRoute: 'landlord.languages.destroy',
+                    restoreRoute: 'landlord.languages.restore',
+                    type: $this->model->pluralTitle,
+                    titleType: $this->model->singleTitle,
+                    showIconsOnly: false
                 );
             })
             ->addColumn('total_translations', function ($row) use ($totalEnglishTranslations) {

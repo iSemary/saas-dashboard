@@ -38,12 +38,13 @@ class SystemUserRepository implements SystemUserInterface
             })
             ->addColumn('actions', function ($row) {
                 $actionButtons = TableHelper::actionButtons(
-                    $row,
-                    'landlord.system-users.edit',
-                    'landlord.system-users.destroy',
-                    "system_users",
-                    "system_user",
-                    true
+                    row: $row,
+                    editRoute: 'landlord.system-users.edit',
+                    deleteRoute: 'landlord.system-users.destroy',
+                    restoreRoute: 'landlord.system-users.restore',
+                    type: "system_users",
+                    titleType: "system_user",
+                    showIconsOnly: true
                 );
 
                 if (Gate::allows('read.activity_logs')) {

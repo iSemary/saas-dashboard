@@ -42,6 +42,7 @@ class TypeRepository implements TypeInterface
                     $row,
                     'landlord.types.edit',
                     'landlord.types.destroy',
+                    'landlord.types.restore',
                     $this->model->pluralTitle,
                     $this->model->singleTitle,
                 );

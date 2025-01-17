@@ -44,11 +44,13 @@ class TranslationRepository implements TranslationInterface
             })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
-                    $row,
-                    'landlord.translations.edit',
-                    'landlord.translations.destroy',
-                    $this->model->pluralTitle,
-                    $this->model->singleTitle,
+                    row: $row,
+                    editRoute: 'landlord.translations.edit',
+                    deleteRoute: 'landlord.translations.destroy',
+                    restoreRoute: 'landlord.translations.restore',
+                    type: $this->model->pluralTitle,
+                    titleType: $this->model->singleTitle,
+                    showIconsOnly: false
                 );
             })
             ->rawColumns(['actions'])

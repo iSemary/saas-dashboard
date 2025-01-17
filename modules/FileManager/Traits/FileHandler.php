@@ -17,6 +17,7 @@ trait FileHandler
      */
     public function __construct()
     {
+        parent::__construct();
         $this->configurationService = app('Modules\Development\Services\ConfigurationService');
         $this->AWSService = app('Modules\FileManager\Services\AWSService');
     }

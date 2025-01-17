@@ -39,11 +39,13 @@ class PermissionRepository implements PermissionInterface
             })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
-                    $row,
-                    'landlord.permissions.edit',
-                    'landlord.permissions.destroy',
-                    "permissions",
-                    "permission",
+                   row: $row,
+                   editRoute: 'landlord.permissions.edit',
+                   deleteRoute: 'landlord.permissions.destroy',
+                   restoreRoute: 'landlord.permissions.restore',
+                   type: "permissions",
+                   titleType: "permission",
+                   showIconsOnly: false
                 );
             })
             ->rawColumns(['actions'])

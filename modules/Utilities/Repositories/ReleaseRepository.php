@@ -33,11 +33,13 @@ class ReleaseRepository implements ReleaseInterface
         return DataTables::of($rows)
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
-                    $row,
-                    'landlord.releases.edit',
-                    'landlord.releases.destroy',
-                    $this->model->pluralTitle,
-                    $this->model->singleTitle,
+                    row: $row,
+                    editRoute: 'landlord.releases.edit',
+                    deleteRoute: 'landlord.releases.destroy',
+                    restoreRoute: 'landlord.releases.restore',
+                    type: $this->model->pluralTitle,
+                    titleType: $this->model->singleTitle,
+                    showIconsOnly: false
                 );
             })
             ->rawColumns(['actions'])

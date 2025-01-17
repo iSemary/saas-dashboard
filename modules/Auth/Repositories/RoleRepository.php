@@ -45,11 +45,13 @@ class RoleRepository implements RoleInterface
             })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
-                    $row,
-                    'landlord.roles.edit',
-                    'landlord.roles.destroy',
-                    "roles",
-                    "role",
+                   row: $row,
+                   editRoute: 'landlord.roles.edit',
+                   deleteRoute: 'landlord.roles.destroy',
+                   restoreRoute: 'landlord.roles.restore',
+                   type: "roles",
+                   titleType: "role",
+                   showIconsOnly: false
                 );
             })
             ->rawColumns(['actions'])

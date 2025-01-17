@@ -35,12 +35,13 @@ class TenantRepository implements TenantInterface
         return DataTables::of($rows)
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
-                    $row,
-                    'landlord.tenants.edit',
-                    'landlord.tenants.destroy',
-                    "tenants",
-                    "tenant",
-                    true
+                    row: $row,
+                    editRoute: 'landlord.tenants.edit',
+                    deleteRoute: 'landlord.tenants.destroy',
+                    restoreRoute: 'landlord.tenants.restore',
+                    type: "tenants",
+                    titleType: "tenant",
+                    showIconsOnly: true
                 );
             })
             ->rawColumns(['actions'])

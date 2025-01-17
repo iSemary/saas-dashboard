@@ -71,5 +71,9 @@ class $MODEL_NAME$Controller extends ApiController
     {
         $this->service->delete($id);
         return $this->return(200, "Deleted successfully");
+    }    public function destroy($id)
+    {
+        $this->service->delete($id);
+        return $this->return(200, "Deleted successfully");
     }
 }
