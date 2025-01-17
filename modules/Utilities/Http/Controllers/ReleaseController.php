@@ -78,4 +78,10 @@ class ReleaseController extends ApiController
         $this->service->delete($id);
         return $this->return(200, "Deleted successfully");
     }
+
+    public function restore($id)
+    {
+        $this->service->restore($id);
+        return $this->return(200, "Deleted successfully");
+    }
 }

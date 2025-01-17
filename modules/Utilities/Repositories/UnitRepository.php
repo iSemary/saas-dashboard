@@ -22,7 +22,7 @@ class UnitRepository implements UnitInterface
 
     public function datatables()
     {
-        $rows = $this->model->query()
+        $rows = $this->model->query()->withTrashed()
             ->select([
                 'units.*',
                 'types.name as type'

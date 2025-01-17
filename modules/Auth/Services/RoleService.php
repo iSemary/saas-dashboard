@@ -45,4 +45,10 @@ class RoleService
     {
         return $this->repository->delete($id);
     }
+
+    public function restore($id)
+    {
+        return $this->repository->restore($id);
+    }
 }
+

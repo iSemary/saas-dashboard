@@ -23,7 +23,7 @@ class TagRepository implements TagInterface
 
     public function datatables(int $id = null)
     {
-        $rows = $this->model->query()
+        $rows = $this->model->query()->withTrashed()
             ->where(function ($q) use ($id) {
                 if ($id) {
                     $q->where('parent_id', $id);
@@ -89,6 +89,16 @@ class TagRepository implements TagInterface
         $row = $this->model->find($id);
         if ($row) {
             $row->delete();
+            return true;
+        }
+        return false;
+    }
+
+    public function restore($id)
+    {
+        $row = $this->model->withTrashed()->find($id);
+        if ($row) {
+            $row->restore();
             return true;
         }
         return false;

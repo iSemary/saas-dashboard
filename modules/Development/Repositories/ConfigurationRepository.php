@@ -23,7 +23,7 @@ class ConfigurationRepository implements ConfigurationInterface
 
     public function datatables()
     {
-        $rows = $this->model->query()
+        $rows = $this->model->query()->withTrashed()
             ->select([
                 'configurations.*',
                 'types.name as type'

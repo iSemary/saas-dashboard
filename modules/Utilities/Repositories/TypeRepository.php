@@ -22,7 +22,7 @@ class TypeRepository implements TypeInterface
 
     public function datatables()
     {
-        $rows = $this->model->query()->where(
+        $rows = $this->model->query()->withTrashed()->where(
             function ($q) {
                 if (request()->from_date && request()->to_date) {
                     TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
@@ -76,6 +76,16 @@ class TypeRepository implements TypeInterface
         $row = $this->model->find($id);
         if ($row) {
             $row->delete();
+            return true;
+        }
+        return false;
+    }
+
+    public function restore($id)
+    {
+        $row = $this->model->withTrashed()->find($id);
+        if ($row) {
+            $row->restore();
             return true;
         }
         return false;

@@ -22,7 +22,7 @@ class LanguageRepository implements LanguageInterface
 
     public function datatables()
     {
-        $rows = $this->model->query()
+        $rows = $this->model->query()->withTrashed()
             ->withCount('translations')
             ->where(function ($q) {
                 if (request()->from_date && request()->to_date) {
@@ -76,6 +76,16 @@ class LanguageRepository implements LanguageInterface
         $row = $this->model->find($id);
         if ($row) {
             $row->delete();
+            return true;
+        }
+        return false;
+    }
+
+    public function restore($id)
+    {
+        $row = $this->model->withTrashed()->find($id);
+        if ($row) {
+            $row->restore();
             return true;
         }
         return false;

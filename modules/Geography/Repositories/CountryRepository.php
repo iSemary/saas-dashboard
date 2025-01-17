@@ -22,7 +22,7 @@ class CountryRepository implements CountryInterface
 
     public function datatables()
     {
-        $rows = $this->model->query()
+        $rows = $this->model->query()->withTrashed()
             ->leftJoin("provinces", function ($join) {
                 $join->on("provinces.country_id", "=", "countries.id")
                     ->where("provinces.is_capital", true);
@@ -82,6 +82,16 @@ class CountryRepository implements CountryInterface
         $row = $this->model->find($id);
         if ($row) {
             $row->delete();
+            return true;
+        }
+        return false;
+    }
+
+    public function restore($id)
+    {
+        $row = $this->model->withTrashed()->find($id);
+        if ($row) {
+            $row->restore();
             return true;
         }
         return false;

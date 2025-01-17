@@ -23,7 +23,7 @@ class CategoryRepository implements CategoryInterface
 
     public function datatables()
     {
-        $rows = $this->model->query()->withTrashed()
+        $rows = $this->model->query()->withTrashed()->withTrashed()
             ->select([
                 'categories.*',
                 DB::raw('(SELECT name FROM categories AS parent WHERE parent.id = categories.parent_id) AS parent_name')

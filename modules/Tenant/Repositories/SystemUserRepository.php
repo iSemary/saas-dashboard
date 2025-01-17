@@ -24,7 +24,7 @@ class SystemUserRepository implements SystemUserInterface
 
     public function datatables()
     {
-        $rows = $this->model->query()->where(
+        $rows = $this->model->query()->withTrashed()->where(
             function ($q) {
                 if (request()->from_date && request()->to_date) {
                     TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);

@@ -88,4 +88,14 @@ class CityRepository implements CityInterface
         }
         return false;
     }
+
+    public function restore($id)
+    {
+        $row = $this->model->withTrashed()->find($id);
+        if ($row) {
+            $row->restore();
+            return true;
+        }
+        return false;
+    }
 }
