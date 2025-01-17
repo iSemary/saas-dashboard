@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->integer("country_id");
             $table->boolean('is_capital');
             $table->string('flag')->nullable();
+            $table->string('timezone')->nullable();
             $table->string('phone_code')->nullable();
             $table->softDeletes();
             $table->timestamps();

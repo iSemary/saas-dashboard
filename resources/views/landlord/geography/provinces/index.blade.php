@@ -13,6 +13,7 @@
                         <th scope="col">@translate('country')</th>
                         <th scope="col">@translate('is_capital')</th>
                         <th scope="col">@translate('flag')</th>
+                        <th scope="col">@translate('timezone')</th>
                         <th scope="col">@translate('phone_code')</th>
                         <th scope="col">@translate('action')</th>
                     </tr>

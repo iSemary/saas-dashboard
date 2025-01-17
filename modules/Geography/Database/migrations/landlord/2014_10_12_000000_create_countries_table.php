@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('code')->unique();
             $table->string('region')->nullable();
             $table->string('flag')->nullable();
+            $table->string('timezone')->nullable();
             $table->string('phone_code')->nullable();
             $table->softDeletes();
             $table->timestamps();

@@ -37,6 +37,13 @@
             value="{{ isset($row) ? $row->phone_code : '' }}" required>
     </div>
 
+
+    <div class="form-group">
+        <label for="timezone" class="form-label">@translate('timezone')</label>
+        <input type="text" name="timezone" id="timezone" class="form-control"
+            value="{{ isset($row) ? $row->timezone : '' }}" required>
+    </div>
+
     <div class="form-group">
         <div class="form-status"></div>
     </div>

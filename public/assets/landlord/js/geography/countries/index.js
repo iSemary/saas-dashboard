@@ -26,6 +26,10 @@ let cols = [
         name: "flag",
     },
     {
+        data: "timezone",
+        name: "timezone",
+    },
+    {
         data: "phone_code",
         name: "phone_code",
     },
