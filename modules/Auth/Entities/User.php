@@ -12,6 +12,7 @@ use Laravel\Passport\Token;
 use Modules\Auth\Entities\EmailToken;
 use Spatie\Permission\Traits\HasRoles;
 use Laravolt\Avatar\Facade as Avatar;
+use Modules\Notification\Entities\Notification;
 
 class User extends Authenticatable
 {
@@ -63,6 +64,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserMeta::class, 'user_id', 'id');
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'user_id');
+    }
+
 
     /**
      * The function `verifyToken` checks if a given token exists in the `EmailToken` table, updates its

@@ -411,6 +411,12 @@
                                     'route' => 'landlord.development.files.index',
                                     'single' => true,
                                 ],
+                                'file_manager' => [
+                                    'icon' => 'fas fa-folder-open',
+                                    'permission' => 'manage.files',
+                                    'route' => 'landlord.development.files.manage',
+                                    'single' => true,
+                                ],
                                 'configurations' => [
                                     'icon' => 'fas fa-cogs',
                                     'permission' => 'read.configurations',

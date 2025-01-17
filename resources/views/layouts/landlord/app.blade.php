@@ -9,8 +9,9 @@
     <meta name="_token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {{-- Font Awesome --}}
-    <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/fontawesome-free/css/all.min.css') }}"
-        media="screen">
+    <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/fontawesome-free/css/all.min.css') }}" media="screen">
+    {{-- Bootstrap Icons --}}
+    <link rel="stylesheet" href="{{ asset('assets/global/plugins/bootstrap-icons/css/bootstrap-icons.min.css') }}">
     {{-- Bootstrap --}}
     <link rel="stylesheet" href="{{ asset('assets/landlord/css/bootstrap.min.css') }}" media="screen">
     {{-- Theme style --}}

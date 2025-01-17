@@ -344,3 +344,6 @@ $(document).on("change", ".upload-image", function (e) {
         reader.readAsDataURL(this.files[0]);
     }
 });
+
+
+// Notifications Drop Down

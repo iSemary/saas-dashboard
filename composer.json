@@ -7,6 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "alexusmai/laravel-file-manager": "^3.2",
         "aws/aws-sdk-php": "^3.337",
         "bacon/bacon-qr-code": "^3.0",
         "google/cloud-translate": "^1.20",

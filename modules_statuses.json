@@ -10,5 +10,6 @@
     "Subscription": true,
     "Payment": true,
     "Development": true,
-    "FileManager": true
+    "FileManager": true,
+    "Notifications": true
 }

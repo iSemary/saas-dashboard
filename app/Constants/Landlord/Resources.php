@@ -13,7 +13,7 @@ class Resources
             ],
             [
                 'name' => 'files',
-                'actions' => ['read', 'create', 'update', 'delete']
+                'actions' => ['read', 'create', 'update', 'delete', 'manage']
             ],
             [
                 'name' => 'system_users',

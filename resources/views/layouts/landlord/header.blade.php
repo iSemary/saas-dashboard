@@ -7,11 +7,38 @@
     </ul>
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto icons-nav-section">
-        <li class="nav-item dropdown ">
-            <a class="nav-link" href="#">
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button"
+                data-toggle="dropdown" aria-expanded="false">
                 <i class="fas fa-bell"></i>
+                @if($notifications->count() > 0)
+                    <span class="badge badge-danger">{{ $notifications->count() }}</span>
+                @endif
             </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="notificationsDropdown">
+                @if($notifications->isNotEmpty())
+                <h6 class="dropdown-header">Notifications</h6>
+                    @foreach($notifications as $notification)
+                        <a href="{{ $notification->route }}" class="dropdown-item">
+                            <div class="d-flex align-items-center">
+                                <div class="mr-2">
+                                    {!! $notification->icon !!}
+                                </div>
+                                <div>
+                                    <div class="small text-gray-500">{{ $notification->created_at?->diffForHumans() }}</div>
+                                    <span>{{ $notification->name }}</span>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                    @endforeach
+                    <a href="{{ route('notifications.index') }}" class="dropdown-item text-center text-primary">View All</a>
+                @else
+                    <div class="dropdown-item text-center text-muted">No new notifications</div>
+                @endif
+            </div>
         </li>
+        
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
                 aria-expanded="false">
