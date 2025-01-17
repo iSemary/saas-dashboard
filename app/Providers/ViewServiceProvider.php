@@ -23,8 +23,8 @@ class ViewServiceProvider extends ServiceProvider
             if (!auth()->check()) {
                 return;
             }
-            $notifications = auth()->user()->notifications()->latest()->take(10)->get();
             $notificationsCount = auth()->user()->notifications()->whereNull('seen_at')->count();
+            $notifications = auth()->user()->notifications()->orderByDesc("id")->take(10)->get();
             
             $view->with('notifications', $notifications);
             $view->with('notificationsCount', $notificationsCount);

@@ -54,6 +54,17 @@ class User extends Authenticatable
 
         return 'tenant';
     }
+    
+    public function getCurrentTypeName()
+    {
+        $currentConnection = config('database.default');
+
+        if ($currentConnection == 'landlord') {
+            return 'landlord';
+        }
+
+        return 'tenant';
+    }
 
     public function role()
     {

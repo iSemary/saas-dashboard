@@ -17,8 +17,7 @@
     {{-- Theme style --}}
     <link rel="stylesheet" href="{{ asset('assets/landlord/css/adminlte.min.css') }}" media="screen">
     {{-- overlayScrollbars --}}
-    <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}"
-        media="screen">
+    <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}" media="screen">
     {{--  Sweetalert 2  --}}
     <link rel="stylesheet" href="{{ asset('assets/landlord/css/sweetalert2.min.css') }}" media="screen">
     {{--  Slick   --}}

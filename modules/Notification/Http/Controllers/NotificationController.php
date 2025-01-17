@@ -3,14 +3,13 @@
 namespace Modules\Notification\Http\Controllers;
 
 use App\Http\Controllers\ApiController;
-use Modules\FileManager\Services\FileService;
-use Illuminate\Http\Request;
+use Modules\Notification\Services\NotificationService;
 
 class NotificationController extends ApiController
 {
     protected $service;
 
-    public function __construct(FileService $service)
+    public function __construct(NotificationService $service)
     {
         $this->service = $service;
     }
@@ -18,39 +17,37 @@ class NotificationController extends ApiController
     {
         $title = translate($this->service->model->pluralTitle);
 
+        $layoutPrefix = auth()->user()->getCurrentTypeName();
+
         $breadcrumbs = [
             ['text' => translate('home'), 'link' => route('home')],
             ['text' => translate($this->service->model->pluralTitle)],
         ];
 
-        return view('landlord.file-managers.files.index', compact('breadcrumbs', 'title'));
+        return view('user.notifications.index', compact('breadcrumbs', 'title', 'layoutPrefix'));
     }
 
-    public function create()
+    public function list()
     {
-        return view('landlord.file-managers.files.editor');
+        return $this->return(200, "List of notifications", ['data' => $this->service->list()]);
     }
 
-    public function store(Request $request)
+    public function markAllAsRead()
     {
-        $data = $request->all();
-        $this->service->create($data);
-        return $this->return(200, "Created successfully");
+        $this->service->markAllAsRead();
+        return $this->return(200, "Marked all as read");
     }
 
-    public function show($id) {}
-
-    public function edit($id)
+    public function markAsRead($id)
     {
-        $row = $this->service->get($id);
-        return view('landlord.file-managers.files.editor', compact('row'));
+        $this->service->markAsRead($id);
+        return $this->return(200, "Marked as read");
     }
 
-    public function update(Request $request, $id)
+    public function markAsUnread($id)
     {
-        $data = $request->all();
-        $this->service->update($id, $data);
-        return $this->return(200, "Updated successfully");
+        $this->service->markAsUnRead($id);
+        return $this->return(200, "Marked as unread");
     }
 
     public function destroy($id)

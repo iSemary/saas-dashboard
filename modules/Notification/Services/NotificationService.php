@@ -16,24 +16,24 @@ class NotificationService
         $this->repository = $repository;
     }
 
-    public function getAll()
+    public function list()
     {
-        return $this->repository->all();
+        return $this->repository->list();
     }
 
-    public function get($id)
+    public function markAllAsRead()
     {
-        return $this->repository->find($id);
+        return $this->repository->markAllAsRead();
     }
 
-    public function create(array $data)
+    public function markAsRead($id)
     {
-        return $this->repository->create($data);
+        return $this->repository->markAsRead($id);
     }
 
-    public function update($id, array $data)
+    public function markAsUnread($id)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->markAsUnread($id);
     }
 
     public function delete($id)

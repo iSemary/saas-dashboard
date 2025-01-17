@@ -4,9 +4,9 @@ namespace Modules\Notification\Repositories;
 
 interface NotificationInterface
 {
-    public function all();
-    public function find($id);
-    public function create(array $data);
-    public function update($id, array $data);
+    public function list();
+    public function markAllAsRead();
+    public function markAsRead(int $id);
+    public function markAsUnread(int $id);
     public function delete($id);
 }
