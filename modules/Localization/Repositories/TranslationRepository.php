@@ -4,6 +4,7 @@ namespace Modules\Localization\Repositories;
 
 use App\Helpers\TableHelper;
 use App\Services\CacheService;
+use Modules\Localization\Entities\Language;
 use Modules\Localization\Entities\Translation;
 use Yajra\DataTables\DataTables;
 
@@ -54,25 +55,28 @@ class TranslationRepository implements TranslationInterface
             ->make(true);
     }
 
-    public function getByKey($key)
+    public function getByKey($key, $locale = null)
     {
-        $cacheValue = $this->getByKeyByCache($key);
+        if (!$locale) {
+            $locale = app()->getLocale();
+        }
+
+        $cacheValue = $this->getByKeyByCache($key, $locale);
         if ($cacheValue) {
             app('log')->info(self::class . "|Cache Got translation key: $key value: $cacheValue");
             return $cacheValue;
         }
-        $databaseRow = $this->getByKeyByDatabase($key);
+        $databaseRow = $this->getByKeyByDatabase($key, $locale);
         if ($databaseRow) {
-            // TODO Add locale in the cache key
-            CacheService::forever("translation_{$databaseRow->translation_key}", $databaseRow->translation_value);
+            CacheService::forever("translation_{$locale}_{$databaseRow->translation_key}", $databaseRow->translation_value);
             app('log')->info(self::class . "|DB Got translation key: $key value: $databaseRow->translation_value");
             return $databaseRow->translation_value;
         }
         app('log')->info(self::class . "|UNKNOWN translation key: $key");
-        return $this->generateTranslation($key);
+        return $this->generateTranslation($key, $locale);
     }
 
-    private function generateTranslation($key)
+    private function generateTranslation($key, $locale = null)
     {
         $value = str_replace(['_', '.'], ' ', $key);
         $value = ucwords($value);
@@ -90,14 +94,17 @@ class TranslationRepository implements TranslationInterface
         return $value;
     }
 
-    private function getByKeyByDatabase($key)
+    private function getByKeyByDatabase($key, $locale = null)
     {
-        return $this->model->where("translation_key", $key)->latest()->first();
+        $language = Language::where("locale", $locale)->first();
+
+        return $this->model->where("translation_key", $key)->where("language_id", $language->id)->latest()->first();
     }
 
-    private function getByKeyByCache($key)
+    private function getByKeyByCache($key, $locale = null)
     {
-        return CacheService::get("translation_{$key}");
+        $language = Language::where("locale", $locale)->first();
+        return CacheService::get("translation_{$locale}_{$key}");
     }
 
     public function find($id)
@@ -108,8 +115,8 @@ class TranslationRepository implements TranslationInterface
     public function create(array $data)
     {
         $translation = $this->model->create($data);
-        // TODO Add locale in the cache key
-        CacheService::forever("translation_{$translation->translation_key}", $translation->translation_value);
+        $locale = Language::find($data['language_id'])->locale;
+        CacheService::forever("translation_{$locale}_{$translation->translation_key}", $translation->translation_value);
         return $translation;
     }
 
@@ -118,9 +125,9 @@ class TranslationRepository implements TranslationInterface
         $row = $this->model->find($id);
         if ($row) {
             $row->update($data);
-            // TODO Add locale in the cache key
-            CacheService::forget("translation_{$row->translation_key}");
-            CacheService::forever("translation_{$row->translation_key}", $row->translation_value);
+            $locale = Language::find($row->language_id)->locale;
+            CacheService::forget("translation_{$locale}_{$row->translation_key}");
+            CacheService::forever("translation_{$locale}_{$row->translation_key}", $row->translation_value);
             return $row;
         }
         return null;
@@ -130,8 +137,8 @@ class TranslationRepository implements TranslationInterface
     {
         $row = $this->model->find($id);
         if ($row) {
-            // TODO Add locale in the cache key
-            CacheService::forget("translation_{$row->translation_key}");
+            $locale = Language::find($row->language_id)->locale;
+            CacheService::forget("translation_{$locale}_{$row->translation_key}");
             $row->delete();
             return true;
         }

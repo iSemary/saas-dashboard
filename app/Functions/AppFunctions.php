@@ -4,9 +4,9 @@ use App\Helpers\TranslateHelper;
 use Modules\Development\Services\ConfigurationService;
 
 if (!function_exists('translate')) {
-    function translate($key)
+    function translate($key, $language = null)
     {
-        return app(TranslateHelper::class)->translate($key);
+        return app(TranslateHelper::class)->translate($key, $language);
     }
 }
 

@@ -21,7 +21,7 @@ class TranslationService
         return $this->repository->all();
     }
 
-    public function getByKey($key)
+    public function getByKey($key, $language = null)
     {
         return $this->repository->getByKey($key);
     }
