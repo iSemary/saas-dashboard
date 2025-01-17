@@ -103,4 +103,14 @@ class RoleRepository implements RoleInterface
         }
         return false;
     }
+
+    public function restore($id)
+    {
+        $row = DB::table('roles')->where("id", $id);
+        if ($row->first()) {
+            $row->restore();
+            return true;
+        }
+        return false;
+    }
 }

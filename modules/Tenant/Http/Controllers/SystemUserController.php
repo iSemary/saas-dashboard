@@ -91,6 +91,12 @@ class SystemUserController extends ApiController
         return $this->return(200, "Deleted successfully");
     }
 
+    public function restore($id)
+    {
+        $this->service->restore($id);
+        return $this->return(200, "Restored successfully");
+    }
+
     public function checkEmail(Request $request)
     {
         $email = $request->email;

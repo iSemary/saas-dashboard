@@ -73,6 +73,16 @@ class TenantRepository implements TenantInterface
         return false;
     }
 
+    public function restore($id)
+    {
+        $row = $this->model->withTrashed()->find($id);
+        if ($row) {
+            $row->restore();
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Initializes a new tenant with the given customer username.
      *

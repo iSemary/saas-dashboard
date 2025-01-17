@@ -23,7 +23,7 @@ class PermissionRepository implements PermissionInterface
 
     public function datatables()
     {
-        $rows =  $this->model->query()->where(
+        $rows =  $this->model->query()->withTrashed()->where(
             function ($q) {
                 if (request()->from_date && request()->to_date) {
                     TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
@@ -77,6 +77,16 @@ class PermissionRepository implements PermissionInterface
         $row = DB::table('permissions')->where("id", $id);
         if ($row->first()) {
             $row->delete();
+            return true;
+        }
+        return false;
+    }
+
+    public function restore($id)
+    {
+        $row = DB::table('permissions')->where("id", $id);
+        if ($row->first()) {
+            $row->restore();
             return true;
         }
         return false;

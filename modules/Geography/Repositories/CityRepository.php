@@ -22,7 +22,7 @@ class CityRepository implements CityInterface
 
     public function datatables()
     {
-        $rows =  $this->model->query()
+        $rows =  $this->model->query()->withTrashed()
             ->leftJoin("provinces", "provinces.id", "=", "cities.province_id")
             ->leftJoin("countries", "countries.id", "=", "provinces.country_id")
             ->select([

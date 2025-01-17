@@ -97,6 +97,16 @@ class UnitRepository implements UnitInterface
         return false;
     }
 
+    public function restore($id)
+    {
+        $row = $this->model->withTrashed()->find($id);
+        if ($row) {
+            $row->restore();
+            return true;
+        }
+        return false;
+    }
+
     public function getByType($typeId)
     {
         return $this->model->where('type_id', $typeId)->get();

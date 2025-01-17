@@ -139,4 +139,15 @@ class ConfigurationRepository implements ConfigurationInterface
     {
         return CacheService::get("configuration_{$key}");
     }
+
+    public function restore($id)
+    {
+        $row = $this->model->withTrashed()->find($id);
+        if ($row) {
+            CacheService::forever("configuration_{$row->configuration_key}", $row->configuration_value);
+            $row->restore();
+            return true;
+        }
+        return false;
+    }
 }

@@ -22,7 +22,7 @@ class ProvinceRepository implements ProvinceInterface
 
     public function datatables()
     {
-        $rows =  $this->model->query()
+        $rows =  $this->model->query()->withTrashed()
             ->leftJoin("countries", "countries.id", "=", "provinces.country_id")
             ->select([
                 "provinces.*",

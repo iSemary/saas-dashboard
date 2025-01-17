@@ -41,6 +41,11 @@ class TenantService
         return $this->repository->delete($id);
     }
 
+    public function restore($id)
+    {
+        return $this->repository->restore($id);
+    }
+
     public function init(string $customerUsername)
     {
         return $this->repository->init($customerUsername);

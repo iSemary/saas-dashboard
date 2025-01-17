@@ -46,6 +46,11 @@ class SystemUserService
         return $this->repository->delete($id);
     }
 
+    public function restore($id)
+    {
+        return $this->repository->restore($id);
+    }
+
     public function checkEmail($email, $id = null)
     {
         return $this->repository->checkEmail($email, $id);

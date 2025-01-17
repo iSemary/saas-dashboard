@@ -22,7 +22,7 @@ class StreetRepository implements StreetInterface
 
     public function datatables()
     {
-        $rows =  $this->model->query()
+        $rows =  $this->model->query()->withTrashed()
             ->leftJoin("towns", "towns.id", "=", "streets.town_id")
             ->leftJoin("cities", "cities.id", "=", "towns.city_id")
             ->leftJoin("provinces", "provinces.id", "=", "cities.province_id")

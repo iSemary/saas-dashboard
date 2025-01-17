@@ -115,6 +115,16 @@ class SystemUserRepository implements SystemUserInterface
         return false;
     }
 
+    public function restore($id)
+    {
+        $row = $this->model->withTrashed()->find($id);
+        if ($row) {
+            $row->restore();
+            return true;
+        }
+        return false;
+    }
+
     public function checkEmail($email, $id = null)
     {
         $query = $this->model->where('email', $email);

@@ -24,7 +24,7 @@ class TranslationRepository implements TranslationInterface
 
     public function datatables()
     {
-        $rows =  $this->model->query()
+        $rows =  $this->model->query()->withTrashed()
             ->leftJoin("languages", function ($join) {
                 $join->on("languages.id", "=", "translations.language_id");
             })->select([
@@ -142,6 +142,18 @@ class TranslationRepository implements TranslationInterface
             $locale = Language::find($row->language_id)->locale;
             CacheService::forget("translation_{$locale}_{$row->translation_key}");
             $row->delete();
+            return true;
+        }
+        return false;
+    }
+
+    public function restore($id)
+    {
+        $row = $this->model->withTrashed()->find($id);
+        if ($row) {
+            $locale = Language::find($row->language_id)->locale;
+            CacheService::forever("translation_{$locale}_{$row->translation_key}", $row->translation_value);
+            $row->restore();
             return true;
         }
         return false;

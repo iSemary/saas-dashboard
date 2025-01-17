@@ -22,7 +22,7 @@ class TownRepository implements TownInterface
 
     public function datatables()
     {
-        $rows =  $this->model->query()
+        $rows =  $this->model->query()->withTrashed()
             ->leftJoin("cities", "cities.id", "=", "towns.city_id")
             ->leftJoin("provinces", "provinces.id", "=", "cities.province_id")
             ->leftJoin("countries", "countries.id", "=", "provinces.country_id")
