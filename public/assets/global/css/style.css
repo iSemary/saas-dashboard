@@ -314,7 +314,37 @@
 .rtl .checkbox-inline .toggle+span {
     margin-right: 8px;
 }
+
 /* Datatables processing   */
 #table_processing {
     background-color: #e5e5e5;
+}
+
+/* Translatable Editor */
+.translatable-editor {
+    position: relative;
+}
+
+.translatable-icon {
+    position: absolute;
+    right: 7px;
+    top: -13px;
+    color: #3F51B5;
+}
+
+.refresh-modal {
+    background-color: transparent;
+    color: grey;
+}
+
+.close-modal {
+    background-color: transparent;
+    color: grey;
+}
+.refresh-modal i {
+    font-size: 15px;
+}
+
+.close-modal i {
+    font-size: 18px;
 }

@@ -322,6 +322,7 @@ $(document).on(
 
         // Show the modal and set a loading message
         const $modal = $(`#${modalId}`);
+        $modal.attr("data-modal-link", url);
         $modal.find(".modal-title").html(title);
         $modal.find(".modal-body").html("<p>Loading...</p>");
         $modal.modal("show");
@@ -342,6 +343,33 @@ $(document).on(
         });
     }
 );
+
+
+$(document).on('click', '.refresh-modal', function (e) { 
+    e.preventDefault();
+    
+    // Get the modal ID from the parent modal element
+    const $modal = $(this).closest('.modal');
+    const url = $modal.attr("data-modal-link");
+
+    // Show loading message while fetching the content again
+    $modal.find(".modal-body").html("<p>Loading...</p>");
+
+    // Make the AJAX request again to refresh the content
+    $.ajax({
+        url: url,
+        method: "GET",
+        success: function (response) {
+            $modal.find(".modal-body").html(response);
+            fireDependencies();
+        },
+        error: function () {
+            $modal
+                .find(".modal-body")
+                .html("<p>Failed to load content. Please try again.</p>");
+        },
+    });
+});
 
 /**
  *

@@ -75,5 +75,10 @@ class TranslationService
     {
         return $this->repository->countDatatablesJsonByLocale($locale);
     }
+
+    public function updateObjectTranslations(string $decryptedObjectType, string $decryptedObjectKey, int $objectId, array $translations)
+    {
+        return $this->repository->updateObjectTranslations($decryptedObjectType, $decryptedObjectKey, $objectId, $translations);
+    }
 }
 

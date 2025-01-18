@@ -1,9 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
 use Modules\Localization\Http\Controllers\LanguageController;
 use Modules\Localization\Http\Controllers\TranslationController;
+
+Route::middleware(['auth:web', '2fa'])->group(function () {
+    Route::get('translations/objects/{objectId}', [TranslationController::class, 'getObjectTranslations'])->name('translations.object.show');
+    Route::put('translations/objects/{objectId}', [TranslationController::class, 'updateObjectTranslations'])->name('translations.object.update');
+});
 
 Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:landlord', '2fa'])->group(function () {
     Route::resource('languages', LanguageController::class)->names('languages');

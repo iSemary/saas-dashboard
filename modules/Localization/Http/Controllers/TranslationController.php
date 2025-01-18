@@ -2,7 +2,9 @@
 
 namespace Modules\Localization\Http\Controllers;
 
+use App\Helpers\CryptHelper;
 use App\Http\Controllers\ApiController;
+use Exception;
 use Modules\Localization\Services\TranslationService;
 use Illuminate\Http\Request;
 use Modules\Localization\Services\LanguageService;
@@ -112,5 +114,63 @@ class TranslationController extends ApiController
     {
         $this->service->syncMissing();
         return $this->return(200, "Synced successfully");
+    }
+
+    public function getObjectTranslations(Request $request, int $objectId)
+    {
+        // $request->object_type is an encrypted class like [Modules\Utilities\Entities\Category]
+        $objectType = $request->object_type;
+        $decryptedObjectType = CryptHelper::decrypt($objectType);
+
+        // $request->object_key is an encrypted column like [name]
+        $objectKey = $request->object_key;
+        $decryptedObjectKey = CryptHelper::decrypt($objectKey);
+
+        $languages = $this->languageService->getAll();
+
+        $row = $decryptedObjectType::select(['id', $decryptedObjectKey])->whereId($objectId)->first();
+
+        return view("user.localizations.object-manager", [
+            'languages' => $languages,
+            'objectType' => $objectType,
+            'objectKey' => $objectKey,
+            'row' => $row,
+            'key' => $decryptedObjectKey
+        ]);
+    }
+
+    public function updateObjectTranslations(Request $request, int $objectId)
+    {
+        try {
+            // $request->object_type is an encrypted class like [Modules\Utilities\Entities\Category]
+            $objectType = $request->object_type;
+            $decryptedObjectType = CryptHelper::decrypt($objectType);
+
+            if (!class_exists($decryptedObjectType)) {
+                return $this->return(400, translate("invalid_class"));
+            }
+            
+            // $request->object_key is an encrypted column like [name]
+            $objectKey = $request->object_key;
+            $decryptedObjectKey = CryptHelper::decrypt($objectKey);
+
+            if (!property_exists($decryptedObjectType, 'fillable')) {
+                return $this->return(400, translate("missing_fillable_property"));
+            }            
+
+            // Process the translations [this will contain an array of locale as keys and translation values as the value]
+            $translations = $request->{$decryptedObjectKey};
+
+            if(!count($translations) && !is_string($decryptedObjectKey) && !is_string($decryptedObjectType)) {
+                return $this->return(400, translate("something_went_wrong"));
+            }
+
+            // Update translations using the service
+            $this->service->updateObjectTranslations($decryptedObjectType, $decryptedObjectKey, $objectId, $translations);
+
+            return $this->return(200, translate("translations_updated_successfully"));
+        } catch (Exception $e) {
+            return $this->return(400, translate("something_went_wrong"), debug: $e->getMessage());
+        }
     }
 }

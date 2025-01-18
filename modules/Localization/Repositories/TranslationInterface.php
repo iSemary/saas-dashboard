@@ -16,5 +16,6 @@ interface TranslationInterface
     public function generateJson();
     public function countJsonByLocale($locale);
     public function countDatatablesJsonByLocale($locale);
+    public function updateObjectTranslations(string $decryptedObjectType, string $decryptedObjectKey, int $objectId, array $translations);
 }
 

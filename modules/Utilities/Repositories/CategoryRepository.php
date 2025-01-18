@@ -3,6 +3,7 @@
 namespace Modules\Utilities\Repositories;
 
 use App\Helpers\TableHelper;
+use App\Helpers\TranslateHelper;
 use Illuminate\Support\Facades\DB;
 use Modules\Utilities\Entities\Category;
 use Yajra\DataTables\DataTables;
@@ -40,6 +41,12 @@ class CategoryRepository implements CategoryInterface
             ->filterColumn('parent_name', function ($query, $keyword) {
                 $query->whereRaw('LOWER(categories.name) LIKE ?', ["%{$keyword}%"]);
             })
+            ->editColumn('name', function($row) {
+                return TranslateHelper::returnTranslatableEditor($row, 'name');
+            })
+            ->editColumn('description', function($row) {
+                return TranslateHelper::returnTranslatableEditor($row, 'description');
+            })
             ->editColumn('icon', function ($row) {
                 return '<img src="' . $row->icon . '" width="50px" height="50px" class="img-thumbnail" alt="category" />';
             })
@@ -57,7 +64,7 @@ class CategoryRepository implements CategoryInterface
                     showIconsOnly: true
                 );
             })
-            ->rawColumns(['icon', 'actions'])
+            ->rawColumns(['name', 'description', 'icon', 'actions'])
             ->make(true);
     }
 

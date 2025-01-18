@@ -22,16 +22,6 @@ class Category extends Model implements Auditable
 
     protected $translatableColumns = ['name', 'description'];
 
-    public function getNameAttribute()
-    {
-        return $this->getTranslatable('name');
-    }
-
-    public function getDescriptionAttribute()
-    {
-        return $this->getTranslatable('description');
-    }
-
     protected $fileColumns = [
         'icon' => [
             'folder' => 'categories',

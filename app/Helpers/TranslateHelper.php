@@ -35,4 +35,20 @@ class TranslateHelper
 
         return $locale;
     }
+
+    public static function returnTranslatableEditor($model, $column)
+    {
+        $objectType = CryptHelper::encrypt(get_class($model));
+        $objectKey = CryptHelper::encrypt($column);
+        $translationManager = translate("translation_manager");
+        $modalLink = route('translations.object.show', $model->id) . '?object_type=' . $objectType . '&object_key=' . $objectKey;
+
+        $btn = '<div class="translatable-editor">';
+        $btn .= '<span class="translatable-text">' . htmlspecialchars($model->{$column}, ENT_QUOTES, 'UTF-8') . '</span>';
+        $btn .= '<button title="' . htmlspecialchars($translationManager, ENT_QUOTES, 'UTF-8') . '" data-modal-title="' . htmlspecialchars($translationManager, ENT_QUOTES, 'UTF-8') . '" data-modal-link="' . htmlspecialchars($modalLink, ENT_QUOTES, 'UTF-8') . '" class="btn btn-sm translatable-icon open-details-btn" type="button">';
+        $btn .= '<i class="fas fa-language"></i>';
+        $btn .= '</button></div>';
+
+        return $btn;
+    }
 }

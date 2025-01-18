@@ -228,4 +228,12 @@ class TranslationRepository implements TranslationInterface
         $translations = json_decode($content, true);
         return count($translations);
     }
+
+    public function updateObjectTranslations(string $decryptedObjectType, string $decryptedObjectKey, int $objectId, array $translations)
+    {
+        foreach ($translations as $languageLocale => $translationValue) {
+            $row = $decryptedObjectType::where('id', $objectId)->first();
+            $row->setTranslatable($decryptedObjectKey, $translationValue, $languageLocale);
+        }
+    }
 }

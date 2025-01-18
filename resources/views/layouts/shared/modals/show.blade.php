@@ -1,14 +1,20 @@
-<div class="modal right fade" id="showModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal right fade" id="showModal" data-modal-link="" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <div class="row w-100">
+                    <div class="col-10">
+                        <h5 class="modal-title"></h5>
+                    </div>
+                    <div class="col-2 text-revert">
+                        <button type="button" class="close-modal" data-dismiss="modal" aria-label="Close"><i
+                                class="fas fa-times"></i></button>
+                        <button type="button" class="refresh-modal"><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                </div>
             </div>
             <div class="modal-body">
-                
+
             </div>
         </div>
     </div>
