@@ -93,14 +93,20 @@ class TranslationRepository implements TranslationInterface
             $language = Language::where("locale", app()->getLocale())->first();
         }
 
-        $data = [
-            'language_id' => $language->id,
-            'translation_key' => $key,
-            'translation_value' => $value,
-            'translation_context' => null,
-        ];
+        $existingTranslation = $this->model->where('language_id', $language->id)
+            ->where('translation_key', $key)
+            ->first();
 
-        $this->create($data);
+        if (!$existingTranslation) {
+            $data = [
+                'language_id' => $language->id,
+                'translation_key' => $key,
+                'translation_value' => $value,
+                'translation_context' => null,
+            ];
+
+            $this->create($data);
+        }
 
         return $value;
     }
