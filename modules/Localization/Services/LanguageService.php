@@ -50,5 +50,10 @@ class LanguageService
     {
         return $this->repository->restore($id);
     }
+
+    public function getLanguagesStatus()
+    {
+        return $this->repository->getLanguagesStatus();
+    }
 }
 

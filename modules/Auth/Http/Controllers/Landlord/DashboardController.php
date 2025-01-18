@@ -3,11 +3,23 @@
 namespace Modules\Auth\Http\Controllers\Landlord;
 
 use App\Http\Controllers\ApiController;
+use Doctrine\Inflector\Language;
+use Modules\Localization\Services\LanguageService;
 
 class DashboardController extends ApiController
 {
+    protected $languageService;
+
+    public function __construct(LanguageService $languageService)
+    {
+        $this->languageService = $languageService;
+    }
     public function index()
     {
-        return view('landlord.dashboard.index');
+        $languages = $this->languageService->getLanguagesStatus();
+
+        return view('landlord.dashboard.index', [
+            'languages' => $languages,
+        ]);
     }
 }

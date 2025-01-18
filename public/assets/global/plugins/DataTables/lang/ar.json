@@ -206,6 +206,5 @@
         "fillHorizontal": "تعبئة الخلايا أفقيًا",
         "fillVertical": "تعبئة الخلايا عموديا"
     },
-    "decimal": ",",
     "infoFiltered": "(مرشحة من مجموع _MAX_ مُدخل)"
 }

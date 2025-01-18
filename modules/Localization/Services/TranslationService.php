@@ -65,5 +65,15 @@ class TranslationService
     {
         return $this->repository->generateJson();
     }
+
+    public function countJsonByLocale($locale)
+    {
+        return $this->repository->countJsonByLocale($locale);
+    }
+
+    public function countDatatablesJsonByLocale($locale)
+    {
+        return $this->repository->countDatatablesJsonByLocale($locale);
+    }
 }
 

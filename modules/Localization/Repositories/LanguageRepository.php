@@ -4,15 +4,18 @@ namespace Modules\Localization\Repositories;
 
 use App\Helpers\TableHelper;
 use Modules\Localization\Entities\Language;
+use Modules\Localization\Services\TranslationService;
 use Yajra\DataTables\DataTables;
 
 class LanguageRepository implements LanguageInterface
 {
     protected $model;
+    protected $translationService;
 
-    public function __construct(Language $language)
+    public function __construct(Language $language, TranslationService $translationService)
     {
         $this->model = $language;
+        $this->translationService = $translationService;
     }
 
     public function all()
@@ -45,7 +48,7 @@ class LanguageRepository implements LanguageInterface
                 );
             })
             ->addColumn('total_translations', function ($row) use ($totalEnglishTranslations) {
-                return '<span class="' . ($totalEnglishTranslations == $row->translations_count ? 'text-success' : 'text-danger') . '">' .$row->translations_count . '</span>';
+                return '<span class="' . ($totalEnglishTranslations == $row->translations_count ? 'text-success' : 'text-danger') . '">' . $row->translations_count . '</span>';
             })
             ->rawColumns(['actions', 'total_translations'])
             ->make(true);;
@@ -89,5 +92,45 @@ class LanguageRepository implements LanguageInterface
             return true;
         }
         return false;
+    }
+    
+    /**
+     * Get the status of all languages.
+     *
+     * This method retrieves all languages along with their translation counts and calculates
+     * the maximum counts for translations, shareable translations, JSON translations, and
+     * datatable translations. It then determines the status of each language based on these
+     * maximum counts.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection The collection of languages with their statuses.
+     */
+    public function getLanguagesStatus()
+    {
+        $languages = $this->model->withCount('translations')
+            ->withCount(['translations as shareable_translations_count' => function ($query) {
+                $query->where('translations.is_shareable', 1);
+            }])->get();
+
+        $maxTranslationsCount = $languages->max('translations_count');
+        $maxShareableTranslationsCount = $languages->max('shareable_translations_count');
+        $maxTotalJsonTranslations = $languages->max(function ($language) {
+            return $this->translationService->countJsonByLocale($language->locale);
+        });
+        $maxTotalDatatableTranslations = $languages->max(function ($language) {
+            return $this->translationService->countDatatablesJsonByLocale($language->locale);
+        });
+
+        foreach ($languages as $language) {
+            $language->total_json_translations = $this->translationService->countJsonByLocale($language->locale);
+            $language->total_datatable_translations = $this->translationService->countDatatablesJsonByLocale($language->locale);
+            $language->status = (
+                $language->translations_count == $maxTranslationsCount &&
+                $language->shareable_translations_count == $maxShareableTranslationsCount &&
+                $language->total_json_translations == $maxTotalJsonTranslations &&
+                $language->total_datatable_translations == $maxTotalDatatableTranslations
+            ) ? translate('stable') : translate('missing');
+        }
+
+        return $languages;
     }
 }

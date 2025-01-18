@@ -352,6 +352,11 @@ $(document).on("change", ".upload-image", function (e) {
     }
 });
 
+// Static datatables
+$('.static-datatables').DataTable({
+    "ordering": false,
+});        
+
 // Notifications Drop Down
 document.addEventListener("DOMContentLoaded", function () {
     const notificationsList = document.querySelector(".notifications-list");

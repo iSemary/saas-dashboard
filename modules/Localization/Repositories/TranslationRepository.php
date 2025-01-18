@@ -204,4 +204,28 @@ class TranslationRepository implements TranslationInterface
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
+
+    public function countJsonByLocale($locale)
+    {
+        $file = public_path("assets/global/lang/{$locale}.json");
+        if (!file_exists($file)) {
+            return 0;
+        }
+
+        $content = file_get_contents($file);
+        $translations = json_decode($content, true);
+        return count($translations);
+    }
+
+    public function countDatatablesJsonByLocale($locale)
+    {
+        $file = public_path("assets/global/plugins/DataTables/lang/{$locale}.json");
+        if (!file_exists($file)) {
+            return 0;
+        }
+
+        $content = file_get_contents($file);
+        $translations = json_decode($content, true);
+        return count($translations);
+    }
 }

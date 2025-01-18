@@ -14,5 +14,7 @@ interface TranslationInterface
     public function restore($id);
     public function syncMissing();
     public function generateJson();
+    public function countJsonByLocale($locale);
+    public function countDatatablesJsonByLocale($locale);
 }
 
