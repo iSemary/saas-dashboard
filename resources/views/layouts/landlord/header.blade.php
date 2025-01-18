@@ -34,22 +34,22 @@
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li>
                     <a class="dropdown-item" href="{{ route('home') }}">
-                        <i class="fas fa-home"></i> Home
+                        <i class="fas fa-home"></i> @translate('home')
                     </a>
                 </li>
                 <li>
                     <a class="dropdown-item" href="#" onclick="window.history.back()">
-                        <i class="fas fa-arrow-left"></i> Go Back
+                        <i class="fas fa-arrow-left"></i> @translate('go_back')
                     </a>
                 </li>
                 <li>
                     <a class="dropdown-item" id="FullScreen" href="#">
-                        <i class="fas fa-expand"></i> Full Screen
+                        <i class="fas fa-expand"></i> @translate('full_screen')
                     </a>
                 </li>
                 <li>
                     <a class="dropdown-item" href="#" onclick="window.location.reload();">
-                        <i class="fas fa-sync-alt"></i> Reload
+                        <i class="fas fa-sync-alt"></i> @translate('reload')
                     </a>
                 </li>
             </ul>

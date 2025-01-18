@@ -5,7 +5,7 @@ namespace Modules\Localization\Repositories;
 interface TranslationInterface
 {
     public function all();
-    public function getByKey($key, $language = null);
+    public function getByKey($key, $locale = null);
     public function datatables();
     public function find($id);
     public function create(array $data);

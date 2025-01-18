@@ -13,8 +13,8 @@ class TranslateHelper
         $this->translationInterface = $translationInterface;
     }
 
-    public function translate($key, $language = null)
+    public function translate($key, $locale = null)
     {
-        return $this->translationInterface->getByKey($key, $language);
+        return $this->translationInterface->getByKey($key, $locale);
     }
 }

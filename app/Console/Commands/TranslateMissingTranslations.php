@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Modules\Localization\Entities\Language;
 use Modules\Localization\Entities\Translation;
 use Google\Cloud\Translate\V2\TranslateClient;
+use Modules\Localization\Services\TranslationService;
 
 class TranslateMissingTranslations extends Command
 {
@@ -13,10 +14,14 @@ class TranslateMissingTranslations extends Command
     protected $description = 'Translate missing translations using Google Translate API every 10 minutes';
 
     private $translateClient;
+    private $translationService;
 
-    public function __construct()
+    public function __construct(TranslationService $translationService)
     {
         parent::__construct();
+
+        $this->translationService = $translationService;
+
         $this->translateClient = new TranslateClient([
             'key' => env('GOOGLE_CLOUD_TRANSLATION_API_KEY', 'AIzaSyA7ZwzAa6QVwpzwqcCbHckOnwpaNULtXhE')
         ]); // Initialize Google Translate Client
@@ -41,14 +46,11 @@ class TranslateMissingTranslations extends Command
                     $translatedValue = $this->translate($englishTranslation->translation_value, $language->locale);
 
                     if ($translatedValue) {
-                        // TODO call the repository to save the translation
-
-                        Translation::create([
+                        $this->translationService->create([
                             'language_id' => $language->id,
                             'translation_key' => $englishTranslation->translation_key,
                             'translation_value' => $translatedValue,
                         ]);
-
                         $this->info("Translated and saved missing translation: {$englishTranslation->translation_key} in {$language->locale}");
                     }
                 }

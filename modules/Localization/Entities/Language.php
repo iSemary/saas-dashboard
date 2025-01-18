@@ -5,6 +5,7 @@ namespace Modules\Localization\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Auth\Entities\User;
 use OwenIt\Auditing\Contracts\Auditable;
 
 class Language extends Model implements Auditable
@@ -26,4 +27,10 @@ class Language extends Model implements Auditable
     {
         return $this->hasMany(Translation::class, 'language_id');
     }
+
+    public function users()
+{
+    return $this->hasMany(User::class, 'language_id');
+}
+
 }

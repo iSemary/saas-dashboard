@@ -27,7 +27,7 @@
 
     <div class="form-group">
         <label for="translationContext" class="form-label">Context</label>
-        <textarea name="translation_context" id="translationContext" class="form-control" required>{{ isset($row) ? $row->translation_context : '' }}</textarea>
+        <textarea name="translation_context" id="translationContext" class="form-control">{{ isset($row) ? $row->translation_context : '' }}</textarea>
     </div>
 
     <div class="form-group">

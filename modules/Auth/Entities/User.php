@@ -12,6 +12,7 @@ use Laravel\Passport\Token;
 use Modules\Auth\Entities\EmailToken;
 use Spatie\Permission\Traits\HasRoles;
 use Laravolt\Avatar\Facade as Avatar;
+use Modules\Localization\Entities\Language;
 use Modules\Notification\Entities\Notification;
 
 class User extends Authenticatable
@@ -54,7 +55,7 @@ class User extends Authenticatable
 
         return 'tenant';
     }
-    
+
     public function getCurrentTypeName()
     {
         $currentConnection = config('database.default');
@@ -81,6 +82,15 @@ class User extends Authenticatable
         return $this->hasMany(Notification::class, 'user_id');
     }
 
+    public function language()
+    {
+        return $this->belongsTo(Language::class);
+    }
+
+    public function getLocale()
+    {
+        return $this->language ? $this->language->locale : app()->getLocale();
+    }
 
     /**
      * The function `verifyToken` checks if a given token exists in the `EmailToken` table, updates its

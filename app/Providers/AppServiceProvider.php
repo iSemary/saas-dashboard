@@ -19,8 +19,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Translate dashboard content global function
-        Blade::directive('translate', function ($expression, $language = null) {
-            return "<?php echo translate($expression, $language); ?>";
+        Blade::directive('translate', function ($expression, $locale = null) {
+            return "<?php echo translate($expression, $locale); ?>";
         });
 
         // Translate dashboard content global function

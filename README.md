@@ -20,6 +20,7 @@
 -   [Global Classes](#global-classes)
 -   [Global IDs](#global-ids)
 -   [Global Functions](#global-functions)
+-   [Global Variables](#global-variables)
 -   [Model and Data Structure](#model-and-data-structure)
     -   [Geography](#geography)
     -   [Utilities](#utilities)
@@ -157,6 +158,11 @@ Please refer to the README file for the file structure:
 
 -   `configuration()` OR `@configuration`: For fetching configuration values from configurations table.
 
+---
+
+## Global Variables
+
+- in ViewServiceProvider
 ---
 
 ## Model and Data Structure

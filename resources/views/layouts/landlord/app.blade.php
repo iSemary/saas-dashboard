@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="" dir="">
+<html lang="{{ $language->locale }}" dir="{{ $language->direction }}">
 
 <head>
     <meta charset="utf-8">
@@ -32,12 +32,18 @@
     {{-- Bootstrap Toggle --}}
     <link rel="stylesheet" href="{{ asset('assets/global/plugins/bootstrap-toggle/css/bootstrap-toggle.min.css') }}"
         media="screen">
-    @if (app()->getLocale() == 'ar')
+    @if ($language->locale == 'ar')
         <link rel="stylesheet" href="{{ asset('assets/landlord/css/custom.css') . '?v=1.2.1' }}" media="screen">
         <link rel="stylesheet" href="{{ asset('assets/landlord/css/bootstrap-rtl.min.css') }}" media="screen">
         <link rel="stylesheet" href="{{ asset('assets/landlord/css/dashboard.rtl.css') }}" media="screen">
     @else
         <style>
+            .direction {
+                direction: {{ $language->direction }};
+            }
+            .dir {
+                direction: {{ $language->direction }};
+            }
             table {
                 direction: ltr;
             }
@@ -61,7 +67,7 @@
     @yield('styles')
 </head>
 
-<body class="sidebar-mini layout-fixed">
+<body class="sidebar-mini layout-fixed {{ $language->direction }}">
     {{-- All Content --}}
     <div class="wrapper">
         {{-- Header --}}
@@ -109,11 +115,8 @@
     <script src="{{ asset('assets/landlord/js/sweetalert2.all.min.js') }}"></script>
     {{-- CKEDITOR --}}
     <script src="{{ asset('assets/global/plugins/ckeditor/ckeditor.js') }}"></script>
-    <script>
-        CKEDITOR.config.language = "{{ app()->getLocale() }}";
-    </script>
     {{-- Datatables --}}
-    <script src="{{ asset('assets/global/plugins/DataTables/datatables.js') }}"></script>
+    <script src="{{ asset('assets/global/plugins/DataTables/datatables.min.js') }}"></script>
     {{-- Select2 --}}
     <script src="{{ asset('assets/landlord/plugins/select2/select2.min.js') }}"></script>
     {{-- Apex Charts --}}
@@ -122,6 +125,16 @@
     <script src="{{ asset('assets/landlord/plugins/flickity/flickity.pkgd.min.js') }}"></script>
     {{-- Bootstrap Toggle --}}
     <script src="{{ asset('assets/global/plugins/bootstrap-toggle/js/bootstrap-toggle.min.js') }}"></script>
+    {{-- Configurations --}}
+    <script>
+        let language = {
+            locale: "{{ $language->locale }}",
+            direction: "{{ $language->direction }}",
+            dataTableLanguageFile: `{{ asset('assets/global/plugins/DataTables/lang/' . $language->locale . '.json') }}`,
+        };
+
+        CKEDITOR.config.language = "{{ $language->locale }}";
+    </script>
     {{-- Main Scripts --}}
     <script src="{{ asset('assets/global/js/shared.js') . '?v=' . filemtime(public_path('assets/global/js/shared.js')) }}"></script>
     <script src="{{ asset('assets/landlord/js/main.js') . '?v=' . filemtime(public_path('assets/landlord/js/main.js')) }}"></script>

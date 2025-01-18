@@ -115,12 +115,12 @@ $("#navbarVerticalNav")
 
 // DataTables Config
 $.extend(true, $.fn.dataTable.defaults, {
-    // language: {
-    //     url: "LanguageJson",
-    // },
+    language: {
+        url: language.dataTableLanguageFile,
+    },
     lengthMenu: [
         [10, 25, 50, -1],
-        [10, 25, 50, "All"],
+        [10, 25, 50, "∞"],
     ],
     dom: "Blfrtip",
     // dom: "lpftrip",
@@ -993,7 +993,10 @@ function filterTable(
 ) {
     // init
     if (init) {
-        $(TableID).DataTable().destroy();
+        // check if the table is already exists
+        if ($.fn.DataTable.isDataTable(TableID)) {
+            $(TableID).DataTable().destroy();
+        }
     }
 
     let data = {
@@ -1056,45 +1059,48 @@ $(document).on("change", "#country_id", function (e) {
     });
 });
 
-$(document).on("click", ".open-create-modal, .open-edit-modal, .open-details-btn", function (e) {
-    e.preventDefault();
+$(document).on(
+    "click",
+    ".open-create-modal, .open-edit-modal, .open-details-btn",
+    function (e) {
+        e.preventDefault();
 
-    // Determine the modal ID based on the button's class
-    let modalId;
-    if ($(this).hasClass("open-create-modal")) {
-        modalId = "createModal";
-    } else if ($(this).hasClass("open-edit-modal")) {
-        modalId = "editModal";
-    } else if ($(this).hasClass("open-details-btn")) {
-        modalId = "showModal";
+        // Determine the modal ID based on the button's class
+        let modalId;
+        if ($(this).hasClass("open-create-modal")) {
+            modalId = "createModal";
+        } else if ($(this).hasClass("open-edit-modal")) {
+            modalId = "editModal";
+        } else if ($(this).hasClass("open-details-btn")) {
+            modalId = "showModal";
+        }
+
+        // Get the data attributes from the button
+        const url = $(this).data("modal-link");
+        const title = $(this).data("modal-title");
+
+        // Show the modal and set a loading message
+        const $modal = $(`#${modalId}`);
+        $modal.find(".modal-title").html(title);
+        $modal.find(".modal-body").html("<p>Loading...</p>");
+        $modal.modal("show");
+
+        // Make the AJAX request
+        $.ajax({
+            url: url,
+            method: "GET",
+            success: function (response) {
+                $modal.find(".modal-body").html(response);
+                fireDependencies();
+            },
+            error: function () {
+                $modal
+                    .find(".modal-body")
+                    .html("<p>Failed to load content. Please try again.</p>");
+            },
+        });
     }
-
-    // Get the data attributes from the button
-    const url = $(this).data("modal-link");
-    const title = $(this).data("modal-title");
-
-    // Show the modal and set a loading message
-    const $modal = $(`#${modalId}`);
-    $modal.find(".modal-title").html(title);
-    $modal.find(".modal-body").html("<p>Loading...</p>");
-    $modal.modal("show");
-
-    // Make the AJAX request
-    $.ajax({
-        url: url,
-        method: "GET",
-        success: function (response) {
-            $modal.find(".modal-body").html(response);
-            fireDependencies();
-        },
-        error: function () {
-            $modal
-                .find(".modal-body")
-                .html("<p>Failed to load content. Please try again.</p>");
-        },
-    });
-});
-
+);
 
 function fireDependencies() {
     $(".form-toggle").bootstrapToggle();

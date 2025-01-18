@@ -21,7 +21,7 @@
         </div>
     </div>
     <div class="col-6">
-        <div class="text-right p-1">
+        <div class="text-revert p-1">
             @if (isset($actionButtons) && is_array($actionButtons))
                 @foreach ($actionButtons as $button)
                     <button type="button" class="btn {{ $button['class'] }}"

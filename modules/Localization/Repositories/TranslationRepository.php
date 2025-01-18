@@ -75,7 +75,7 @@ class TranslationRepository implements TranslationInterface
             return $databaseRow->translation_value;
         }
         app('log')->info(self::class . "|UNKNOWN translation key: $key");
-        return $this->generateTranslation($key, $locale);
+        return $this->generateTranslation($key, 'en');
     }
 
     private function generateTranslation($key, $locale = null)
@@ -84,8 +84,13 @@ class TranslationRepository implements TranslationInterface
         $value = ucwords($value);
         $value = trim($value);
 
+        $language = Language::where('locale', $locale)->first();
+        if (!$language) {
+            $language = Language::where("locale", app()->getLocale())->first();
+        }
+
         $data = [
-            'language_id' => 1, // as english language
+            'language_id' => $language->id,
             'translation_key' => $key,
             'translation_value' => $value,
             'translation_context' => null,

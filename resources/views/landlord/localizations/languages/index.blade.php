@@ -25,3 +25,4 @@
 @section("scripts")
 <script src="{{ asset("assets/landlord/js/localizations/languages/index.js") }}"></script>
 @endsection
+
