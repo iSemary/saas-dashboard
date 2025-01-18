@@ -13,6 +13,8 @@
                         <tr>
                             <th>@translate('language')</th>
                             <th>@translate('total_translations')</th>
+                            <th>@translate('total_without_objects')</th>
+                            <th>@translate('total_with_objects')</th>
                             <th>@translate('total_shareable_translations')</th>
                             <th>@translate('total_json_translations')</th>
                             <th>@translate('total_datatable_translations')</th>
@@ -24,6 +26,8 @@
                             <tr>
                                 <td>{{ $language->name }}</td>
                                 <td>{{ $language->translations_count }}</td>
+                                <td>{{ $language->total_without_objects }}</td>
+                                <td>{{ $language->total_with_objects }}</td>
                                 <td>{{ $language->shareable_translations_count }}</td>
                                 <td>{{ $language->total_json_translations }}</td>
                                 <td>{{ $language->total_datatable_translations }}</td>

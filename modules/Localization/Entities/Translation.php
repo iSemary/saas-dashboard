@@ -24,4 +24,13 @@ class Translation extends Model implements Auditable
         'is_shareable',
     ];
 
+    public function language()
+    {
+        return $this->belongsTo(Language::class, 'language_id');
+    }
+
+    public function translationObjects()
+    {
+        return $this->hasMany(TranslationObject::class, 'translation_id');
+    }
 }

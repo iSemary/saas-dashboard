@@ -29,7 +29,8 @@
         -   [Category](#category)
         -   [Industry](#industry)
 -   [Name Convention](#name-convention)
--   [File Uploader Handler](#file-uploader-handler)
+-   [File Handler](#file-handler)
+-   [Translatable](#translatable)
 
 ---
 
@@ -225,14 +226,14 @@ Please refer to the README file for the file structure:
 -   **Role Name**: Single
 -   **Route**: Plural
 
-## File Uploader Handler
+## File Handler
 
 In the main class, use `FileHandler`.
 
 Define the file columns and their info for example:
 
 ```php
-protected $imageColumns = [
+protected $fileColumns = [
     'icon' => [ // use custom configurations
         'is_encrypted' => false,
         'access_level' => 'public',
@@ -269,4 +270,11 @@ public function setIconAttribute($value)
     }
 }
 
+```
+---
+
+## Translatable
+
+```php
+use Translatable;
 ```

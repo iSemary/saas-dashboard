@@ -93,7 +93,7 @@ class LanguageRepository implements LanguageInterface
         }
         return false;
     }
-    
+
     /**
      * Get the status of all languages.
      *
@@ -109,7 +109,19 @@ class LanguageRepository implements LanguageInterface
         $languages = $this->model->withCount('translations')
             ->withCount(['translations as shareable_translations_count' => function ($query) {
                 $query->where('translations.is_shareable', 1);
-            }])->get();
+            }])
+            ->get();
+
+        // Add additional counts for translation objects through the translations relationship
+        foreach ($languages as $language) {
+            $language->total_without_objects = $language->translations->filter(function ($translation) {
+                return $translation->translationObjects->isEmpty(); // No related translation objects
+            })->count();
+
+            $language->total_with_objects = $language->translations->filter(function ($translation) {
+                return $translation->translationObjects->isNotEmpty(); // There are related translation objects
+            })->count();
+        }
 
         $maxTranslationsCount = $languages->max('translations_count');
         $maxShareableTranslationsCount = $languages->max('shareable_translations_count');

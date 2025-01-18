@@ -27,7 +27,7 @@ class Tag extends Model implements Auditable
         'priority'
     ];
 
-    protected $imageColumns = [
+    protected $fileColumns = [
         'icon' => [
             'folder' => 'tags',
             'is_encrypted' => false,

@@ -30,7 +30,7 @@ trait FileHandler
     public static function bootImageUploader()
     {
         static::saving(function ($model) {
-            foreach ($model->imageColumns as $column) {
+            foreach ($model->fileColumns as $column) {
                 if ($model->{$column} instanceof UploadedFile) {
                     $model->{$column . '_id'} = $model->uploadImage($model->{$column}, $column);
                     $model->{$column} = null;
@@ -73,7 +73,7 @@ trait FileHandler
      */
     private function getDiskFromColumn(string $column): string
     {
-        return $this->imageColumns[$column]['access_level'] ?? 'public';
+        return $this->fileColumns[$column]['access_level'] ?? 'public';
     }
 
     /**
@@ -81,7 +81,7 @@ trait FileHandler
      */
     private function getFolderNameFromColumn(string $column): string
     {
-        return $this->imageColumns[$column]['folder'] ?? 'files';
+        return $this->fileColumns[$column]['folder'] ?? 'files';
     }
 
     /**
@@ -122,7 +122,7 @@ trait FileHandler
         return $this->AWSService->upload(
             $file,
             $folderName,
-            $this->imageColumns[$column]['access_level'] ?? 'public'
+            $this->fileColumns[$column]['access_level'] ?? 'public'
         );
     }
 
@@ -169,11 +169,11 @@ trait FileHandler
     private function collectMetadata(UploadedFile $file, string $filePath, string $disk, string $host, string $column): array
     {
         $fileMetadata = [];
-        if (empty($this->imageColumns[$column]['metadata'])) {
+        if (empty($this->fileColumns[$column]['metadata'])) {
             return $fileMetadata;
         }
 
-        foreach ($this->imageColumns[$column]['metadata'] as $metaKey) {
+        foreach ($this->fileColumns[$column]['metadata'] as $metaKey) {
             $fileMetadata = array_merge(
                 $fileMetadata,
                 $this->getMetadataForKey($metaKey, $file, $filePath, $disk, $host)
@@ -235,10 +235,10 @@ trait FileHandler
             'mime_type' => $file->getMimeType(),
             'host' => $host,
             'status' => 'active',
-            'access_level' => $this->imageColumns[$column]['access_level'] ?? 'public',
+            'access_level' => $this->fileColumns[$column]['access_level'] ?? 'public',
             'size' => $file->getSize(),
             'metadata' => json_encode($fileMetadata),
-            'is_encrypted' => $this->imageColumns[$column]['is_encrypted'] ?? false,
+            'is_encrypted' => $this->fileColumns[$column]['is_encrypted'] ?? false,
             'url' => $uploadResult['url'],
         ]);
     }
@@ -248,8 +248,8 @@ trait FileHandler
      */
     private function getFolderIdFromColumn(string $column): ?int
     {
-        return isset($this->imageColumns[$column]['folder'])
-            ? $this->getFolderId($this->imageColumns[$column]['folder'])
+        return isset($this->fileColumns[$column]['folder'])
+            ? $this->getFolderId($this->fileColumns[$column]['folder'])
             : null;
     }
 

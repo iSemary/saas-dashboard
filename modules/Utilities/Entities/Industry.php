@@ -26,7 +26,7 @@ class Industry extends Model implements Auditable
         'priority'
     ];
 
-    protected $imageColumns = [
+    protected $fileColumns = [
         'icon' => [
             'folder' => 'industries',
             'is_encrypted' => false,

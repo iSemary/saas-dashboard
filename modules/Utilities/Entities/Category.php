@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\FileManager\Traits\FileHandler;
+use Modules\Localization\Traits\Translatable;
 use OwenIt\Auditing\Contracts\Auditable;
 
 class Category extends Model implements Auditable
 {
-    use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable, FileHandler;
+    use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable, FileHandler, Translatable;
 
     protected $connection = "landlord";
 
@@ -19,7 +20,19 @@ class Category extends Model implements Auditable
 
     protected $fillable = ['name', 'slug', 'description', 'parent_id', 'icon', 'priority', 'status'];
 
-    protected $imageColumns = [
+    protected $translatableColumns = ['name', 'description'];
+
+    public function getNameAttribute()
+    {
+        return $this->getTranslatable('name');
+    }
+
+    public function getDescriptionAttribute()
+    {
+        return $this->getTranslatable('description');
+    }
+
+    protected $fileColumns = [
         'icon' => [
             'folder' => 'categories',
             'is_encrypted' => false,

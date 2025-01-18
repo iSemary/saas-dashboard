@@ -31,7 +31,7 @@ class Notification extends Model implements Auditable
         'seen_at',
     ];
 
-    protected $imageColumns = [
+    protected $fileColumns = [
         'icon' => [
             'folder' => 'notifications',
             'is_encrypted' => false,

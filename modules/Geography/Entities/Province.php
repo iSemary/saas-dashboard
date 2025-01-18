@@ -21,7 +21,7 @@ class Province extends Model implements Auditable
 
     protected $hidden = [];
 
-    protected $imageColumns = [
+    protected $fileColumns = [
         'flag' => [
             'folder' => 'provinces',
             'is_encrypted' => false,

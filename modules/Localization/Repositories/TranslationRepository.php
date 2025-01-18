@@ -25,7 +25,7 @@ class TranslationRepository implements TranslationInterface
 
     public function datatables()
     {
-        $rows =  $this->model->query()->withTrashed()
+        $rows =  $this->model->query()->withTrashed()->whereDoesntHave('translationObjects')
             ->leftJoin("languages", function ($join) {
                 $join->on("languages.id", "=", "translations.language_id");
             })->select([

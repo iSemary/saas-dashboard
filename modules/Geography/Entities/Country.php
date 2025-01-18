@@ -21,7 +21,7 @@ class Country extends Model implements Auditable
 
     protected $hidden = [];
 
-    protected $imageColumns = [
+    protected $fileColumns = [
         'flag' => [
             'folder' => 'countries',
             'is_encrypted' => false,

@@ -32,7 +32,7 @@ class TranslateMissingTranslations extends Command
     public function handle()
     {
         $englishLanguage = Language::where('locale', 'en')->first();
-        $englishTranslations = Translation::where('language_id', $englishLanguage->id)->get();
+        $englishTranslations = Translation::where('language_id', $englishLanguage->id)->whereDoesntHave('translationObjects')->get();
 
         // Loop through all languages except English and check for missing translations
         $otherLanguages = Language::where('locale', '!=', 'en')->get();

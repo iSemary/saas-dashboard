@@ -27,7 +27,7 @@ class Type extends Model implements Auditable
     ];
 
 
-    protected $imageColumns = [
+    protected $fileColumns = [
         'icon' => [
             'folder' => 'types',
             'is_encrypted' => false,
