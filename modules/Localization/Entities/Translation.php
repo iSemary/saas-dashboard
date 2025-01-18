@@ -21,6 +21,7 @@ class Translation extends Model implements Auditable
         'translation_key',
         'translation_value',
         'translation_context',
+        'is_shareable',
     ];
 
 }

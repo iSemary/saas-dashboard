@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('translation_key');
             $table->text('translation_value');
             $table->text('translation_context')->nullable();
+            $table->boolean('is_shareable')->default(0);
             $table->softDeletes();
             $table->timestamps();
         });

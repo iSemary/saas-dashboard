@@ -5,13 +5,13 @@
         @method('PUT')
     @endif
     <div class="form-group">
-        <label for="translationKey" class="form-label">Key</label>
+        <label for="translationKey" class="form-label">@translate('key')</label>
         <input type="text" name="translation_key" id="translationKey" class="form-control"
             value="{{ isset($row) ? $row->translation_key : '' }}" required>
     </div>
 
     <div class="form-group">
-        <label for="translationValue" class="form-label">Language</label>
+        <label for="translationValue" class="form-label">@translate('language')</label>
         <select class="form-control select2" name="language_id" required>
             <option value="">@translate('select')</option>
             @foreach ($languages as $language)
@@ -21,13 +21,19 @@
     </div>
 
     <div class="form-group">
-        <label for="translationValue" class="form-label">Value</label>
+        <label for="translationValue" class="form-label">@translate('value')</label>
         <textarea name="translation_value" id="translationValue" class="form-control" required>{{ isset($row) ? $row->translation_value : '' }}</textarea>
     </div>
 
     <div class="form-group">
-        <label for="translationContext" class="form-label">Context</label>
+        <label for="translationContext" class="form-label">@translate('context')</label>
         <textarea name="translation_context" id="translationContext" class="form-control">{{ isset($row) ? $row->translation_context : '' }}</textarea>
+    </div>
+
+    <div class="form-group">
+        <label class="checkbox-inline">
+            <input type="checkbox" name="is_shareable" class="form-toggle" {{ isset($row) && $row->is_shareable ? 'checked' : '' }} data-toggle="toggle"> @translate('is_shareable') <small>@translate('shared_with_frontend_side_as_json')</small>
+        </label>
     </div>
 
     <div class="form-group">

@@ -283,6 +283,33 @@
     text-align: right !important;
 }
 
-.rtl .modal-header .close, .modal-header .mailbox-attachment-close {
+.rtl .modal-header .close,
+.modal-header .mailbox-attachment-close {
     margin: -1rem -1rem auto -1rem;
+}
+
+.rtl .checkbox-inline {
+    direction: rtl;
+    display: inline-block;
+    position: relative;
+    padding-right: 70px;
+    padding-left: 0;
+    text-align: right;
+}
+
+.rtl .checkbox-inline .toggle {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Keep toggle button's internal direction LTR for proper functionality */
+.rtl .toggle.btn .toggle-group {
+    direction: ltr;
+}
+
+/* Ensure proper spacing between toggle and text */
+.rtl .checkbox-inline .toggle+span {
+    margin-right: 8px;
 }

@@ -30,13 +30,29 @@ class TranslationController extends ApiController
 
         $actionButtons = [
             [
-                'text' => 'Add ' . $this->service->model->singleTitle,
+                'text' => translate("create") . " " . translate($this->service->model->singleTitle),
                 'class' => 'open-create-modal btn-sm btn-success',
                 'attr' => [
                     'data-modal-link' => route('landlord.translations.create'),
-                    'data-modal-title' => "Create " . $this->service->model->singleTitle,
+                    'data-modal-title' => translate("create") . " " . translate($this->service->model->singleTitle),
                 ]
             ],
+            [
+                'text' => translate("generate_translations_json"),
+                'class' => 'btn-sm btn-warning generate-translations-json',
+                'attr' => [
+                    'data-route' => route('landlord.translations.generate-json'),
+                    'data-method' => 'POST',
+                ]
+            ],
+            [
+                'text' => translate("sync_missing_translations"),
+                'class' => 'btn-sm btn-warning sync-missing-translations',
+                'attr' => [
+                    'data-route' => route('landlord.translations.sync-missing'),
+                    'data-method' => 'POST',
+                ]
+            ]
         ];
 
         return view('landlord.localizations.translations.index', compact('breadcrumbs', 'title', 'actionButtons'));
@@ -61,7 +77,7 @@ class TranslationController extends ApiController
     {
         $row = $this->service->get($id);
         $languages = $this->languageService->getAll();
-        return view('landlord.localizations.translations.editor', compact('row','languages'));
+        return view('landlord.localizations.translations.editor', compact('row', 'languages'));
     }
 
     public function update(Request $request, $id)
@@ -81,5 +97,17 @@ class TranslationController extends ApiController
     {
         $this->service->restore($id);
         return $this->return(200, "Deleted successfully");
+    }
+
+    public function generateJson()
+    {
+        $this->service->generateJson();
+        return $this->return(200, "Generated successfully");
+    }
+
+    public function syncMissing()
+    {
+        $this->service->syncMissing();
+        return $this->return(200, "Synced successfully");
     }
 }

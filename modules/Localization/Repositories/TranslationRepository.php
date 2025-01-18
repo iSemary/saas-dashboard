@@ -2,6 +2,7 @@
 
 namespace Modules\Localization\Repositories;
 
+use App\Console\Commands\TranslateMissingTranslations;
 use App\Helpers\TableHelper;
 use App\Services\CacheService;
 use Modules\Localization\Entities\Language;
@@ -41,6 +42,9 @@ class TranslationRepository implements TranslationInterface
         return DataTables::of($rows)
             ->filterColumn('language', function ($query, $keyword) {
                 $query->whereRaw('LOWER(languages.name) LIKE ?', ["%{$keyword}%"]);
+            })
+            ->editColumn('is_shareable', function ($row) {
+                return $row->is_shareable ? translate('yes') : translate('no');
             })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
@@ -121,6 +125,7 @@ class TranslationRepository implements TranslationInterface
 
     public function create(array $data)
     {
+        $data['is_shareable'] = isset($data['is_shareable']) && $data['is_shareable'] ? true : false;
         $translation = $this->model->create($data);
         $locale = Language::find($data['language_id'])->locale;
         CacheService::forever("translation_{$locale}_{$translation->translation_key}", $translation->translation_value);
@@ -129,6 +134,7 @@ class TranslationRepository implements TranslationInterface
 
     public function update($id, array $data)
     {
+        $data['is_shareable'] = isset($data['is_shareable']) && $data['is_shareable'] ? true : false;
         $row = $this->model->find($id);
         if ($row) {
             $row->update($data);
@@ -162,5 +168,29 @@ class TranslationRepository implements TranslationInterface
             return true;
         }
         return false;
+    }
+
+    public function syncMissing()
+    {
+        app(TranslateMissingTranslations::class)->handle();
+        return true;
+    }
+
+    public function generateJson()
+    {
+        $languages = Language::all();
+        $keys = $this->model->select('translation_key')->distinct()->get();
+        $translations = [];
+        foreach ($languages as $language) {
+            $translations[$language->locale] = [];
+            foreach ($keys as $key) {
+                $translations[$language->locale][$key->translation_key] = $this->getByKey($key->translation_key, $language->locale);
+            }
+        }
+        $path = resource_path('lang');
+        foreach ($translations as $locale => $translation) {
+            $file = $path . "/$locale.json";
+            file_put_contents($file, json_encode($translation, JSON_PRETTY_PRINT));
+        }
     }
 }

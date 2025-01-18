@@ -17,7 +17,7 @@
         </div>
         <div class="form-inline">
             <div class="input-group" data-widget="sidebar-search">
-                <input class="form-control form-control-sidebar" type="search" placeholder="Search"
+                <input class="form-control form-control-sidebar" type="search" placeholder="@translate("search")"
                     aria-label="Search">
                 <div class="input-group-append">
                     <button class="btn btn-sidebar">
@@ -379,6 +379,7 @@
                                         'create' => false,
                                     ],
                                     'external' => true,
+                                    'translate' => false,
                                     'path' => env('HORIZON_PATH'),
                                 ],
                                 'telescope' => [
@@ -388,6 +389,7 @@
                                         'create' => false,
                                     ],
                                     'external' => true,
+                                    'translate' => false,
                                     'path' => env('TELESCOPE_PATH'),
                                 ],
                                 'log_viewer' => [
@@ -434,6 +436,7 @@
                                     'permission' => 'read.env_diff',
                                     'route' => 'landlord.development.env-diff.show',
                                     'single' => true,
+                                    'translate' => false,
                                 ],
                             ],
                         ],
@@ -460,7 +463,8 @@
                                             <a href="{{ $item['path'] ?? route($item['routes']['index']) }}"
                                                 target="_blank" class="nav-link">
                                                 <i class="nav-icon fas fa-{{ $item['icon'] ?? '' }}"></i>
-                                                <p>@translate($key)</p>
+                                                {{-- <p>@translate($key)</p> --}}
+                                                <p>{{ isset($item['translate']) && !$item['translate'] ? translate($key, 'en') : translate($key)  }}</p>
                                             </a>
                                         </li>
                                     @elseif(isset($item['single']) && $item['single'])
@@ -469,7 +473,7 @@
                                                 <a href="{{ route($item['route']) }}"
                                                     class="nav-link @if (Request::route()->getName() === $item['route']) active @endif">
                                                     <i class="nav-icon fas fa-{{ $item['icon'] ?? '' }}"></i>
-                                                    <p>@translate($key)</p>
+                                                    <p>{{ isset($item['translate']) && !$item['translate'] ? translate($key, 'en') : translate($key)  }}</p>
                                                 </a>
                                             </li>
                                         @endif
@@ -489,7 +493,8 @@
                                                     <a href="{{ route($item['routes']['index']) }}"
                                                         class="pl-2 nav-link @if (Request::url() === route($item['routes']['index'])) active @endif">
                                                         <i class="fas fa-{{ $item['icon'] ?? '' }}"></i>
-                                                        <p>@translate($key)</p>
+                                                        {{-- <p>@translate($key)</p> --}}
+                                                        <p>{{ isset($item['translate']) && !$item['translate'] ? translate($key, 'en') : translate($key)  }}</p>
                                                     </a>
                                                 </li>
 

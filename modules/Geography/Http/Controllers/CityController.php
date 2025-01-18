@@ -31,11 +31,11 @@ class CityController extends ApiController
 
         $actionButtons = [
             [
-                'text' => 'Add ' . $this->service->model->singleTitle,
+                'text' => translate("create") . " " . translate($this->service->model->singleTitle),
                 'class' => 'open-create-modal btn-sm btn-success',
                 'attr' => [
                     'data-modal-link' => route('landlord.cities.create'),
-                    'data-modal-title' => "Create " . $this->service->model->singleTitle,
+                    'data-modal-title' => translate("create") . " " . translate($this->service->model->singleTitle),
                 ]
             ],
         ];

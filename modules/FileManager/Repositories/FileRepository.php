@@ -38,7 +38,7 @@ class FileRepository implements FileInterface
                 });
             })
             ->editColumn('folder', function ($row) {
-                return $row->folder->name;
+                return $row->folder?->name;
             })
             ->editColumn('size', function ($row) {
                 return FileHelper::returnSizeString($row->size);

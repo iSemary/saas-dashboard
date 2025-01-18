@@ -55,5 +55,15 @@ class TranslationService
     {
         return $this->repository->restore($id);
     }
+
+    public function syncMissing()
+    {
+        return $this->repository->syncMissing();
+    }
+
+    public function generateJson()
+    {
+        return $this->repository->generateJson();
+    }
 }
 

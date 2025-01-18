@@ -13,6 +13,7 @@
                         <th scope="col">@translate('translation_key')</th>
                         <th scope="col">@translate('translation_value')</th>
                         <th scope="col">@translate('translation_context')</th>
+                        <th scope="col">@translate('is_shareable')</th>
                         <th scope="col">@translate('action')</th>
                     </tr>
                 </thead>
