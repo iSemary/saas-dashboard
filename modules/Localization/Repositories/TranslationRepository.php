@@ -178,19 +178,24 @@ class TranslationRepository implements TranslationInterface
 
     public function generateJson()
     {
-        $languages = Language::all();
-        $keys = $this->model->select('translation_key')->distinct()->get();
-        $translations = [];
-        foreach ($languages as $language) {
-            $translations[$language->locale] = [];
-            foreach ($keys as $key) {
-                $translations[$language->locale][$key->translation_key] = $this->getByKey($key->translation_key, $language->locale);
+        try {
+            $languages = Language::all();
+            $keys = $this->model->select('translation_key')->distinct()->get();
+            $translations = [];
+            foreach ($languages as $language) {
+                $translations[$language->locale] = [];
+                foreach ($keys as $key) {
+                    $translations[$language->locale][$key->translation_key] = $this->getByKey($key->translation_key, $language->locale);
+                }
             }
-        }
-        $path = resource_path('lang');
-        foreach ($translations as $locale => $translation) {
-            $file = $path . "/$locale.json";
-            file_put_contents($file, json_encode($translation, JSON_PRETTY_PRINT));
+            $path = resource_path('lang');
+            foreach ($translations as $locale => $translation) {
+                $file = $path . "/$locale.json";
+                file_put_contents($file, json_encode($translation, JSON_PRETTY_PRINT));
+            }
+            return ['success' => true, 'message' => 'JSON files generated successfully.'];
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 }

@@ -36,7 +36,7 @@ let cols = [
 filterTable(route, tableID, null, null, true, cols, null);
 
 // Generate json files from the translations
-$(document).on("click", "#generate-translations-json", function () {
+$(document).on("click", ".generate-translations-json", function () {
     let btn = $(this);
     let route = $(this).attr("data-route");
     let method = $(this).attr("data-method");
@@ -45,10 +45,10 @@ $(document).on("click", "#generate-translations-json", function () {
         url: route,
         type: method,
         beforeSend: function () {
-            btn.html("Generating...").prop("disabled", true);
+            btn.html("lang.generating...").prop("disabled", true);
         },
         success: function (response) {
-            btn.html("Generate").prop("disabled", false);
+            btn.html("lang.generate_translations_json").prop("disabled", false);
             Swal.fire({
                 text: "lang.translations_generated",
                 confirmButtonText: "lang.ok",
@@ -71,7 +71,7 @@ $(document).on("click", "#generate-translations-json", function () {
 });
 
 // Generate json files from the translations
-$(document).on("click", "#sync-missing-translations", function () {
+$(document).on("click", ".sync-missing-translations", function () {
     let btn = $(this);
     let route = $(this).attr("data-route");
     let method = $(this).attr("data-method");
@@ -79,10 +79,10 @@ $(document).on("click", "#sync-missing-translations", function () {
         url: route,
         type: method,
         beforeSend: function () {
-            btn.html("Generating...").prop("disabled", true);
+            btn.html("lang.processing...").prop("disabled", true);
         },
         success: function (response) {
-            btn.html("Generate").prop("disabled", false);
+            btn.html("lang.sync_missing_translations").prop("disabled", false);
 
             Swal.fire({
                 text: "lang.translations_synced",

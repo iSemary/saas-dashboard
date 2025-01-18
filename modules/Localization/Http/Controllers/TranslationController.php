@@ -39,7 +39,7 @@ class TranslationController extends ApiController
             ],
             [
                 'text' => translate("generate_translations_json"),
-                'class' => 'btn-sm btn-warning generate-translations-json',
+                'class' => 'btn-sm btn-orange text-white generate-translations-json',
                 'attr' => [
                     'data-route' => route('landlord.translations.generate-json'),
                     'data-method' => 'POST',
@@ -47,7 +47,7 @@ class TranslationController extends ApiController
             ],
             [
                 'text' => translate("sync_missing_translations"),
-                'class' => 'btn-sm btn-warning sync-missing-translations',
+                'class' => 'btn-sm btn-orange text-white sync-missing-translations',
                 'attr' => [
                     'data-route' => route('landlord.translations.sync-missing'),
                     'data-method' => 'POST',
@@ -101,8 +101,11 @@ class TranslationController extends ApiController
 
     public function generateJson()
     {
-        $this->service->generateJson();
-        return $this->return(200, "Generated successfully");
+        $response = $this->service->generateJson();
+        if ($response['success']) {
+            return $this->return(200, "Generated successfully");
+        }
+        return $this->return(400, "Failed on generating json", ['errors' => $response['message']]);
     }
 
     public function syncMissing()

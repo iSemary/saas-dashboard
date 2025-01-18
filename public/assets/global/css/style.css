@@ -59,16 +59,17 @@
 }
 
 .btn-orange {
-    background-color: #f0ad4e;
+    background-color: #ef6c00;
     color: #fff;
 }
 
 .btn-orange:hover,
 .btn-orange:focus {
-    background-color: #ec971f;
-    border-color: #d58512;
+    background-color: #e65100;
+    border-color: #e65100;
     color: #fff;
 }
+
 
 .btn-teal {
     background-color: #20c997;
