@@ -9,7 +9,8 @@
     <meta name="_token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {{-- Font Awesome --}}
-    <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/fontawesome-free/css/all.min.css') }}" media="screen">
+    <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/fontawesome-free/css/all.min.css') }}"
+        media="screen">
     {{-- Bootstrap Icons --}}
     <link rel="stylesheet" href="{{ asset('assets/global/plugins/bootstrap-icons/css/bootstrap-icons.min.css') }}">
     {{-- Bootstrap --}}
@@ -17,7 +18,8 @@
     {{-- Theme style --}}
     <link rel="stylesheet" href="{{ asset('assets/landlord/css/adminlte.min.css') }}" media="screen">
     {{-- overlayScrollbars --}}
-    <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}" media="screen">
+    <link rel="stylesheet"
+        href="{{ asset('assets/landlord/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}" media="screen">
     {{--  Sweetalert 2  --}}
     <link rel="stylesheet" href="{{ asset('assets/landlord/css/sweetalert2.min.css') }}" media="screen">
     {{--  Slick   --}}
@@ -41,18 +43,26 @@
             .direction {
                 direction: {{ $language->direction }};
             }
+
             .dir {
                 direction: {{ $language->direction }};
             }
+
             table {
                 direction: ltr;
             }
         </style>
     @endif
     {{-- Main Style --}}
-    <link rel="stylesheet" href="{{ asset('assets/landlord/css/main.css') . '?v=' . filemtime(public_path('assets/landlord/css/main.css')) }}" media="screen">
-    <link rel="stylesheet" href="{{ asset('assets/landlord/css/style.css') . '?v=' . filemtime(public_path('assets/landlord/css/style.css')) }}" media="screen">
-    <link rel="stylesheet" href="{{ asset('assets/global/css/style.css') . '?v=' . filemtime(public_path('assets/global/css/style.css')) }}" media="screen">
+    <link rel="stylesheet"
+        href="{{ asset('assets/landlord/css/main.css') . '?v=' . filemtime(public_path('assets/landlord/css/main.css')) }}"
+        media="screen">
+    <link rel="stylesheet"
+        href="{{ asset('assets/landlord/css/style.css') . '?v=' . filemtime(public_path('assets/landlord/css/style.css')) }}"
+        media="screen">
+    <link rel="stylesheet"
+        href="{{ asset('assets/global/css/style.css') . '?v=' . filemtime(public_path('assets/global/css/style.css')) }}"
+        media="screen">
 
     {{-- Dark Mode --}}
     {{-- @if (!is_null(\App\Models\Setting::where('user_id', Auth::id())->first()) && \App\Models\Setting::where('user_id', auth::id())->first()->theme_mode == 0)
@@ -130,9 +140,10 @@
         let language = {
             locale: "{{ $language->locale }}",
             direction: "{{ $language->direction }}",
+            languageFile: `{{ asset('assets/global/lang/' . $language->locale . '.json') }}`,
             dataTableLanguageFile: `{{ asset('assets/global/plugins/DataTables/lang/' . $language->locale . '.json') }}`,
-        };
 
+        };
         CKEDITOR.config.language = "{{ $language->locale }}";
     </script>
     {{-- Main Scripts --}}

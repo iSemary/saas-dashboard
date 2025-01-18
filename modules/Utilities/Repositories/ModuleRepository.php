@@ -32,7 +32,7 @@ class ModuleRepository implements ModuleInterface
 
         return DataTables::of($rows)
             ->editColumn('icon', function ($row) {
-                return '<img src="' . $row->icon . '" width="50px" height="50px" alt="module" />';
+                return '<img src="' . $row->icon . '" width="50px" height="50px" class="img-thumbnail" alt="module" />';
             })
             ->editColumn('status', function ($row) {
                 return translate($row->status);

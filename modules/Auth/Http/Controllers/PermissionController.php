@@ -20,19 +20,19 @@ class PermissionController extends ApiController
         if (request()->ajax()) {
             return $this->service->getDataTables();
         }
-        $title = "permissions";
+        $title = translate("permissions");
         $breadcrumbs = [
             ['text' => translate('home'), 'link' => route('home')],
-            ['text' => "permissions"],
+            ['text' => $title],
         ];
 
         $actionButtons = [
             [
-                'text' => 'Add ' . "permission",
+                'text' => translate("create") . " " . translate("permission"),
                 'class' => 'open-create-modal btn-sm btn-success',
                 'attr' => [
                     'data-modal-link' => route('landlord.permissions.create'),
-                    'data-modal-title' => "Create " . "permission",
+                    'data-modal-title' => translate("create") . " " . translate("permission"),
                 ]
             ],
         ];
@@ -49,7 +49,7 @@ class PermissionController extends ApiController
     {
         $data = $request->all();
         $this->service->create($data);
-        return $this->return(200, "Created successfully");
+        return $this->return(200, translate("created_successfully"));
     }
 
     public function show($id) {}
@@ -64,7 +64,7 @@ class PermissionController extends ApiController
     {
         $data = $request->all();
         $this->service->update($id, $data);
-        return $this->return(200, "Updated successfully");
+        return $this->return(200, translate("updated_successfully"));
     }
 
     public function destroy($id)

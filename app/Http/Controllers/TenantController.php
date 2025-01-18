@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Modules\Tenant\Helper\TenantHelper;
 use Modules\Tenant\Entities\Tenant;
-use Modules\Utilities\Entities\Category;
 
 class TenantController extends Controller
 {
@@ -14,7 +13,7 @@ class TenantController extends Controller
         $subdomain = TenantHelper::getSubDomain();
 
         if ($subdomain === 'landlord') {
-            return view('landlord.dashboard');
+            return app()->call('Modules\Auth\Http\Controllers\Landlord\DashboardController@index');
         }
 
         $tenant = Tenant::where("domain", $subdomain)->first();

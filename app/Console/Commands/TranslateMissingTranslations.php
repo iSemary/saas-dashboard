@@ -20,11 +20,13 @@ class TranslateMissingTranslations extends Command
     {
         parent::__construct();
 
+        $this->output = new \Symfony\Component\Console\Output\ConsoleOutput();
+
         $this->translationService = $translationService;
 
         $this->translateClient = new TranslateClient([
             'key' => env('GOOGLE_CLOUD_TRANSLATION_API_KEY', 'AIzaSyA7ZwzAa6QVwpzwqcCbHckOnwpaNULtXhE')
-        ]); // Initialize Google Translate Client
+        ]);
     }
 
     public function handle()
@@ -50,6 +52,7 @@ class TranslateMissingTranslations extends Command
                             'language_id' => $language->id,
                             'translation_key' => $englishTranslation->translation_key,
                             'translation_value' => $translatedValue,
+                            'is_shareable' => $englishTranslation->is_shareable,
                         ]);
                         $this->info("Translated and saved missing translation: {$englishTranslation->translation_key} in {$language->locale}");
                     }

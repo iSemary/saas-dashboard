@@ -1,3 +1,10 @@
+var translate = {};
+$.getJSON(language.languageFile, function(data) {
+    translate = data;
+}).fail(function(xhr, textStatus, error) {
+    console.error('Error loading translation file:', error);
+});
+
 $(document).on("change", "#LangSelect", function (e) {
     let Locale = $(this).val();
     let FullLocale = $("#LangSelect option:selected").text();

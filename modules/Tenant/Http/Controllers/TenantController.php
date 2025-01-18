@@ -50,7 +50,7 @@ class TenantController extends ApiController
         $customerUsername = $data['customer_username'];
 
         $this->service->init($customerUsername);
-        return $this->return(200, "Created successfully");
+        return $this->return(200, translate("created_successfully"));
     }
 
     public function show($id) {}
@@ -65,7 +65,7 @@ class TenantController extends ApiController
     {
         $data = $request->all();
         $this->service->update($id, $data);
-        return $this->return(200, "Updated successfully");
+        return $this->return(200, translate("updated_successfully"));
     }
 
     public function destroy($id)

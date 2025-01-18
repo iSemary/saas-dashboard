@@ -45,23 +45,29 @@ $(document).on("click", ".generate-translations-json", function () {
         url: route,
         type: method,
         beforeSend: function () {
-            btn.html("lang.generating...").prop("disabled", true);
+            btn.html(translate.generating + "...").prop("disabled", true);
         },
         success: function (response) {
-            btn.html("lang.generate_translations_json").prop("disabled", false);
+            btn.html(translate.generate_translations_json).prop(
+                "disabled",
+                false
+            );
             Swal.fire({
-                text: "lang.translations_generated",
-                confirmButtonText: "lang.ok",
+                text: translate.translations_generated,
+                confirmButtonText: translate.ok,
                 type: "success",
                 toast: true,
                 position: "bottom",
             });
         },
         error: function (response) {
-            btn.html("Generate").prop("disabled", false);
+            btn.html(translate.generate_translations_json).prop(
+                "disabled",
+                false
+            );
             Swal.fire({
-                text: "lang.translations_generate_failed",
-                confirmButtonText: "lang.ok",
+                text: translate.translations_generate_failed,
+                confirmButtonText: translate.ok,
                 type: "error",
                 toast: true,
                 position: "bottom",
@@ -79,24 +85,29 @@ $(document).on("click", ".sync-missing-translations", function () {
         url: route,
         type: method,
         beforeSend: function () {
-            btn.html("lang.processing...").prop("disabled", true);
+            btn.html(translate.processing + "...").prop("disabled", true);
         },
         success: function (response) {
-            btn.html("lang.sync_missing_translations").prop("disabled", false);
-
+            btn.html(translate.sync_missing_translations).prop(
+                "disabled",
+                false
+            );
             Swal.fire({
-                text: "lang.translations_synced",
-                confirmButtonText: "lang.ok",
+                text: translate.translations_synced,
+                confirmButtonText: translate.ok,
                 type: "success",
                 toast: true,
                 position: "bottom",
             });
         },
         error: function (response) {
-            btn.html("Generate").prop("disabled", false);
+            btn.html(translate.sync_missing_translations).prop(
+                "disabled",
+                false
+            );
             Swal.fire({
-                text: "lang.translations_sync_failed",
-                confirmButtonText: "lang.ok",
+                text: translate.translations_sync_failed,
+                confirmButtonText: translate.ok,
                 type: "error",
                 toast: true,
                 position: "bottom",

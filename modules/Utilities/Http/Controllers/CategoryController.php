@@ -20,7 +20,7 @@ class CategoryController extends ApiController
         if (request()->ajax()) {
             return $this->service->getDataTables();
         }
-        $title = $this->service->model->pluralTitle;
+        $title = translate($this->service->model->pluralTitle);
         $breadcrumbs = [
             ['text' => translate('home'), 'link' => route('home')],
             ['text' => translate($this->service->model->pluralTitle)],
@@ -51,7 +51,7 @@ class CategoryController extends ApiController
     {
         $data = $request->all();
         $this->service->create($data);
-        return $this->return(200, "Created successfully");
+        return $this->return(200, translate("created_successfully"));
     }
 
     public function show($id) {}
@@ -68,7 +68,7 @@ class CategoryController extends ApiController
     {
         $data = $request->all();
         $this->service->update($id, $data);
-        return $this->return(200, "Updated successfully");
+        return $this->return(200, translate("updated_successfully"));
     }
 
     public function destroy($id)

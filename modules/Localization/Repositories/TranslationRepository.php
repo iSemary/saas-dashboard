@@ -180,7 +180,7 @@ class TranslationRepository implements TranslationInterface
     {
         try {
             $languages = Language::all();
-            $keys = $this->model->select('translation_key')->distinct()->get();
+            $keys = $this->model->select('translation_key')->where("is_shareable", 1)->distinct()->get();
             $translations = [];
             foreach ($languages as $language) {
                 $translations[$language->locale] = [];
@@ -188,7 +188,7 @@ class TranslationRepository implements TranslationInterface
                     $translations[$language->locale][$key->translation_key] = $this->getByKey($key->translation_key, $language->locale);
                 }
             }
-            $path = resource_path('lang');
+            $path = public_path('assets/global/lang');
             foreach ($translations as $locale => $translation) {
                 $file = $path . "/$locale.json";
                 file_put_contents($file, json_encode($translation, JSON_PRETTY_PRINT));

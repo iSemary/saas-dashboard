@@ -314,3 +314,7 @@
 .rtl .checkbox-inline .toggle+span {
     margin-right: 8px;
 }
+/* Datatables processing   */
+#table_processing {
+    background-color: #e5e5e5;
+}

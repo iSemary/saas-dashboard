@@ -41,7 +41,7 @@ class CategoryRepository implements CategoryInterface
                 $query->whereRaw('LOWER(categories.name) LIKE ?', ["%{$keyword}%"]);
             })
             ->editColumn('icon', function ($row) {
-                return '<img src="' . $row->icon . '" width="50px" height="50px" alt="category" />';
+                return '<img src="' . $row->icon . '" width="50px" height="50px" class="img-thumbnail" alt="category" />';
             })
             ->editColumn('status', function ($row) {
                 return translate($row->status);

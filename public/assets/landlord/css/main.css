@@ -823,10 +823,6 @@ table th {
     content: "\f359";
 }
 
-img {
-    cursor: zoom-in;
-}
-
 .icon-container {
     padding-right: 20px;
     text-align: center;
