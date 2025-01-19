@@ -11,6 +11,7 @@ class CodeBuilderController extends ApiController
 {
     protected $modulesFolder = "modules";
     protected $moduleType = "landlord";
+    protected $directoryPermissions = 02775; // drwxrwsr-x
 
     public function show()
     {
@@ -81,7 +82,7 @@ class CodeBuilderController extends ApiController
                     // Create directories if they don't exist
                     $directory = dirname($newPath);
                     if (!File::isDirectory($directory)) {
-                        if (!File::makeDirectory($directory, 0775, true)) {
+                        if (!File::makeDirectory($directory, 02775, true)) {
                             throw new \Exception("Failed to create directory: " . $directory);
                         }
                     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders\landlord;
+namespace Database\Seeders\Landlord;
 
 use Illuminate\Database\Seeder;
 use Modules\Tenant\Entities\Tenant;

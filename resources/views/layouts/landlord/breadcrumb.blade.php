@@ -24,17 +24,24 @@
         <div class="text-revert p-1">
             @if (isset($actionButtons) && is_array($actionButtons))
                 @foreach ($actionButtons as $button)
-                    <button type="button" class="btn {{ $button['class'] }}"
-                        @if (isset($button['attr']) && is_array($button['attr']))
-                            @foreach ($button['attr'] as $key => $value)
-                                {{ $key }}="{{ $value }}"
-                            @endforeach
-                        @endif
-                    >
-                        {{ $button['text'] }}
-                    </button>
+                    @if (!isset($button['permission']) || Gate::check($button['permission']))
+                        <button type="button" class="btn {{ $button['class'] }}"
+                            @if (isset($button['attr']) && is_array($button['attr'])) 
+                                @foreach ($button['attr'] as $key => $value) 
+                                    {{ $key }}="{{ $value }}" 
+                                @endforeach 
+                            @endif>
+                            @if ($language->direction == 'ltr')
+                                {{ $button['text'] }}
+                                {!! isset($button['icon']) ? '<span class="">' . $button['icon'] . '</span>' : '' !!}
+                            @else
+                                {!! isset($button['icon']) ? '<span class="">' . $button['icon'] . '</span>' : '' !!}
+                                {{ $button['text'] }}
+                            @endif
+                        </button>
+                    @endif
                 @endforeach
             @endif
         </div>
-    </div>    
+    </div>
 </div>

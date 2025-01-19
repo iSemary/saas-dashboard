@@ -1,8 +1,8 @@
 <?php
 
-namespace Database\Seeders\landlord;
+namespace Database\Seeders\Tenant;
 
-use App\Constants\Landlord\Resources;
+use App\Constants\Tenant\Resources;
 use Illuminate\Database\Seeder;
 use Modules\Auth\Entities\Permission;
 use Modules\Auth\Entities\Role;
@@ -29,7 +29,7 @@ class RolePermissionSeeder extends Seeder
     {
         $roles = [
             [
-                'name' => 'landlord',
+                'name' => 'owner',
                 'guard_name' => 'api'
             ],
             [
@@ -56,11 +56,14 @@ class RolePermissionSeeder extends Seeder
 
     private function seedPermissions()
     {
+
+        $actions = ['view', 'create', 'update', 'delete'];
+
         foreach ($this->resources as $resource) {
-            foreach ($resource['actions'] as $action) {
+            foreach ($actions as $action) {
                 Permission::updateOrCreate(
-                    ['name' => "$action.{$resource['name']}", 'guard_name' => 'api'],
-                    ['name' => "$action.{$resource['name']}", 'guard_name' => 'api']
+                    ['name' => "$action.$resource", 'guard_name' => 'api'],
+                    ['name' => "$action.$resource", 'guard_name' => 'api']
                 );
             }
         }
@@ -68,7 +71,7 @@ class RolePermissionSeeder extends Seeder
 
     private function seedPermissionsToRoles()
     {
-        $roles = ['landlord', 'super_admin'];
+        $roles = ['owner', 'super_admin'];
         $permissions = Permission::all();
 
         foreach ($roles as $roleName) {

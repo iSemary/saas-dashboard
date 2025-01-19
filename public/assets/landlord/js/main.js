@@ -359,7 +359,7 @@ $(document).on(
 
 $(document).on("click", ".refresh-modal", function (e) {
     e.preventDefault();
-
+    var btn = $(this);
     // Get the modal ID from the parent modal element
     const $modal = $(this).closest(".modal");
     const url = $modal.attr("data-modal-link");
@@ -371,11 +371,16 @@ $(document).on("click", ".refresh-modal", function (e) {
     $.ajax({
         url: url,
         method: "GET",
+        beforeSend:function() {
+            btn.prop("disabled", true);
+        },
         success: function (response) {
+            btn.prop("disabled", false);
             $modal.find(".modal-body").html(response);
             fireDependencies();
         },
         error: function () {
+            btn.prop("disabled", false);
             $modal
                 .find(".modal-body")
                 .html("<p>Failed to load content. Please try again.</p>");

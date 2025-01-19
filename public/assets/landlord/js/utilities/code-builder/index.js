@@ -1,7 +1,7 @@
 $(document).ready(function () {
-    // Restrict inputs to English letters only and no spaces
+    // Restrict inputs to English letters, underscores only, and no spaces
     function sanitizeInput(value) {
-        return value.replace(/[^a-zA-Z]/g, ''); // Removes non-English letters and spaces
+        return value.replace(/[^a-zA-Z_-]/g, ''); // Removes non-English letters, spaces, and disallowed characters except underscores
     }
 
     // Event listener for MODEL_NAME

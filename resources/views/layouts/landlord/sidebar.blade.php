@@ -84,6 +84,17 @@
                             'icon' => 'fas fa-mail-bulk',
                             'label' => 'mailing',
                             'items' => [
+                                'email_campaigns' => [
+                                    'icon' => 'fas fa-bullhorn',
+                                    'permission' => [
+                                        'read' => 'read.email_templates',
+                                        'create' => 'create.email_templates',
+                                    ],
+                                    'routes' => [
+                                        'index' => 'landlord.email-templates.index',
+                                        'create' => 'landlord.email-templates.create',
+                                    ],
+                                ],
                                 'email_templates' => [
                                     'icon' => 'fas fa-envelope-open-text',
                                     'permission' => [
@@ -95,10 +106,36 @@
                                         'create' => 'landlord.email-templates.create',
                                     ],
                                 ],
+                                'email_recipients' => [
+                                    'icon' => 'fas fa-user-plus',
+                                    'permission' => 'read.email_logs',
+                                    'route' => 'landlord.emails.index',
+                                    'single' => true,
+                                    'external' => false,
+                                ],
+                                'email_subscribers' => [
+                                    'icon' => 'fas fa-users',
+                                    'permission' => 'read.email_logs',
+                                    'route' => 'landlord.emails.index',
+                                    'single' => true,
+                                    'external' => false,
+                                ],
+                                'compose_email' => [
+                                    'icon' => 'fas fa-paper-plane',
+                                    'permission' => 'send.emails',
+                                    'attr' => [
+                                        'data-modal-link' => route('landlord.emails.compose'),
+                                        'data-modal-title' => translate('compose'),
+                                    ],
+                                    'single' => true,
+                                    'modal' => true,
+                                    'class' => 'open-details-btn compose-email-btn',
+                                    'text' => 'compose',
+                                ],
                                 'email_log' => [
                                     'icon' => 'fas fa-history',
                                     'permission' => 'read.email_logs',
-                                    'route' => 'landlord.email-logs.index',
+                                    'route' => 'landlord.emails.index',
                                     'single' => true,
                                     'external' => false,
                                 ],
@@ -470,14 +507,26 @@
                                         </li>
                                     @elseif(isset($item['single']) && $item['single'])
                                         @if (!isset($item['permission']) || Gate::check($item['permission']))
-                                            <li class="nav-item">
-                                                <a href="{{ route($item['route']) }}"
-                                                    class="nav-link @if (Request::route()->getName() === $item['route']) active @endif">
-                                                    <i class="nav-icon fas fa-{{ $item['icon'] ?? '' }}"></i>
-                                                    <p>{{ isset($item['translate']) && !$item['translate'] ? translate($key, 'en') : translate($key) }}
-                                                    </p>
-                                                </a>
-                                            </li>
+                                            @if (isset($item['modal']))
+                                                <li class="nav-item">
+                                                    <a href="#"
+                                                        @if (isset($item['attr'])) @foreach ($item['attr'] as $attr => $value){{ $attr }}="{{ $value }}"@endforeach @endif
+                                                        class="nav-link {{ isset($item['class']) ? $item['class'] : '' }}">
+                                                        <i class="nav-icon fas fa-{{ $item['icon'] ?? '' }}"></i>
+                                                        <p>{{ isset($item['translate']) && !$item['translate'] ? translate($key, 'en') : translate($key) }}
+                                                        </p>
+                                                    </a>
+                                                </li>
+                                            @else
+                                                <li class="nav-item">
+                                                    <a href="{{ route($item['route']) }}"
+                                                        class="nav-link @if (Request::route()->getName() === $item['route']) active @endif">
+                                                        <i class="nav-icon fas fa-{{ $item['icon'] ?? '' }}"></i>
+                                                        <p>{{ isset($item['translate']) && !$item['translate'] ? translate($key, 'en') : translate($key) }}
+                                                        </p>
+                                                    </a>
+                                                </li>
+                                            @endif
                                         @endif
                                     @else
                                         <li class="nav-item">
@@ -491,15 +540,27 @@
                                             </a>
                                             <ul class="nav nav-treeview" style="display: none;">
                                                 {{-- Index Page --}}
-                                                <li class="nav-item">
-                                                    <a href="{{ route($item['routes']['index']) }}"
-                                                        class="pl-2 nav-link @if (Request::url() === route($item['routes']['index'])) active @endif">
-                                                        <i class="fas fa-{{ $item['icon'] ?? '' }}"></i>
-                                                        {{-- <p>@translate($key)</p> --}}
-                                                        <p>{{ isset($item['translate']) && !$item['translate'] ? translate($key, 'en') : translate($key) }}
-                                                        </p>
-                                                    </a>
-                                                </li>
+
+                                                @if (isset($item['modal']))
+                                                    <li class="nav-item">
+                                                        <a href="#"
+                                                            @if (isset($item['attr'])) @foreach ($item['attr'] as $attr => $value){{ $attr }}="{{ $value }}"@endforeach @endif
+                                                            class="pl-2 nav-link {{ isset($item['class']) ? $item['class'] : '' }}">
+                                                            <i class="fas fa-{{ $item['icon'] ?? '' }}"></i>
+                                                            <p>{{ isset($item['translate']) && !$item['translate'] ? translate($key, 'en') : translate($key) }}
+                                                            </p>
+                                                        </a>
+                                                    </li>
+                                                @else
+                                                    <li class="nav-item">
+                                                        <a href="{{ route($item['routes']['index']) }}"
+                                                            class="pl-2 nav-link @if (Request::url() === route($item['routes']['index'])) active @endif">
+                                                            <i class="fas fa-{{ $item['icon'] ?? '' }}"></i>
+                                                            <p>{{ isset($item['translate']) && !$item['translate'] ? translate($key, 'en') : translate($key) }}
+                                                            </p>
+                                                        </a>
+                                                    </li>
+                                                @endif
 
                                                 {{-- Create Page --}}
                                                 @if (isset($item['permission']['create']) && $item['permission']['create'])

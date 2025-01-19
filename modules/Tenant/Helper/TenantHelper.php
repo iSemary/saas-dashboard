@@ -9,7 +9,7 @@ class TenantHelper
 {
     public static function getSubDomain()
     {
-        // Get the host (e.g., landlord.sass.test or sass.test)
+        // Get the host (e.g., landlord.saas.test or saas.test)
         $host = request()->getHost();
     
         // Split the host into segments

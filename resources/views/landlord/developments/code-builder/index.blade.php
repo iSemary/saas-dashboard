@@ -7,7 +7,6 @@
                 @csrf
 
                 <div class="row">
-
                     @foreach ($vars as $var)
                         <div class="form-group col-4">
                             <label for="name" class="form-label"><code>{{ $var }}</code></label>

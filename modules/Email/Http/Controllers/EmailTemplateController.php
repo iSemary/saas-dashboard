@@ -1,16 +1,17 @@
 <?php
 
-namespace Modules\$MODULE_NAME$\Http\Controllers;
+namespace Modules\Email\Http\Controllers;
 
+use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
-use Modules\$MODULE_NAME$\Services\$MODEL_NAME$Service;
+use Modules\Email\Services\EmailTemplateService;
 use Illuminate\Http\Request;
 
-class $MODEL_NAME$Controller extends ApiController
+class EmailTemplateController extends ApiController
 {
     protected $service;
 
-    public function __construct($MODEL_NAME$Service $service)
+    public function __construct(EmailTemplateService $service)
     {
         $this->service = $service;
     }
@@ -31,18 +32,29 @@ class $MODEL_NAME$Controller extends ApiController
                 'text' => translate("create") . " " . translate($this->service->model->singleTitle),
                 'class' => 'open-create-modal btn-sm btn-success',
                 'attr' => [
-                    'data-modal-link' => route('landlord.$PLURAL_TITLE$.create'),
+                    'data-modal-link' => route('landlord.email-templates.create'),
                     'data-modal-title' => translate("create") . " " . translate($this->service->model->singleTitle),
                 ]
             ],
+            [
+                'text' => translate("compose"),
+                'permission' => 'send.emails',
+                'class' => 'btn-sm btn-orange text-white open-details-btn compose-email-btn',
+                'icon' => '<i class="bi bi-plus-circle-dotted"></i>',
+                'attr' => [
+                    'data-modal-link' => route('landlord.emails.compose'),
+                    'data-modal-title' => translate("compose"),
+                ]
+            ]
         ];
 
-        return view('landlord.$MODULE_PLURAL_TITLE$.$PLURAL_TITLE$.index', compact('breadcrumbs', 'title', 'actionButtons'));
+        return view('landlord.emails.email-templates.index', compact('breadcrumbs', 'title', 'actionButtons'));
     }
 
     public function create()
     {
-        return view('landlord.$MODULE_PLURAL_TITLE$.$PLURAL_TITLE$.editor');
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
+        return view('landlord.emails.email-templates.editor', compact('statusOptions'));
     }
 
     public function store(Request $request)
@@ -57,7 +69,8 @@ class $MODEL_NAME$Controller extends ApiController
     public function edit($id)
     {
         $row = $this->service->get($id);
-        return view('landlord.$MODULE_PLURAL_TITLE$.$PLURAL_TITLE$.editor', compact('row'));
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
+        return view('landlord.emails.email-templates.editor', compact('row', 'statusOptions'));
     }
 
     public function update(Request $request, $id)
@@ -72,7 +85,7 @@ class $MODEL_NAME$Controller extends ApiController
         $this->service->delete($id);
         return $this->return(200, "Deleted successfully");
     }
-    
+
     public function restore($id)
     {
         $this->service->restore($id);

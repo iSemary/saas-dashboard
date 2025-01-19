@@ -2,19 +2,26 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Email\Http\Controllers\EmailController;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+use Modules\Email\Http\Controllers\EmailTemplateController;
+use Modules\Email\Http\Controllers\EmailSubscriberController;
+use Modules\Email\Http\Controllers\EmailCampaignController;
+use Modules\Email\Http\Controllers\EmailRecipientController;
 
 Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:landlord', '2fa'])->group(function () {
-    Route::resource('email-templates', EmailController::class)->names('email-templates');
-    Route::get('email-logs', [EmailController::class, "index"])->name('email-logs.index');
+    // Email Templates
+    Route::resource('email-templates', EmailTemplateController::class)->names('email-templates');
+
+    // Email Recipients
+    Route::resource('email-recipients', EmailRecipientController::class)->names('email-recipients');
+
+    // Email Campaigns
+    Route::resource('email-campaigns', EmailCampaignController::class)->names('email-campaigns');
+
+    // Email Subscribers
+    Route::get('email-subscribers', [EmailSubscriberController::class, "index"])->name('email-subscribers.index');
+
+    // Email Routes
+    Route::post('emails/resend/{id}', [EmailController::class, "resend"])->name('emails.resend');
+    Route::get('emails/compose', [EmailController::class, "compose"])->name('emails.compose');
+    Route::get('emails', [EmailController::class, "index"])->name('emails.index');
 });

@@ -7,15 +7,12 @@
                         <h5 class="modal-title"></h5>
                     </div>
                     <div class="col-2 text-revert">
-                        <button type="button" class="close-modal" data-dismiss="modal" aria-label="Close"><i
-                                class="fas fa-times"></i></button>
+                        <button type="button" class="close-modal" data-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
                         <button type="button" class="refresh-modal"><i class="fas fa-sync-alt"></i></button>
                     </div>
                 </div>
             </div>
-            <div class="modal-body">
-
-            </div>
+            <div class="modal-body"></div>
         </div>
     </div>
 </div>

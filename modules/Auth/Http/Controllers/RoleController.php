@@ -26,7 +26,7 @@ class RoleController extends ApiController
         $title = translate("roles");
         $breadcrumbs = [
             ['text' => translate('home'), 'link' => route('home')],
-            ['text' => "roles"],
+            ['text' => translate("roles")],
         ];
 
         $actionButtons = [

@@ -100,8 +100,24 @@ class Resources
                 'actions' => ['read', 'create', 'update', 'delete', 'restore']
             ],
             [
+                'name' => 'email_campaigns',
+                'actions' => ['read', 'create', 'update', 'delete', 'restore']
+            ],
+            [
+                'name' => 'email_subscribers',
+                'actions' => ['read']
+            ],
+            [
+                'name' => 'email_recipients',
+                'actions' => ['read', 'create', 'update', 'delete', 'restore']
+            ],
+            [
                 'name' => 'email_logs',
                 'actions' => ['read', 'resend']
+            ],
+            [
+                'name' => 'emails',
+                'actions' => ['send']
             ],
             [
                 'name' => 'plans',
