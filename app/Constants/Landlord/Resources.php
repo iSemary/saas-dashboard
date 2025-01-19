@@ -187,6 +187,14 @@ class Resources
                 'name' => 'env_diff',
                 'actions' => ['read']
             ],
+            [
+                'name' => 'modules_flow',
+                'actions' => ['read', 'update']
+            ],
+            [
+                'name' => 'database_flow',
+                'actions' => ['read', 'update']
+            ]
         ];
     }
 }

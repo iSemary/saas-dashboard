@@ -33,3 +33,16 @@ if (!function_exists('convertToEnglishNumbers')) {
         return $input;
     }
 }
+
+if (!function_exists('vite_assets')) {
+    function vite_assets($entry) {
+        $manifest = public_path('build/manifest.json');
+        
+        if (!file_exists($manifest)) {
+            // Return empty string or null when manifest doesn't exist
+            return '';
+        }
+        
+        return vite($entry);
+    }
+}

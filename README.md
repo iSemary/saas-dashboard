@@ -31,6 +31,9 @@
 -   [Name Convention](#name-convention)
 -   [File Handler](#file-handler)
 -   [Translatable](#translatable)
+-   [React Installation](#react-installation)
+-   [React App Routes](#react-app-routes)
+-   [React Components](#react-components)
 
 ---
 
@@ -87,7 +90,7 @@ php artisan landlord:migrate
 ### Seed Role and Permissions (Landlord)
 
 ```bash
-php artisan db:seed --class=Database\\Seeders\\landlord\\RolePermissionSeeder
+php artisan db:seed --class=Database\\Seeders\\Landlord\\RolePermissionSeeder
 ```
 
 ### Landlord Tenant Seeder (Landlord)
@@ -95,7 +98,7 @@ php artisan db:seed --class=Database\\Seeders\\landlord\\RolePermissionSeeder
 Creates a landlord row in the tenants table:
 
 ```bash
-php artisan db:seed --class=Database\\Seeders\\landlord\\LandlordTenantSeeder
+php artisan db:seed --class=Database\\Seeders\\Landlord\\LandlordTenantSeeder
 ```
 
 ### Seed Default Landlord User (Landlord)
@@ -291,7 +294,6 @@ The `$translatableColumns` property is an array that specifies which columns are
 The `->editColumn('description', function($row) { ... })` method in the datatable allows you to manage the translation
 of the 'description' column using the `TranslateHelper::returnTranslatableEditor` method.
 
-
 ```php
 use Translatable;
 ```
@@ -308,10 +310,58 @@ in datatable table you can manage the translation by this
 })
 ```
 
-
-
 ## Prevent git from chmod changes
 
 ```bash
 git config core.fileMode false
 ```
+
+---
+
+## React Installation
+
+To install and set up React for your project, follow these steps:
+
+1. **Install Dependencies**:
+
+    ```bash
+    npm install
+    ```
+
+2. **Run Development Server**:
+    ```bash
+    npm run dev
+    ```
+
+If you encounter any issues, try the following commands to clean the cache and reinstall dependencies:
+
+1. **Clean npm Cache**:
+
+    ```bash
+    npm cache clean --force
+    ```
+
+2. **Remove `node_modules` and `package-lock.json`**:
+
+    ```bash
+    rm -rf node_modules package-lock.json
+    ```
+
+3. **Reinstall Dependencies**:
+
+    ```bash
+    npm install
+    ```
+
+4. **Run Development Server Again**:
+    ```bash
+    npm run dev
+    ```
+
+---
+
+## React App Routes
+
+---
+
+## React Components

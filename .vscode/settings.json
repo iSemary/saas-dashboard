@@ -6,6 +6,7 @@
         "Alexusmai",
         "apexcharts",
         "Barryvdh",
+        "bezier",
         "Blfrtip",
         "CKEDITOR",
         "darkmode",
@@ -52,6 +53,8 @@
         "tabindex",
         "treeview",
         "ucfirst",
+        "vite",
+        "xyflow",
         "Yajra",
         "Zoomable"
     ]

@@ -475,6 +475,20 @@
                                     'single' => true,
                                     'translate' => false,
                                 ],
+                                'modules_flow' => [
+                                    'icon' => 'fas fa-bezier-curve',
+                                    'permission' => 'read.modules_flow',
+                                    'route' => 'landlord.development.flows.modules',
+                                    'single' => true,
+                                    'translate' => false,
+                                ],
+                                'database_flow' => [
+                                    'icon' => 'fas fa-bezier-curve',
+                                    'permission' => 'read.database_flow',
+                                    'route' => 'landlord.development.flows.database',
+                                    'single' => true,
+                                    'translate' => false,
+                                ],
                             ],
                         ],
                     ];

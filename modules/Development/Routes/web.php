@@ -2,21 +2,16 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Development\Http\Controllers\ConfigurationController;
+use Modules\Development\Http\Controllers\FlowController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
 
 Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:landlord', '2fa'])->group(function () {
     // DEVELOPERS ONLY
     Route::prefix('development')->name('development.')->group(function () {
         Route::resource('configurations', ConfigurationController::class)->names('configurations');
+
+        // Flows 
+        Route::get('flows/modules', [FlowController::class, "modules"])->name('flows.modules');
+        Route::get('flows/database', [FlowController::class, "database"])->name('flows.database');
     });
 });

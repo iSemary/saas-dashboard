@@ -159,6 +159,10 @@
 
     @yield('scripts')
     @stack('scripts')
+
+    @viteReactRefresh
+    @vite('resources/js/app.jsx')
+    {{-- {{ vite_assets('resources/js/app.jsx') }} --}}
 </body>
 
 </html>

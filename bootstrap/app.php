@@ -10,12 +10,13 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
         using: function () {
-            Route::middleware('web')
-                ->group(base_path('routes/web.php'));
-            Route::middleware('web')
-                ->group(base_path('routes/landlord/web.php'));
-            Route::middleware('web')
-                ->group(base_path('routes/modules.php'));
+            Route::middleware('web')->group(base_path('routes/web.php'));
+
+            Route::middleware('web')->group(base_path('routes/landlord/web.php'));
+
+            Route::middleware('web')->group(base_path('routes/modules.php'));
+
+            Route::prefix('api')->middleware('api')->group(base_path('routes/api/modules.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware) {
@@ -26,7 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'auth' => \App\Http\Middleware\Authenticate::class,
         ]);
-        
+
         $middleware->group('tenant', [
             'set-db-connection',
             \Spatie\Multitenancy\Http\Middleware\NeedsTenant::class,
