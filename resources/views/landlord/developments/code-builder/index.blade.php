@@ -2,7 +2,7 @@
 @section('content')
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('landlord.development.code-builder.submit') }}" id="createForm" method="POST"
+            <form action="{{ route('landlord.development.code-builder.submit') }}" class="create-form" method="POST"
                 enctype="multipart/form-data">
                 @csrf
 

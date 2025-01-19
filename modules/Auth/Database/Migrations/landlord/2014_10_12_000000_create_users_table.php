@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('username', 64)->nullable();
+            $table->string('username', 64)->nullable()->unique();
             $table->integer('country_id')->nullable();
             $table->unsignedInteger('language_id')->default(1);
             $table->tinyInteger('theme_mode')->default(1)->comment('1-> Light | 2-> Dark | 3-> System');

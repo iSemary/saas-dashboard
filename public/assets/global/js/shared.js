@@ -355,7 +355,32 @@ $(document).on("change", ".upload-image", function (e) {
 // Static datatables
 $('.static-datatables').DataTable({
     "ordering": false,
-});        
+});
+
+// Initialize intl-tel-input plugin
+var intlInput = document.querySelector(".intl-tel-input");
+
+if (intlInput) {
+    var iti = intlTelInput(intlInput, {
+        nationalMode: false,
+    });
+
+    // Check if the input has a value
+    if (intlInput.value) {
+        // If the input has a phone number, get the flag from the phone number
+        var countryCode = iti.getSelectedCountryData().iso2;
+        console.log("Country code from phone number:", countryCode);
+    } else {
+        fetch('https://ipinfo.io/json')
+            .then(response => response.json())
+            .then(data => {
+                var countryCodeFromIp = data.country.toLowerCase();
+                iti.setCountry(countryCodeFromIp);
+                console.log("Country code from IP:", countryCodeFromIp);
+            })
+            .catch(error => console.error("Error fetching IP data:", error));
+    }
+}
 
 // Notifications Drop Down
 document.addEventListener("DOMContentLoaded", function () {

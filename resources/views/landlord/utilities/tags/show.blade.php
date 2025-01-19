@@ -27,7 +27,7 @@
     </div>
     <div class="card-body">
         <form action="{{ isset($row) ? route('landlord.tags.update', $row->id) : route('landlord.tags.store') }}"
-            id="{{ isset($row) ? 'editForm' : 'createForm' }}" method="POST" enctype="multipart/form-data">
+            class="{{ isset($row) ? 'edit-form' : 'create-form' }}" method="POST" enctype="multipart/form-data">
             @csrf
             @if (isset($row))
                 @method('PUT')

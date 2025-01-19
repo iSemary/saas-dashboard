@@ -26,7 +26,6 @@ $.extend(true, $.fn.dataTable.defaults, {
     buttons: ["copyHtml5", "excelHtml5", "csvHtml5", "pdfHtml5", "print"],
 });
 
-
 // Get URL parameter name
 function getURLParameter(sParam) {
     var sPageURL = window.location.search.substring(1);
@@ -103,12 +102,13 @@ function OpenCreateModal(url) {
         });
 }
 
-$(document).on("submit", "#createForm", function (e) {
+$(document).on("submit", ".create-form", function (e) {
     e.preventDefault();
     let formBtn = $(this).find(":submit");
     let formData = new FormData(this);
     let formID = "#" + $(this).attr("id");
     let formUrl = $(this).attr("action");
+    let form = $(this);
 
     $.ajax({
         type: "POST",
@@ -119,7 +119,7 @@ $(document).on("submit", "#createForm", function (e) {
         contentType: false,
         processData: false,
         beforeSend: function () {
-            $(".form-status").html(
+            form.find(".form-status").html(
                 `<h6 class="text-muted"><i class="fas fa-circle-notch fa-spin"></i> ` +
                     translate.processing +
                     ` ...` +
@@ -128,12 +128,16 @@ $(document).on("submit", "#createForm", function (e) {
             formBtn.prop("disabled", true);
         },
         success: function (data) {
-            $(".form-status").html(
+            form.find(".form-status").html(
                 `<h6 class="text-success"><i class="fas fa-check-circle"></i> ` +
                     data.message +
                     `</h6>`
             );
             formBtn.prop("disabled", false);
+
+            // reload the page if came from the back
+            if (data.data.reload) location.reload();
+
             $("input, textarea", formID)
                 .not(
                     ":input[type=button], :input[type=submit], :input[type=hidden], :input[type=reset]"
@@ -142,11 +146,10 @@ $(document).on("submit", "#createForm", function (e) {
             $(".dataTable").DataTable().ajax.reload();
         },
         error: function (data) {
-            $(".form-status").html("");
+            form.find(".form-status").html("");
             formBtn.prop("disabled", false);
-            console.log(data);
             // $.each(xhr.responseJSON.errors, function(key, value) {
-            $(".form-status").append(
+            form.find(".form-status").append(
                 `<h6 class="text-danger"><i class="fas fa-exclamation-triangle"></i> ` +
                     (data.responseJSON ?? "Something went wrong") +
                     `</h6>`
@@ -195,6 +198,10 @@ $(document).on("submit", ".import-excel-form", function (e) {
                     `</h6>`
             );
             formBtn.prop("disabled", false);
+
+            // reload the page if came from the back
+            if (data.data.reload) location.reload();
+
             $("input, textarea", formID)
                 .not(
                     ":input[type=button], :input[type=submit], :input[type=hidden], :input[type=reset]"
@@ -250,12 +257,13 @@ function OpenEditModal(url) {
         });
 }
 
-$(document).on("submit", "#editForm", function (e) {
+$(document).on("submit", ".edit-form", function (e) {
     e.preventDefault();
     let formBtn = $(this).find(":submit");
     let formData = new FormData(this);
     let formID = "#" + $(this).attr("id");
     let formUrl = $(this).attr("action");
+    let form = $(this);
 
     $.ajax({
         type: "POST",
@@ -266,7 +274,7 @@ $(document).on("submit", "#editForm", function (e) {
         contentType: false,
         processData: false,
         beforeSend: function () {
-            $(".form-status").html(
+            form.find(".form-status").html(
                 `<h6 class="text-muted"><i class="fas fa-circle-notch fa-spin"></i> ` +
                     translate.updating +
                     ` ...` +
@@ -275,16 +283,20 @@ $(document).on("submit", "#editForm", function (e) {
             formBtn.prop("disabled", true);
         },
         success: function (data) {
-            $(".form-status").html(
+            form.find(".form-status").html(
                 `<h6 class="text-success"><i class="fas fa-check-circle"></i> ` +
                     data.message +
                     `</h6>`
             );
             formBtn.prop("disabled", false);
+
+            // reload the page if came from the back
+            if (data.data.reload) location.reload();
+
             $(".dataTable").DataTable().ajax.reload();
         },
         error: function (xhr) {
-            $(".form-status").html("");
+            form.find(".form-status").html("");
             formBtn.prop("disabled", false);
             $.each(xhr.responseJSON.errors, function (key, value) {
                 $(".form-status").append(
@@ -296,6 +308,7 @@ $(document).on("submit", "#editForm", function (e) {
         },
     });
 });
+
 $("#EditModal").on("hidden.bs.modal", function () {
     $("#EditTargetModal").html("");
 });
@@ -344,12 +357,11 @@ $(document).on(
     }
 );
 
-
-$(document).on('click', '.refresh-modal', function (e) { 
+$(document).on("click", ".refresh-modal", function (e) {
     e.preventDefault();
-    
+
     // Get the modal ID from the parent modal element
-    const $modal = $(this).closest('.modal');
+    const $modal = $(this).closest(".modal");
     const url = $modal.attr("data-modal-link");
 
     // Show loading message while fetching the content again
@@ -407,7 +419,8 @@ function deleteRow(link, ModelDeleteType) {
                         });
                     } else {
                         Swal.fire({
-                            text: data.response ?? translate.something_went_wrong,
+                            text:
+                                data.response ?? translate.something_went_wrong,
                             confirmButtonText: translate.ok,
                             type: "error",
                             toast: true,
@@ -463,7 +476,8 @@ function restoreRow(link, ModelDeleteType) {
                         });
                     } else {
                         Swal.fire({
-                            text: data.response ?? translate.something_went_wrong,
+                            text:
+                                data.response ?? translate.something_went_wrong,
                             confirmButtonText: translate.ok,
                             type: "error",
                             toast: true,

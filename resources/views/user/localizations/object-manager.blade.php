@@ -1,4 +1,4 @@
-<form action="{{ route('translations.object.update', $row->id) }}" id="{{ 'editForm' }}" method="POST"
+<form action="{{ route('translations.object.update', $row->id) }}" class="{{ 'edit-form' }}" method="POST"
     enctype="multipart/form-data">
     @csrf
     @method('PUT')

@@ -12,12 +12,13 @@ use Laravel\Passport\Token;
 use Modules\Auth\Entities\EmailToken;
 use Spatie\Permission\Traits\HasRoles;
 use Laravolt\Avatar\Facade as Avatar;
+use Modules\FileManager\Traits\FileHandler;
 use Modules\Localization\Entities\Language;
 use Modules\Notification\Entities\Notification;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes, FileHandler;
 
     // protected $connection = 'tenant';
 
@@ -37,6 +38,15 @@ class User extends Authenticatable
     protected $hidden = ['password', 'remember_token'];
 
     protected $guard_name = 'api';
+
+    protected $metaKeys = ['avatar', 'gender', 'address', 'phone'];
+
+    protected $fileColumns = [
+        'avatar' => [
+            'folder' => 'avatar',
+            'access_level' => 'public',
+        ],
+    ];
 
     /**
      * The attributes that should be cast.
@@ -200,17 +210,63 @@ class User extends Authenticatable
         return null;
     }
 
+
     /**
-     * This PHP function retrieves the avatar image of a user, either from user metadata or generates a new
-     * avatar based on the user's name.
-     * 
-     * @return string The `getAvatarAttribute` function returns a string value. If the user has an avatar
-     * meta with the key 'avatar', it returns the value of that meta. Otherwise, it creates an avatar using
-     * the user's name and returns the base64 representation of the avatar image.
+     * User metas 
      */
-    public function getAvatarAttribute(): string
+    public function __get($key)
     {
-        $avatarMeta = $this->userMeta()->where('meta_key', 'avatar')->first();
-        return $avatarMeta ? $avatarMeta->meta_value : Avatar::create($this->name)->toBase64();
+        // Check if the key is a meta attribute
+        if (in_array($key, $this->metaKeys)) {
+            $meta = $this->userMeta()->where('meta_key', $key)->first();
+
+            // Special handling for avatar
+            if ($key === 'avatar') {
+                return $meta ? $this->getFileUrl($meta->meta_value) : Avatar::create($this->name)->toBase64();
+            }
+
+            return $meta ? $meta->meta_value : null;
+        }
+
+        return parent::__get($key);
+    }
+
+    // Dynamic meta attribute setter
+    public function __set($key, $value)
+    {
+        if (in_array($key, $this->metaKeys)) {
+
+            if ($key == 'avatar') {
+                $this->updateAvatar($value);
+            } else {
+                $this->userMeta()->updateOrCreate(
+                    ['meta_key' => $key],
+                    ['meta_value' => $value]
+                );
+            }
+            return;
+        }
+
+        parent::__set($key, $value);
+    }
+
+    public function setMeta(array $metaData)
+    {
+        foreach ($metaData as $key => $value) {
+            if (in_array($key, $this->metaKeys)) {
+                $this->$key = $value;
+            }
+        }
+    }
+
+    public function updateAvatar($value)
+    {
+        if ($value instanceof \Illuminate\Http\UploadedFile) {
+            $media = $this->upload($value, 'avatar');
+            $this->userMeta()->updateOrCreate(
+                ['meta_key' => 'avatar'],
+                ['meta_value' => $media->id]
+            );
+        }
     }
 }
