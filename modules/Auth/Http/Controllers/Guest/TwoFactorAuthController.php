@@ -3,10 +3,8 @@
 namespace Modules\Auth\Http\Controllers\Guest;
 
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Auth\Entities\FactorAuthenticateToken;
-use Modules\Auth\Entities\OAuthAccessToken;
 use Modules\Auth\Entities\User;
 
 class TwoFactorAuthController extends ApiController

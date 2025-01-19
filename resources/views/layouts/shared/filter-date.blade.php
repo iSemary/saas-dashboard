@@ -1,4 +1,4 @@
-<div class="col-md-8">
+<div class="{{ isset($classes) && !empty($classes) ? $classes : 'col-md-8' }}">
     <form method="GET" id="filterTable" class="row">
         <div class="form-group col-4">
             <label for=""><i class="fas fa-calendar-alt"></i> {{ translate('from_date') }}</label>

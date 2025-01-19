@@ -3,7 +3,6 @@
 namespace Modules\Auth\Http\Controllers\Landlord;
 
 use App\Http\Controllers\ApiController;
-use Doctrine\Inflector\Language;
 use Modules\Localization\Services\LanguageService;
 
 class DashboardController extends ApiController

@@ -149,7 +149,7 @@ return [
             // database/
             'factory' => ['path' => 'Database/factories', 'generate' => false],
             'migration' => ['path' => 'Database/migrations', 'generate' => true],
-            'seeder' => ['path' => 'Database/seeders', 'generate' => true],
+            'seeder' => ['path' => 'Database/Seeders', 'generate' => true],
 
             // lang/
             'lang' => ['path' => 'lang', 'generate' => false],

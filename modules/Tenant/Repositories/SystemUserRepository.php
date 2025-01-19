@@ -48,7 +48,7 @@ class SystemUserRepository implements SystemUserInterface
                 );
 
                 if (Gate::allows('read.activity_logs')) {
-                    $actionButtons .= '<button type="button" title="' . translate("activity_logs") . '" data-modal-title="' . translate("activity_logs") . '" data-modal-link="' . route('landlord.attempts.index', $row->id) . '" class="btn-blue mx-1 btn-sm open-details-btn">';
+                    $actionButtons .= '<button type="button" title="' . translate("activity_logs") . '" data-modal-title="' . translate("activity_logs") . '" data-modal-link="' . route('landlord.activity-logs.modal', $row->id) . '" class="btn-blue mx-1 btn-sm open-details-btn">';
                     $actionButtons .=  '<i class="fas fa-user-clock"></i>';
                     $actionButtons .= '</button>';
                 }

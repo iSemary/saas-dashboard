@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Constants\Resources;
+use App\Constants\Tenant\Resources;
 use Illuminate\Database\Seeder;
 use Modules\Auth\Entities\Permission;
 use Modules\Auth\Entities\Role;

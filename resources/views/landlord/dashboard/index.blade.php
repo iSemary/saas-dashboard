@@ -1,6 +1,9 @@
 @extends('layouts.landlord.app')
 @section("content")
-
+    <div>
+        <span>power:</span><span id="power"></span>
+    </div>
+    {{-- Translations Status --}}
     <div class="row">
         <div class="col-12">
             <div class="card">

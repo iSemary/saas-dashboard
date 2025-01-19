@@ -135,6 +135,10 @@
     <script src="{{ asset('assets/landlord/plugins/flickity/flickity.pkgd.min.js') }}"></script>
     {{-- Bootstrap Toggle --}}
     <script src="{{ asset('assets/global/plugins/bootstrap-toggle/js/bootstrap-toggle.min.js') }}"></script>
+    {{-- Socket.io --}}
+    <script src="{{ asset('assets/global/plugins/socketio/socketio.min.js') }}"></script>
+    {{-- Socket.io Configurations --}}
+    <script src="{{ asset('assets/landlord/js/socketio/config.js') }}"></script>
     {{-- Configurations --}}
     <script>
         let language = {

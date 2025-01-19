@@ -163,7 +163,8 @@ Please refer to the README file for the file structure:
 
 ## Global Variables
 
-- in ViewServiceProvider
+-   in ViewServiceProvider
+
 ---
 
 ## Model and Data Structure
@@ -230,6 +231,10 @@ Please refer to the README file for the file structure:
 
 In the main class, use `FileHandler`.
 
+```php
+use FileHandler;
+```
+
 Define the file columns and their info for example:
 
 ```php
@@ -271,10 +276,34 @@ public function setIconAttribute($value)
 }
 
 ```
+
 ---
 
 ## Translatable
 
+This section demonstrates how to use the Translatable trait in a PHP project.
+It includes an example of defining translatable columns and managing translations in a datatable.
+
+The `use Translatable;` statement imports the Translatable trait.
+
+The `$translatableColumns` property is an array that specifies which columns are translatable.
+
+The `->editColumn('description', function($row) { ... })` method in the datatable allows you to manage the translation
+of the 'description' column using the `TranslateHelper::returnTranslatableEditor` method.
+
+
 ```php
 use Translatable;
+```
+
+```php
+protected $translatableColumns = ['name', 'description'];
+```
+
+in datatable table you can manage the translation by this
+
+```php
+->editColumn('description', function($row) {
+    return TranslateHelper::returnTranslatableEditor($row, 'description');
+})
 ```

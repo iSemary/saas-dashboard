@@ -385,7 +385,7 @@ class AuthController extends ApiController
         }
 
         $route = $id ? route('landlord.attempts.index', $id) : route('attempts.index');
-        return view('user.login-attempts.index', compact('route'));
+        return view('user.auth.login-attempts.index', compact('route'));
     }
 
     public function attemptsDatatables($id = null)

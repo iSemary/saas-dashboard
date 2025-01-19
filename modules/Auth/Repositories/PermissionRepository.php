@@ -3,7 +3,6 @@
 namespace Modules\Auth\Repositories;
 
 use App\Helpers\TableHelper;
-use Illuminate\Support\Facades\DB;
 use Modules\Auth\Entities\Permission;
 use Yajra\DataTables\DataTables;
 
