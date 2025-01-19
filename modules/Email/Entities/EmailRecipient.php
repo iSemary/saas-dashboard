@@ -13,7 +13,15 @@ class EmailRecipient extends Model implements Auditable
 
     protected $connection = "landlord";
 
-    public $singleTitle = "emailRecipient";
-    public $pluralTitle = "email-recipients";
+    public $singleTitle = "email_recipient";
+    public $pluralTitle = "email_recipients";
 
+    protected $fillable = [
+        'campaign_id',
+        'email',
+        'name',
+        'status',
+        'opened_at',
+        'clicked_at',
+    ];
 }

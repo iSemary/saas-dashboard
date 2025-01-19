@@ -307,3 +307,11 @@ in datatable table you can manage the translation by this
     return TranslateHelper::returnTranslatableEditor($row, 'description');
 })
 ```
+
+
+
+## Prevent git from chmod changes
+
+```bash
+git config core.fileMode false
+```

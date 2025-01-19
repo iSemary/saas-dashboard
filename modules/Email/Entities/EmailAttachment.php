@@ -2,24 +2,22 @@
 
 namespace Modules\Email\Entities;
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-return new class extends Migration {
-    public function up(): void
-    {
-        Schema::create('email_subscribers', function (Blueprint $table) {
-            $table->id();
-            $table->string('email')->unique();
-            $table->enum('status', ['active', 'inactive']);
-            $table->softDeletes();
-            $table->timestamps();
-        });
-    }
+class EmailAttachment extends Model implements Auditable
+{
+    use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable;
+    protected $connection = "landlord";
 
-    public function down(): void
-    {
-        Schema::dropIfExists('email_subscribers');
-    }
-};
+    public $singleTitle = "email_attachment";
+    public $pluralTitle = "email_attachments";
+
+    protected $fillable = [
+        'campaign_id',
+        'template_id',
+        'file_id',
+    ];
+}

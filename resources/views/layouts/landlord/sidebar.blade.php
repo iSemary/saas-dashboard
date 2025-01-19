@@ -87,8 +87,8 @@
                                 'email_campaigns' => [
                                     'icon' => 'fas fa-bullhorn',
                                     'permission' => [
-                                        'read' => 'read.email_templates',
-                                        'create' => 'create.email_templates',
+                                        'read' => 'read.email_campaigns',
+                                        'create' => 'create.email_campaigns',
                                     ],
                                     'routes' => [
                                         'index' => 'landlord.email-templates.index',
@@ -108,15 +108,15 @@
                                 ],
                                 'email_recipients' => [
                                     'icon' => 'fas fa-user-plus',
-                                    'permission' => 'read.email_logs',
-                                    'route' => 'landlord.emails.index',
+                                    'permission' => 'read.email_recipients',
+                                    'route' => 'landlord.email-recipients.index',
                                     'single' => true,
                                     'external' => false,
                                 ],
                                 'email_subscribers' => [
                                     'icon' => 'fas fa-users',
-                                    'permission' => 'read.email_logs',
-                                    'route' => 'landlord.emails.index',
+                                    'permission' => 'read.email_subscribers',
+                                    'route' => 'landlord.email-subscribers.index',
                                     'single' => true,
                                     'external' => false,
                                 ],

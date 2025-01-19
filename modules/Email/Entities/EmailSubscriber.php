@@ -11,12 +11,13 @@ class EmailSubscriber extends Model implements Auditable
 {
     use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable;
 
+    protected $connection = "landlord";
+
+    public $singleTitle = "email_subscriber";
+    public $pluralTitle = "email_subscribers";
+
     protected $fillable = [
         'email',
         'status',
-    ];
-
-    protected $casts = [
-        'status' => 'string',
     ];
 }

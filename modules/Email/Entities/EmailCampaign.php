@@ -11,17 +11,23 @@ class EmailCampaign extends Model implements Auditable
 {
     use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable;
 
+    protected $connection = "landlord";
+
+    public $singleTitle = "email_campaign";
+    public $pluralTitle = "email_campaigns";
+
     protected $fillable = [
-        'template_id',
+        'campaign_id',
+        'email',
         'name',
-        'subject',
-        'body',
         'status',
-        'scheduled_at',
+        'opened_at',
+        'clicked_at',
     ];
 
     protected $casts = [
         'status' => 'string',
-        'scheduled_at' => 'datetime',
+        'opened_at' => 'datetime',
+        'clicked_at' => 'datetime',
     ];
 }
