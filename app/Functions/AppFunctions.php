@@ -34,15 +34,19 @@ if (!function_exists('convertToEnglishNumbers')) {
     }
 }
 
-if (!function_exists('vite_assets')) {
-    function vite_assets($entry) {
-        $manifest = public_path('build/manifest.json');
-        
-        if (!file_exists($manifest)) {
-            // Return empty string or null when manifest doesn't exist
-            return '';
-        }
-        
-        return vite($entry);
+if (!function_exists('isRunningViteDevServer')) {
+    function isRunningViteDevServer()
+    {
+        $url = env('VITE_DEV_SERVER_URL', 'http://localhost:5173');
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 2); // Short timeout to avoid delays
+        $response = curl_exec($curl);
+        $error = curl_errno($curl);
+        curl_close($curl);
+
+        // Check if the server responded without errors
+        return !$error && $response !== false;
     }
 }
+

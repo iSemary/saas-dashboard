@@ -32,9 +32,11 @@
     {{-- flickity --}}
     <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/flickity/flickity.css') }}" media="screen">
     {{-- Bootstrap Toggle --}}
-    <link rel="stylesheet" href="{{ asset('assets/global/plugins/bootstrap-toggle/css/bootstrap-toggle.min.css') }}" media="screen">
+    <link rel="stylesheet" href="{{ asset('assets/global/plugins/bootstrap-toggle/css/bootstrap-toggle.min.css') }}"
+        media="screen">
     {{-- Intl Tel Input --}}
-    <link rel="stylesheet" href="{{ asset('assets/global/plugins/intl-tel-input/css/intlTelInput.min.css') }}" media="screen" />
+    <link rel="stylesheet" href="{{ asset('assets/global/plugins/intl-tel-input/css/intlTelInput.min.css') }}"
+        media="screen" />
     @if ($language->locale == 'ar')
         <link rel="stylesheet" href="{{ asset('assets/landlord/css/custom.css') . '?v=1.2.1' }}" media="screen">
         <link rel="stylesheet" href="{{ asset('assets/landlord/css/bootstrap-rtl.min.css') }}" media="screen">
@@ -154,15 +156,19 @@
         CKEDITOR.config.language = "{{ $language->locale }}";
     </script>
     {{-- Main Scripts --}}
-    <script src="{{ asset('assets/global/js/shared.js') . '?v=' . filemtime(public_path('assets/global/js/shared.js')) }}"></script>
-    <script src="{{ asset('assets/landlord/js/main.js') . '?v=' . filemtime(public_path('assets/landlord/js/main.js')) }}"></script>
+    <script src="{{ asset('assets/global/js/shared.js') . '?v=' . filemtime(public_path('assets/global/js/shared.js')) }}">
+    </script>
+    <script src="{{ asset('assets/landlord/js/main.js') . '?v=' . filemtime(public_path('assets/landlord/js/main.js')) }}">
+    </script>
 
     @yield('scripts')
     @stack('scripts')
 
-    @viteReactRefresh
-    @vite('resources/js/app.jsx')
-    {{-- {{ vite_assets('resources/js/app.jsx') }} --}}
+    {{-- App will still running without [Vite manifest not found] error if you're on localhost and not running npm run dev --}}
+    @if (app()->environment('local') && isRunningViteDevServer())
+        @viteReactRefresh
+        @vite('resources/js/app.jsx')
+    @endif
 </body>
 
 </html>
