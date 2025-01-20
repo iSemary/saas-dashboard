@@ -25,7 +25,7 @@
         <label for="icon" class="form-label">@translate('icon')</label>
         <input type="file" name="icon" id="icon" class="border-0 form-control upload-image" accept="image/*">
         <div class="preview-image-container mt-2">
-            <img src="{{ isset($row) && $row->icon ? $row->icon : asset('assets/global/images/icons/defaults/image.png') }}"
+            <img src="{{ isset($row) && $row->icon ? $row->icon : asset('assets/shared/images/icons/defaults/image.png') }}"
                 width="100px" height="100px" alt="Preview" class="preview-image" />
         </div>
     </div>

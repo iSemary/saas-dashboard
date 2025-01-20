@@ -10,6 +10,6 @@
     </div>
 @endsection
 @section("scripts")
-<script src="{{ asset('assets/global/js/auth/activity-logs/index.js') }}"></script>
+<script src="{{ asset('assets/shared/js/auth/activity-logs/index.js') }}"></script>
 @endsection
 

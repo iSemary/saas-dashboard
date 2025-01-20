@@ -26,7 +26,7 @@
         <label for="flag" class="form-label">@translate('flag')</label>
         <input type="file" name="flag" id="flag" class="border-0 form-control upload-image" accept="image/*">
         <div class="preview-image-container mt-2">
-            <img src="{{ isset($row) && $row->flag ? $row->flag : asset('assets/global/images/icons/defaults/image.png') }}"
+            <img src="{{ isset($row) && $row->flag ? $row->flag : asset('assets/shared/images/icons/defaults/image.png') }}"
                 width="100px" height="100px" alt="Preview" class="preview-image" />
         </div>
     </div>

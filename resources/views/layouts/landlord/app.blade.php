@@ -5,14 +5,14 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>{{ env('APP_NAME') }} {{ isset($title) ? ' | ' . $title : '' }}</title>
-    <link rel="icon" type="image/png" href="{{ asset('assets/global/images/icons/logo/favicon.ico') }}" />
+    <link rel="icon" type="image/png" href="{{ asset('assets/shared/images/icons/logo/favicon.ico') }}" />
     <meta name="_token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {{-- Font Awesome --}}
     <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/fontawesome-free/css/all.min.css') }}"
         media="screen">
     {{-- Bootstrap Icons --}}
-    <link rel="stylesheet" href="{{ asset('assets/global/plugins/bootstrap-icons/css/bootstrap-icons.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/shared/plugins/bootstrap-icons/css/bootstrap-icons.min.css') }}">
     {{-- Bootstrap --}}
     <link rel="stylesheet" href="{{ asset('assets/landlord/css/bootstrap.min.css') }}" media="screen">
     {{-- Theme style --}}
@@ -26,16 +26,16 @@
     <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/slick/slick.css') }}" media="screen">
     <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/slick/slick-theme.css') }}" media="screen">
     {{-- Datatables --}}
-    <link rel="stylesheet" href="{{ asset('assets/global/plugins/DataTables/datatables.min.css') }}" media="screen">
+    <link rel="stylesheet" href="{{ asset('assets/shared/plugins/DataTables/datatables.min.css') }}" media="screen">
     {{-- Select2 --}}
     <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/select2/select2.min.css') }}" media="screen">
     {{-- flickity --}}
     <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/flickity/flickity.css') }}" media="screen">
     {{-- Bootstrap Toggle --}}
-    <link rel="stylesheet" href="{{ asset('assets/global/plugins/bootstrap-toggle/css/bootstrap-toggle.min.css') }}"
+    <link rel="stylesheet" href="{{ asset('assets/shared/plugins/bootstrap-toggle/css/bootstrap-toggle.min.css') }}"
         media="screen">
     {{-- Intl Tel Input --}}
-    <link rel="stylesheet" href="{{ asset('assets/global/plugins/intl-tel-input/css/intlTelInput.min.css') }}"
+    <link rel="stylesheet" href="{{ asset('assets/shared/plugins/intl-tel-input/css/intlTelInput.min.css') }}"
         media="screen" />
     @if ($language->locale == 'ar')
         <link rel="stylesheet" href="{{ asset('assets/landlord/css/custom.css') . '?v=1.2.1' }}" media="screen">
@@ -63,7 +63,7 @@
     {{-- Main Style --}}
     <link rel="stylesheet" href="{{ asset('assets/landlord/css/main.css') . '?v=' . filemtime(public_path('assets/landlord/css/main.css')) }}" media="screen">
     <link rel="stylesheet" href="{{ asset('assets/landlord/css/style.css') . '?v=' . filemtime(public_path('assets/landlord/css/style.css')) }}" media="screen">
-    <link rel="stylesheet" href="{{ asset('assets/global/css/style.css') . '?v=' . filemtime(public_path('assets/global/css/style.css')) }}" media="screen">
+    <link rel="stylesheet" href="{{ asset('assets/shared/css/style.css') . '?v=' . filemtime(public_path('assets/shared/css/style.css')) }}" media="screen">
 
     @yield('styles')
 </head>
@@ -113,21 +113,21 @@
     {{-- Sweet Alert --}}
     <script src="{{ asset('assets/landlord/js/sweetalert2.all.min.js') }}"></script>
     {{-- CKEDITOR --}}
-    <script src="{{ asset('assets/global/plugins/ckeditor/ckeditor.js') }}"></script>
+    <script src="{{ asset('assets/shared/plugins/ckeditor/ckeditor.js') }}"></script>
     {{-- Datatables --}}
-    <script src="{{ asset('assets/global/plugins/DataTables/datatables.min.js') }}"></script>
+    <script src="{{ asset('assets/shared/plugins/DataTables/datatables.min.js') }}"></script>
     {{-- Select2 --}}
     <script src="{{ asset('assets/landlord/plugins/select2/select2.min.js') }}"></script>
     {{-- Apex Charts --}}
-    <script src="{{ asset('assets/global/plugins/apexcharts/apexcharts.min.js') }}"></script>
+    <script src="{{ asset('assets/shared/plugins/apexcharts/apexcharts.min.js') }}"></script>
     {{-- Flickity --}}
     <script src="{{ asset('assets/landlord/plugins/flickity/flickity.pkgd.min.js') }}"></script>
     {{-- Bootstrap Toggle --}}
-    <script src="{{ asset('assets/global/plugins/bootstrap-toggle/js/bootstrap-toggle.min.js') }}"></script>
+    <script src="{{ asset('assets/shared/plugins/bootstrap-toggle/js/bootstrap-toggle.min.js') }}"></script>
     {{-- Intl Tel Input --}}
-    <script src="{{ asset('assets/global/plugins/intl-tel-input/js/intlTelInput.min.js') }}"></script>
+    <script src="{{ asset('assets/shared/plugins/intl-tel-input/js/intlTelInput.min.js') }}"></script>
     {{-- Socket.io --}}
-    <script src="{{ asset('assets/global/plugins/socketio/socketio.min.js') }}"></script>
+    <script src="{{ asset('assets/shared/plugins/socketio/socketio.min.js') }}"></script>
     {{-- Socket.io Configurations --}}
     <script src="{{ asset('assets/landlord/js/socketio/config.js') }}"></script>
     {{-- Configurations --}}
@@ -135,14 +135,14 @@
         let language = {
             locale: "{{ $language->locale }}",
             direction: "{{ $language->direction }}",
-            languageFile: `{{ asset('assets/global/lang/' . $language->locale . '.json') }}`,
-            dataTableLanguageFile: `{{ asset('assets/global/plugins/DataTables/lang/' . $language->locale . '.json') }}`,
+            languageFile: `{{ asset('assets/shared/lang/' . $language->locale . '.json') }}`,
+            dataTableLanguageFile: `{{ asset('assets/shared/plugins/DataTables/lang/' . $language->locale . '.json') }}`,
 
         };
         CKEDITOR.config.language = "{{ $language->locale }}";
     </script>
     {{-- Main Scripts --}}
-    <script src="{{ asset('assets/global/js/shared.js') . '?v=' . filemtime(public_path('assets/global/js/shared.js')) }}">
+    <script src="{{ asset('assets/shared/js/shared.js') . '?v=' . filemtime(public_path('assets/shared/js/shared.js')) }}">
     </script>
     <script src="{{ asset('assets/landlord/js/main.js') . '?v=' . filemtime(public_path('assets/landlord/js/main.js')) }}">
     </script>

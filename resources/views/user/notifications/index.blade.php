@@ -7,5 +7,5 @@
     </div>
 @endsection
 @section("scripts")
-<script src="{{ asset("assets/global/js/notifications/index.js") }}"></script>
+<script src="{{ asset("assets/shared/js/notifications/index.js") }}"></script>
 @endsection

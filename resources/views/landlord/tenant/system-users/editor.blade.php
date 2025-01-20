@@ -17,7 +17,7 @@
                 value="{{ isset($row) ? $row->username : '' }}" required>
         </div>
         <div class="form-group col-6"
-            data-loader-image="{{ asset('assets/global/images/icons/animated/loaders/loader.gif') }}"
+            data-loader-image="{{ asset('assets/shared/images/icons/animated/loaders/loader.gif') }}"
             data-invalid-email-format-message="{{ translate('please_enter_a_valid_email_address') }}"
             data-id="{{ isset($row) ? $row->id : '' }}"
             data-email-check-route="{{ route('landlord.system-users.check-email') }}">

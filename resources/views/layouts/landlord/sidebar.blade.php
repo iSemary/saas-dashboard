@@ -2,7 +2,7 @@
     <!-- Brand Logo -->
     <a href="{{ route('home') }}" class="brand-link">
         <!-- Store Logo / Name -->
-        <img src="{{ asset('assets/global/images/icons/logo/favicon.svg') }}" alt="logo"
+        <img src="{{ asset('assets/shared/images/icons/logo/favicon.svg') }}" alt="logo"
             class="brand-image img-circle elevation-3 float-revert">
         <span class="brand-text font-weight-light">{{ env('APP_NAME') }}</span>
     </a>

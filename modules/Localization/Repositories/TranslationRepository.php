@@ -194,7 +194,7 @@ class TranslationRepository implements TranslationInterface
                     $translations[$language->locale][$key->translation_key] = $this->getByKey($key->translation_key, $language->locale);
                 }
             }
-            $path = public_path('assets/global/lang');
+            $path = public_path('assets/shared/lang');
             foreach ($translations as $locale => $translation) {
                 $file = $path . "/$locale.json";
                 file_put_contents($file, json_encode($translation, JSON_PRETTY_PRINT));
@@ -207,7 +207,7 @@ class TranslationRepository implements TranslationInterface
 
     public function countJsonByLocale($locale)
     {
-        $file = public_path("assets/global/lang/{$locale}.json");
+        $file = public_path("assets/shared/lang/{$locale}.json");
         if (!file_exists($file)) {
             return 0;
         }
@@ -219,7 +219,7 @@ class TranslationRepository implements TranslationInterface
 
     public function countDatatablesJsonByLocale($locale)
     {
-        $file = public_path("assets/global/plugins/DataTables/lang/{$locale}.json");
+        $file = public_path("assets/shared/plugins/DataTables/lang/{$locale}.json");
         if (!file_exists($file)) {
             return 0;
         }

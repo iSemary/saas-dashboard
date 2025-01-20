@@ -29,4 +29,4 @@
         </table>
     </div>
 </div>
-<script src="{{ asset('assets/global/js/auth/activity-logs/modal.js') }}"></script>
+<script src="{{ asset('assets/shared/js/auth/activity-logs/modal.js') }}"></script>

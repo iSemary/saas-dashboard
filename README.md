@@ -126,7 +126,7 @@ php artisan db:seed --class=Modules\\Development\\Database\\Seeders\\Configurati
 ## Logo Files
 
 Please refer to the README file for the file structure:
-`public/assets/global/images/icons/logo/README.md`
+`public/assets/shared/images/icons/logo/README.md`
 
 ---
 

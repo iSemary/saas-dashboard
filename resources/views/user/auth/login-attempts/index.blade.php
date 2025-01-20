@@ -17,4 +17,4 @@
             </table>
         </div>
     </div>
-    <script src="{{ asset('assets/global/js/auth/login-attempts/index.js') }}"></script>
+    <script src="{{ asset('assets/shared/js/auth/login-attempts/index.js') }}"></script>
