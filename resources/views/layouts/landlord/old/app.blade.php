@@ -8,9 +8,35 @@
     <link rel="icon" type="image/png" href="{{ asset('assets/global/images/icons/logo/favicon.ico') }}" />
     <meta name="_token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    
-
+    {{-- Font Awesome --}}
+    <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/fontawesome-free/css/all.min.css') }}"
+        media="screen">
+    {{-- Bootstrap Icons --}}
+    <link rel="stylesheet" href="{{ asset('assets/global/plugins/bootstrap-icons/css/bootstrap-icons.min.css') }}">
+    {{-- Bootstrap --}}
+    <link rel="stylesheet" href="{{ asset('assets/landlord/css/bootstrap.min.css') }}" media="screen">
+    {{-- Theme style --}}
+    <link rel="stylesheet" href="{{ asset('assets/landlord/css/adminlte.min.css') }}" media="screen">
+    {{-- overlayScrollbars --}}
+    <link rel="stylesheet"
+        href="{{ asset('assets/landlord/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}" media="screen">
+    {{--  Sweetalert 2  --}}
+    <link rel="stylesheet" href="{{ asset('assets/landlord/css/sweetalert2.min.css') }}" media="screen">
+    {{--  Slick   --}}
+    <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/slick/slick.css') }}" media="screen">
+    <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/slick/slick-theme.css') }}" media="screen">
+    {{-- Datatables --}}
+    <link rel="stylesheet" href="{{ asset('assets/global/plugins/DataTables/datatables.min.css') }}" media="screen">
+    {{-- Select2 --}}
+    <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/select2/select2.min.css') }}" media="screen">
+    {{-- flickity --}}
+    <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/flickity/flickity.css') }}" media="screen">
+    {{-- Bootstrap Toggle --}}
+    <link rel="stylesheet" href="{{ asset('assets/global/plugins/bootstrap-toggle/css/bootstrap-toggle.min.css') }}"
+        media="screen">
+    {{-- Intl Tel Input --}}
+    <link rel="stylesheet" href="{{ asset('assets/global/plugins/intl-tel-input/css/intlTelInput.min.css') }}"
+        media="screen" />
     @if ($language->locale == 'ar')
         <link rel="stylesheet" href="{{ asset('assets/landlord/css/custom.css') . '?v=1.2.1' }}" media="screen">
         <link rel="stylesheet" href="{{ asset('assets/landlord/css/bootstrap-rtl.min.css') }}" media="screen">
@@ -35,13 +61,9 @@
         <link rel="stylesheet" href="{{ asset('assets/landlord/css/darkmode-bootstrap.css') }}">
     @endif --}}
     {{-- Main Style --}}
-    {{-- <link rel="stylesheet" href="{{ asset('assets/landlord/css/main.css') . '?v=' . filemtime(public_path('assets/landlord/css/main.css')) }}" media="screen">
+    <link rel="stylesheet" href="{{ asset('assets/landlord/css/main.css') . '?v=' . filemtime(public_path('assets/landlord/css/main.css')) }}" media="screen">
     <link rel="stylesheet" href="{{ asset('assets/landlord/css/style.css') . '?v=' . filemtime(public_path('assets/landlord/css/style.css')) }}" media="screen">
-    <link rel="stylesheet" href="{{ asset('assets/global/css/style.css') . '?v=' . filemtime(public_path('assets/global/css/style.css')) }}" media="screen"> --}}
-
-    @vite(['resources/css/landlord/app.css'])
-
-    {{-- {!! vite_assets('css') !!} --}}
+    <link rel="stylesheet" href="{{ asset('assets/global/css/style.css') . '?v=' . filemtime(public_path('assets/global/css/style.css')) }}" media="screen">
 
     @yield('styles')
 </head>
@@ -57,7 +79,6 @@
         <div class="content-wrapper mt-2">
             <section class="content">
                 @include('layouts.landlord.breadcrumb', isset($breadcrumbs) ? $breadcrumbs : [])
-
                 @yield('content')
             </section>
         </div>

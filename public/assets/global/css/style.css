@@ -364,3 +364,7 @@
 .w-100 .iti {
     width: 100% !important;
 }
+
+.swal2-image {
+    width: 24% !important;
+}

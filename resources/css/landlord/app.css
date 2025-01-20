@@ -1,0 +1,21 @@
+/* resources/css/landlord/app.css */
+
+/* Third-party plugins */
+@import 'fontawesome-free/css/all.min.css';
+@import 'bootstrap-icons/font/bootstrap-icons.min.css';
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'admin-lte/dist/css/adminlte.min.css';
+@import 'overlayscrollbars/overlayscrollbars.css';
+@import 'sweetalert2/dist/sweetalert2.min.css';
+@import 'slick-carousel/slick/slick.css';
+@import 'slick-carousel/slick/slick-theme.scss';
+@import 'datatables.net-dt/css/jquery.dataTables.min.css';
+@import 'select2/dist/css/select2.min.css';
+@import 'flickity/css/flickity.css';
+@import 'bootstrap-toggle/css/bootstrap-toggle.min.css';
+@import 'intl-tel-input/build/css/intlTelInput.min.css';
+
+/* Custom styles */
+/* @import './main.css';
+@import './style.css';
+@import './global-style.css'; */

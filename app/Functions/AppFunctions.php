@@ -1,6 +1,7 @@
 <?php
 
 use App\Helpers\TranslateHelper;
+use Illuminate\Support\Facades\Vite;
 use Modules\Development\Services\ConfigurationService;
 
 if (!function_exists('translate')) {
@@ -50,3 +51,10 @@ if (!function_exists('isRunningViteDevServer')) {
     }
 }
 
+if (!function_exists('vite_assets')) {
+    function vite_assets($extension = "css")
+    {
+        $type = auth()->check() ? auth()->user()->getCurrentTypeName() : "tenant";
+        return Vite::asset("resources/css/{$type}/app." . $extension);
+    }
+}
