@@ -5,11 +5,14 @@
             @include('layouts.shared.filter-date')
         </div>
         <div class="card-body">
-            <table id="table" data-route="{{ route("landlord.email-subscribers.index") }}" class="table table-bordered table-striped table-hover">
+            <table id="table" data-route="{{ route("landlord.email-credentials.index") }}" class="table table-bordered table-striped table-hover">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">@translate('email')</th>
+                        <th scope="col">@translate('name')</th>
+                        <th scope="col">@translate('description')</th>
+                        <th scope="col">@translate('from_name')</th>
+                        <th scope="col">@translate('from_address')</th>
                         <th scope="col">@translate('status')</th>
                         <th scope="col">@translate('action')</th>
                     </tr>
@@ -21,5 +24,5 @@
     </div>
 @endsection
 @section("scripts")
-<script src="{{ asset("assets/landlord/js/emails/email-subscribers/index.js") }}"></script>
+<script src="{{ asset("assets/landlord/js/emails/email-credentials/index.js") }}"></script>
 @endsection

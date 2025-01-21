@@ -52,7 +52,7 @@
 
     <div class="form-group">
         <label for="status" class="form-label">@translate('status')</label>
-        <select name="status" id="status" class="form-control">
+        <select name="status" id="status" class="form-control select2">
             @foreach ($statusOptions as $status)
                 <option value="{{ $status }}" {{ isset($row) && $row->status == $status ? 'selected' : '' }}>
                     @translate($status)

@@ -2,6 +2,7 @@
 
 namespace Modules\Development\Repositories;
 
+use App\Helpers\CryptHelper;
 use App\Helpers\TableHelper;
 use App\Services\CacheService;
 use Modules\Development\Entities\Configuration;
@@ -97,6 +98,8 @@ class ConfigurationRepository implements ConfigurationInterface
         $data['is_system'] = isset($data['is_system']) && $data['is_system'] ? true : false;
         $data['is_visible'] = isset($data['is_visible']) && $data['is_visible'] ? true : false;
 
+        $data['configuration_value'] = $this->handleConfigurationValue($data);
+
         $configuration = $this->model->create($data);
 
         CacheService::forever("configuration_{$configuration->configuration_key}", $configuration->configuration_value);
@@ -105,18 +108,55 @@ class ConfigurationRepository implements ConfigurationInterface
 
     public function update($id, array $data)
     {
-        $data['is_encrypted'] = isset($data['is_encrypted']) && $data['is_encrypted'] ? true : false;
-        $data['is_system'] = isset($data['is_system']) && $data['is_system'] ? true : false;
-        $data['is_visible'] = isset($data['is_visible']) && $data['is_visible'] ? true : false;
-
         $row = $this->model->find($id);
         if ($row) {
+            $data['is_encrypted'] = isset($data['is_encrypted']) && $data['is_encrypted'] ? true : false;
+            $data['is_system'] = isset($data['is_system']) && $data['is_system'] ? true : false;
+            $data['is_visible'] = isset($data['is_visible']) && $data['is_visible'] ? true : false;
+
+            $data['configuration_value'] = $this->handleConfigurationValue($data, $row);
+
             CacheService::forget("configuration_{$row->configuration_key}");
             CacheService::forever("configuration_{$row->configuration_key}", $row->configuration_value);
             $row->update($data);
             return $row;
         }
         return null;
+    }
+
+    public function handleConfigurationValue($data, $row = null)
+    {
+        switch ($data['input_type']) {
+            case 'string':
+            case 'integer':
+            case 'html':
+            case 'array':
+            case 'object':
+            case 'date':
+            case 'time':
+            case 'datetime':
+            case 'email':
+            case 'url':
+            case 'phone':
+            case 'color':
+            case 'range':
+                return $data['configuration_value'] ?? "";
+                break;
+
+            case 'boolean':
+                $data['configuration_value'] = isset($data['configuration_value']) && $data['configuration_value'] ? true : false;
+                break;
+            case 'file':
+                // TODO upload file then
+                break;
+            case 'password':
+                // TODO recheck this function
+                $data['configuration_value'] = isset($data['configuration_value']) && !empty($data['configuration_value']) ? CryptHelper::encrypt($data['configuration_value']) : $row->configuration_value;
+                break;
+            default:
+                return $data['configuration_value'] ?? "";
+                break;
+        }
     }
 
     public function delete($id)

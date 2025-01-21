@@ -57,50 +57,11 @@ $(".logout-btn").on("click", function (e) {
     $("#" + Form).submit();
 });
 
-// Select 2
-function fireSelect2() {
-    $(".select2").select2({});
-}
-fireSelect2();
-
-// Tooltip
-$(function () {
-    $('[data-toggle="tooltip"]').tooltip();
-});
-
 /**
  *
  * ===== Create Modal Section
  *
  */
-
-function OpenCreateModal(url) {
-    $("#CreateModal").modal({
-        backdrop: true,
-        show: true,
-    });
-    $(".modal-dialog").draggable({
-        handle: ".modal-header",
-    });
-
-    for (i = 0; i < LargeModalStrings.length; i++) {
-        if (url.includes(LargeModalStrings[i])) {
-            $("#ModalCreateDialog").addClass("modal-lg");
-            break;
-        } else {
-            $("#ModalCreateDialog").removeClass("modal-lg");
-        }
-    }
-
-    $("#CreateTargetModal")
-        .html(LoadingSpan)
-        .load(url, function () {
-            $("select.select2").select2({});
-            $("body").tooltip({
-                selector: '[data-toggle="tooltip"]',
-            });
-        });
-}
 
 $(document).on("submit", ".create-form", function (e) {
     e.preventDefault();
@@ -151,7 +112,7 @@ $(document).on("submit", ".create-form", function (e) {
             // $.each(xhr.responseJSON.errors, function(key, value) {
             form.find(".form-status").append(
                 `<h6 class="text-danger"><i class="fas fa-exclamation-triangle"></i> ` +
-                    (data.responseJSON ?? "Something went wrong") +
+                    (data.responseJSON ?? translate.something_went_wrong) +
                     `</h6>`
             );
             // });
@@ -160,8 +121,8 @@ $(document).on("submit", ".create-form", function (e) {
     });
 });
 
-$("#CreateModal").on("hidden.bs.modal", function () {
-    $("#CreateTargetModal").html("");
+$("#createModal").on("hidden.bs.modal", function () {
+    $(this).find(".modal-body").html("");
 });
 /**
  *
@@ -230,33 +191,6 @@ $(document).on("submit", ".import-excel-form", function (e) {
  *
  */
 
-function OpenEditModal(url) {
-    $("#EditModal").modal({
-        backdrop: true,
-        show: true,
-    });
-    $(".modal-dialog").draggable({
-        handle: ".modal-header",
-    });
-
-    for (i = 0; i < LargeModalStrings.length; i++) {
-        if (url.includes(LargeModalStrings[i])) {
-            $("#ModalEditDialog").addClass("modal-lg");
-            break;
-        } else {
-            $("#ModalEditDialog").removeClass("modal-lg");
-        }
-    }
-    $("#EditTargetModal")
-        .html(LoadingSpan)
-        .load(url, function () {
-            $("select.select2").select2({});
-            $("body").tooltip({
-                selector: '[data-toggle="tooltip"]',
-            });
-        });
-}
-
 $(document).on("submit", ".edit-form", function (e) {
     e.preventDefault();
     let formBtn = $(this).find(":submit");
@@ -299,9 +233,9 @@ $(document).on("submit", ".edit-form", function (e) {
             form.find(".form-status").html("");
             formBtn.prop("disabled", false);
             $.each(xhr.responseJSON.errors, function (key, value) {
-                $(".form-status").append(
+                form.find(".form-status").append(
                     `<h6 class="text-danger"><i class="fas fa-exclamation-triangle"></i> ` +
-                        value[0] +
+                        (value[0] ?? translate.something_went_wrong) +
                         `</h6>`
                 );
             });
@@ -309,8 +243,8 @@ $(document).on("submit", ".edit-form", function (e) {
     });
 });
 
-$("#EditModal").on("hidden.bs.modal", function () {
-    $("#EditTargetModal").html("");
+$("#editModal").on("hidden.bs.modal", function () {
+    $(this).find(".modal-body").html("");
 });
 
 $(document).on(
@@ -371,7 +305,7 @@ $(document).on("click", ".refresh-modal", function (e) {
     $.ajax({
         url: url,
         method: "GET",
-        beforeSend:function() {
+        beforeSend: function () {
             btn.prop("disabled", true);
         },
         success: function (response) {
@@ -566,10 +500,14 @@ $(document).on("submit", "#filterTable", function (e) {
 });
 
 function fireDependencies() {
-    $(".form-toggle").bootstrapToggle();
-    $(".select2").select2();
-    fireCKEditor();
-    $('[data-toggle="tooltip"]').tooltip();
+    setTimeout(() => {
+        $(".form-toggle").bootstrapToggle();
+        document.querySelectorAll(".select2").forEach(function (element) {
+            $(element).select2();
+        });
+        fireCKEditor();
+        $('[data-toggle="tooltip"]').tooltip();
+    }, 0);
 }
 
 fireDependencies();

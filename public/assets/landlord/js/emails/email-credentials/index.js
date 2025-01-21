@@ -6,8 +6,20 @@ let cols = [
         name: "id",
     },
     {
-        data: "email",
-        name: "email",
+        data: "name",
+        name: "name",
+    },
+    {
+        data: "description",
+        name: "description",
+    },
+    {
+        data: "from_name",
+        name: "from_name",
+    },
+    {
+        data: "from_address",
+        name: "from_address",
     },
     {
         data: "status",

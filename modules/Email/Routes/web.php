@@ -5,6 +5,7 @@ use Modules\Email\Http\Controllers\EmailController;
 use Modules\Email\Http\Controllers\EmailTemplateController;
 use Modules\Email\Http\Controllers\EmailSubscriberController;
 use Modules\Email\Http\Controllers\EmailCampaignController;
+use Modules\Email\Http\Controllers\EmailCredentialController;
 use Modules\Email\Http\Controllers\EmailRecipientController;
 
 Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:landlord', '2fa'])->group(function () {
@@ -14,14 +15,18 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:land
     // Email Recipients
     Route::resource('email-recipients', EmailRecipientController::class)->names('email-recipients');
 
+    // Email Credentials
+    Route::resource('email-credentials', EmailCredentialController::class)->names('email-credentials');
+
     // Email Campaigns
     Route::resource('email-campaigns', EmailCampaignController::class)->names('email-campaigns');
 
     // Email Subscribers
-    Route::get('email-subscribers', [EmailSubscriberController::class, "index"])->name('email-subscribers.index');
+    Route::resource('email-subscribers', EmailSubscriberController::class)->names('email-subscribers')->only(['index', 'update', 'edit']);
 
     // Email Routes
     Route::post('emails/resend/{id}', [EmailController::class, "resend"])->name('emails.resend');
+    Route::post('emails/send', [EmailController::class, "send"])->name('emails.send');
     Route::get('emails/compose', [EmailController::class, "compose"])->name('emails.compose');
     Route::get('emails', [EmailController::class, "index"])->name('emails.index');
 });

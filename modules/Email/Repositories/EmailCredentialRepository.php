@@ -3,21 +3,27 @@
 namespace Modules\Email\Repositories;
 
 use App\Helpers\TableHelper;
-use Modules\Email\Entities\EmailSubscriber;
+use Modules\Email\Entities\EmailCredential;
 use Yajra\DataTables\DataTables;
 
-class EmailSubscriberRepository implements EmailSubscriberInterface
+class EmailCredentialRepository implements EmailCredentialInterface
 {
     protected $model;
 
-    public function __construct(EmailSubscriber $emailSubscriber)
+    public function __construct(EmailCredential $emailCredential)
     {
-        $this->model = $emailSubscriber;
+        $this->model = $emailCredential;
     }
 
-    public function all()
+    public function all(array $conditions = [])
     {
-        return $this->model->all();
+        $query = $this->model;
+
+        if (!empty($conditions)) {
+            $query = $query->where($conditions);
+        }
+
+        return $query->get();
     }
 
     public function datatables()
@@ -31,15 +37,15 @@ class EmailSubscriberRepository implements EmailSubscriberInterface
         );
 
         return DataTables::of($rows)
-            ->editColumn('status', function ($row) {
+            ->editColumn('status', function($row) {
                 return translate($row->status);
             })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
                     row: $row,
-                    editRoute: 'landlord.email-subscribers.edit',
-                    deleteRoute: 'landlord.email-subscribers.destroy',
-                    restoreRoute: 'landlord.email-subscribers.restore',
+                    editRoute: 'landlord.email-credentials.edit',
+                    deleteRoute: 'landlord.email-credentials.destroy',
+                    restoreRoute: 'landlord.email-credentials.restore',
                     type: $this->model->pluralTitle,
                     titleType: $this->model->singleTitle,
                     showIconsOnly: false
@@ -63,6 +69,7 @@ class EmailSubscriberRepository implements EmailSubscriberInterface
     {
         $row = $this->model->find($id);
         if ($row) {
+            if (!$data['password'] || empty($data['password'])) $data['password'] = $row->getRawOriginal('password');
             $row->update($data);
             return $row;
         }

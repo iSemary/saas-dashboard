@@ -2,9 +2,9 @@
 
 namespace Modules\Email\Repositories;
 
-interface EmailTemplateInterface
+interface EmailCredentialInterface
 {
-    public function all(array $attributes = []);
+    public function all(array $conditions = []);
     public function datatables();
     public function find($id);
     public function create(array $data);

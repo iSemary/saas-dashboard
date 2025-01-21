@@ -15,9 +15,15 @@ class EmailTemplateRepository implements EmailTemplateInterface
         $this->model = $emailTemplate;
     }
 
-    public function all()
+    public function all(array $conditions = [])
     {
-        return $this->model->all();
+        $query = $this->model;
+
+        if (!empty($conditions)) {
+            $query = $query->where($conditions);
+        }
+
+        return $query->get();
     }
 
     public function datatables()

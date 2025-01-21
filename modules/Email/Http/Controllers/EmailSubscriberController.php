@@ -2,6 +2,7 @@
 
 namespace Modules\Email\Http\Controllers;
 
+use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
 use Modules\Email\Services\EmailSubscriberService;
 use Illuminate\Http\Request;
@@ -26,38 +27,25 @@ class EmailSubscriberController extends ApiController
             ['text' => translate($this->service->model->pluralTitle)],
         ];
 
-        $actionButtons = [
-            [
-                'text' => translate("create") . " " . translate($this->service->model->singleTitle),
-                'class' => 'open-create-modal btn-sm btn-success',
-                'attr' => [
-                    'data-modal-link' => route('landlord.email-subscribers.create'),
-                    'data-modal-title' => translate("create") . " " . translate($this->service->model->singleTitle),
-                ]
-            ],
-        ];
 
-        return view('landlord.emails.email-subscribers.index', compact('breadcrumbs', 'title', 'actionButtons'));
+        return view('landlord.emails.email-subscribers.index', compact('breadcrumbs', 'title',));
     }
 
     public function create()
     {
-        return view('landlord.emails.email-subscribers.editor');
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
+        return view('landlord.emails.email-subscribers.editor', compact('statusOptions'));
     }
 
-    public function store(Request $request)
-    {
-        $data = $request->all();
-        $this->service->create($data);
-        return $this->return(200, translate("created_successfully"));
-    }
+    public function store(Request $request) {}
 
     public function show($id) {}
 
     public function edit($id)
     {
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
         $row = $this->service->get($id);
-        return view('landlord.emails.email-subscribers.editor', compact('row'));
+        return view('landlord.emails.email-subscribers.editor', compact('row', 'statusOptions'));
     }
 
     public function update(Request $request, $id)
@@ -69,13 +57,9 @@ class EmailSubscriberController extends ApiController
 
     public function destroy($id)
     {
-        $this->service->delete($id);
-        return $this->return(200, "Deleted successfully");
     }
-    
+
     public function restore($id)
     {
-        $this->service->restore($id);
-        return $this->return(200, "Deleted successfully");
     }
 }

@@ -19,6 +19,24 @@ return new class extends Migration {
             $table->text('description')->nullable()->comment('Optional description explaining the purpose of this configuration');
 
             // References and flags
+            $table->enum('input_type', [
+                'string', 
+                'integer', 
+                'boolean', 
+                'html',
+                'array', 
+                'object', 
+                'date', 
+                'time', 
+                'datetime', 
+                'file', 
+                'email', 
+                'url', 
+                'password', 
+                'phone', 
+                'color', 
+                'range'
+            ])->default('string')->comment('Each input type will be considered in the form editor and response');
             $table->unsignedBigInteger('type_id')->nullable()->comment('Reference to the configuration type, if applicable');
             $table->boolean('is_encrypted')->default(false)->comment('Indicates if the configuration value is stored in encrypted form');
             $table->boolean('is_system')->default(false)->comment('Indicates if this is a system-level configuration that should not be modified');

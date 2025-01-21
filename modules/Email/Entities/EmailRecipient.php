@@ -17,7 +17,7 @@ class EmailRecipient extends Model implements Auditable
     public $pluralTitle = "email_recipients";
 
     protected $fillable = [
-        'campaign_id',
+        'email_campaign_id',
         'email',
         'name',
         'status',

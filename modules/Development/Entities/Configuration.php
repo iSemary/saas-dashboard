@@ -23,6 +23,7 @@ class Configuration extends Model implements Auditable
         'configuration_value',
         'description',
         'type_id',
+        'input_type',
         'is_encrypted',
         'is_system',
         'is_visible',

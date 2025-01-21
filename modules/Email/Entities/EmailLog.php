@@ -14,7 +14,9 @@ class EmailLog extends Model implements Auditable
     protected $connection = "landlord";
 
     protected $fillable = [
-        'template_id',
+        'email_recipient_id',
+        'email_template_id',
+        'email_campaign_id',
         'email',
         'status',
         'error_message',

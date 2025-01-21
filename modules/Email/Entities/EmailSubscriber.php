@@ -13,8 +13,8 @@ class EmailSubscriber extends Model implements Auditable
 
     protected $connection = "landlord";
 
-    public $singleTitle = "email_subscriber";
     public $pluralTitle = "email_subscribers";
+    public $singleTitle = "email_subscriber";
 
     protected $fillable = [
         'email',

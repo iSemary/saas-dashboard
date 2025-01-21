@@ -1,20 +1,18 @@
 <?php
 
-namespace Modules\Development\Http\Controllers;
+namespace Modules\Email\Http\Controllers;
 
 use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
-use Modules\Development\Services\ConfigurationService;
+use Modules\Email\Services\EmailCredentialService;
 use Illuminate\Http\Request;
-use Modules\Utilities\Services\TypeService;
 
-class ConfigurationController extends ApiController
+class EmailCredentialController extends ApiController
 {
     protected $service;
-    protected $typeService;
-    public function __construct(ConfigurationService $service, TypeService $typeService)
+
+    public function __construct(EmailCredentialService $service)
     {
-        $this->typeService = $typeService;
         $this->service = $service;
     }
     public function index()
@@ -34,20 +32,20 @@ class ConfigurationController extends ApiController
                 'text' => translate("create") . " " . translate($this->service->model->singleTitle),
                 'class' => 'open-create-modal btn-sm btn-success',
                 'attr' => [
-                    'data-modal-link' => route('landlord.development.configurations.create'),
+                    'data-modal-link' => route('landlord.email-credentials.create'),
                     'data-modal-title' => translate("create") . " " . translate($this->service->model->singleTitle),
                 ]
             ],
         ];
 
-        return view('landlord.developments.configurations.index', compact('breadcrumbs', 'title', 'actionButtons'));
+        return view('landlord.emails.email-credentials.index', compact('breadcrumbs', 'title', 'actionButtons'));
     }
 
     public function create()
     {
-        $types = $this->typeService->getAll();
-        $inputTypes = EnumHelper::getEnumFromTable($this->service->model->getTable(), 'input_type');
-        return view('landlord.developments.configurations.editor', compact('types', 'inputTypes'));
+        $encryptionOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), 'encryption');
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), 'status');
+        return view('landlord.emails.email-credentials.editor', ['encryptionOptions' => $encryptionOptions, 'statusOptions' => $statusOptions]);
     }
 
     public function store(Request $request)
@@ -61,10 +59,10 @@ class ConfigurationController extends ApiController
 
     public function edit($id)
     {
-        $types = $this->typeService->getAll();
+        $encryptionOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), 'encryption');
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), 'status');
         $row = $this->service->get($id);
-        $inputTypes = EnumHelper::getEnumFromTable($this->service->model->getTable(), 'input_type');
-        return view('landlord.developments.configurations.editor', compact('row', 'types', 'inputTypes'));
+        return view('landlord.emails.email-credentials.editor', compact('row', 'encryptionOptions', 'statusOptions'));
     }
 
     public function update(Request $request, $id)

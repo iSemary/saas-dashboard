@@ -1,25 +1,25 @@
 <?php
 
-namespace Modules\Email\Entities;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+return new class extends Migration {
+    public function up(): void
+    {
+        Schema::create('email_templates', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('description');
+            $table->text('body');
+            $table->enum('status', ['active', 'inactive']);
+            $table->softDeletes();
+            $table->timestamps();
+        });
+    }
 
-class EmailTemplate extends Model implements Auditable
-{
-    use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable;
-
-    protected $connection = "landlord";
-
-    public $singleTitle = "email_template";
-    public $pluralTitle = "email_templates";
-
-    protected $fillable = [
-        'name',
-        'subject',
-        'body',
-        'status',
-    ];
-}
+    public function down(): void
+    {
+        Schema::dropIfExists('email_templates');
+    }
+};

@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('email_campaigns', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('template_id')->constrained('email_templates')->onDelete('cascade');
+            $table->foreignId('email_template_id')->constrained('email_templates')->onDelete('cascade');
             $table->string('name')->nullable();
             $table->string('subject');
             $table->text('body');

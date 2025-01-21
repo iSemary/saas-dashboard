@@ -106,6 +106,17 @@
                                         'create' => 'landlord.email-templates.create',
                                     ],
                                 ],
+                                'email_credentials' => [
+                                    'icon' => 'fas fa-key',
+                                    'permission' => [
+                                        'read' => 'read.email_credentials',
+                                        'create' => 'create.email_credentials',
+                                    ],
+                                    'routes' => [
+                                        'index' => 'landlord.email-credentials.index',
+                                        'create' => 'landlord.email-credentials.create',
+                                    ],
+                                ],
                                 'email_recipients' => [
                                     'icon' => 'fas fa-user-plus',
                                     'permission' => 'read.email_recipients',

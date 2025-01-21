@@ -105,10 +105,14 @@ class Resources
             ],
             [
                 'name' => 'email_subscribers',
-                'actions' => ['read']
+                'actions' => ['read', 'update']
             ],
             [
                 'name' => 'email_recipients',
+                'actions' => ['read', 'create', 'update', 'delete', 'restore']
+            ],
+            [
+                'name' => 'email_credentials',
                 'actions' => ['read', 'create', 'update', 'delete', 'restore']
             ],
             [

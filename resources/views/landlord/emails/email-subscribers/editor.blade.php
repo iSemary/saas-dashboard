@@ -5,9 +5,20 @@
         @method('PUT')
     @endif
     <div class="form-group">
-        <label for="name" class="form-label">@translate('name')</label>
-        <input type="text" name="name" id="name" class="form-control"
-            value="{{ isset($row) ? $row->name : '' }}" required>
+        <label for="email" class="form-label">@translate('email')</label>
+        <input type="email" name="email" id="email" class="form-control"
+            value="{{ isset($row) ? $row->email : '' }}" readonly>
+    </div>
+
+    <div class="form-group">
+        <label for="status" class="form-label">@translate('status')</label>
+        <select name="status" id="status" class="form-control select2">
+            @foreach ($statusOptions as $status)
+                <option value="{{ $status }}" {{ isset($row) && $row->status == $status ? 'selected' : '' }}>
+                    @translate($status)
+                </option>
+            @endforeach
+        </select>
     </div>
 
     <div class="form-group">

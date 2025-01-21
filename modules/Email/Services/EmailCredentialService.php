@@ -2,23 +2,23 @@
 
 namespace Modules\Email\Services;
 
-use Modules\Email\Entities\EmailTemplate;
-use Modules\Email\Repositories\EmailTemplateInterface;
+use Modules\Email\Entities\EmailCredential;
+use Modules\Email\Repositories\EmailCredentialInterface;
 
-class EmailTemplateService
+class EmailCredentialService
 {
     protected $repository;
     public $model;
 
-    public function __construct(EmailTemplateInterface $repository, EmailTemplate $emailTemplate)
+    public function __construct(EmailCredentialInterface $repository, EmailCredential $emailCredential)
     {
-        $this->model = $emailTemplate;
+        $this->model = $emailCredential;
         $this->repository = $repository;
     }
 
-    public function getAll(array $attributes = [])
+    public function getAll(array $conditions = [])
     {
-        return $this->repository->all($attributes);
+        return $this->repository->all($conditions);
     }
 
     public function getDataTables()

@@ -9,7 +9,9 @@ return new class extends Migration {
     {
         Schema::create('email_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('template_id')->constrained('email_templates')->onDelete('cascade');
+            $table->foreignId('email_recipient_id')->constrained('email_recipients')->nullable();
+            $table->foreignId('email_template_id')->constrained('email_templates')->nullable();
+            $table->bigInteger('email_campaign_id')->constrained('email_campaigns')->nullable();
             $table->string('email');
             $table->enum('status', ['active', 'inactive']);
             $table->text('error_message')->nullable();

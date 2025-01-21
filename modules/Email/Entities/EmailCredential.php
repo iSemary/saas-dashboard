@@ -7,25 +7,29 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
-class EmailCampaign extends Model implements Auditable
+class EmailCredential extends Model implements Auditable
 {
     use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable;
 
     protected $connection = "landlord";
 
-    public $singleTitle = "email_campaign";
-    public $pluralTitle = "email_campaigns";
-
+    public $singleTitle = "email_credential";
+    public $pluralTitle = "email_credentials";
     protected $fillable = [
-        'email_template_id',
         'name',
-        'subject',
-        'body',
+        'description',
+        'from_address',
+        'from_name',
+        'mailer',
+        'host',
+        'port',
+        'username',
+        'password',
+        'encryption',
         'status',
-        'scheduled_at',
     ];
 
     protected $casts = [
-        'scheduled_at' => 'datetime',
+        'password' => 'encrypted',
     ];
 }
