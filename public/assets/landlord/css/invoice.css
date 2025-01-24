@@ -407,9 +407,6 @@ table th {
 .table th {
     padding: 10px 0 !important;
 }
-img {
-    cursor: zoom-in;
-}
 * {
     font-size: 15px;
 }

@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body text-center">
-                <img id="modalImage" src="" alt="Zoomable Image" class="img-fluid">
+                <img id="modalImage" src="" alt="Zoomable Image" class="img-fluid zoom-image">
             </div>
         </div>
     </div>

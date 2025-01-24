@@ -509,6 +509,12 @@ function fireDependencies() {
         document.querySelectorAll(".form-toggle").forEach(function (element) {
             $(element).bootstrapToggle();
         });
+        document.querySelectorAll(".emoji-input").forEach(function (element) {
+            $(element).emojioneArea({
+                pickerPosition: "bottom",
+                searchPosition: "bottom"
+            });
+        });
         fireCKEditor();
         $('[data-toggle="tooltip"]').tooltip();
         // Force select2 search to work inside modals

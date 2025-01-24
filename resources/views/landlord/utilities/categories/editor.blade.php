@@ -7,7 +7,7 @@
 
     <div class="form-group">
         <label for="name" class="form-label">@translate('name')</label>
-        <input type="text" name="name" id="name" class="form-control"
+        <input type="text" name="name" id="name" class="form-control emoji-input"
             value="{{ isset($row) ? $row->name : '' }}" required>
     </div>
 
@@ -19,7 +19,7 @@
 
     <div class="form-group">
         <label for="description" class="form-label">@translate('description')</label>
-        <textarea name="description" id="description" class="form-control">{{ isset($row) ? $row->description : '' }}</textarea>
+        <textarea name="description" id="description" class="form-control emoji-input">{{ isset($row) ? $row->description : '' }}</textarea>
     </div>
 
     <div class="form-group">

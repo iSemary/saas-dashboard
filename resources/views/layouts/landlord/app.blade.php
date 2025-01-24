@@ -37,6 +37,10 @@
     {{-- Intl Tel Input --}}
     <link rel="stylesheet" href="{{ asset('assets/shared/plugins/intl-tel-input/css/intlTelInput.min.css') }}"
         media="screen" />
+    {{-- Emoji-Area --}}
+    <link rel="stylesheet" href="{{ asset('assets/shared/plugins/emoji-area/emojionearea.min.css') }}"
+    media="screen" />
+
     @if ($language->locale == 'ar')
         <link rel="stylesheet" href="{{ asset('assets/landlord/css/custom.css') . '?v=1.2.1' }}" media="screen">
         <link rel="stylesheet" href="{{ asset('assets/landlord/css/bootstrap-rtl.min.css') }}" media="screen">
@@ -126,6 +130,8 @@
     <script src="{{ asset('assets/shared/plugins/bootstrap-toggle/js/bootstrap-toggle.min.js') }}"></script>
     {{-- Intl Tel Input --}}
     <script src="{{ asset('assets/shared/plugins/intl-tel-input/js/intlTelInput.min.js') }}"></script>
+    {{-- Emoji Area --}}
+    <script src="{{ asset('assets/shared/plugins/emoji-area/emojionearea.min.js') }}"></script>
     {{-- Socket.io --}}
     {{-- <script src="{{ asset('assets/shared/plugins/socketio/socketio.min.js') }}"></script> --}}
     {{-- Socket.io Configurations --}}

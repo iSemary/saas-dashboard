@@ -141,6 +141,7 @@ Please refer to the README file for the file structure:
 -   `.slug-input`
 -   `.snake-input`
 -   `.decimal-input`
+-   `.emoji-input`
 -   `.open-create-modal`
 -   `.open-edit-modal`
 -   `.open-details-btn`

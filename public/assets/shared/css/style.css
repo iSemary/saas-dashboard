@@ -1,10 +1,10 @@
-.modal img {
+.modal .zoom-image {
     max-width: 100%;
     height: auto;
     cursor: zoom-in;
 }
 
-.modal img.zoomed {
+.modal .zoom-image.zoomed {
     transform: scale(2);
     cursor: zoom-out;
     transition: transform 0.3s ease-in-out;
