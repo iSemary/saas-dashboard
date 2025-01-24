@@ -3,18 +3,21 @@
         enctype="multipart/form-data">
         @csrf
         <div class="card-body">
-            {{-- TODO on select email template, call ajax, get subject and body, put it in the inputs --}}
+
+            {{-- Email Template --}}
             <div class="form-group">
                 <label for="email_template_id" class="form-label">@translate('email_template')</label>
-                <select name="email_template_id" id="email_template_id" class="form-control select2">
+                <select name="email_template_id" id="email_template_id" class="form-control select2 select-email-template">
                     <option value="">@translate('select')</option>
                     @foreach ($emailTemplates as $emailTemplate)
-                        <option value="{{ $emailTemplate->id }}">
+                        <option data-route="{{ route('landlord.email-templates.show', $emailTemplate->id) }}" value="{{ $emailTemplate->id }}">
                             @translate($emailTemplate->name)
                         </option>
                     @endforeach
                 </select>
             </div>
+
+            {{-- Email Credential --}}
             <div class="form-group">
                 <label for="email_credential_id" class="form-label">@translate('from'):</label>
                 <select name="email_credential_id" id="email_credential_id" class="form-control select2">
@@ -26,18 +29,38 @@
                     @endforeach
                 </select>
             </div>
-            {{-- TODO Make this lists or input or multiple or upload excel --}}
+
+            {{-- Select Recipients Type --}}
             <div class="form-group">
-                <input class="form-control" placeholder="@translate('to'):" type="email" name="email" id="email" />
+                <label for="recipients_type" class="form-label">@translate('recipients_type')</label>
+                <select name="recipients_type" id="recipients_type" class="form-control select2 select-recipients-type">
+                    <option value="all">@translate('all')</option>
+                    <option value="recipients_only">@translate('recipients_only')</option>
+                    <option value="multiple">@translate('multiple')</option>
+                    <option value="single" selected>@translate('single')</option>
+                    <option value="upload_excel">@translate('upload_excel')</option>
+                </select>
             </div>
 
             <hr />
+            {{-- Recipients --}}
+            <div class="form-group email-to-container">
+                <input class="form-control" placeholder="@translate('to'):" type="email" name="email" id="email" required/>
+            </div>
+
+            <hr />
+
+            {{-- Subject --}}
             <div class="form-group">
                 <input class="form-control email-subject" placeholder="@translate('subject'):" type="text" name="subject" id="subject" required>
             </div>
+
+            {{-- Body --}}
             <div class="form-group">
                 <textarea id="ckInput" class="form-control ckeditor email-body" name="body" required></textarea>
             </div>
+
+            {{-- Attachment --}}
             <div class="form-group">
                 <div class="btn btn-default btn-file">
                     <i class="fas fa-paperclip"></i> @translate('attachment')
@@ -53,3 +76,5 @@
         </div>
     </form>
 </div>
+
+<script src="{{ asset('assets/landlord/js/emails/compose.js') }}"></script>

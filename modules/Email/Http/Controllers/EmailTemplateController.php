@@ -64,7 +64,10 @@ class EmailTemplateController extends ApiController
         return $this->return(200, translate("created_successfully"));
     }
 
-    public function show($id) {}
+    public function show(int $id)
+    {
+        return $this->return(200, 'Template fetched successfully', ['data' => $this->service->get($id)]);
+    }
 
     public function edit($id)
     {
