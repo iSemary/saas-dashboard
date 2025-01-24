@@ -121,9 +121,6 @@ $(document).on("submit", ".create-form", function (e) {
     });
 });
 
-$("#createModal").on("hidden.bs.modal", function () {
-    $(this).find(".modal-body").html("");
-});
 /**
  *
  * ===== Import Excel Script
@@ -243,7 +240,12 @@ $(document).on("submit", ".edit-form", function (e) {
     });
 });
 
-$("#editModal").on("hidden.bs.modal", function () {
+// Unbind all events for elements within .modal-body
+$(document).on("hidden.bs.modal", "#editModal, #createModal", function () {
+    $(this).find(".modal-body *").unbind();
+    $(this).find(".modal-body *").off();
+
+    // Clear the HTML content
     $(this).find(".modal-body").html("");
 });
 
@@ -501,13 +503,44 @@ $(document).on("submit", "#filterTable", function (e) {
 
 function fireDependencies() {
     setTimeout(() => {
-        $(".form-toggle").bootstrapToggle();
         document.querySelectorAll(".select2").forEach(function (element) {
             $(element).select2();
         });
+        document.querySelectorAll(".form-toggle").forEach(function (element) {
+            $(element).bootstrapToggle();
+        });
         fireCKEditor();
         $('[data-toggle="tooltip"]').tooltip();
+        // Force select2 search to work inside modals
+        $.fn.modal.Constructor.prototype._enforceFocus = function () {};
     }, 0);
 }
 
 fireDependencies();
+
+$(document).on("click", ".copy-to-clipboard-btn", function (e) {
+    e.preventDefault();
+    var content = $(this).data("content");
+
+    // Create temporary textarea to copy from
+    var tempTextArea = document.createElement("textarea");
+    tempTextArea.value = content;
+    document.body.appendChild(tempTextArea);
+
+    // Select and copy the text
+    tempTextArea.select();
+    document.execCommand("copy");
+
+    // Remove the temporary textarea
+    document.body.removeChild(tempTextArea);
+
+    // Show success message using SweetAlert
+    Swal.fire({
+        type: "success",
+        title: translate.copied_to_clipboard,
+        position: "bottom",
+        toast: true,
+        showConfirmButton: false,
+        timer: 1500,
+    });
+});

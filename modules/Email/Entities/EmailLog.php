@@ -20,5 +20,7 @@ class EmailLog extends Model implements Auditable
         'email',
         'status',
         'error_message',
+        'opened_at',
+        'clicked_at',
     ];
 }

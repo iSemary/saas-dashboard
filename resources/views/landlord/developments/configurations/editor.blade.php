@@ -82,6 +82,8 @@
 <script src="{{ asset("assets/landlord/js/developments/configurations/editor.js") }}"></script>
 @if(isset($row))
 <script>
-    handleInputType($row->input_type, $row->configuration_value);
+    var inputType = `{{$row->input_type}}`;
+    var configurationValue =`{{$row->configuration_value}}`;
+    handleInputType(inputType, configurationValue);
 </script>
 @endif

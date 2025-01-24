@@ -4,12 +4,13 @@ $("#inputType").on("change", function () {
 
 // Function to handle dynamic input fields based on input type
 function handleInputType(inputType, configValue) {
-    $("#inputTypeFields").empty(); // Clear previous input fields
+    var inputTypeField = $("#inputTypeFields");
+    inputTypeField.empty(); // Clear previous input fields
 
     // Check the selected input type and display the relevant input fields
     switch (inputType) {
         case "string":
-            $("#inputTypeFields").html(
+            inputTypeField.html(
                 `<div class="w-100">
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -21,7 +22,7 @@ function handleInputType(inputType, configValue) {
             );
             break;
         case "integer":
-            $("#inputTypeFields").html(
+            inputTypeField.html(
                 `<div class="w-100">
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -34,7 +35,7 @@ function handleInputType(inputType, configValue) {
             break;
 
         case "boolean":
-            $("#inputTypeFields").html(
+            inputTypeField.html(
                 `<label class="checkbox-inline">
                         <input type="checkbox" name="configuration_value" id="configuration_value" class="form-toggle" ${
                             configValue === "1" ? "checked" : ""
@@ -44,27 +45,27 @@ function handleInputType(inputType, configValue) {
             break;
 
         case "html":
-            $("#inputTypeFields").html(
+            inputTypeField.html(
                 `<textarea name="configuration_value" id="ckInput" class="form-control" required>${configValue}</textarea>`
             );
             break;
         case "file":
-            $("#inputTypeFields").html(
+            inputTypeField.html(
                 `<input type="file" name="configuration_value" id="configuration_value" required />`
             );
             break;
         case "array":
-            $("#inputTypeFields").html(
+            inputTypeField.html(
                 `<textarea name="configuration_value" id="configuration_value" class="form-control" required>${configValue}</textarea>`
             );
             break;
         case "object":
-            $("#inputTypeFields").html(
+            inputTypeField.html(
                 `<textarea name="configuration_value" id="configuration_value" class="form-control" required>${configValue}</textarea>`
             );
             break;
         case "email":
-            $("#inputTypeFields").html(
+            inputTypeField.html(
                 `<div class="w-100">
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -76,7 +77,7 @@ function handleInputType(inputType, configValue) {
             );
             break;
         case "url":
-            $("#inputTypeFields").html(
+            inputTypeField.html(
                 `<div class="w-100">
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -88,19 +89,19 @@ function handleInputType(inputType, configValue) {
             );
             break;
         case "password":
-            $("#inputTypeFields").html(
+            inputTypeField.html(
                 `<div class="w-100">
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="inputGroupPrependPassword"><i class="fa fa-lock"></i></span>
                             </div>
-                            <input type="password" name="configuration_value" id="configuration_value" class="form-control" value="${configValue}" required />
+                            <input type="password" name="configuration_value" id="configuration_value" class="form-control" value="" ${configValue && configValue !== ""?"": "required"} />
                         </div>
                     </div>`
             );
             break;
         case "phone":
-            $("#inputTypeFields").html(
+            inputTypeField.html(
                 `<div class="w-100">
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -112,7 +113,7 @@ function handleInputType(inputType, configValue) {
             );
             break;
         case "date":
-            $("#inputTypeFields").html(
+            inputTypeField.html(
                 `<div class="w-100">
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -124,7 +125,7 @@ function handleInputType(inputType, configValue) {
             );
             break;
         case "time":
-            $("#inputTypeFields").html(
+            inputTypeField.html(
                 `<div class="w-100">
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -136,7 +137,7 @@ function handleInputType(inputType, configValue) {
             );
             break;
         case "datetime":
-            $("#inputTypeFields").html(
+            inputTypeField.html(
                 `<div class="w-100">
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -148,20 +149,20 @@ function handleInputType(inputType, configValue) {
             );
             break;
         case "color":
-            $("#inputTypeFields").html(
+            inputTypeField.html(
                 `<input type="color" name="configuration_value" id="configuration_value" class="form-control" value="${configValue}" required />`
             );
             break;
         case "range":
-            $("#inputTypeFields").html(
+            inputTypeField.html(
                 `<input type="range" name="configuration_value" id="configuration_value" class="form-control" value="${configValue}" required />`
             );
             break;
-
         default:
-            $("#inputTypeFields").html(
-                `<input type="text" name="configuration_value" id="configuration_value" class="form-control" value="${configValue}" required/>`
+            inputTypeField.html(
+                `<input type="text" name="configuration_value" id="configuration_value" class="form-control default-input" value="${configValue}" required/>`
             );
+            break;
     }
 
     fireDependencies();

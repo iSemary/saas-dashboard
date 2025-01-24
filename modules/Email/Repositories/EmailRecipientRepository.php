@@ -23,14 +23,23 @@ class EmailRecipientRepository implements EmailRecipientInterface
     public function datatables()
     {
         $rows = $this->model->query()->withTrashed()->withTrashed()->where(
-                function ($q) {
-                    if (request()->from_date && request()->to_date) {
-                        TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
-                    }
+            function ($q) {
+                if (request()->from_date && request()->to_date) {
+                    TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
                 }
-            );
+            }
+        );
 
         return DataTables::of($rows)
+            ->addColumn('total_metadata', function ($row) {
+                return $row->metas->count();
+            })
+            ->addColumn('name', function ($row) {
+                return $row->metas->firstWhere('meta_key', 'name')?->meta_value ?? '';
+            })
+            ->editColumn('status', function ($row) {
+                return translate($row->status);
+            })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
                     row: $row,
@@ -53,7 +62,21 @@ class EmailRecipientRepository implements EmailRecipientInterface
 
     public function create(array $data)
     {
-        return $this->model->create($data);
+        $emailRecipient = $this->model->create($data);
+
+        $metaKeys = $data['meta_keys'] ?? [];
+        $metaValues = $data['meta_values'] ?? [];
+
+        foreach ($metaKeys as $index => $key) {
+            if (!empty($key) && isset($metaValues[$index])) {
+                $emailRecipient->metas()->create([
+                    'meta_key' => $key,
+                    'meta_value' => $metaValues[$index]
+                ]);
+            }
+        }
+
+        return $emailRecipient;
     }
 
     public function update($id, array $data)
@@ -61,6 +84,21 @@ class EmailRecipientRepository implements EmailRecipientInterface
         $row = $this->model->find($id);
         if ($row) {
             $row->update($data);
+
+            $row->metas()->delete();
+
+            $metaKeys = $data['meta_keys'] ?? [];
+            $metaValues = $data['meta_values'] ?? [];
+
+            foreach ($metaKeys as $index => $key) {
+                if (!empty($key) && isset($metaValues[$index])) {
+                    $row->metas()->create([
+                        'meta_key' => $key,
+                        'meta_value' => $metaValues[$index]
+                    ]);
+                }
+            }
+
             return $row;
         }
         return null;

@@ -12,9 +12,14 @@ return new class extends Migration {
             $table->foreignId('email_recipient_id')->constrained('email_recipients')->nullable();
             $table->foreignId('email_template_id')->constrained('email_templates')->nullable();
             $table->bigInteger('email_campaign_id')->constrained('email_campaigns')->nullable();
+            $table->bigInteger('email_credential_id')->constrained('email_credentials')->nullable();
             $table->string('email');
             $table->enum('status', ['active', 'inactive']);
+            $table->string('subject')->nullable();
+            $table->text('body')->nullable();
             $table->text('error_message')->nullable();
+            $table->timestamp('opened_at')->nullable();
+            $table->timestamp('clicked_at')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

@@ -119,10 +119,14 @@
                                 ],
                                 'email_recipients' => [
                                     'icon' => 'fas fa-user-plus',
-                                    'permission' => 'read.email_recipients',
-                                    'route' => 'landlord.email-recipients.index',
-                                    'single' => true,
-                                    'external' => false,
+                                    'permission' => [
+                                        'read' => 'read.email_recipients',
+                                        'create' => 'create.email_recipients',
+                                    ],
+                                    'routes' => [
+                                        'index' => 'landlord.email-recipients.index',
+                                        'create' => 'landlord.email-recipients.create',
+                                    ],
                                 ],
                                 'email_subscribers' => [
                                     'icon' => 'fas fa-users',

@@ -84,7 +84,7 @@
                             <div class="col-md-6">
                                 <div class="form-group mb-3 w-100">
                                     <label for="phone" class="form-label">@translate('phone')</label><br/>
-                                    <input type="tel" name="phone" id="phone" class="form-control intl-tel-input"
+                                    <input type="tel" name="phone" id="phone" class="form-control intl-tel-input" required
                                         value="{{ (isset($user) && $user->phone ? ("+".$user->phone) : "")}}">
                                 </div>
                             </div>

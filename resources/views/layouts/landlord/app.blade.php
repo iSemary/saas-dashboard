@@ -127,9 +127,9 @@
     {{-- Intl Tel Input --}}
     <script src="{{ asset('assets/shared/plugins/intl-tel-input/js/intlTelInput.min.js') }}"></script>
     {{-- Socket.io --}}
-    <script src="{{ asset('assets/shared/plugins/socketio/socketio.min.js') }}"></script>
+    {{-- <script src="{{ asset('assets/shared/plugins/socketio/socketio.min.js') }}"></script> --}}
     {{-- Socket.io Configurations --}}
-    <script src="{{ asset('assets/landlord/js/socketio/config.js') }}"></script>
+    {{-- <script src="{{ asset('assets/landlord/js/socketio/config.js') }}"></script> --}}
     {{-- Configurations --}}
     <script>
         let language = {
@@ -141,12 +141,13 @@
         };
         CKEDITOR.config.language = "{{ $language->locale }}";
     </script>
+
     {{-- Main Scripts --}}
     <script src="{{ asset('assets/shared/js/shared.js') . '?v=' . filemtime(public_path('assets/shared/js/shared.js')) }}">
     </script>
     <script src="{{ asset('assets/landlord/js/main.js') . '?v=' . filemtime(public_path('assets/landlord/js/main.js')) }}">
     </script>
-
+    
     @yield('scripts')
     @stack('scripts')
 

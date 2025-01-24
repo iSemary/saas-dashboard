@@ -105,10 +105,10 @@ class User extends Authenticatable
     /**
      * The function `verifyToken` checks if a given token exists in the `EmailToken` table, updates its
      * status to 1, and returns the corresponding user from the `User` table.
-     * 
+     *
      * @param string token The "token" parameter is a string that represents a unique identifier for a user's
      * email verification token.
-     * 
+     *
      * @return User an instance of the User model where the id matches the user_id of the EmailToken.
      */
     public static function verifyToken(string $token)
@@ -124,7 +124,7 @@ class User extends Authenticatable
 
     /**
      * The function creates a password reset token for a user if one does not already exist.
-     * 
+     *
      * @return string password reset token.
      */
     public function createResetToken(): string
@@ -139,7 +139,7 @@ class User extends Authenticatable
 
     /**
      * The function updates the password of the current user with a new password.
-     * 
+     *
      * @param string newPassword The  parameter is a string that represents the new password
      * that the user wants to set.
      */
@@ -151,7 +151,7 @@ class User extends Authenticatable
     /**
      * The function sets the email attribute and updates the email_verified_at attribute based on whether
      * the email value has changed.
-     * 
+     *
      * @param value The value parameter represents the new value that is being assigned to the email
      * attribute.
      */
@@ -165,11 +165,11 @@ class User extends Authenticatable
      * The function `manualCheckToken` checks the validity of an access token by decoding its header,
      * retrieving the token ID, and then searching for the token in a database. If the token is found, it
      * returns the associated user; otherwise, it returns false.
-     * 
+     *
      * @param accessToken The `accessToken` parameter is a string that represents a token used for
      * authentication or authorization purposes.
-     * 
-     * @return either the user associated with the token if the token is found in the database, or false if
+     *
+     * @return boolean|string either the user associated with the token if the token is found in the database, or false if
      * the token is not found or if the 'jti' field is not present in the token header.
      */
     public static function manualCheckToken($accessToken)
@@ -178,7 +178,7 @@ class User extends Authenticatable
         $tokenHeader = $tokenParts[1];
         $tokenHeaderJson = base64_decode($tokenHeader);
         $tokenHeaderArray = json_decode($tokenHeaderJson, true);
-        $tokenId = isset($tokenHeaderArray['jti']) ? $tokenHeaderArray['jti'] : null;
+        $tokenId = $tokenHeaderArray['jti'] ?? null;
         if (!$tokenId) {
             return false;
         }
@@ -192,7 +192,7 @@ class User extends Authenticatable
     /**
      * This PHP function retrieves the ID of the latest access token associated with the currently
      * authenticated user.
-     * 
+     *
      * @return `id` of the latest `oauth_access_token` for the currently authenticated user is being
      * returned by the `getCurrentToken` function. If a token is found, its `id` is returned; otherwise,
      * `null` is returned.
@@ -212,7 +212,7 @@ class User extends Authenticatable
 
 
     /**
-     * User metas 
+     * User metas
      */
     public function __get($key)
     {

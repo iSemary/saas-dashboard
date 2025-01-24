@@ -9,7 +9,10 @@
                 <thead>
                     <tr>
                         <th scope="col">#</th>
+                        <th scope="col">@translate('email')</th>
                         <th scope="col">@translate('name')</th>
+                        <th scope="col">@translate('total_metadata')</th>
+                        <th scope="col">@translate('status')</th>
                         <th scope="col">@translate('action')</th>
                     </tr>
                 </thead>

@@ -73,4 +73,19 @@ class TableHelper
 
         return $btn;
     }
+
+    public static function viewMore($originalText, $length, $link = null)
+    {
+        if (strlen($originalText) <= $length) {
+            return htmlspecialchars($originalText);
+        }
+
+        $text = strip_tags($originalText);
+
+        if ($link) {
+            return htmlspecialchars('<span class="d-inline-block">' . substr($text, 0, $length) . '... <a href="' . $link . '" target="_blank" class="btn-link"><i class="fas fa-external-link-square-alt"></i></a></span>');
+        }
+
+        return '<span class="d-inline-block"><span>' . htmlspecialchars(substr($text, 0, $length)) . '</span>... <button type="button" class="btn-primary btn-sm copy-to-clipboard-btn" data-content="' . htmlspecialchars($originalText) . '" title="' . translate('copy_to_clipboard') . '"><i class="far fa-copy"></i></button></span>';
+    }
 }

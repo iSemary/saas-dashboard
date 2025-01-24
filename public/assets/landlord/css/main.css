@@ -541,8 +541,7 @@ button {
 /*
     Responsive Table
 */
-
-table {
+.responsive-table {
     border: 1px solid #ccc;
     border-collapse: collapse;
     direction: rtl;
@@ -552,37 +551,37 @@ table {
     table-layout: fixed;
 }
 
-table caption {
+.responsive-table caption {
     font-size: 1.5em;
     margin: 0.5em 0 0.75em;
 }
 
-table tr {
+.responsive-table tr {
     border: 1px solid #ddd;
     padding: 0.35em;
 }
 
-table th,
-table td {
+.responsive-table th,
+.responsive-table td {
     padding: 0.625em;
     text-align: center;
 }
 
-table th {
+.responsive-table th {
     font-size: 0.85em;
     text-transform: uppercase;
 }
 
 @media screen and (max-width: 600px) {
-    table {
+    .responsive-table {
         border: 0;
     }
 
-    table caption {
+    .responsive-table caption {
         font-size: 1.3em;
     }
 
-    table thead {
+    .responsive-table thead {
         border: none;
         clip: rect(0 0 0 0);
         height: 1px;
@@ -593,20 +592,20 @@ table th {
         width: 1px;
     }
 
-    table tr {
+    .responsive-table tr {
         border-bottom: 3px solid #ddd;
         display: block;
         margin-bottom: 0.625em;
     }
 
-    table td {
+    .responsive-table td {
         border-bottom: 1px solid #ddd;
         display: block;
         font-size: 0.8em;
         text-align: right;
     }
 
-    table td::before {
+    .responsive-table td::before {
         /*
         * aria-label has no advantage, it won't be read inside a table
         content: attr(aria-label);
@@ -617,7 +616,7 @@ table th {
         text-transform: uppercase;
     }
 
-    table td:last-child {
+    .responsive-table td:last-child {
         border-bottom: 0;
     }
 }
@@ -637,8 +636,8 @@ table th {
     margin-top: 5px;
 }
 
-.table td,
-.table th {
+.responsive-table td,
+.responsive-table th {
     padding: 10px 0 !important;
 }
 

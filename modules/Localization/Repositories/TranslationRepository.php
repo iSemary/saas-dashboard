@@ -54,7 +54,7 @@ class TranslationRepository implements TranslationInterface
                     restoreRoute: 'landlord.translations.restore',
                     type: $this->model->pluralTitle,
                     titleType: $this->model->singleTitle,
-                    showIconsOnly: false
+                    showIconsOnly: true
                 );
             })
             ->rawColumns(['actions'])
@@ -69,13 +69,11 @@ class TranslationRepository implements TranslationInterface
 
         $cacheValue = $this->getByKeyByCache($key, $locale);
         if ($cacheValue) {
-            app('log')->info(self::class . "|Cache Got translation key: $key value: $cacheValue");
             return $cacheValue;
         }
         $databaseRow = $this->getByKeyByDatabase($key, $locale);
         if ($databaseRow) {
             CacheService::forever("translation_{$locale}_{$databaseRow->translation_key}", $databaseRow->translation_value);
-            app('log')->info(self::class . "|DB Got translation key: $key value: $databaseRow->translation_value");
             return $databaseRow->translation_value;
         }
         app('log')->info(self::class . "|UNKNOWN translation key: $key");

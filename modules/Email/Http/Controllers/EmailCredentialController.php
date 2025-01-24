@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class EmailCredentialController extends ApiController
 {
-    protected $service;
+    protected EmailCredentialService $service;
 
     public function __construct(EmailCredentialService $service)
     {

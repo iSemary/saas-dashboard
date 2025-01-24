@@ -41,6 +41,9 @@ class ConfigurationRepository implements ConfigurationInterface
             ->filterColumn('type', function ($query, $keyword) {
                 $query->whereRaw('LOWER(types.name) LIKE ?', ["%" . strtolower($keyword) . "%"]);
             })
+            ->editColumn('configuration_value', function ($row) {
+                return '<div style="width:150px">' . TableHelper::viewMore($row->configuration_value, 20) . '</div>';
+            })
             ->editColumn('is_encrypted', function ($row) {
                 return $row->is_encrypted ? '<span><i class="fas fa-circle text-success"></i></span>' : '<span><i class="fas fa-circle text-danger"></i></span>';
             })
@@ -62,6 +65,7 @@ class ConfigurationRepository implements ConfigurationInterface
                 );
             })
             ->rawColumns([
+                'configuration_value',
                 'is_encrypted',
                 'is_system',
                 'is_visible',
@@ -142,24 +146,28 @@ class ConfigurationRepository implements ConfigurationInterface
             case 'range':
                 return $data['configuration_value'] ?? "";
                 break;
-
             case 'boolean':
-                $data['configuration_value'] = isset($data['configuration_value']) && $data['configuration_value'] ? true : false;
+                return isset($data['configuration_value']) && $data['configuration_value'];
                 break;
             case 'file':
                 // TODO upload file then
                 break;
             case 'password':
-                // TODO recheck this function
-                $data['configuration_value'] = isset($data['configuration_value']) && !empty($data['configuration_value']) ? CryptHelper::encrypt($data['configuration_value']) : $row->configuration_value;
+                if (is_null($row)) {
+                    return CryptHelper::encrypt($data['configuration_value']);
+                } elseif (!empty($data['configuration_value'])) {
+                    return CryptHelper::encrypt($data['configuration_value']);
+                } else {
+                    return $row->configuration_value;
+                }
+                return $password;
                 break;
             default:
                 return $data['configuration_value'] ?? "";
-                break;
         }
     }
 
-    public function delete($id)
+    public function delete($id): bool
     {
         $row = $this->model->find($id);
         if ($row) {
@@ -170,7 +178,7 @@ class ConfigurationRepository implements ConfigurationInterface
         return false;
     }
 
-    private function getByKeyByDatabase($key)
+    private function getByKeyByDatabase($key): Configuration
     {
         return $this->model->where("configuration_key", $key)->latest()->first();
     }
@@ -180,7 +188,8 @@ class ConfigurationRepository implements ConfigurationInterface
         return CacheService::get("configuration_{$key}");
     }
 
-    public function restore($id)
+
+    public function restore($id): bool
     {
         $row = $this->model->withTrashed()->find($id);
         if ($row) {

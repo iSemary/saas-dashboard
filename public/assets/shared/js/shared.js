@@ -52,12 +52,16 @@ $(document).on("input", ".snake-input", function () {
         return String.fromCharCode(digit.charCodeAt(0) - 0x0660 + 48);
     });
 
+    // Convert capital English letters to lowercase
+    inputValue = inputValue.toLowerCase();
+
     // Remove any characters that are not alphanumeric, hyphens, or underscores
-    inputValue = inputValue.replace(/[^a-zA-Z0-9\-_.]/g, "");
+    inputValue = inputValue.replace(/[^a-z0-9\-_.]/g, "");
 
     // Update the input value
     $(this).val(inputValue);
 });
+
 
 $(document).on("input", ".decimal-input", function (e) {
     // Remove any non-numeric characters except decimal point

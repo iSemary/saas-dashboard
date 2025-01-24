@@ -7,10 +7,11 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('email_recipients', function (Blueprint $table) {
+        Schema::create('email_recipient_metas', function (Blueprint $table) {
             $table->id();
-            $table->string('email');
-            $table->enum('status', ['active', 'inactive']);
+            $table->foreignId('email_recipient_id')->constrained('email_recipients')->nullable();
+            $table->string('meta_key')->nullable();
+            $table->text('meta_value')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
@@ -18,6 +19,6 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('email_recipients');
+        Schema::dropIfExists('email_recipient_metas');
     }
 };

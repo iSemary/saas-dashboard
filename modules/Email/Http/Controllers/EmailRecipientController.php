@@ -2,6 +2,7 @@
 
 namespace Modules\Email\Http\Controllers;
 
+use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
 use Modules\Email\Services\EmailRecipientService;
 use Illuminate\Http\Request;
@@ -42,7 +43,8 @@ class EmailRecipientController extends ApiController
 
     public function create()
     {
-        return view('landlord.emails.email-recipients.editor');
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), 'status');
+        return view('landlord.emails.email-recipients.editor', ['statusOptions' => $statusOptions]);
     }
 
     public function store(Request $request)
@@ -56,8 +58,9 @@ class EmailRecipientController extends ApiController
 
     public function edit($id)
     {
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), 'status');
         $row = $this->service->get($id);
-        return view('landlord.emails.email-recipients.editor', compact('row'));
+        return view('landlord.emails.email-recipients.editor', compact('row', 'statusOptions'));
     }
 
     public function update(Request $request, $id)
