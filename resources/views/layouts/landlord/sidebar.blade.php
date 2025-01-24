@@ -477,6 +477,17 @@
                                     'route' => 'landlord.development.configurations.index',
                                     'single' => true,
                                 ],
+                                'ip_blacklists' => [
+                                    'icon' => 'fas fa-map-marker-alt',
+                                    'permission' => [
+                                        'read' => 'read.ip_blacklists',
+                                        'create' => 'create.ip_blacklists',
+                                    ],
+                                    'routes' => [
+                                        'index' => 'landlord.development.ip-blacklists.index',
+                                        'create' => 'landlord.development.ip-blacklists.create',
+                                    ],
+                                ],
                                 'code_builder' => [
                                     'icon' => 'fas fa-code',
                                     'permission' => 'read.code_builder',

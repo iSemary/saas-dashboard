@@ -205,7 +205,7 @@ class CodeBuilderController extends ApiController
 
             case 'migration':
                 $timestamp = date('Y_m_d_His');
-                return $timestamp . '_create_' . strtolower($replacements['PLURAL_TITLE']) . '_table.' . $extension;
+                return $timestamp . '_create_' . strtolower($replacements['TABLE_NAME']) . '_table.' . $extension;
 
             case 'seeder':
                 return $replacements['MODEL_NAME'] . 'Seeder.' . $extension;

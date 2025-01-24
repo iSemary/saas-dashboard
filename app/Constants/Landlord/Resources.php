@@ -168,6 +168,10 @@ class Resources
                 'actions' => ['read', 'create', 'update', 'delete', 'restore']
             ],
             [
+                'name' => 'ip_blacklists',
+                'actions' => ['read', 'create', 'update', 'delete', 'restore']
+            ],
+            [
                 'name' => 'telescope',
                 'actions' => ['read']
             ],

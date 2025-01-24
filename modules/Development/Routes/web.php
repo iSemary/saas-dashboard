@@ -3,12 +3,14 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Development\Http\Controllers\ConfigurationController;
 use Modules\Development\Http\Controllers\FlowController;
-
+use Modules\Development\Http\Controllers\IpBlacklistController;
 
 Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:landlord', '2fa'])->group(function () {
     // DEVELOPERS ONLY
     Route::prefix('development')->name('development.')->group(function () {
         Route::resource('configurations', ConfigurationController::class)->names('configurations');
+        
+        Route::resource('ip-blacklists', IpBlacklistController::class)->names('ip-blacklists');
 
         // Flows 
         Route::get('flows/modules', [FlowController::class, "modules"])->name('flows.modules');
