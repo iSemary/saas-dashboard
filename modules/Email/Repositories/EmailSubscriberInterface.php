@@ -5,6 +5,7 @@ namespace Modules\Email\Repositories;
 interface EmailSubscriberInterface
 {
     public function all();
+    public function count();
     public function datatables();
     public function find($id);
     public function create(array $data);

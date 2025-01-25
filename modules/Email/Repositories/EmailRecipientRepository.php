@@ -20,6 +20,16 @@ class EmailRecipientRepository implements EmailRecipientInterface
         return $this->model->all();
     }
 
+    public function count()
+    {
+        return $this->model->count();
+    }
+
+    public function getPaginated()
+    {
+        return $this->model->paginate(20);
+    }
+
     public function datatables()
     {
         $rows = $this->model->query()->withTrashed()->withTrashed()->where(

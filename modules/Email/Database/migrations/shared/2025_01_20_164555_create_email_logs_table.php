@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('email_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('email_recipient_id')->constrained('email_recipients')->nullable();
-            $table->foreignId('email_template_id')->constrained('email_templates')->nullable();
+            $table->foreignId('email_template_log_id')->constrained('email_template_logs')->nullable();
             $table->bigInteger('email_campaign_id')->constrained('email_campaigns')->nullable();
             $table->bigInteger('email_credential_id')->constrained('email_credentials')->nullable();
             $table->string('email');
@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->string('subject')->nullable();
             $table->text('body')->nullable();
             $table->text('error_message')->nullable();
+            $table->json('email_recipient_meta')->nullable();
             $table->timestamp('opened_at')->nullable();
             $table->timestamp('clicked_at')->nullable();
             $table->softDeletes();

@@ -37,4 +37,11 @@ class EmailController extends ApiController
         $this->emailService->send($request->all());
         return $this->return(200, translate('email_sent_successfully'));
     }
+
+    // Recipients and Subscribers
+    public function countAll()
+    {
+        $count = $this->emailService->countAllEmails();
+        return $this->return(200, 'All Recipients Fetched', ['count' => $count]);
+    }
 }

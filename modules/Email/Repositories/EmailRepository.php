@@ -6,9 +6,19 @@ use Modules\Email\Entities\EmailCredential;
 use Modules\Email\Entities\EmailTemplate;
 use Modules\Email\Entities\EmailRecipient;
 use Modules\Email\Entities\EmailAttachment;
+use Modules\Email\Services\EmailRecipientService;
+use Modules\Email\Services\EmailSubscriberService;
 
 class EmailRepository implements EmailInterface
 {
+    protected $emailRecipientService;
+    protected $emailSubscriberService;
+   
+    public function __construct(EmailRecipientService $emailRecipientService, EmailSubscriberService $emailSubscriberService)
+    {
+        $this->emailRecipientService = $emailRecipientService;
+        $this->emailSubscriberService = $emailSubscriberService;
+    }
     /**
      * Send email
      *
@@ -22,7 +32,23 @@ class EmailRepository implements EmailInterface
      *  attachments: [files or null]
      * @return void
      */
-    public function send(array $data) {}
+    public function send(array $data) {
+        // Save current details as email template log [even if it's not email template]
+        
+        // Save attachment files
+
+        // Collect recipients as array [id, email, metadata] 
+
+        // Send the job
+        
+        // Save the log
+
+    }
+
+    public function countAllEmails()
+    {
+        return $this->emailRecipientService->count() + $this->emailSubscriberService->count();
+    }
 
     public function getEmailCredential(array $data)
     {

@@ -17,4 +17,9 @@ class EmailService
     {
         return $this->repository->send($data);
     }
+
+    public function countAllEmails()
+    {
+        return $this->repository->countAllEmails();
+    }
 }

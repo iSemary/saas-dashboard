@@ -20,6 +20,11 @@ class EmailSubscriberRepository implements EmailSubscriberInterface
         return $this->model->all();
     }
 
+    public function count()
+    {
+        return $this->model->count();
+    }
+
     public function datatables()
     {
         $rows = $this->model->query()->withTrashed()->withTrashed()->where(

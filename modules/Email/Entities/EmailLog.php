@@ -15,7 +15,7 @@ class EmailLog extends Model implements Auditable
 
     protected $fillable = [
         'email_recipient_id',
-        'email_template_id',
+        'email_template_log_id',
         'email_campaign_id',
         'email',
         'status',

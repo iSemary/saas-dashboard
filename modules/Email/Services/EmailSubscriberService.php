@@ -21,6 +21,11 @@ class EmailSubscriberService
         return $this->repository->all();
     }
 
+    public function count()
+    {
+        return $this->repository->count();
+    }
+
     public function getDataTables()
     {
         return $this->repository->datatables();

@@ -13,8 +13,9 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:land
     Route::resource('email-templates', EmailTemplateController::class)->names('email-templates');
 
     // Email Recipients
+    Route::get('email-recipients/list', [EmailRecipientController::class, "list"])->name('email-recipients.list');
     Route::resource('email-recipients', EmailRecipientController::class)->names('email-recipients');
-
+    
     // Email Credentials
     Route::resource('email-credentials', EmailCredentialController::class)->names('email-credentials');
 
@@ -29,4 +30,5 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:land
     Route::post('emails/send', [EmailController::class, "send"])->name('emails.send');
     Route::get('emails/compose', [EmailController::class, "compose"])->name('emails.compose');
     Route::get('emails', [EmailController::class, "index"])->name('emails.index');
+    Route::get('emails/users/all', [EmailController::class, "countAll"])->name('emails.users.all');
 });

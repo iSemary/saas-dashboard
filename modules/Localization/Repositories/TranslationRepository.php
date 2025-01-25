@@ -133,6 +133,9 @@ class TranslationRepository implements TranslationInterface
         $translation = $this->model->create($data);
         $locale = Language::find($data['language_id'])->locale;
         CacheService::forever("translation_{$locale}_{$translation->translation_key}", $translation->translation_value);
+        if ($data['is_shareable']) {
+            $this->generateJson();
+        }
         return $translation;
     }
 
@@ -142,6 +145,11 @@ class TranslationRepository implements TranslationInterface
         $row = $this->model->find($id);
         if ($row) {
             $row->update($data);
+
+            if ($data['is_shareable']) {
+                $this->generateJson();
+            }
+
             $locale = Language::find($row->language_id)->locale;
             CacheService::forget("translation_{$locale}_{$row->translation_key}");
             CacheService::forever("translation_{$locale}_{$row->translation_key}", $row->translation_value);
