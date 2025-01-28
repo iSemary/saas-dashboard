@@ -1,9 +1,40 @@
-var translate = {};
-$.getJSON(language.languageFile, function(data) {
-    translate = data;
-}).fail(function(xhr, textStatus, error) {
-    console.error('Error loading translation file:', error);
+var translations = {};
+
+$.ajax({
+    url: language.languageFile,
+    dataType: 'json',
+    async: false,
+    success: function(data) {
+        translations = data;
+    },
+    error: function(xhr, textStatus, error) {
+        console.error('Error loading translation file:', error);
+    }
 });
+
+/**
+ * Translate a key with optional placeholder replacements.
+ * Example: translate('unknown_key', { var1: 'test1' })
+ * @param {string} key - The translation key.
+ * @param {object} [placeholders={}] - Key-value pairs for placeholders.
+ * @returns {string} - The translated string with placeholders replaced.
+ */
+function translate(key, placeholders = {}) {
+    // Get the translation string
+    let translation = translations[key] || key; // Fallback to the key if translation is missing
+    console.log(translation, "translation");
+    // Replace placeholders in the translation string
+    for (const [placeholder, value] of Object.entries(placeholders)) {
+        // Replace :placeholder with the value (skip if value is undefined)
+        translation = translation.replace(new RegExp(`:${placeholder}`, 'g'), value ?? '');
+    }
+    console.log(translation, "translation");
+    return translation;
+}
+
+function t(key, placeholders = {}) {
+    return translate(key, placeholders);
+}
 
 $(document).on("change", "#LangSelect", function (e) {
     let Locale = $(this).val();

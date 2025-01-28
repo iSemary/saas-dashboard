@@ -172,12 +172,18 @@ Please refer to the README file for the file structure:
 
 ## Global Functions
 
--   `translate()` OR `@translate`: For translating dashboard items.
+### PHP 
+
+-   `translate('key', ['attribute' => 'value'], 'en')` OR `@translate()` OR `__()` For translating dashboard items.
 -   // TODO `translateModel()` OR `@translateModel()`: For translating model items (e.g., name, description).
 
 -   `configuration()` OR `@configuration`: For fetching configuration values from configurations table.
 
 -   `render_number()`: // Output: <span title="1,000,000">1m</span>
+
+### JS
+
+- `translate('home')` OR `t('home')` OR t('unknown_key', { var1: 'test1' })
 
 ---
 

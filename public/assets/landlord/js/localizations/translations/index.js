@@ -45,26 +45,26 @@ $(document).on("click", ".generate-translations-json", function () {
         url: route,
         type: method,
         beforeSend: function () {
-            btn.find(".btn-text").html(translate.generating);
+            btn.find(".btn-text").html(t('generating'));
             btn.prop("disabled", true);
         },
         success: function (response) {
-            btn.find(".btn-text").html(translate.generate_translations_json);
+            btn.find(".btn-text").html(t('generate_translations_json'));
             btn.prop("disabled", false);
             Swal.fire({
-                text: translate.translations_generated,
-                confirmButtonText: translate.ok,
+                text: t('translations_generated'),
+                confirmButtonText: t('ok'),
                 type: "success",
                 toast: true,
                 position: "bottom",
             });
         },
         error: function (response) {
-            btn.find(".btn-text").html(translate.generate_translations_json);
+            btn.find(".btn-text").html(t('generate_translations_json'));
             btn.prop("disabled", false);
             Swal.fire({
-                text: translate.translations_generate_failed,
-                confirmButtonText: translate.ok,
+                text: t('translations_generate_failed'),
+                confirmButtonText: t('ok'),
                 type: "error",
                 toast: true,
                 position: "bottom",
@@ -82,26 +82,26 @@ $(document).on("click", ".sync-missing-translations", function () {
         url: route,
         type: method,
         beforeSend: function () {
-            btn.find(".btn-text").html(translate.processing);
+            btn.find(".btn-text").html(t('processing'));
             btn.prop("disabled", true);
         },
         success: function (response) {
-            btn.find(".btn-text").html(translate.sync_missing_translations);
+            btn.find(".btn-text").html(t('sync_missing_translations'));
             btn.prop("disabled", false);
             Swal.fire({
-                text: translate.translations_synced,
-                confirmButtonText: translate.ok,
+                text: t('translations_synced'),
+                confirmButtonText: t('ok'),
                 type: "success",
                 toast: true,
                 position: "bottom",
             });
         },
         error: function (response) {
-            btn.find(".btn-text").html(translate.sync_missing_translations);
+            btn.find(".btn-text").html(t('sync_missing_translations'));
             btn.prop("disabled", false);
             Swal.fire({
-                text: translate.translations_sync_failed,
-                confirmButtonText: translate.ok,
+                text: t('translations_sync_failed'),
+                confirmButtonText: t('ok'),
                 type: "error",
                 toast: true,
                 position: "bottom",

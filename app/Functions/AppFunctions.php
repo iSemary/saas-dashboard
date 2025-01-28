@@ -1,14 +1,27 @@
 <?php
 
 use App\Helpers\TranslateHelper;
-use Illuminate\Support\Facades\Vite;
 use Modules\Development\Services\ConfigurationService;
 
 if (!function_exists('translate')) {
-    function translate($key, $locale = null)
+    function translate($key, $attributes = [], $locale = null)
     {
         $locale = TranslateHelper::getLocale($locale);
-        return app(TranslateHelper::class)->translate($key, $locale);
+        return app(TranslateHelper::class)->translate($key, $attributes, $locale);
+    }
+}
+
+if (!function_exists('t')) {
+    function t($key, $attributes = [], $locale = null)
+    {
+        return translate($key, $attributes, $locale);
+    }
+}
+
+if (!function_exists('__')) {
+    function __($key, $attributes = [], $locale = null)
+    {
+        return translate($key, $attributes, $locale);
     }
 }
 

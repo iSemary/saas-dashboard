@@ -39,7 +39,7 @@ function handleInputType(inputType, configValue) {
                 `<label class="checkbox-inline">
                         <input type="checkbox" name="configuration_value" id="configuration_value" class="form-toggle" ${
                             configValue === "1" ? "checked" : ""
-                        } data-toggle="toggle"> ${translate.active}
+                        } data-toggle="toggle"> ${t('active')}
                     </label>`
             );
             break;

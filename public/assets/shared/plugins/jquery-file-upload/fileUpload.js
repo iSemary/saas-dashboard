@@ -30,7 +30,7 @@
                     <div>
                         <i class="fas fa-cloud-upload-alt"></i>
                         <p>${config.label}</p>
-                        <span>${translate.or}</span>
+                        <span>${t('or')}</span>
                         <div>${config.buttonLabel}</div>
                     </div>
                     <input type="file" id="${fileUploadId}" name="files[]" 
@@ -53,11 +53,11 @@
                         <thead>
                             <tr>
                                 <th></th>
-                                <th style="width: 30%;">${translate.file_name}</th>
-                                <th>${translate.preview}</th>
+                                <th style="width: 30%;">${t('file_name')}</th>
+                                <th>${t('preview')}</th>
                                 <th style="width: 20%;">Size</th>
-                                <th>${translate.type}</th>
-                                <th>${translate.action}</th>
+                                <th>${t('type')}</th>
+                                <th>${t('action')}</th>
                             </tr>
                         </thead>
                         <tbody>

@@ -13,13 +13,14 @@ class TranslateHelper
         $this->translationInterface = $translationInterface;
     }
 
-    public function translate($key, $locale = null)
+    public function translate($key, $attributes = [], $locale = null)
     {
-        return $this->translationInterface->getByKey($key, $locale);
+        return $this->translationInterface->getByKey($key, $attributes, $locale);
     }
 
     public static function getLocale($locale = null)
     {
+        // TODO Add get the locale from session and also set the locale in session based on changing in language and login or register 
         if ($locale) {
             $locale = $locale;
         } else {

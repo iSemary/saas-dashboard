@@ -69,7 +69,7 @@ class TranslationRepository implements TranslationInterface
             ->make(true);
     }
 
-    public function getByKey($key, $locale = null)
+    public function getByKey($key, $attributes = [], $locale = null)
     {
         if (!$locale) {
             $locale = app()->getLocale();
@@ -77,15 +77,31 @@ class TranslationRepository implements TranslationInterface
 
         $cacheValue = $this->getByKeyByCache($key, $locale);
         if ($cacheValue) {
-            return $cacheValue;
+            $translationValue = $cacheValue;
+        } else {
+            $databaseRow = $this->getByKeyByDatabase($key, $locale);
+            if ($databaseRow) {
+                CacheService::forever("translation_{$locale}_{$databaseRow->translation_key}", $databaseRow->translation_value);
+                $translationValue = $databaseRow->translation_value;
+            } else {
+                app('log')->info(self::class . "|UNKNOWN translation key: $key");
+                $translationValue =  $this->generateTranslation($key, 'en');
+            }
         }
-        $databaseRow = $this->getByKeyByDatabase($key, $locale);
-        if ($databaseRow) {
-            CacheService::forever("translation_{$locale}_{$databaseRow->translation_key}", $databaseRow->translation_value);
-            return $databaseRow->translation_value;
+
+        // Assign values to attributes
+        if (is_array($attributes) && count($attributes)) {
+            $modifiedAttributes = array_combine(
+                array_map(function ($key) {
+                    return ":$key"; // Append ":" to each key
+                }, array_keys($attributes)),
+                array_values($attributes)
+            );
+
+            return str_replace(array_keys($modifiedAttributes), array_values($attributes), $translationValue);
+        } else {
+            return $translationValue;
         }
-        app('log')->info(self::class . "|UNKNOWN translation key: $key");
-        return $this->generateTranslation($key, 'en');
     }
 
     private function generateTranslation($key, $locale = null)

@@ -10,7 +10,7 @@ $.ajaxSetup({
     },
 });
 
-const loadingSpan = `<span><i class="fa fa-spinner fa-spin"></i> ${translate.please_wait}</span>`;
+const loadingSpan = `<span><i class="fa fa-spinner fa-spin"></i> ${t('please_wait')}</span>`;
 
 // DataTables Config
 $.extend(true, $.fn.dataTable.defaults, {
@@ -82,7 +82,7 @@ $(document).on("submit", ".create-form", function (e) {
         beforeSend: function () {
             form.find(".form-status").html(
                 `<h6 class="text-muted"><i class="fas fa-circle-notch fa-spin"></i> ` +
-                    translate.processing +
+                    t('processing') +
                     ` ...` +
                     `</h6>`
             );
@@ -104,7 +104,12 @@ $(document).on("submit", ".create-form", function (e) {
                     ":input[type=button], :input[type=submit], :input[type=hidden], :input[type=reset]"
                 )
                 .val("");
-            $(".dataTable").DataTable().ajax.reload();
+            if ($(".dataTable").length > 0) {
+                var dataTable = $(".dataTable").DataTable();
+                if (dataTable?.settings()[0]?.ajax) {
+                    dataTable.ajax.reload();
+                }
+            }
         },
         error: function (data) {
             form.find(".form-status").html("");
@@ -112,7 +117,7 @@ $(document).on("submit", ".create-form", function (e) {
             // $.each(xhr.responseJSON.errors, function(key, value) {
             form.find(".form-status").append(
                 `<h6 class="text-danger"><i class="fas fa-exclamation-triangle"></i> ` +
-                    (data.responseJSON ?? translate.something_went_wrong) +
+                    (data('responseJSON') ?? t('something_went_wrong')) +
                     `</h6>`
             );
             // });
@@ -143,7 +148,7 @@ $(document).on("submit", ".import-excel-form", function (e) {
         beforeSend: function () {
             $(".import-status").html(
                 `<h6 class="text-muted"><i class="fas fa-circle-notch fa-spin"></i> ` +
-                    translate.creating +
+                    t('creating') +
                     `...` +
                     `</h6>`
             );
@@ -165,7 +170,12 @@ $(document).on("submit", ".import-excel-form", function (e) {
                     ":input[type=button], :input[type=submit], :input[type=hidden], :input[type=reset]"
                 )
                 .val("");
-            $(".dataTable").DataTable().ajax.reload();
+            if ($(".dataTable").length > 0) {
+                var dataTable = $(".dataTable").DataTable();
+                if (dataTable?.settings()[0]?.ajax) {
+                    dataTable.ajax.reload();
+                }
+            }
         },
         error: function (xhr) {
             $(".import-status").html("");
@@ -207,7 +217,7 @@ $(document).on("submit", ".edit-form", function (e) {
         beforeSend: function () {
             form.find(".form-status").html(
                 `<h6 class="text-muted"><i class="fas fa-circle-notch fa-spin"></i> ` +
-                    translate.updating +
+                    t('updating') +
                     ` ...` +
                     `</h6>`
             );
@@ -224,7 +234,12 @@ $(document).on("submit", ".edit-form", function (e) {
             // reload the page if came from the back
             if (data.data.reload) location.reload();
 
-            $(".dataTable").DataTable().ajax.reload();
+            if ($(".dataTable").length > 0) {
+                var dataTable = $(".dataTable").DataTable();
+                if (dataTable?.settings()[0]?.ajax) {
+                    dataTable.ajax.reload();
+                }
+            }
         },
         error: function (xhr) {
             form.find(".form-status").html("");
@@ -232,7 +247,7 @@ $(document).on("submit", ".edit-form", function (e) {
             $.each(xhr.responseJSON.errors, function (key, value) {
                 form.find(".form-status").append(
                     `<h6 class="text-danger"><i class="fas fa-exclamation-triangle"></i> ` +
-                        (value[0] ?? translate.something_went_wrong) +
+                        (value[0] ?? t('something_went_wrong')) +
                         `</h6>`
                 );
             });
@@ -332,14 +347,14 @@ $(document).on("click", ".refresh-modal", function (e) {
 
 function deleteRow(link, ModelDeleteType) {
     Swal.fire({
-        title: translate.are_you_sure,
-        text: translate.you_want_delete_this + " " + ModelDeleteType + " ?",
+        title: t('are_you_sure'),
+        text: t('you_want_delete_this') + " " + ModelDeleteType + " ?",
         type: "warning",
         showCancelButton: true,
         confirmButtonColor: "#d33",
         cancelButtonColor: "#3085d6",
-        confirmButtonText: translate.delete,
-        cancelButtonText: translate.cancel,
+        confirmButtonText: t('delete'),
+        cancelButtonText: t('cancel'),
     }).then((result) => {
         if (result.value) {
             $.ajax({
@@ -352,8 +367,8 @@ function deleteRow(link, ModelDeleteType) {
                 .done(function (data) {
                     if (data.status == 200) {
                         Swal.fire({
-                            text: translate.deleted_successfully,
-                            confirmButtonText: translate.ok,
+                            text: t('deleted_successfully'),
+                            confirmButtonText: t('ok'),
                             type: "success",
                             toast: true,
                             position: "bottom",
@@ -361,14 +376,19 @@ function deleteRow(link, ModelDeleteType) {
                     } else {
                         Swal.fire({
                             text:
-                                data.response ?? translate.something_went_wrong,
-                            confirmButtonText: translate.ok,
+                                data.response ?? t('something_went_wrong'),
+                            confirmButtonText: t('ok'),
                             type: "error",
                             toast: true,
                             position: "bottom",
                         });
                     }
-                    $(".dataTable").DataTable().ajax.reload();
+                    if ($(".dataTable").length > 0) {
+                        var dataTable = $(".dataTable").DataTable();
+                        if (dataTable?.settings()[0]?.ajax) {
+                            dataTable.ajax.reload();
+                        }
+                    }
                 })
                 .fail(function (data) {
                     Swal.fire({
@@ -389,14 +409,14 @@ function deleteRow(link, ModelDeleteType) {
 
 function restoreRow(link, ModelDeleteType) {
     Swal.fire({
-        title: translate.are_you_sure,
-        text: translate.you_want_restore_this + " " + ModelDeleteType + " ?",
+        title: t('are_you_sure'),
+        text: t('you_want_restore_this') + " " + ModelDeleteType + " ?",
         type: "warning",
         showCancelButton: true,
         confirmButtonColor: "#FFD43B",
         cancelButtonColor: "#3085d6",
-        confirmButtonText: translate.restore,
-        cancelButtonText: translate.cancel,
+        confirmButtonText: t('restore'),
+        cancelButtonText: t('cancel'),
     }).then((result) => {
         if (result.value) {
             $.ajax({
@@ -409,8 +429,8 @@ function restoreRow(link, ModelDeleteType) {
                 .done(function (data) {
                     if (data.status == 200) {
                         Swal.fire({
-                            text: translate.restored_successfully,
-                            confirmButtonText: translate.ok,
+                            text: t('restored_successfully'),
+                            confirmButtonText: t('ok'),
                             type: "success",
                             toast: true,
                             position: "bottom",
@@ -418,14 +438,19 @@ function restoreRow(link, ModelDeleteType) {
                     } else {
                         Swal.fire({
                             text:
-                                data.response ?? translate.something_went_wrong,
-                            confirmButtonText: translate.ok,
+                                data.response ?? t('something_went_wrong'),
+                            confirmButtonText: t('ok'),
                             type: "error",
                             toast: true,
                             position: "bottom",
                         });
                     }
-                    $(".dataTable").DataTable().ajax.reload();
+                    if ($(".dataTable").length > 0) {
+                        var dataTable = $(".dataTable").DataTable();
+                        if (dataTable?.settings()[0]?.ajax) {
+                            dataTable.ajax.reload();
+                        }
+                    }
                 })
                 .fail(function (data) {
                     Swal.fire({
@@ -515,7 +540,7 @@ function fireDependencies() {
         document.querySelectorAll(".emoji-input").forEach(function (element) {
             $(element).emojioneArea({
                 pickerPosition: "bottom",
-                searchPosition: "bottom"
+                searchPosition: "bottom",
             });
         });
         fireCKEditor();
@@ -546,7 +571,7 @@ $(document).on("click", ".copy-to-clipboard-btn", function (e) {
     // Show success message using SweetAlert
     Swal.fire({
         type: "success",
-        title: translate.copied_to_clipboard,
+        title: t('copied_to_clipboard'),
         position: "bottom",
         toast: true,
         showConfirmButton: false,

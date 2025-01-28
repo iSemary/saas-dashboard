@@ -43,13 +43,13 @@ function showAllUsersContainer(allUsersRoute) {
         dataType: "json",
         beforeSend: function () {
             $(".email-to-container").html(
-                `<p class="mb-0">${translate.all_users_will_receive_the_email}</p><p>${translate.total_users}: <b>${totalUsers}</b></p>`
+                `<p class="mb-0">${t('all_users_will_receive_the_email')}</p><p>${t('total_users')}: <b>${totalUsers}</b></p>`
             );
         },
         success: function (response) {
             totalUsers = response.data.count;
             $(".email-to-container").html(
-                `<p class="mb-0">${translate.all_users_will_receive_the_email}</p><p>${translate.total_users}: <b>${totalUsers}</b></p>`
+                `<p class="mb-0">${t('all_users_will_receive_the_email')}</p><p>${t('total_users')}: <b>${totalUsers}</b></p>`
             );
         },
     });
@@ -64,13 +64,13 @@ function showRecipientsOnlyContainer(recipientsRoute) {
         dataType: "json",
         beforeSend: function () {
             $(".email-to-container").html(
-                `<p class="mb-0">${translate.all_recipients_will_receive_the_email}</p><p>${translate.total_recipients}: <b>${totalRecipients}</b></p>`
+                `<p class="mb-0">${t('all_recipients_will_receive_the_email')}</p><p>${t('total_recipients')}: <b>${totalRecipients}</b></p>`
             );
         },
         success: function (response) {
             totalRecipients = response.data.data.total;
             $(".email-to-container").html(
-                `<p class="mb-0">${translate.all_recipients_will_receive_the_email}</p><p>${translate.total_recipients}: <b>${totalRecipients}</b></p>`
+                `<p class="mb-0">${t('all_recipients_will_receive_the_email')}</p><p>${t('total_recipients')}: <b>${totalRecipients}</b></p>`
             );
         },
     });
@@ -118,10 +118,10 @@ function showMultipleRecipientsContainer(recipientsRoute) {
             },
             cache: true,
         },
-        placeholder: `${translate.search_for_recipients}...`,
+        placeholder: `${t('search_for_recipients')}...`,
         language: {
             searching: function () {
-                return `${translate.searching}...`;
+                return `${t('searching')}...`;
             },
         },
         minimumInputLength: 1,
@@ -130,23 +130,23 @@ function showMultipleRecipientsContainer(recipientsRoute) {
 
 function showSingleRecipientsContainer() {
     $(".email-to-container").html(
-        `<input class="form-control" placeholder="${translate.to}:" type="email" name="email" id="email" required/>`
+        `<input class="form-control" placeholder="${t('to')}:" type="email" name="email" id="email" required/>`
     );
 }
 
 function showUploadExcelRecipientsContainer() {
     $(".email-to-container").html(`
         <div class="upload-excel-container mb-2">
-            <label for="uploadExcel" class="upload-label">${translate.upload_excel_file}</label><br/>
+            <label for="uploadExcel" class="upload-label">${t('upload_excel_file')}</label><br/>
             <input type="file" id="uploadExcel" accept=".xlsx, .xls" class="upload-input" />
         </div>
         <div class="excel-table">
             <table class="excel-datatable table table-bordered table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>${translate.email}<span class="text-danger">*</span></th>
-                        <th>${translate.name}</th>
-                        <th>${translate.action}</th>
+                        <th>${t('email')}<span class="text-danger">*</span></th>
+                        <th>${t('name')}</th>
+                        <th>${t('action')}</th>
                     </tr>
                 </thead>
                 <tbody id="excelDataBody">
