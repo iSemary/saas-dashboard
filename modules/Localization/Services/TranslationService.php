@@ -21,6 +21,11 @@ class TranslationService
         return $this->repository->all();
     }
 
+    public function exists($key)
+    {
+        return $this->repository->exists($key);
+    }
+
     public function getByKey($key, $language = null)
     {
         return $this->repository->getByKey($key);
@@ -80,5 +85,14 @@ class TranslationService
     {
         return $this->repository->updateObjectTranslations($decryptedObjectType, $decryptedObjectKey, $objectId, $translations);
     }
-}
 
+    public function getUsedTranslationInJs()
+    {
+        return $this->repository->getUsedTranslationInJs();
+    }
+    
+    public function getUsedTranslationInPhp()
+    {
+        return $this->repository->getUsedTranslationInPhp();
+    }
+}

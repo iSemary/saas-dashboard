@@ -2,6 +2,7 @@
 
 import { defineConfig } from "vite";
 import laravel from "laravel-vite-plugin";
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
     plugins: [
@@ -9,9 +10,15 @@ export default defineConfig({
             input: ["resources/js/app.jsx"],
             refresh: true,
         }),
+        react(),
     ],
+    resolve: {
+        alias: {
+            "@": "/resources/js",
+        },
+    },
     server: {
-        origin: 'http://localhost:5173',
-        cors: true
+        origin: "http://localhost:5173",
+        cors: true,
     },
 });

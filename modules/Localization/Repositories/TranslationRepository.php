@@ -8,6 +8,9 @@ use App\Services\CacheService;
 use Modules\Localization\Entities\Language;
 use Modules\Localization\Entities\Translation;
 use Yajra\DataTables\DataTables;
+use RecursiveDirectoryIterator;
+use CallbackFilterIterator;
+use RecursiveIteratorIterator;
 
 class TranslationRepository implements TranslationInterface
 {
@@ -21,6 +24,11 @@ class TranslationRepository implements TranslationInterface
     public function all()
     {
         return $this->model->all();
+    }
+
+    public function exists($key)
+    {
+        return $this->model->where("translation_key", $key)->whereDoesntHave('translationObjects')->exists();
     }
 
     public function datatables()
@@ -241,5 +249,105 @@ class TranslationRepository implements TranslationInterface
             $row = $decryptedObjectType::where('id', $objectId)->first();
             $row->setTranslatable($decryptedObjectKey, $translationValue, $languageLocale);
         }
+    }
+
+    // Scan all .js files in /public/folder [Excluded (Plugins) folder]
+    // then in the $keys array will contain file path and key in the file
+    // scan for any thing containing translate.* for ex: translate.name or translate.email 
+    // it may contain more than one in the file 
+    public function getUsedTranslationInJs()
+    {
+        $keys = [];
+
+        // Define the directory to scan
+        $directory = public_path();
+
+        // Create a RecursiveDirectoryIterator to iterate through the directory
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
+
+        // Filter out the Plugins folder
+        $filter = function ($file) {
+            return $file->isFile() && $file->getExtension() === 'js' && !str_contains($file->getPathname(), 'plugins');
+        };
+
+        // Apply the filter
+        $filteredIterator = new CallbackFilterIterator($iterator, $filter);
+
+        // Regular expression to match translate.* patterns
+        $pattern = '/translate\.([a-zA-Z0-9_]+)/';
+
+        foreach ($filteredIterator as $file) {
+            $filePath = $file->getPathname();
+            $content = file_get_contents($filePath);
+
+            // Search for translate.* patterns in the file content
+            if (preg_match_all($pattern, $content, $matches)) {
+                foreach ($matches[1] as $key) {
+                    $keys[] = [
+                        'file' => $filePath,
+                        'key' => $key,
+                        'exists' => $this->exists($key),
+                    ];
+                }
+            }
+        }
+
+        // Sort the $keys array by the 'exists' key (false first)
+        usort($keys, function ($a, $b) {
+            return $a['exists'] <=> $b['exists']; // false comes before true
+        });
+
+        return $keys;
+    }
+
+    // Scan all .php files in root folder [Excluded (vendor and plugins) folder]
+    // then in the $keys array will contain file path and key in the file
+    // scan for any thing containing translate(*) for ex: translate(name) or translate(email) 
+    // ALSO scan for any thing containing @translate(*) for ex: @translate(name) or @translate(email) 
+    // it may contain more than one in the file 
+    public function getUsedTranslationInPhp()
+    {
+        // Define the directory to scan (root folder)
+        $directory = base_path();
+
+        // Create a RecursiveDirectoryIterator to iterate through the directory
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
+
+        // Filter out the vendor and plugins folders
+        $filter = function ($file) {
+            return $file->isFile() &&
+                $file->getExtension() === 'php' &&
+                !str_contains($file->getPathname(), 'vendor') &&
+                !str_contains($file->getPathname(), 'plugins');
+        };
+
+        // Apply the filter
+        $filteredIterator = new CallbackFilterIterator($iterator, $filter);
+
+        // Regular expression to match translate(*) and @translate(*) patterns
+        $pattern = '/(@?)translate\(([\'"])([a-zA-Z0-9_]+)\2\)/';
+
+        foreach ($filteredIterator as $file) {
+            $filePath = $file->getPathname();
+            $content = file_get_contents($filePath);
+
+            // Search for translate(*) and @translate(*) patterns in the file content
+            if (preg_match_all($pattern, $content, $matches)) {
+                foreach ($matches[3] as $key) {
+                    $keys[] = [
+                        'file' => $filePath,
+                        'key' => $key,
+                        'exists' => $this->exists($key),
+                    ];
+                }
+            }
+        }
+
+        // Sort the $keys array by the 'exists' key (false first)
+        usort($keys, function ($a, $b) {
+            return $a['exists'] <=> $b['exists']; // false comes before true
+        });
+
+        return $keys;
     }
 }

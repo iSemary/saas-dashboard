@@ -373,7 +373,6 @@ if (intlInput) {
     if (intlInput.value) {
         // If the input has a phone number, get the flag from the phone number
         var countryCode = iti.getSelectedCountryData().iso2;
-        console.log("Country code from phone number:", countryCode);
     } else {
         fetch('https://ipinfo.io/json')
             .then(response => response.json())

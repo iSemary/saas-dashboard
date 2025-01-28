@@ -7,7 +7,7 @@
             {{-- Email Template --}}
             <div class="form-group">
                 <label for="email_template_id" class="form-label">@translate('email_template')</label>
-                <select name="email_template_id" id="email_template_id"
+                <select name="email_template_id" id="emailTemplateId"
                     class="form-control select2 select-email-template">
                     <option value="">@translate('select')</option>
                     @foreach ($emailTemplates as $emailTemplate)
@@ -35,7 +35,7 @@
             {{-- Select Recipients Type --}}
             <div class="form-group">
                 <label for="recipients_type" class="form-label">@translate('recipients_type')</label>
-                <select name="recipients_type" id="recipients_type"
+                <select name="recipients_type" id="recipientsType"
                     data-recipients-route="{{ route('landlord.email-recipients.list') }}"
                     data-all-users-route="{{ route('landlord.emails.users.all') }}"
                     class="form-control select2 select-recipients-type" required>
@@ -66,7 +66,14 @@
             <div class="form-group">
                 <textarea id="ckInput" class="form-control ckeditor email-body" name="body" required></textarea>
             </div>
+{{-- 
+            <div class="file-selector" data-max-size="10485760" data-accept="image/*" data-max-files="3"
+                data-label="Drop files here"></div>
 
+            <div class="file-selector" data-max-size="10485760" data-accept="image/*" data-max-files="3"
+                data-label="Drop files here"></div> --}}
+
+                
             {{-- Attachment --}}
             <div class="form-group">
                 <div class="btn btn-default btn-file">

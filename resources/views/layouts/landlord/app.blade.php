@@ -41,6 +41,8 @@
     <link rel="stylesheet" href="{{ asset('assets/shared/plugins/emoji-area/emojionearea.min.css') }}"
     media="screen" />
 
+    <link rel="stylesheet" href="{{ asset('assets/shared/plugins/jquery-file-upload/fileUpload.css') }}">
+
     @if ($language->locale == 'ar')
         <link rel="stylesheet" href="{{ asset('assets/landlord/css/custom.css') . '?v=1.2.1' }}" media="screen">
         <link rel="stylesheet" href="{{ asset('assets/landlord/css/bootstrap-rtl.min.css') }}" media="screen">
@@ -136,6 +138,9 @@
     {{-- <script src="{{ asset('assets/shared/plugins/socketio/socketio.min.js') }}"></script> --}}
     {{-- Socket.io Configurations --}}
     {{-- <script src="{{ asset('assets/landlord/js/socketio/config.js') }}"></script> --}}
+
+    <script src="{{ asset('assets/shared/plugins/jquery-file-upload/fileUpload.js') }}"></script>
+
     {{-- Configurations --}}
     <script>
         let language = {

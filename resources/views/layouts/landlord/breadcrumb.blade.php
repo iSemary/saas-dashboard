@@ -25,14 +25,14 @@
             @if (isset($actionButtons) && is_array($actionButtons))
                 @foreach ($actionButtons as $button)
                     @if (!isset($button['permission']) || Gate::check($button['permission']))
-                        <button type="button" class="btn {{ $button['class'] }}"
+                        <button type="button" class="btn m-1 {{ $button['class'] }}"
                             @if (isset($button['attr']) && is_array($button['attr'])) 
                                 @foreach ($button['attr'] as $key => $value) 
                                     {{ $key }}="{{ $value }}" 
                                 @endforeach 
                             @endif>
                             @if ($language->direction == 'ltr')
-                                {{ $button['text'] }}
+                                <span class="btn-text">{{ $button['text'] }}</span>
                                 {!! isset($button['icon']) ? '<span class="">' . $button['icon'] . '</span>' : '' !!}
                             @else
                                 {!! isset($button['icon']) ? '<span class="">' . $button['icon'] . '</span>' : '' !!}

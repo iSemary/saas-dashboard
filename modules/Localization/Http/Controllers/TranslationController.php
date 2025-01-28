@@ -33,6 +33,7 @@ class TranslationController extends ApiController
         $actionButtons = [
             [
                 'text' => translate("create") . " " . translate($this->service->model->singleTitle),
+                'icon' => '<i class="fas fa-plus"></i>',
                 'class' => 'open-create-modal btn-sm btn-success',
                 'attr' => [
                     'data-modal-link' => route('landlord.translations.create'),
@@ -41,6 +42,7 @@ class TranslationController extends ApiController
             ],
             [
                 'text' => translate("generate_translations_json"),
+                'icon' => '<i class="far fa-file"></i>',
                 'class' => 'btn-sm btn-orange text-white generate-translations-json',
                 'attr' => [
                     'data-route' => route('landlord.translations.generate-json'),
@@ -49,12 +51,31 @@ class TranslationController extends ApiController
             ],
             [
                 'text' => translate("sync_missing_translations"),
+                'icon' => '<i class="fas fa-sync"></i>',
                 'class' => 'btn-sm btn-orange text-white sync-missing-translations',
                 'attr' => [
                     'data-route' => route('landlord.translations.sync-missing'),
                     'data-method' => 'POST',
                 ]
-            ]
+            ],
+            [
+                'text' => translate("scan_translation_keys_in_js_files"),
+                'icon' => '<i class="fas fa-search"></i>',
+                'class' => 'open-details-btn btn-sm btn-info',
+                'attr' => [
+                    'data-modal-link' => route('landlord.translations.used-translation-js'),
+                    'data-modal-title' => translate("scan_translation_keys_in_js_files"),
+                ]
+            ],
+            [
+                'text' => translate("scan_translation_keys_in_php_files"),
+                'icon' => '<i class="fas fa-search"></i>',
+                'class' => 'open-details-btn btn-sm btn-info',
+                'attr' => [
+                    'data-modal-link' => route('landlord.translations.used-translation-php'),
+                    'data-modal-title' => translate("scan_translation_keys_in_php_files"),
+                ]
+            ],
         ];
 
         return view('landlord.localizations.translations.index', compact('breadcrumbs', 'title', 'actionButtons'));
@@ -149,19 +170,19 @@ class TranslationController extends ApiController
             if (!class_exists($decryptedObjectType)) {
                 return $this->return(400, translate("invalid_class"));
             }
-            
+
             // $request->object_key is an encrypted column like [name]
             $objectKey = $request->object_key;
             $decryptedObjectKey = CryptHelper::decrypt($objectKey);
 
             if (!property_exists($decryptedObjectType, 'fillable')) {
                 return $this->return(400, translate("missing_fillable_property"));
-            }            
+            }
 
             // Process the translations [this will contain an array of locale as keys and translation values as the value]
             $translations = $request->{$decryptedObjectKey};
 
-            if(!count($translations) && !is_string($decryptedObjectKey) && !is_string($decryptedObjectType)) {
+            if (!count($translations) && !is_string($decryptedObjectKey) && !is_string($decryptedObjectType)) {
                 return $this->return(400, translate("something_went_wrong"));
             }
 
@@ -172,5 +193,20 @@ class TranslationController extends ApiController
         } catch (Exception $e) {
             return $this->return(400, translate("something_went_wrong"), debug: $e->getMessage());
         }
+    }
+
+    public function getUsedTranslationInJs()
+    {
+        $keys = $this->service->getUsedTranslationInJs();
+
+        return view('landlord.localizations.translations.used-translations', ['keys' => $keys]);
+    }
+
+    public function getUsedTranslationInPhp()
+    {
+        $keys = $this->service->getUsedTranslationInPhp();
+
+        
+        return view('landlord.localizations.translations.used-translations', ['keys' => $keys]);
     }
 }

@@ -49,3 +49,37 @@ if (!function_exists('isRunningViteDevServer')) {
         return !$error && $response !== false;
     }
 }
+
+if (!function_exists('render_number')) {
+    function render_number($number)
+    {
+        // Define the thresholds for formatting
+        $thresholds = [
+            1000000000000000000000000000000 => 'd', // Decillion
+            1000000000000000000000000000 => 'n', // Nonillion
+            1000000000000000000000000 => 'o', // Octillion
+            1000000000000000000000 => 'S', // Septillion
+            1000000000000000000 => 's', // Sextillion
+            1000000000000000 => 'Q', // Quintillion
+            1000000000000 => 'q', // Quadrillion
+            1000000000 => 't', // Trillion
+            1000000 => 'b', // Billion
+            1000 => 'm', // Million
+        ];
+
+        // Initialize the formatted number and title
+        $formattedNumber = $number;
+        $title = number_format($number); // Format the original number with commas
+
+        // Apply formatting based on the number's magnitude
+        foreach ($thresholds as $threshold => $suffix) {
+            if ($number >= $threshold) {
+                $formattedNumber = floor($number / $threshold) . translate('numbers.' . $suffix);
+                break;
+            }
+        }
+
+        // Return the <span> element with the formatted number and title
+        return '<span title="' . htmlspecialchars($title) . '">' . htmlspecialchars($formattedNumber) . '</span>';
+    }
+}

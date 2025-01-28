@@ -147,6 +147,20 @@ Please refer to the README file for the file structure:
 -   `.open-details-btn`
 -   `.upload-image`
 -   `.view-image`
+-   `.file-uploader` ex:
+
+    ```html
+    <div
+        class="file-uploader"
+        data-multiple="true"
+        data-required="true"
+        data-max-file-size="1024"
+        data-allowed-files="png,jpg,pdf,xlsx"
+        data-label="Drag & Drop Files Here"
+        data-button-label="Browse Files"
+    ></div>
+    ```
+
 -   `.generate-password-input`
 
 ## Global IDs
@@ -162,6 +176,8 @@ Please refer to the README file for the file structure:
 -   // TODO `translateModel()` OR `@translateModel()`: For translating model items (e.g., name, description).
 
 -   `configuration()` OR `@configuration`: For fetching configuration values from configurations table.
+
+-   `render_number()`: // Output: <span title="1,000,000">1m</span>
 
 ---
 

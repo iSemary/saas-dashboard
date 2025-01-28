@@ -509,6 +509,9 @@ function fireDependencies() {
         document.querySelectorAll(".form-toggle").forEach(function (element) {
             $(element).bootstrapToggle();
         });
+        document.querySelectorAll(".file-uploader").forEach(function (element) {
+            $(element).fileUpload();
+        });
         document.querySelectorAll(".emoji-input").forEach(function (element) {
             $(element).emojioneArea({
                 pickerPosition: "bottom",

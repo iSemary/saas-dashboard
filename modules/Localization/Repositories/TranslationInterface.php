@@ -8,6 +8,7 @@ interface TranslationInterface
     public function getByKey($key, $locale = null);
     public function datatables();
     public function find($id);
+    public function exists($key);
     public function create(array $data);
     public function update($id, array $data);
     public function delete($id);
@@ -17,5 +18,7 @@ interface TranslationInterface
     public function countJsonByLocale($locale);
     public function countDatatablesJsonByLocale($locale);
     public function updateObjectTranslations(string $decryptedObjectType, string $decryptedObjectKey, int $objectId, array $translations);
+    public function getUsedTranslationInJs();
+    public function getUsedTranslationInPhp();
 }
 

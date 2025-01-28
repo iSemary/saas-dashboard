@@ -1,4 +1,5 @@
-$(document).on("change", "#recipients_type", function () {
+
+$(document).on("change", "#recipientsType", function () {
     const recipientsType = $(this).val();
     const recipientsRoute = $(this).data("recipients-route");
     const allUsersRoute = $(this).data("all-users-route");
@@ -86,21 +87,21 @@ function showMultipleRecipientsContainer(recipientsRoute) {
             url: recipientsRoute,
             dataType: "json",
             delay: 250,
-            data: function(params) {
+            data: function (params) {
                 return {
                     term: params.term || "", // Search term
                     page: params.page || 1, // Current page for pagination
                 };
             },
-            processResults: function(response, params) {
+            processResults: function (response, params) {
                 // Extract the data from the nested structure
                 const items = response.data.data.data;
 
                 // Map the data to the format Select2 expects
-                const results = items.map(function(item) {
+                const results = items.map(function (item) {
                     return {
                         id: item.id, // Use 'id' as the value
-                        text: item.email // Use 'email' as the displayed text
+                        text: item.email, // Use 'email' as the displayed text
                     };
                 });
 
@@ -111,22 +112,21 @@ function showMultipleRecipientsContainer(recipientsRoute) {
                 return {
                     results: results,
                     pagination: {
-                        more: hasMore
-                    }
+                        more: hasMore,
+                    },
                 };
             },
-            cache: true
+            cache: true,
         },
         placeholder: `${translate.search_for_recipients}...`,
         language: {
-            searching: function() {
+            searching: function () {
                 return `${translate.searching}...`;
-            }
+            },
         },
-        minimumInputLength: 1
+        minimumInputLength: 1,
     });
 }
-
 
 function showSingleRecipientsContainer() {
     $(".email-to-container").html(
@@ -146,7 +146,7 @@ function showUploadExcelRecipientsContainer() {
                     <tr>
                         <th>${translate.email}<span class="text-danger">*</span></th>
                         <th>${translate.name}</th>
-                        <th>${translate.actions}</th>
+                        <th>${translate.action}</th>
                     </tr>
                 </thead>
                 <tbody id="excelDataBody">

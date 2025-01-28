@@ -45,13 +45,12 @@ $(document).on("click", ".generate-translations-json", function () {
         url: route,
         type: method,
         beforeSend: function () {
-            btn.html(translate.generating + "...").prop("disabled", true);
+            btn.find(".btn-text").html(translate.generating);
+            btn.prop("disabled", true);
         },
         success: function (response) {
-            btn.html(translate.generate_translations_json).prop(
-                "disabled",
-                false
-            );
+            btn.find(".btn-text").html(translate.generate_translations_json);
+            btn.prop("disabled", false);
             Swal.fire({
                 text: translate.translations_generated,
                 confirmButtonText: translate.ok,
@@ -61,10 +60,8 @@ $(document).on("click", ".generate-translations-json", function () {
             });
         },
         error: function (response) {
-            btn.html(translate.generate_translations_json).prop(
-                "disabled",
-                false
-            );
+            btn.find(".btn-text").html(translate.generate_translations_json);
+            btn.prop("disabled", false);
             Swal.fire({
                 text: translate.translations_generate_failed,
                 confirmButtonText: translate.ok,
@@ -85,13 +82,12 @@ $(document).on("click", ".sync-missing-translations", function () {
         url: route,
         type: method,
         beforeSend: function () {
-            btn.html(translate.processing + "...").prop("disabled", true);
+            btn.find(".btn-text").html(translate.processing);
+            btn.prop("disabled", true);
         },
         success: function (response) {
-            btn.html(translate.sync_missing_translations).prop(
-                "disabled",
-                false
-            );
+            btn.find(".btn-text").html(translate.sync_missing_translations);
+            btn.prop("disabled", false);
             Swal.fire({
                 text: translate.translations_synced,
                 confirmButtonText: translate.ok,
@@ -101,10 +97,8 @@ $(document).on("click", ".sync-missing-translations", function () {
             });
         },
         error: function (response) {
-            btn.html(translate.sync_missing_translations).prop(
-                "disabled",
-                false
-            );
+            btn.find(".btn-text").html(translate.sync_missing_translations);
+            btn.prop("disabled", false);
             Swal.fire({
                 text: translate.translations_sync_failed,
                 confirmButtonText: translate.ok,
