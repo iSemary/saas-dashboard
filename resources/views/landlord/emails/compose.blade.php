@@ -7,8 +7,7 @@
             {{-- Email Template --}}
             <div class="form-group">
                 <label for="email_template_id" class="form-label">@translate('email_template')</label>
-                <select name="email_template_id" id="emailTemplateId"
-                    class="form-control select2 select-email-template">
+                <select name="email_template_id" id="emailTemplateId" class="form-control select2 select-email-template">
                     <option value="">@translate('select')</option>
                     @foreach ($emailTemplates as $emailTemplate)
                         <option data-route="{{ route('landlord.email-templates.show', $emailTemplate->id) }}"
@@ -66,26 +65,26 @@
             <div class="form-group">
                 <textarea id="ckInput" class="form-control ckeditor email-body" name="body" required></textarea>
             </div>
-{{-- 
-            <div class="file-selector" data-max-size="10485760" data-accept="image/*" data-max-files="3"
-                data-label="Drop files here"></div>
 
-            <div class="file-selector" data-max-size="10485760" data-accept="image/*" data-max-files="3"
-                data-label="Drop files here"></div> --}}
-
-                
             {{-- Attachment --}}
             <div class="form-group">
-                <div class="btn btn-default btn-file">
-                    <i class="fas fa-paperclip"></i> @translate('attachment')
-                    <input type="file" name="attachment">
-                </div>
+                @translate('attachments')
+                <div class="file-uploader" data-multiple="true" data-required="false" data-max-file-size="1024"
+                    data-allowed-files="png,jpg,pdf,xlsx" data-label="Drag & Drop Files Here"
+                    data-button-label="Browse Files"></div>
                 <p class="help-block">@translate('max'): @configuration('max_email_file_size') @translate('sizes.mb')</p>
             </div>
         </div>
         <div class="card-footer">
-            <div class="float-right">
-                <button type="submit" class="btn btn-primary"><i class="bi bi-send"></i> @translate('send')</button>
+            <div class="row">
+
+                <div class="form-group col-8">
+                    <div class="form-status"></div>
+                </div>
+                <div class="form-group col-4 text-revert">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-send"></i>
+                        @translate('send')</button>
+                </div>
             </div>
         </div>
     </form>

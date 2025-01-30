@@ -22,13 +22,11 @@ $.ajax({
 function translate(key, placeholders = {}) {
     // Get the translation string
     let translation = translations[key] || key; // Fallback to the key if translation is missing
-    console.log(translation, "translation");
     // Replace placeholders in the translation string
     for (const [placeholder, value] of Object.entries(placeholders)) {
         // Replace :placeholder with the value (skip if value is undefined)
         translation = translation.replace(new RegExp(`:${placeholder}`, 'g'), value ?? '');
     }
-    console.log(translation, "translation");
     return translation;
 }
 

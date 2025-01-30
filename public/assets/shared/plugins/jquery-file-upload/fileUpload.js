@@ -30,7 +30,7 @@
                     <div>
                         <i class="fas fa-cloud-upload-alt"></i>
                         <p>${config.label}</p>
-                        <span>${t('or')}</span>
+                        <span>${t("or")}</span>
                         <div>${config.buttonLabel}</div>
                     </div>
                     <input type="file" id="${fileUploadId}" name="files[]" 
@@ -53,11 +53,11 @@
                         <thead>
                             <tr>
                                 <th></th>
-                                <th style="width: 30%;">${t('file_name')}</th>
-                                <th>${t('preview')}</th>
+                                <th style="width: 30%;">${t("file_name")}</th>
+                                <th>${t("preview")}</th>
                                 <th style="width: 20%;">Size</th>
-                                <th>${t('type')}</th>
-                                <th>${t('action')}</th>
+                                <th>${t("type")}</th>
+                                <th>${t("action")}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -138,13 +138,35 @@
                     }
 
                     tableBody.find(".deleteBtn").click(function () {
-                        $(this).closest("tr").remove();
+                        var row = $(this).closest("tr");
+                        var fileName = row.find("td:nth-child(2)").text();
+
+                        var input = fileUploadDiv.find(`#${fileUploadId}`)[0];
+                        var dataTransfer = new DataTransfer();
+
+                        // Add all files except the deleted one
+                        for (var i = 0; i < input.files.length; i++) {
+                            if (input.files[i].name !== fileName) {
+                                dataTransfer.items.add(input.files[i]);
+                            }
+                        }
+
+                        input.files = dataTransfer.files;
+                        row.remove();
 
                         if (tableBody.find("tr").length === 0) {
                             tableBody.append(
                                 '<tr><td colspan="6" class="no-file">No files selected!</td></tr>'
                             );
                         }
+
+                        // $(this).closest("tr").remove();
+
+                        // if (tableBody.find("tr").length === 0) {
+                        //     tableBody.append(
+                        //         '<tr><td colspan="6" class="no-file">No files selected!</td></tr>'
+                        //     );
+                        // }
                     });
                 }
             }
