@@ -1,3 +1,65 @@
+.resizable-handle {
+    position: absolute;
+    top: 0;
+    left: -5px;
+    width: 10px;
+    height: 100%;
+    cursor: ew-resize;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.nav.nav-treeview {
+    display: block;
+    margin-left: 20px;
+    border-left: 1px solid #ffffff24;
+    padding-left: 10px;
+}
+
+.nav.nav-treeview .nav-item a {
+    padding-left: 0;
+}
+
+.bg-transparent {
+    background-color: transparent !important;
+}
+
+.ltr .modal.right .modal-dialog {
+    position: fixed;
+    margin: 0;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+}
+
+.rtl .modal.right .modal-dialog {
+    position: fixed;
+    margin: 0;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+}
+
+
+.modal.right .modal-content {
+    height: 100%;
+    overflow-y: auto;
+}
+
+.modal.right.show .modal-dialog {
+    transform: translateX(0);
+}
+
+
+.checkbox-inline {
+    margin-left: 20px;
+}
+
 .modal .zoom-image {
     max-width: 100%;
     height: auto;

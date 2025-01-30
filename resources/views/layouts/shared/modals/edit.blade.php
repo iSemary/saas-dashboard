@@ -8,7 +8,7 @@
                     </div>
                     <div class="col-2 text-revert">
                         <button type="button" class="close-modal" data-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
-                        <button type="button" class="refresh-modal"><i class="fas fa-sync-alt"></i></button>
+                        <button type="button" class="refresh-modal mx-2"><i class="fas fa-sync-alt"></i></button>
                     </div>
                 </div>
             </div>

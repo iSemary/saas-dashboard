@@ -42,6 +42,7 @@
     media="screen" />
 
     <link rel="stylesheet" href="{{ asset('assets/shared/plugins/jquery-file-upload/fileUpload.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/landlord/css/jquery-ui.min.css') }}">
 
     @if ($language->locale == 'ar')
         <link rel="stylesheet" href="{{ asset('assets/landlord/css/custom.css') . '?v=1.2.1' }}" media="screen">

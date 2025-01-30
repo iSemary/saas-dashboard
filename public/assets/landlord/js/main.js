@@ -10,7 +10,9 @@ $.ajaxSetup({
     },
 });
 
-const loadingSpan = `<span><i class="fa fa-spinner fa-spin"></i> ${t('please_wait')}</span>`;
+const loadingSpan = `<span><i class="fa fa-spinner fa-spin"></i> ${t(
+    "please_wait"
+)}</span>`;
 
 // DataTables Config
 $.extend(true, $.fn.dataTable.defaults, {
@@ -82,7 +84,7 @@ $(document).on("submit", ".create-form", function (e) {
         beforeSend: function () {
             form.find(".form-status").html(
                 `<h6 class="text-muted"><i class="fas fa-circle-notch fa-spin"></i> ` +
-                    t('processing') +
+                    t("processing") +
                     ` ...` +
                     `</h6>`
             );
@@ -117,7 +119,7 @@ $(document).on("submit", ".create-form", function (e) {
             // $.each(xhr.responseJSON.errors, function(key, value) {
             form.find(".form-status").append(
                 `<h6 class="text-danger"><i class="fas fa-exclamation-triangle"></i> ` +
-                    (data('responseJSON') ?? t('something_went_wrong')) +
+                    (data("responseJSON") ?? t("something_went_wrong")) +
                     `</h6>`
             );
             // });
@@ -148,7 +150,7 @@ $(document).on("submit", ".import-excel-form", function (e) {
         beforeSend: function () {
             $(".import-status").html(
                 `<h6 class="text-muted"><i class="fas fa-circle-notch fa-spin"></i> ` +
-                    t('creating') +
+                    t("creating") +
                     `...` +
                     `</h6>`
             );
@@ -217,7 +219,7 @@ $(document).on("submit", ".edit-form", function (e) {
         beforeSend: function () {
             form.find(".form-status").html(
                 `<h6 class="text-muted"><i class="fas fa-circle-notch fa-spin"></i> ` +
-                    t('updating') +
+                    t("updating") +
                     ` ...` +
                     `</h6>`
             );
@@ -247,7 +249,7 @@ $(document).on("submit", ".edit-form", function (e) {
             $.each(xhr.responseJSON.errors, function (key, value) {
                 form.find(".form-status").append(
                     `<h6 class="text-danger"><i class="fas fa-exclamation-triangle"></i> ` +
-                        (value[0] ?? t('something_went_wrong')) +
+                        (value[0] ?? t("something_went_wrong")) +
                         `</h6>`
                 );
             });
@@ -286,9 +288,17 @@ $(document).on(
 
         // Show the modal and set a loading message
         const $modal = $(`#${modalId}`);
+
+        // make it resizable
+        $modal.find(".modal-content").resizable({
+            minWidth: 625,
+            minHeight: 175,
+            handles: language.direction == "ltr" ? "w" : "e",
+        });
+
         $modal.attr("data-modal-link", url);
         $modal.find(".modal-title").html(title);
-        $modal.find(".modal-body").html("<p>Loading...</p>");
+        $modal.find(".modal-body").html(`<p>${t("loading")}...</p>`);
         $modal.modal("show");
 
         // Make the AJAX request
@@ -302,7 +312,11 @@ $(document).on(
             error: function () {
                 $modal
                     .find(".modal-body")
-                    .html("<p>Failed to load content. Please try again.</p>");
+                    .html(
+                        `<p>${t(
+                            "failed_to_load_content._please_try_again."
+                        )}</p>`
+                    );
             },
         });
     }
@@ -316,7 +330,7 @@ $(document).on("click", ".refresh-modal", function (e) {
     const url = $modal.attr("data-modal-link");
 
     // Show loading message while fetching the content again
-    $modal.find(".modal-body").html("<p>Loading...</p>");
+    $modal.find(".modal-body").html(`<p>${t('loading')}...</p>`);
 
     // Make the AJAX request again to refresh the content
     $.ajax({
@@ -334,7 +348,9 @@ $(document).on("click", ".refresh-modal", function (e) {
             btn.prop("disabled", false);
             $modal
                 .find(".modal-body")
-                .html("<p>Failed to load content. Please try again.</p>");
+                .html(
+                    `<p>${t("failed_to_load_content._please_try_again.")}</p>`
+                );
         },
     });
 });
@@ -347,14 +363,14 @@ $(document).on("click", ".refresh-modal", function (e) {
 
 function deleteRow(link, ModelDeleteType) {
     Swal.fire({
-        title: t('are_you_sure'),
-        text: t('you_want_delete_this') + " " + ModelDeleteType + " ?",
+        title: t("are_you_sure"),
+        text: t("you_want_delete_this") + " " + ModelDeleteType + " ?",
         type: "warning",
         showCancelButton: true,
         confirmButtonColor: "#d33",
         cancelButtonColor: "#3085d6",
-        confirmButtonText: t('delete'),
-        cancelButtonText: t('cancel'),
+        confirmButtonText: t("delete"),
+        cancelButtonText: t("cancel"),
     }).then((result) => {
         if (result.value) {
             $.ajax({
@@ -367,17 +383,16 @@ function deleteRow(link, ModelDeleteType) {
                 .done(function (data) {
                     if (data.status == 200) {
                         Swal.fire({
-                            text: t('deleted_successfully'),
-                            confirmButtonText: t('ok'),
+                            text: t("deleted_successfully"),
+                            confirmButtonText: t("ok"),
                             type: "success",
                             toast: true,
                             position: "bottom",
                         });
                     } else {
                         Swal.fire({
-                            text:
-                                data.response ?? t('something_went_wrong'),
-                            confirmButtonText: t('ok'),
+                            text: data.response ?? t("something_went_wrong"),
+                            confirmButtonText: t("ok"),
                             type: "error",
                             toast: true,
                             position: "bottom",
@@ -409,14 +424,14 @@ function deleteRow(link, ModelDeleteType) {
 
 function restoreRow(link, ModelDeleteType) {
     Swal.fire({
-        title: t('are_you_sure'),
-        text: t('you_want_restore_this') + " " + ModelDeleteType + " ?",
+        title: t("are_you_sure"),
+        text: t("you_want_restore_this") + " " + ModelDeleteType + " ?",
         type: "warning",
         showCancelButton: true,
         confirmButtonColor: "#FFD43B",
         cancelButtonColor: "#3085d6",
-        confirmButtonText: t('restore'),
-        cancelButtonText: t('cancel'),
+        confirmButtonText: t("restore"),
+        cancelButtonText: t("cancel"),
     }).then((result) => {
         if (result.value) {
             $.ajax({
@@ -429,17 +444,16 @@ function restoreRow(link, ModelDeleteType) {
                 .done(function (data) {
                     if (data.status == 200) {
                         Swal.fire({
-                            text: t('restored_successfully'),
-                            confirmButtonText: t('ok'),
+                            text: t("restored_successfully"),
+                            confirmButtonText: t("ok"),
                             type: "success",
                             toast: true,
                             position: "bottom",
                         });
                     } else {
                         Swal.fire({
-                            text:
-                                data.response ?? t('something_went_wrong'),
-                            confirmButtonText: t('ok'),
+                            text: data.response ?? t("something_went_wrong"),
+                            confirmButtonText: t("ok"),
                             type: "error",
                             toast: true,
                             position: "bottom",
@@ -571,7 +585,7 @@ $(document).on("click", ".copy-to-clipboard-btn", function (e) {
     // Show success message using SweetAlert
     Swal.fire({
         type: "success",
-        title: t('copied_to_clipboard'),
+        title: t("copied_to_clipboard"),
         position: "bottom",
         toast: true,
         showConfirmButton: false,
