@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
     ReactFlow,
     MiniMap,
@@ -9,55 +9,161 @@ import {
     addEdge,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-
-const initialNodes = [
-    {
-        id: "1",
-        type: "input",
-        data: { label: "Database 1" },
-        position: { x: 250, y: 25 },
-    },
-    {
-        id: "2",
-        data: { label: "Database 2" },
-        position: { x: 100, y: 125 },
-    },
-    {
-        id: "3",
-        type: "output",
-        data: { label: "Database 3" },
-        position: { x: 250, y: 250 },
-    },
-];
-
-const initialEdges = [
-    { id: "e1-2", source: "1", target: "2" },
-    { id: "e2-3", source: "2", target: "3" },
-];
+import axiosConfig from "../../../../configs/AxiosConfig";
+import Loader from "../../../utilities/Loader";
 
 const FlowsDatabase = () => {
-    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-    const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+    const [nodes, setNodes, onNodesChange] = useNodesState([]);
+    const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+    const [databases, setDatabases] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [syncLoading, setSyncLoading] = useState(false);
 
     const onConnect = useCallback(
         (params) => setEdges((eds) => addEdge(params, eds)),
         [setEdges]
     );
 
+    // Transform database structure into nodes and edges
+    const processDbStructure = (dbData) => {
+        const newNodes = [];
+        const newEdges = [];
+        let yOffset = 0;
+
+        Object.entries(dbData).forEach(([dbName, tables]) => {
+            tables.forEach((table, tableIndex) => {
+                const nodeId = `${dbName}-${table.name}`;
+                const label = (
+                    <div>
+                        <strong>{table.name}</strong>
+                        <div style={{ fontSize: "0.8em" }}>
+                            {table.columns.map((col) => (
+                                <div key={col.title}>
+                                    {col.title} ({col.data_type})
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+
+                newNodes.push({
+                    id: nodeId,
+                    data: { label },
+                    position: table.design?.position
+                        ? {
+                              x: parseInt(table.design.position.x, 10),
+                              y: parseInt(table.design.position.y, 10),
+                          }
+                        : {
+                              x: 250 + (tableIndex % 2) * 300,
+                              y: 100 + yOffset,
+                          },
+                    style: {
+                        width: "auto",
+                        padding: 10,
+                        backgroundColor: table.design?.color || "#fff",
+                    },
+                });
+
+                if (table.relations) {
+                    table.relations.forEach((relation, index) => {
+                        const targetId = `${dbName}-${relation.references.table}`;
+                        newEdges.push({
+                            id: `${nodeId}-${targetId}-${index}`,
+                            source: nodeId,
+                            target: targetId,
+                            label: `${relation.column} → ${relation.references.column}`,
+                            type: "smoothstep",
+                            animated: true,
+                            style: { stroke: "#888" },
+                        });
+                    });
+                }
+
+                yOffset += 250;
+            });
+        });
+
+        setNodes(newNodes);
+        setEdges(newEdges);
+    };
+
+    useEffect(() => {
+        axiosConfig
+            .get("/development/databases/flow")
+            .then((response) => {
+                if (response.data.success) {
+                    setDatabases(response.data.data.databases);
+                    processDbStructure(response.data.data.databases);
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching databases:", error);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, []);
+
+    const handleSaveFlow = () => {
+        setSyncLoading(true);
+        const formattedData = nodes.map((node) => {
+            const [connection, table] = node.id.split("-");
+            return {
+                table,
+                connection,
+                position: node.position,
+                color: node.style?.backgroundColor || "#fff",
+            };
+        });
+
+        axiosConfig
+            .post("/development/databases/flow", { nodes: formattedData })
+            .then((response) => {
+                if (response.data.success) {
+                    alert("Flow saved successfully!");
+                }
+            })
+            .catch((error) => {
+                console.error("Error syncing databases:", error);
+            })
+            .finally(() => {
+                setSyncLoading(false);
+            });
+    };
+
+    if (loading) {
+        return <Loader />;
+    }
+
     return (
-        <div style={{ width: "100%", height: "500px" }}>
-            <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
-                onConnect={onConnect}
-            >
-                <Controls />
-                <MiniMap />
-                <Background variant="dots" gap={12} size={1} />
-            </ReactFlow>
-        </div>
+        <>
+            <div className="text-revert mb-2">
+                <button
+                    className="btn btn-success"
+                    type="button"
+                    disabled={syncLoading}
+                    onClick={handleSaveFlow}
+                >
+                    Save
+                </button>
+            </div>
+            <div style={{ width: "100%", height: "70vh" }}>
+                <ReactFlow
+                    nodes={nodes}
+                    edges={edges}
+                    onNodesChange={onNodesChange}
+                    onEdgesChange={onEdgesChange}
+                    onConnect={onConnect}
+                    fitView
+                    attributionPosition="bottom-right"
+                >
+                    <Controls />
+                    <MiniMap zoomable pannable />
+                    <Background variant="dots" gap={12} size={1} />
+                </ReactFlow>
+            </div>
+        </>
     );
 };
 

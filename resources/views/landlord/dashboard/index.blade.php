@@ -1,16 +1,5 @@
 @extends('layouts.landlord.app')
 @section('content')
-    {{-- <div class="file-uploader" data-multiple="true" data-required="true" data-max-file-size="1024"
-        data-allowed-files="png,jpg,pdf,xlsx" data-label="Drag & Drop Files Here" data-button-label="Browse Files">
-    </div> --}}
-
-    {{ translate('test_var', ['var1' => 'test1', 'var2' => 'test2', 'var3' => null]) }}<br/>
-    {{ t('test_var', ['var1' => 'test1', 'var2' => 'test2', 'var3' => null]) }}<br/>
-    {{ __('test_var', ['var1' => 'test1', 'var2' => 'test2', 'var3' => null]) }}<br/>
-    <div id="testResult"></div>
-    <div>
-        <span>power:</span><span id="power"></span>
-    </div>
     {{-- Translations Status --}}
     <div class="row">
         <div class="col-12">
