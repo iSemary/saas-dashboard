@@ -1,6 +1,7 @@
 <div class="modal right fade" id="showModal" data-modal-link="" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
+            <div class="resizable-handle"></div>
             <div class="modal-header">
                 <div class="row w-100">
                     <div class="col-10">
