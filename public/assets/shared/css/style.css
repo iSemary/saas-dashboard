@@ -8,6 +8,11 @@
     background-color: rgba(0, 0, 0, 0.1);
 }
 
+.rtl .resizable-handle {
+    left: unset !important;
+    right: -5px !important;
+}
+
 .nav.nav-treeview {
     display: block;
     margin-left: 20px;

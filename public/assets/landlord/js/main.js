@@ -289,12 +289,30 @@ $(document).on(
         // Show the modal and set a loading message
         const $modal = $(`#${modalId}`);
 
-        // make it resizable
-        $modal.find(".modal-content").resizable({
-            minWidth: 625,
-            minHeight: 175,
-            handles: language.direction == "ltr" ? "w" : "e",
-        });
+        if (language.direction == "rtl") {
+            $modal.find(".modal-content").resizable({
+                handles: {
+                    e: ".resizable-handle",
+                },
+                start: function (event, ui) {},
+                resize: function (event, ui) {
+                    if (language.direction == "rtl") {
+                        // Maintain the right position while resizing
+                        const parentWidth = $(this).parent().width();
+                        const newRight =
+                            parentWidth - (ui.position.left + ui.size.width);
+                        $(this).css({
+                            left: "auto",
+                            right: newRight,
+                        });
+                    }
+                },
+            });
+        } else {
+            $modal.find(".modal-content").resizable({
+                handles: "w",
+            });
+        }
 
         $modal.attr("data-modal-link", url);
         $modal.find(".modal-title").html(title);
@@ -330,7 +348,7 @@ $(document).on("click", ".refresh-modal", function (e) {
     const url = $modal.attr("data-modal-link");
 
     // Show loading message while fetching the content again
-    $modal.find(".modal-body").html(`<p>${t('loading')}...</p>`);
+    $modal.find(".modal-body").html(`<p>${t("loading")}...</p>`);
 
     // Make the AJAX request again to refresh the content
     $.ajax({
