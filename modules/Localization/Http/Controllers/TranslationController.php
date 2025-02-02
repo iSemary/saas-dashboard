@@ -76,6 +76,12 @@ class TranslationController extends ApiController
                     'data-modal-title' => translate("scan_translation_keys_in_php_files"),
                 ]
             ],
+            [
+                'text' => translate("translations_status"),
+                'icon' => '<i class="fas fa-search"></i>',
+                'class' => 'btn-sm btn-info',
+                'redirect' => route('landlord.translations.showStatus')
+            ],
         ];
 
         return view('landlord.localizations.translations.index', compact('breadcrumbs', 'title', 'actionButtons'));
@@ -198,15 +204,18 @@ class TranslationController extends ApiController
     public function getUsedTranslationInJs()
     {
         $keys = $this->service->getUsedTranslationInJs();
-
         return view('landlord.localizations.translations.used-translations', ['keys' => $keys]);
     }
 
     public function getUsedTranslationInPhp()
     {
-        $keys = $this->service->getUsedTranslationInPhp();
-
-        
+        $keys = $this->service->getUsedTranslationInPhp();        
         return view('landlord.localizations.translations.used-translations', ['keys' => $keys]);
+    }
+
+    public function showStatus()
+    {
+        $languages = $this->languageService->getLanguagesStatus();
+        return view('landlord.localizations.translations.status', ['languages' => $languages]);
     }
 }

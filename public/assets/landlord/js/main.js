@@ -508,17 +508,20 @@ $(document).on("click", ".restore-btn", function (event) {
 
 function filterTable(
     Route,
-    TableID,
-    from_date,
-    to_date,
-    init,
-    cols,
-    colDefs,
-    dataExtra
+    TableID = 'table',
+    from_date = null,
+    to_date = null,
+    init = true,
+    cols = [],
+    colDefs = null,
+    dataExtra = null,
+    orderColumnIndex = 0,
+    orderColumnType = "desc",
+    selectable = false
 ) {
     // init
     if (init) {
-        // check if the table is already exists
+        // check if the table already exists
         if ($.fn.DataTable.isDataTable(TableID)) {
             $(TableID).DataTable().destroy();
         }
@@ -533,8 +536,8 @@ function filterTable(
         $.extend(data, dataExtra);
     }
 
-    $(TableID).DataTable({
-        order: [[0, "desc"]],
+    let dataTableConfig = {
+        order: [[orderColumnIndex, orderColumnType]],
         processing: true,
         serverSide: true,
         columnDefs: colDefs ?? null,
@@ -543,7 +546,71 @@ function filterTable(
             data: data,
         },
         columns: cols,
+        createdRow: function (row, data, dataIndex) {
+            // Set the data-id attribute for the row
+            if (data.id) {
+                $(row).attr('data-id', data.id);
+            }
+        },
+    };
+
+    // Add select configuration if selectable is true
+    if (selectable) {
+        dataTableConfig.select = {
+            style: 'multi',
+            selector: 'td:not(:last-child)' // Exclude the last column (e.g., actions column)
+        };
+    }
+
+    // Initialize the DataTable
+    var dataTableCoreTable = $(TableID).DataTable(dataTableConfig);
+
+    // Select all rows when the header checkbox is clicked
+    $('#selectAllRows').on('click', function () {
+        var rows = dataTableCoreTable.rows({ 'search': 'applied' }).nodes();
+        $('input[type="checkbox"]', rows).prop('checked', this.checked);
+        updateButtonState(); // Update button state when "Select All" is clicked
     });
+
+    // Handle row selection
+    $(TableID).on('change', '.select-row', function () {
+        if (!this.checked) {
+            var el = $('#selectAllRows').get(0);
+            if (el && el.checked && ('indeterminate' in el)) {
+                el.indeterminate = true;
+            }
+        }
+        updateButtonState(); // Update button state when a row is selected/deselected
+    });
+
+    // Make the entire row selectable, except the last <td>
+    $(TableID).on('click', 'tbody tr', function (event) {
+        // Check if the click was on the checkbox itself to avoid double toggling
+        if ($(event.target).is('input[type="checkbox"]')) {
+            return;
+        }
+
+        // Check if the click was on the last <td> in the row
+        if ($(event.target).closest('td').is(':last-child')) {
+            return; // Skip toggling if the last <td> was clicked
+        }
+
+        // Toggle the checkbox
+        var checkbox = $(this).find('.select-row');
+        checkbox.prop('checked', !checkbox.prop('checked')).trigger('change');
+    });
+
+    // Function to update the button state
+    function updateButtonState() {
+        // Count the number of selected rows
+        let selectedCount = $('.select-row:checked').length;
+
+        // Enable/disable buttons with data-button-listen="select-row"
+        $('button[data-button-listen="select-row"]').prop('disabled', selectedCount < 2);
+    }
+
+    // Initial button state update
+    updateButtonState();
 }
 
 $(document).on("submit", "#filterTable", function (e) {

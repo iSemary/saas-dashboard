@@ -135,14 +135,16 @@ class TranslationRepository implements TranslationInterface
 
     private function getByKeyByDatabase($key, $locale = null)
     {
-        $language = Language::where("locale", $locale)->first();
-
-        return $this->model->where("translation_key", $key)->where("language_id", $language->id)->latest()->first();
+        return $this->model
+            ->join('languages', 'languages.id', '=', 'translations.language_id')
+            ->where('translation_key', $key)
+            ->where('languages.locale', $locale)
+            ->latest('translations.created_at')
+            ->first(['translations.*']);
     }
 
     private function getByKeyByCache($key, $locale = null)
     {
-        $language = Language::where("locale", $locale)->first();
         return CacheService::get("translation_{$locale}_{$key}");
     }
 

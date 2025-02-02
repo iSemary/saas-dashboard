@@ -21,6 +21,7 @@
 -   [Global IDs](#global-ids)
 -   [Global Functions](#global-functions)
 -   [Global Variables](#global-variables)
+-   [Global Data Attributes](#global-data-attributes)
 -   [Model and Data Structure](#model-and-data-structure)
     -   [Geography](#geography)
     -   [Utilities](#utilities)
@@ -145,6 +146,7 @@ Please refer to the README file for the file structure:
 -   `.open-create-modal`
 -   `.open-edit-modal`
 -   `.open-details-btn`
+-   `.select-row` // used for datatable multiple rows select 
 -   `.upload-image`
 -   `.view-image`
 -   `.file-uploader` ex:
@@ -190,6 +192,12 @@ Please refer to the README file for the file structure:
 ## Global Variables
 
 -   in ViewServiceProvider
+
+---
+
+## Global Data Attributes
+
+- data-button-listen="select-row"
 
 ---
 

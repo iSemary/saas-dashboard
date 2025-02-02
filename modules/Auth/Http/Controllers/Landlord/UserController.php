@@ -7,7 +7,9 @@ use App\Http\Controllers\ApiController;
 use Modules\Auth\Http\Requests\Landlord\ProfileRequest;
 use Illuminate\Support\Facades\Hash;
 use Modules\Geography\Services\CountryService;
+use Modules\Localization\Entities\Language;
 use Modules\Localization\Services\LanguageService;
+use Session;
 
 class UserController extends ApiController
 {
@@ -68,6 +70,10 @@ class UserController extends ApiController
             'gender' => $data['gender'] ?? null,
             'avatar' => $data['avatar'] ?? null,
         ]);
+
+        $language = Language::where('id', $data['language_id'])->first();
+        Session::put('language', $language);
+
     }
 
     protected function updateSecurity($user, array $data)

@@ -1,5 +1,5 @@
     <div class="notifications-list">
-        @foreach ($notifications as $notification)
+        {{-- @foreach ($notifications as $notification)
             <div class="notification-item dropdown-item {{ $notification->seen_at ? 'notification-seen' : 'notification-unseen' }}"
                 data-seen-at="{{ $notification->seen_at }}" data-stopPropagation="true">
                 <div class="d-flex align-items-center">
@@ -40,5 +40,5 @@
                 </div>
             </div>
             <div class="dropdown-divider"></div>
-        @endforeach
+        @endforeach --}}
     </div>

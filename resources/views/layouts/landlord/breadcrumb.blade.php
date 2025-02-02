@@ -26,11 +26,10 @@
                 @foreach ($actionButtons as $button)
                     @if (!isset($button['permission']) || Gate::check($button['permission']))
                         <button type="button" class="btn m-1 {{ $button['class'] }}"
-                            @if (isset($button['attr']) && is_array($button['attr'])) 
-                                @foreach ($button['attr'] as $key => $value) 
+                            @if (isset($button['redirect']) && $button['redirect']) onclick="window.location.href='{{ $button['redirect'] }}'" @endif
+                            @if (isset($button['attr']) && is_array($button['attr'])) @foreach ($button['attr'] as $key => $value) 
                                     {{ $key }}="{{ $value }}" 
-                                @endforeach 
-                            @endif>
+                                @endforeach @endif>
                             @if ($language->direction == 'ltr')
                                 <span class="btn-text">{{ $button['text'] }}</span>
                                 {!! isset($button['icon']) ? '<span class="">' . $button['icon'] . '</span>' : '' !!}

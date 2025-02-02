@@ -6,8 +6,8 @@ use Modules\Development\Services\ConfigurationService;
 if (!function_exists('translate')) {
     function translate($key, $attributes = [], $locale = null)
     {
-        $locale = TranslateHelper::getLocale($locale);
-        return app(TranslateHelper::class)->translate($key, $attributes, $locale);
+        $language = TranslateHelper::getLanguage();
+        return app(TranslateHelper::class)->translate($key, $attributes, $language->locale);
     }
 }
 

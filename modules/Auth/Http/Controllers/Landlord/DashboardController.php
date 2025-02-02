@@ -15,10 +15,7 @@ class DashboardController extends ApiController
     }
     public function index()
     {
-        $languages = $this->languageService->getLanguagesStatus();
 
-        return view('landlord.dashboard.index', [
-            'languages' => $languages,
-        ]);
+        return view('landlord.dashboard.index', []);
     }
 }

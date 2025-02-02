@@ -2,15 +2,20 @@
 
 namespace App\Helpers;
 
+use Modules\Localization\Entities\Language;
+use Modules\Localization\Repositories\LanguageInterface;
 use Modules\Localization\Repositories\TranslationInterface;
+use Session;
 
 class TranslateHelper
 {
     protected $translationInterface;
+    protected $languageInterface;
 
-    public function __construct(TranslationInterface $translationInterface)
+    public function __construct(TranslationInterface $translationInterface, LanguageInterface $languageInterface)
     {
         $this->translationInterface = $translationInterface;
+        $this->languageInterface = $languageInterface;
     }
 
     public function translate($key, $attributes = [], $locale = null)
@@ -20,14 +25,16 @@ class TranslateHelper
 
     public static function getLocale($locale = null)
     {
-        // TODO Add get the locale from session and also set the locale in session based on changing in language and login or register 
         if ($locale) {
             $locale = $locale;
         } else {
             if (auth()->check()) {
-                $locale = auth()->user()->language?->locale;
+                $locale = Session::get('locale');
                 if (!$locale) {
-                    $locale = app()->getLocale();
+                    $locale = auth()->user()->language?->locale;
+                    if (!$locale) {
+                        $locale = app()->getLocale();
+                    }
                 }
             } else {
                 $locale = app()->getLocale();
@@ -35,6 +42,27 @@ class TranslateHelper
         }
 
         return $locale;
+    }
+
+    public static function getLanguage($language = null)
+    {
+        if ($language) {
+            $language = $language;
+        } else {
+            if (auth()->check()) {
+                $language = Session::get('language');
+                if (!$language) {
+                    $language = auth()->user()->language;
+                    if (!$language) {
+                        $language = Language::whereLocale(app()->getLocale())->first();
+                    }
+                }
+            } else {
+                $language = Language::whereLocale(app()->getLocale())->first();
+            }
+        }
+
+        return $language;
     }
 
     public static function returnTranslatableEditor($model, $column)

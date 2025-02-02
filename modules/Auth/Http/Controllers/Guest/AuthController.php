@@ -29,6 +29,7 @@ use Modules\Customer\Entities\Customer;
 use Carbon\Carbon;
 use stdClass;
 use Exception;
+use Session;
 use Yajra\DataTables\Facades\DataTables;
 
 class AuthController extends ApiController
@@ -122,6 +123,9 @@ class AuthController extends ApiController
         $response = $this->collectUserDetails($user);
 
         $redirect = $this->handleRedirection($request);
+
+        $language = auth()->user()->language;
+        Session::put('language', $language);
 
         return $this->return(200, 'User Logged in Successfully', [
             'user' => $response,
