@@ -222,6 +222,10 @@ class Resources
                 'actions' => ['read']
             ],
             [
+                'name' => 'backups',
+                'actions' => ['read', 'download']
+            ],
+            [
                 'name' => 'modules_flow',
                 'actions' => ['read', 'update']
             ],

@@ -477,6 +477,12 @@
                                     'route' => 'landlord.development.configurations.index',
                                     'single' => true,
                                 ],
+                                'backups' => [
+                                    'icon' => 'fas fa-cloud',
+                                    'permission' => 'read.backups',
+                                    'route' => 'landlord.development.backups.index',
+                                    'single' => true,
+                                ],
                                 'ip_blacklists' => [
                                     'icon' => 'fas fa-map-marker-alt',
                                     'permission' => [

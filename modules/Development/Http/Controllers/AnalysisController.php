@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Utilities\Http\Controllers;
+namespace Modules\Development\Http\Controllers;
 
 use App\Http\Controllers\ApiController;
 use Illuminate\Routing\Controllers\Middleware;

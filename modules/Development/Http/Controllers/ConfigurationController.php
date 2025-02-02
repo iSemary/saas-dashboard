@@ -14,11 +14,24 @@ class ConfigurationController extends ApiController implements HasMiddleware
 {
     protected $service;
     protected $typeService;
+    
     public function __construct(ConfigurationService $service, TypeService $typeService)
     {
         $this->typeService = $typeService;
         $this->service = $service;
     }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.configurations', only: ['index', 'show']),
+            new Middleware('permission:create.configurations', only: ['create', 'store']),
+            new Middleware('permission:update.configurations', only: ['edit', 'update']),
+            new Middleware('permission:delete.configurations', only: ['destroy']),
+            new Middleware('permission:restore.configurations', only: ['restore']),
+        ];
+    }
+
     public function index()
     {
         if (request()->ajax()) {
@@ -86,16 +99,5 @@ class ConfigurationController extends ApiController implements HasMiddleware
     {
         $this->service->restore($id);
         return $this->return(200, "Deleted successfully");
-    }
-
-    public static function middleware(): array
-    {
-        return [
-            new Middleware('permission:read.configurations', only: ['index', 'show']),
-            new Middleware('permission:create.configurations', only: ['create', 'store']),
-            new Middleware('permission:update.configurations', only: ['edit', 'update']),
-            new Middleware('permission:delete.configurations', only: ['destroy']),
-            new Middleware('permission:restore.configurations', only: ['restore']),
-        ];
     }
 }
