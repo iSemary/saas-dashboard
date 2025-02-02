@@ -89,6 +89,7 @@ php artisan migrate --path=modules/*/Database/Migrations/landlord --database=lan
 php artisan migrate --path=modules/*/Database/migrations/landlord --database=landlord
 php artisan migrate --path=modules/*/Database/migrations/shared --database=landlord
 php artisan migrate --path=modules/*/Database/Migrations/shared --database=landlord
+php artisan migrate --path=database/migrations/shared --database=landlord
 ```
 
 ### Option 2: Custom Artisan Command

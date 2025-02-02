@@ -29,6 +29,11 @@ class RunLandlordMigrations extends Command
     public function handle()
     {
         $this->call('migrate', [
+            '--path' => 'database/migrations/shared',
+            '--database' => 'landlord',
+        ]);
+
+        $this->call('migrate', [
             '--path' => 'database/migrations/landlord',
             '--database' => 'landlord',
         ]);
