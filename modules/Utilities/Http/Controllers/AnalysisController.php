@@ -3,12 +3,17 @@
 namespace Modules\Utilities\Http\Controllers;
 
 use App\Http\Controllers\ApiController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class AnalysisController extends ApiController
+class AnalysisController extends ApiController implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.env_diff', only: ['showEnvDiff']),
+        ];
+    }
 
     public function showEnvDiff()
     {
@@ -24,7 +29,7 @@ class AnalysisController extends ApiController
             'missing_in_env' => $missingInEnv,
             'missing_in_env_example' => $missingInEnvExample,
         ];
-        
+
         if (empty($missingInEnv) && empty($missingInEnvExample)) {
             $status = 'success';
             $message = "Both files have the same number of keys ({$data['env_count']}).";
@@ -32,7 +37,7 @@ class AnalysisController extends ApiController
             $status = 'error';
             $message = 'There are differences between the two files.';
         }
-        
+
         $data['status'] = $status;
         $data['message'] = $message;
 

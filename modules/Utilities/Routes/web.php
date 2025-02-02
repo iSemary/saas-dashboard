@@ -3,8 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Utilities\Http\Controllers\CurrencyController;
 use Modules\Utilities\Http\Controllers\CategoryController;
-use Modules\Utilities\Http\Controllers\CodeBuilderController;
-use Modules\Utilities\Http\Controllers\AnalysisController;
 use Modules\Utilities\Http\Controllers\AnnouncementController;
 use Modules\Utilities\Http\Controllers\IndustryController;
 use Modules\Utilities\Http\Controllers\ModuleController;
@@ -28,11 +26,4 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_
     Route::resource('types', TypeController::class)->names('types');
     Route::resource('industries', IndustryController::class)->names('industries');
     Route::resource('units', UnitController::class)->names('units');
-
-    // DEVELOPERS ONLY
-    Route::prefix('development')->name('development.')->group(function () {
-        Route::get("code-builder", [CodeBuilderController::class, "show"])->name("code-builder.show");
-        Route::post("code-builder", [CodeBuilderController::class, "submit"])->name("code-builder.submit");
-        Route::get("env-diff", [AnalysisController::class, "showEnvDiff"])->name("env-diff.show");
-    });
 });
