@@ -49,4 +49,4 @@ let cols = [
     },
 ];
 
-filterTable(route, tableID, null, null, true, cols, null);
+filterTable({ route: route, tableID: tableID, cols: cols });

@@ -33,7 +33,7 @@ let cols = [
     },
 ];
 
-filterTable(route, tableID, null, null, true, cols, null);
+filterTable({ route: route, tableID: tableID, cols: cols });
 
 // Generate json files from the translations
 $(document).on("click", ".generate-translations-json", function () {

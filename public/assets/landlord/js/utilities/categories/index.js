@@ -12,4 +12,4 @@ let cols = [
     { data: "actions", name: "actions", orderable: false, searchable: false },
 ];
 
-filterTable(route, tableID, null, null, true, cols, null);
+filterTable({ route: route, tableID: tableID, cols: cols });
