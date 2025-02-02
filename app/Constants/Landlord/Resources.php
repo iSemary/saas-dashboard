@@ -4,6 +4,32 @@ namespace App\Constants\Landlord;
 
 class Resources
 {
+    public static function getRoles()
+    {
+        return [
+            [
+                'name' => 'landlord',
+                'guard_name' => 'api'
+            ],
+            [
+                'name' => 'developer',
+                'guard_name' => 'api'
+            ],
+            [
+                'name' => 'marketing',
+                'guard_name' => 'api'
+            ],
+            [
+                'name' => 'sales',
+                'guard_name' => 'api'
+            ],
+            [
+                'name' => 'viewer',
+                'guard_name' => 'api'
+            ]
+        ];
+    }
+
     public static function getResources()
     {
         return [

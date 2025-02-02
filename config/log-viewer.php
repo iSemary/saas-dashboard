@@ -78,7 +78,8 @@ return [
         \Opcodes\LogViewer\Http\Middleware\AuthorizeLogViewer::class,
         Authorize::class,
         'auth:web',
-        'role:landlord'
+        'role:landlord|developer',
+        'permission:read.log_viewer'
     ],
 
     /*

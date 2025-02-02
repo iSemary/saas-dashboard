@@ -27,28 +27,7 @@ class RolePermissionSeeder extends Seeder
 
     private function seedRoles()
     {
-        $roles = [
-            [
-                'name' => 'landlord',
-                'guard_name' => 'api'
-            ],
-            [
-                'name' => 'developer',
-                'guard_name' => 'api'
-            ],
-            [
-                'name' => 'marketing',
-                'guard_name' => 'api'
-            ],
-            [
-                'name' => 'sales',
-                'guard_name' => 'api'
-            ],
-            [
-                'name' => 'viewer',
-                'guard_name' => 'api'
-            ]
-        ];
+        $roles = Resources::getRoles();
 
         foreach ($roles as $role) {
             Role::updateOrCreate(

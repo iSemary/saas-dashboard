@@ -14,7 +14,7 @@ use Modules\Payment\Http\Controllers\PaymentController;
 |
 */
 
-Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:landlord', '2fa'])->group(function () {
+Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_roles', '2fa'])->group(function () {
     Route::resource('payment-methods', PaymentController::class)->names('payment-methods');
     Route::resource('payment-logs', PaymentController::class)->names('payment-logs');
 });

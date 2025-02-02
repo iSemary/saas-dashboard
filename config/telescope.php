@@ -95,7 +95,8 @@ return [
         'web',
         Authorize::class,
         'auth:web',
-        'role:landlord'
+        'role:landlord|developer',
+        'permission:read.telescope'
     ],
 
     /*

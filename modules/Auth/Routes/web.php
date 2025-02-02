@@ -56,7 +56,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Landlord Routes
-Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:landlord', '2fa'])->group(function () {
+Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_roles', '2fa'])->group(function () {
     Route::resource('permissions', PermissionController::class)->names('permissions');
     Route::resource('roles', RoleController::class)->names('roles');
 

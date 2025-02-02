@@ -96,7 +96,13 @@ return [
      * Add your middleware name to array -> ['web', 'auth', 'admin']
      * !!!! RESTRICT ACCESS FOR NON ADMIN USERS !!!!
      */
-    'middleware'        => ['web', 'role:landlord', '2fa', Authorize::class,],
+    'middleware'        => [
+        'web',
+        'role:landlord|developer',
+        '2fa',
+        Authorize::class,
+        'permission:read.log_viewer'
+    ],
 
     /***************************************************************************
      * ACL mechanism ON/OFF

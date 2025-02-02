@@ -8,7 +8,7 @@ use Modules\Email\Http\Controllers\EmailCampaignController;
 use Modules\Email\Http\Controllers\EmailCredentialController;
 use Modules\Email\Http\Controllers\EmailRecipientController;
 
-Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:landlord', '2fa'])->group(function () {
+Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_roles', '2fa'])->group(function () {
     // Email Templates
     Route::resource('email-templates', EmailTemplateController::class)->names('email-templates');
 

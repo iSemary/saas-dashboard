@@ -70,7 +70,7 @@ return [
     |
     */
 
-    'middleware' => ['web','auth:web', 'role:landlord'],
+    'middleware' => ['web','auth:web', 'role:landlord|developer', 'permission:read.horizon'],
 
     /*
     |--------------------------------------------------------------------------

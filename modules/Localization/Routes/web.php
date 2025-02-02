@@ -9,7 +9,7 @@ Route::middleware(['auth:web', '2fa'])->group(function () {
     Route::put('translations/objects/{objectId}', [TranslationController::class, 'updateObjectTranslations'])->name('translations.object.update');
 });
 
-Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:landlord', '2fa'])->group(function () {
+Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_roles', '2fa'])->group(function () {
     Route::resource('languages', LanguageController::class)->names('languages');
 
     Route::get('translations/status', [TranslationController::class, 'showStatus'])->name('translations.showStatus');

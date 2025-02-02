@@ -14,7 +14,7 @@ use Modules\Subscription\Http\Controllers\SubscriptionController;
 |
 */
 
-Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:landlord', '2fa'])->group(function () {
+Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_roles', '2fa'])->group(function () {
     Route::resource('subscriptions', SubscriptionController::class)->names('subscriptions');
     Route::resource('plans', SubscriptionController::class)->names('plans');
 });

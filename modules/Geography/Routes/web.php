@@ -8,7 +8,7 @@ use Modules\Geography\Http\Controllers\TownController;
 use Modules\Geography\Http\Controllers\StreetController;
 
 
-Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:landlord', '2fa'])->group(function () {
+Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_roles', '2fa'])->group(function () {
     Route::resource('countries', CountryController::class)->names('countries');
     Route::resource('provinces', ProvinceController::class)->names('provinces');
     Route::resource('cities', CityController::class)->names('cities');
