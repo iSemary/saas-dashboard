@@ -672,6 +672,11 @@ function fireDependencies() {
                 searchPosition: "bottom",
             });
         });
+        document.querySelectorAll('[data-toggle="tooltip"]').forEach(function(element) {
+            $(element).tooltip({
+                trigger: 'hover'
+            });
+        });
         fireCKEditor();
         $('[data-toggle="tooltip"]').tooltip();
         // Force select2 search to work inside modals

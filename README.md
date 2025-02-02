@@ -20,6 +20,7 @@
 -   [Modules Stubs](#modules-stubs)
 -   [Global Classes](#global-classes)
 -   [Global IDs](#global-ids)
+-   [Global Data Attributes](#global-data-attributes)
 -   [Global Functions](#global-functions)
 -   [Global Variables](#global-variables)
 -   [Global Data Attributes](#global-data-attributes)
@@ -177,10 +178,19 @@ Please refer to the README file for the file structure:
 
 -   `.generate-password-input`
 
+---
+
 ## Global IDs
 
 -   `#table` for datatables inputs
 -   `#ckInput` for ck-editor inputs
+
+---
+
+## Global Data Attributes
+
+- `data-toggle="tooltip"`
+- `data-selectable="true"` // for datatable multiple select rows
 
 ---
 
