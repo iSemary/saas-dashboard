@@ -18,6 +18,7 @@ class ConfigurationsSeeder extends Seeder
                 'configuration_value' => 'local',
                 'description' => 'Host of the file \r\nAllowed options: local, aws',
                 'type_id' => '1',
+                'input_type' => 'string',
                 'is_encrypted' => false,
                 'is_system' => true,
                 'is_visible' => true,

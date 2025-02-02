@@ -14,7 +14,6 @@ class CodeBuilderController extends ApiController implements HasMiddleware
     protected $moduleType = "landlord";
     protected $directoryPermissions = 02775; // drwxrwsr-x
 
-
     public static function middleware(): array
     {
         return [

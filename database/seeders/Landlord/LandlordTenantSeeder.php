@@ -9,10 +9,12 @@ class LandlordTenantSeeder extends Seeder
 {
     public function run(): void
     {
-        Tenant::create([
-            'name' => 'landlord',
-            'domain' => 'landlord',
-            'database' => env("DB_DATABASE", 'landlord')
-        ]);
+        Tenant::updateOrCreate(
+            ['name' => 'landlord'],
+            [
+                'domain' => 'landlord',
+                'database' => env('DB_DATABASE', 'landlord')
+            ]
+        );
     }
 }

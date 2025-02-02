@@ -5,7 +5,8 @@
 -   [Installation](#installation)
 -   [Modules Requirements](#modules-requirements)
 -   [Commands](#commands)
-    -   [Sync Missing Language Translations](#)
+    -   [Start App Command](#start-app-command)
+    -   [Sync Missing Language Translations](#sync-missing-language-translations)
 -   [Databases](#databases)
 -   [Running Landlord-Specific Migrations](#running-landlord-specific-migrations)
     -   [Option 1: Direct Migration Commands](#option-1-direct-migration-commands)
@@ -54,7 +55,17 @@ php artisan storage:link
 
 ## Commands
 
+### Start app command
+
+It will run the necessary commands to start the app
+
+```bash
+php artisan app:start
+```
+
 ### Sync Missing Language Translations
+
+It will sync the missed translations by translating it from google translate API
 
 ```bash
 php artisan translations:translate-missing
@@ -146,7 +157,7 @@ Please refer to the README file for the file structure:
 -   `.open-create-modal`
 -   `.open-edit-modal`
 -   `.open-details-btn`
--   `.select-row` // used for datatable multiple rows select 
+-   `.select-row` // used for datatable multiple rows select
 -   `.upload-image`
 -   `.view-image`
 -   `.file-uploader` ex:
@@ -174,7 +185,7 @@ Please refer to the README file for the file structure:
 
 ## Global Functions
 
-### PHP 
+### PHP
 
 -   `translate('key', ['attribute' => 'value'], 'en')` OR `@translate()` OR `__()` For translating dashboard items.
 -   // TODO `translateModel()` OR `@translateModel()`: For translating model items (e.g., name, description).
@@ -185,7 +196,7 @@ Please refer to the README file for the file structure:
 
 ### JS
 
-- `translate('home')` OR `t('home')` OR t('unknown_key', { var1: 'test1' })
+-   `translate('home')` OR `t('home')` OR t('unknown_key', { var1: 'test1' })
 
 ---
 
@@ -197,7 +208,7 @@ Please refer to the README file for the file structure:
 
 ## Global Data Attributes
 
-- data-button-listen="select-row"
+-   data-button-listen="select-row"
 
 ---
 
