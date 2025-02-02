@@ -5,8 +5,10 @@ namespace Modules\Geography\Http\Controllers;
 use App\Http\Controllers\ApiController;
 use Modules\Geography\Services\CountryService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class CountryController extends ApiController
+class CountryController extends ApiController implements HasMiddleware
 {
     protected $service;
 
@@ -76,5 +78,16 @@ class CountryController extends ApiController
     {
         $this->service->restore($id);
         return $this->return(200, "Deleted successfully");
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.countries', only: ['index', 'show']),
+            new Middleware('permission:create.countries', only: ['create', 'store']),
+            new Middleware('permission:update.countries', only: ['edit', 'update']),
+            new Middleware('permission:delete.countries', only: ['destroy']),
+            new Middleware('permission:restore.countries', only: ['restore']),
+        ];
     }
 }

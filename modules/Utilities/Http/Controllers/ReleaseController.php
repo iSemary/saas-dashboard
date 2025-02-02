@@ -7,8 +7,10 @@ use App\Helpers\ModelHelper;
 use App\Http\Controllers\ApiController;
 use Modules\Utilities\Services\ReleaseService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class ReleaseController extends ApiController
+class ReleaseController extends ApiController implements HasMiddleware
 {
     protected $service;
 
@@ -83,5 +85,16 @@ class ReleaseController extends ApiController
     {
         $this->service->restore($id);
         return $this->return(200, "Deleted successfully");
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.releases', only: ['index', 'show']),
+            new Middleware('permission:create.releases', only: ['create', 'store']),
+            new Middleware('permission:update.releases', only: ['edit', 'update']),
+            new Middleware('permission:delete.releases', only: ['destroy']),
+            new Middleware('permission:restore.releases', only: ['restore']),
+        ];
     }
 }

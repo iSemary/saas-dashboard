@@ -6,8 +6,10 @@ use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
 use Modules\Email\Services\EmailCredentialService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class EmailCredentialController extends ApiController
+class EmailCredentialController extends ApiController implements HasMiddleware
 {
     protected EmailCredentialService $service;
 
@@ -82,5 +84,16 @@ class EmailCredentialController extends ApiController
     {
         $this->service->restore($id);
         return $this->return(200, "Deleted successfully");
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.email_credentials', only: ['index', 'show']),
+            new Middleware('permission:create.email_credentials', only: ['create', 'store']),
+            new Middleware('permission:update.email_credentials', only: ['edit', 'update']),
+            new Middleware('permission:delete.email_credentials', only: ['destroy']),
+            new Middleware('permission:restore.email_credentials', only: ['restore']),
+        ];
     }
 }

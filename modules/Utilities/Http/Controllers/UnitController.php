@@ -6,8 +6,10 @@ use App\Http\Controllers\ApiController;
 use Modules\Utilities\Services\UnitService;
 use Illuminate\Http\Request;
 use Modules\Utilities\Services\TypeService;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class UnitController extends ApiController
+class UnitController extends ApiController implements HasMiddleware
 {
     protected $service;
     protected $typeService;
@@ -82,5 +84,16 @@ class UnitController extends ApiController
     {
         $this->service->restore($id);
         return $this->return(200, "Deleted successfully");
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.units', only: ['index', 'show']),
+            new Middleware('permission:create.units', only: ['create', 'store']),
+            new Middleware('permission:update.units', only: ['edit', 'update']),
+            new Middleware('permission:delete.units', only: ['destroy']),
+            new Middleware('permission:restore.units', only: ['restore']),
+        ];
     }
 }

@@ -7,8 +7,10 @@ use App\Http\Controllers\ApiController;
 use Modules\Development\Services\ConfigurationService;
 use Illuminate\Http\Request;
 use Modules\Utilities\Services\TypeService;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class ConfigurationController extends ApiController
+class ConfigurationController extends ApiController implements HasMiddleware
 {
     protected $service;
     protected $typeService;
@@ -84,5 +86,16 @@ class ConfigurationController extends ApiController
     {
         $this->service->restore($id);
         return $this->return(200, "Deleted successfully");
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.configurations', only: ['index', 'show']),
+            new Middleware('permission:create.configurations', only: ['create', 'store']),
+            new Middleware('permission:update.configurations', only: ['edit', 'update']),
+            new Middleware('permission:delete.configurations', only: ['destroy']),
+            new Middleware('permission:restore.configurations', only: ['restore']),
+        ];
     }
 }

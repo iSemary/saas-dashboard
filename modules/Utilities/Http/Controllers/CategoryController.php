@@ -6,8 +6,10 @@ use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
 use Modules\Utilities\Services\CategoryService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class CategoryController extends ApiController
+class CategoryController extends ApiController implements HasMiddleware
 {
     protected $service;
 
@@ -81,5 +83,16 @@ class CategoryController extends ApiController
     {
         $this->service->restore($id);
         return $this->return(200, "Deleted successfully");
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.categories', only: ['index', 'show']),
+            new Middleware('permission:create.categories', only: ['create', 'store']),
+            new Middleware('permission:update.categories', only: ['edit', 'update']),
+            new Middleware('permission:delete.categories', only: ['destroy']),
+            new Middleware('permission:restore.categories', only: ['restore']),
+        ];
     }
 }

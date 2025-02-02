@@ -5,8 +5,10 @@ namespace Modules\Utilities\Http\Controllers;
 use App\Http\Controllers\ApiController;
 use Modules\Utilities\Services\CurrencyService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class CurrencyController extends ApiController
+class CurrencyController extends ApiController implements HasMiddleware
 {
     protected $service;
 
@@ -76,5 +78,16 @@ class CurrencyController extends ApiController
     {
         $this->service->restore($id);
         return $this->return(200, "Deleted successfully");
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.currencies', only: ['index', 'show']),
+            new Middleware('permission:create.currencies', only: ['create', 'store']),
+            new Middleware('permission:update.currencies', only: ['edit', 'update']),
+            new Middleware('permission:delete.currencies', only: ['destroy']),
+            new Middleware('permission:restore.currencies', only: ['restore']),
+        ];
     }
 }

@@ -5,13 +5,22 @@ namespace Modules\Utilities\Http\Controllers;
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class CodeBuilderController extends ApiController
+class CodeBuilderController extends ApiController implements HasMiddleware
 {
     protected $modulesFolder = "modules";
     protected $moduleType = "landlord";
     protected $directoryPermissions = 02775; // drwxrwsr-x
+
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.code_builder', only: ['index', 'submit']),
+        ];
+    }
 
     public function show()
     {

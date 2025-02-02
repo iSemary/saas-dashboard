@@ -6,8 +6,10 @@ use App\Http\Controllers\ApiController;
 use Modules\Geography\Services\CityService;
 use Illuminate\Http\Request;
 use Modules\Geography\Services\ProvinceService;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class CityController extends ApiController
+class CityController extends ApiController implements HasMiddleware
 {
     protected $service;
     protected $provinceService;
@@ -82,5 +84,16 @@ class CityController extends ApiController
     {
         $this->service->restore($id);
         return $this->return(200, "Restored successfully");
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.cities', only: ['index', 'show']),
+            new Middleware('permission:create.cities', only: ['create', 'store']),
+            new Middleware('permission:update.cities', only: ['edit', 'update']),
+            new Middleware('permission:delete.cities', only: ['destroy']),
+            new Middleware('permission:restore.cities', only: ['restore']),
+        ];
     }
 }

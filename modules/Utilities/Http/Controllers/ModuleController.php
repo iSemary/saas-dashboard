@@ -6,8 +6,10 @@ use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
 use Modules\Utilities\Services\ModuleService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class ModuleController extends ApiController
+class ModuleController extends ApiController implements HasMiddleware
 {
     protected $service;
 
@@ -79,5 +81,16 @@ class ModuleController extends ApiController
     {
         $this->service->restore($id);
         return $this->return(200, "Deleted successfully");
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.modules', only: ['index', 'show']),
+            new Middleware('permission:create.modules', only: ['create', 'store']),
+            new Middleware('permission:update.modules', only: ['edit', 'update']),
+            new Middleware('permission:delete.modules', only: ['destroy']),
+            new Middleware('permission:restore.modules', only: ['restore']),
+        ];
     }
 }

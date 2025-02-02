@@ -5,8 +5,10 @@ namespace Modules\Tenant\Http\Controllers;
 use App\Http\Controllers\ApiController;
 use Modules\Tenant\Services\TenantService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class TenantController extends ApiController
+class TenantController extends ApiController implements HasMiddleware
 {
     protected $service;
 
@@ -14,6 +16,18 @@ class TenantController extends ApiController
     {
         $this->service = $service;
     }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.tenants', only: ['index', 'show']),
+            new Middleware('permission:create.tenants', only: ['create', 'store']),
+            new Middleware('permission:update.tenants', only: ['edit', 'update']),
+            new Middleware('permission:delete.tenants', only: ['destroy']),
+            new Middleware('permission:restore.tenants', only: ['restore']),
+        ];
+    }
+    
     public function index()
     {
         if (request()->ajax()) {

@@ -5,8 +5,10 @@ namespace Modules\Utilities\Http\Controllers;
 use App\Http\Controllers\ApiController;
 use Modules\Utilities\Services\AnnouncementService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class AnnouncementController extends ApiController
+class AnnouncementController extends ApiController implements HasMiddleware
 {
     protected $service;
 
@@ -76,5 +78,16 @@ class AnnouncementController extends ApiController
     {
         $this->service->restore($id);
         return $this->return(200, "Deleted successfully");
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.announcements', only: ['index', 'show']),
+            new Middleware('permission:create.announcements', only: ['create', 'store']),
+            new Middleware('permission:update.announcements', only: ['edit', 'update']),
+            new Middleware('permission:delete.announcements', only: ['destroy']),
+            new Middleware('permission:restore.announcements', only: ['restore']),
+        ];
     }
 }

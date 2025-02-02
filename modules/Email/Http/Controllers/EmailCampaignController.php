@@ -9,8 +9,10 @@ use Illuminate\Http\Request;
 use Modules\Email\Services\EmailCredentialService;
 use Modules\Email\Services\EmailTemplateService;
 use Modules\Email\Services\EmailService;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class EmailCampaignController extends ApiController
+class EmailCampaignController extends ApiController implements HasMiddleware
 {
     protected $service;
     protected $emailService;
@@ -92,5 +94,16 @@ class EmailCampaignController extends ApiController
     {
         $this->service->restore($id);
         return $this->return(200, "Deleted successfully");
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.email_campaigns', only: ['index', 'show']),
+            new Middleware('permission:create.email_campaigns', only: ['create', 'store']),
+            new Middleware('permission:update.email_campaigns', only: ['edit', 'update']),
+            new Middleware('permission:delete.email_campaigns', only: ['destroy']),
+            new Middleware('permission:restore.email_campaigns', only: ['restore']),
+        ];
     }
 }

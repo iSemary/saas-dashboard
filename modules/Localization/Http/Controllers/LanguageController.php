@@ -6,8 +6,10 @@ use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
 use Modules\Localization\Services\LanguageService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class LanguageController extends ApiController
+class LanguageController extends ApiController implements HasMiddleware
 {
     protected $service;
 
@@ -79,5 +81,16 @@ class LanguageController extends ApiController
     {
         $this->service->restore($id);
         return $this->return(200, "Deleted successfully");
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.languages', only: ['index', 'show']),
+            new Middleware('permission:create.languages', only: ['create', 'store']),
+            new Middleware('permission:update.languages', only: ['edit', 'update']),
+            new Middleware('permission:delete.languages', only: ['destroy']),
+            new Middleware('permission:restore.languages', only: ['restore']),
+        ];
     }
 }

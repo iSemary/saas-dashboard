@@ -5,8 +5,10 @@ namespace Modules\Development\Http\Controllers;
 use App\Http\Controllers\ApiController;
 use Modules\Development\Services\IpBlacklistService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class IpBlacklistController extends ApiController
+class IpBlacklistController extends ApiController implements HasMiddleware
 {
     protected $service;
 
@@ -77,5 +79,16 @@ class IpBlacklistController extends ApiController
     {
         $this->service->restore($id);
         return $this->return(200, "Deleted successfully");
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.ip_blacklists', only: ['index', 'show']),
+            new Middleware('permission:create.ip_blacklists', only: ['create', 'store']),
+            new Middleware('permission:update.ip_blacklists', only: ['edit', 'update']),
+            new Middleware('permission:delete.ip_blacklists', only: ['destroy']),
+            new Middleware('permission:restore.ip_blacklists', only: ['restore']),
+        ];
     }
 }

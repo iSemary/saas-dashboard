@@ -8,8 +8,10 @@ use Exception;
 use Modules\Localization\Services\TranslationService;
 use Illuminate\Http\Request;
 use Modules\Localization\Services\LanguageService;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class TranslationController extends ApiController
+class TranslationController extends ApiController implements HasMiddleware
 {
     protected $service;
     protected $languageService;
@@ -217,5 +219,16 @@ class TranslationController extends ApiController
     {
         $languages = $this->languageService->getLanguagesStatus();
         return view('landlord.localizations.translations.status', ['languages' => $languages]);
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.translations', only: ['index', 'show']),
+            new Middleware('permission:create.translations', only: ['create', 'store']),
+            new Middleware('permission:update.translations', only: ['edit', 'update']),
+            new Middleware('permission:delete.translations', only: ['destroy']),
+            new Middleware('permission:restore.translations', only: ['restore']),
+        ];
     }
 }

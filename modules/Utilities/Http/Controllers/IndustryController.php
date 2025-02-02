@@ -6,8 +6,10 @@ use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
 use Modules\Utilities\Services\IndustryService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class IndustryController extends ApiController
+class IndustryController extends ApiController implements HasMiddleware
 {
     protected $service;
 
@@ -79,5 +81,16 @@ class IndustryController extends ApiController
     {
         $this->service->restore($id);
         return $this->return(200, "Deleted successfully");
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.industries', only: ['index', 'show']),
+            new Middleware('permission:create.industries', only: ['create', 'store']),
+            new Middleware('permission:update.industries', only: ['edit', 'update']),
+            new Middleware('permission:delete.industries', only: ['destroy']),
+            new Middleware('permission:restore.industries', only: ['restore']),
+        ];
     }
 }

@@ -6,8 +6,10 @@ use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
 use Modules\Email\Services\EmailTemplateService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class EmailTemplateController extends ApiController
+class EmailTemplateController extends ApiController implements HasMiddleware
 {
     protected $service;
 
@@ -15,6 +17,7 @@ class EmailTemplateController extends ApiController
     {
         $this->service = $service;
     }
+
     public function index()
     {
         if (request()->ajax()) {
@@ -93,5 +96,16 @@ class EmailTemplateController extends ApiController
     {
         $this->service->restore($id);
         return $this->return(200, "Deleted successfully");
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.email_templates', only: ['index', 'show']),
+            new Middleware('permission:create.email_templates', only: ['create', 'store']),
+            new Middleware('permission:update.email_templates', only: ['edit', 'update']),
+            new Middleware('permission:delete.email_templates', only: ['destroy']),
+            new Middleware('permission:restore.email_templates', only: ['restore']),
+        ];
     }
 }

@@ -6,8 +6,10 @@ use App\Http\Controllers\ApiController;
 use Modules\Auth\Services\RoleService;
 use Illuminate\Http\Request;
 use Modules\Auth\Services\PermissionService;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class RoleController extends ApiController
+class RoleController extends ApiController implements HasMiddleware
 {
     protected $service;
     protected $permissionService;
@@ -82,5 +84,16 @@ class RoleController extends ApiController
     {
         $this->service->restore($id);
         return $this->return(200, "Deleted successfully");
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.roles', only: ['index', 'show']),
+            new Middleware('permission:create.roles', only: ['create', 'store']),
+            new Middleware('permission:update.roles', only: ['edit', 'update']),
+            new Middleware('permission:delete.roles', only: ['destroy']),
+            new Middleware('permission:restore.roles', only: ['restore']),
+        ];
     }
 }

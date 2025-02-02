@@ -5,8 +5,10 @@ namespace Modules\FileManager\Http\Controllers;
 use App\Http\Controllers\ApiController;
 use Modules\FileManager\Services\FileService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class FileController extends ApiController
+class FileController extends ApiController implements HasMiddleware
 {
     protected $service;
 
@@ -76,5 +78,16 @@ class FileController extends ApiController
     public function manager()
     {
         return view('landlord.file-managers.files.manager');
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.files', only: ['index', 'show', 'manager']),
+            new Middleware('permission:create.files', only: ['create', 'store']),
+            new Middleware('permission:update.files', only: ['edit', 'update']),
+            new Middleware('permission:delete.files', only: ['destroy']),
+            new Middleware('permission:restore.files', only: ['restore']),
+        ];
     }
 }

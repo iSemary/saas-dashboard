@@ -6,8 +6,10 @@ use App\Http\Controllers\ApiController;
 use Modules\Geography\Services\StreetService;
 use Illuminate\Http\Request;
 use Modules\Geography\Services\TownService;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class StreetController extends ApiController
+class StreetController extends ApiController implements HasMiddleware
 {
     protected $service;
     protected $townService;
@@ -82,5 +84,16 @@ class StreetController extends ApiController
     {
         $this->service->restore($id);
         return $this->return(200, "Deleted successfully");
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.streets', only: ['index', 'show']),
+            new Middleware('permission:create.streets', only: ['create', 'store']),
+            new Middleware('permission:update.streets', only: ['edit', 'update']),
+            new Middleware('permission:delete.streets', only: ['destroy']),
+            new Middleware('permission:restore.streets', only: ['restore']),
+        ];
     }
 }

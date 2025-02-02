@@ -6,8 +6,10 @@ use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
 use Modules\Email\Services\EmailSubscriberService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class EmailSubscriberController extends ApiController
+class EmailSubscriberController extends ApiController implements HasMiddleware
 {
     protected $service;
 
@@ -61,5 +63,16 @@ class EmailSubscriberController extends ApiController
 
     public function restore($id)
     {
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.email_subscribers', only: ['index', 'show']),
+            new Middleware('permission:create.email_subscribers', only: ['create', 'store']),
+            new Middleware('permission:update.email_subscribers', only: ['edit', 'update']),
+            new Middleware('permission:delete.email_subscribers', only: ['destroy']),
+            new Middleware('permission:restore.email_subscribers', only: ['restore']),
+        ];
     }
 }
