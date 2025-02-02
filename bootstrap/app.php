@@ -24,12 +24,15 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'auth' => \App\Http\Middleware\Authenticate::class,
             'ip.blacklist' => \App\Http\Middleware\CheckIpBlacklist::class,
+            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
 
         $middleware->group('tenant', [
             'set-db-connection',
             \Spatie\Multitenancy\Http\Middleware\NeedsTenant::class,
-            \Spatie\Multitenancy\Http\Middleware\EnsureValidTenantSession::class
+            \Spatie\Multitenancy\Http\Middleware\EnsureValidTenantSession::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {})

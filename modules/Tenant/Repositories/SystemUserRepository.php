@@ -34,7 +34,12 @@ class SystemUserRepository implements SystemUserInterface
 
         return DataTables::of($rows)
             ->addColumn('role', function ($row) {
-                return $row->role()?->name ? translate($row->role()?->name) : translate('unset');
+                if ($row->roles && $row->roles->count()) {
+                    return $row->roles->map(function ($role) {
+                        return '<span class="badge badge-primary">' . translate($role->name) . '</span>';
+                    })->implode(' ');
+                }
+                return '<span class="badge badge-secondary">' . translate('unset') . '</span>';
             })
             ->addColumn('actions', function ($row) {
                 $actionButtons = TableHelper::actionButtons(
@@ -47,13 +52,13 @@ class SystemUserRepository implements SystemUserInterface
                     showIconsOnly: true
                 );
 
-                if (Gate::allows('read.activity_logs')) {
+                if (auth()->user()->hasPermissionTo('read.activity_logs')) {
                     $actionButtons .= '<button type="button" title="' . translate("activity_logs") . '" data-modal-title="' . translate("activity_logs") . '" data-modal-link="' . route('landlord.activity-logs.modal', $row->id) . '" class="btn-blue mx-1 btn-sm open-details-btn">';
                     $actionButtons .=  '<i class="fas fa-user-clock"></i>';
                     $actionButtons .= '</button>';
                 }
 
-                if (Gate::allows('read.login_attempts')) {
+                if (auth()->user()->hasPermissionTo('read.login_attempts')) {
                     $actionButtons .= '<button type="button" title="' . translate("login_attempts") . '" data-modal-title="' . translate("login_attempts") . '" data-modal-link="' . route('landlord.attempts.index', $row->id) . '" class="btn-teal ms-1 btn-sm open-details-btn">';
                     $actionButtons .=  '<i class="fas fa-fingerprint"></i>';
                     $actionButtons .= '</button>';
@@ -61,7 +66,7 @@ class SystemUserRepository implements SystemUserInterface
 
                 return $actionButtons;
             })
-            ->rawColumns(['actions'])
+            ->rawColumns(['role','actions'])
             ->make(true);
     }
 
@@ -83,7 +88,11 @@ class SystemUserRepository implements SystemUserInterface
         } else {
             unset($data['password']);
         }
-        $user->update($data);
+
+        if (isset($data['role_id']) && is_array($data['role_id'])) {
+            $roles = Role::whereIn('id', $data['role_id'])->get();
+            $user->roles()->sync($roles->pluck('id')->toArray());
+        }
 
         if (isset($data['permissions'])) {
             $user->permissions()->sync($data['permissions']);
@@ -96,10 +105,13 @@ class SystemUserRepository implements SystemUserInterface
     {
         $user = $this->model->create($data);
 
-        $role = Role::where("name", "landlord")->first();
-
-        $user->assignRole($role->id);
-
+        if (isset($data['role_id']) && is_array($data['role_id'])) {
+            $roles = Role::whereIn('id', $data['role_id'])->get();
+            $user->roles()->sync($roles->pluck('id')->toArray());
+        } else {
+            $role = Role::where("name", "landlord")->first();
+            $user->assignRole($role->id);
+        }
         $user->permissions()->sync($data['permissions']);
 
         return $user;

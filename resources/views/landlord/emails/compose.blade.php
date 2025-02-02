@@ -3,7 +3,6 @@
         enctype="multipart/form-data">
         @csrf
         <div class="card-body">
-
             {{-- Email Template --}}
             <div class="form-group">
                 <label for="email_template_id" class="form-label">@translate('email_template')</label>

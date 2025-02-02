@@ -42,7 +42,7 @@ class IndustryController extends ApiController
 
     public function create()
     {
-        $statusOptions = EnumHelper::getEnumFromTable("tags", "status");
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
         return view('landlord.utilities.industries.editor', compact('statusOptions'));
     }
 
@@ -57,7 +57,7 @@ class IndustryController extends ApiController
 
     public function edit($id)
     {
-        $statusOptions = EnumHelper::getEnumFromTable("tags", "status");
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
         $row = $this->service->get($id);
         return view('landlord.utilities.industries.editor', compact('row', 'statusOptions'));
     }

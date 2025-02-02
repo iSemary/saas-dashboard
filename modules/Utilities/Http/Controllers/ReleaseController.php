@@ -44,7 +44,7 @@ class ReleaseController extends ApiController
 
     public function create()
     {
-        $statusOptions = EnumHelper::getEnumFromTable("releases", "status");
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
         $modelOptions = ModelHelper::getAllModels();
         return view('landlord.utilities.releases.editor', compact('statusOptions', 'modelOptions'));
     }
@@ -60,7 +60,7 @@ class ReleaseController extends ApiController
 
     public function edit($id)
     {
-        $statusOptions = EnumHelper::getEnumFromTable("releases", "status");
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
         $modelOptions = ModelHelper::getAllModels();
         $row = $this->service->get($id);
         return view('landlord.utilities.releases.editor', compact('row', 'statusOptions', 'modelOptions'));

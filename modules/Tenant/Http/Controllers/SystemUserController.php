@@ -6,27 +6,45 @@ use App\Http\Controllers\ApiController;
 use Modules\Tenant\Services\SystemUserService;
 use Illuminate\Http\Request;
 use Modules\Auth\Services\PermissionService;
+use Modules\Auth\Services\RoleService;
 use Modules\Geography\Services\CountryService;
 use Modules\Localization\Services\LanguageService;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class SystemUserController extends ApiController
+class SystemUserController extends ApiController implements HasMiddleware
 {
     protected $service;
     protected $permissionService;
+    protected $roleService;
     protected $countryService;
     protected $languageService;
 
     public function __construct(
         SystemUserService $service,
         PermissionService $permissionService,
+        RoleService $roleService,
         CountryService $countryService,
         LanguageService $languageService,
     ) {
         $this->service = $service;
+        $this->roleService = $roleService;
         $this->permissionService = $permissionService;
         $this->countryService = $countryService;
         $this->languageService = $languageService;
     }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.system_users', only: ['index', 'show']),
+            new Middleware('permission:create.system_users', only: ['create', 'store']),
+            new Middleware('permission:update.system_users', only: ['edit', 'update']),
+            new Middleware('permission:delete.system_users', only: ['destroy']),
+            new Middleware('permission:restore.system_users', only: ['restore']),
+        ];
+    }
+
     public function index()
     {
         if (request()->ajax()) {
@@ -42,6 +60,7 @@ class SystemUserController extends ApiController
             [
                 'text' => translate("create") . " " . translate("system_user"),
                 'class' => 'open-create-modal btn-sm btn-success',
+                'permission' => 'create.system_users',
                 'attr' => [
                     'data-modal-link' => route('landlord.system-users.create'),
                     'data-modal-title' => translate("create") . " " . translate("system_user"),
@@ -54,10 +73,11 @@ class SystemUserController extends ApiController
 
     public function create()
     {
+        $roles = $this->roleService->getAll();
         $permissions = $this->permissionService->getAll();
         $countries = $this->countryService->getAll();
         $languages = $this->languageService->getAll();
-        return view('landlord.tenant.system-users.editor', compact('permissions', 'countries', 'languages'));
+        return view('landlord.tenant.system-users.editor', compact('permissions', 'countries', 'languages', 'roles'));
     }
 
     public function store(Request $request)
@@ -71,11 +91,12 @@ class SystemUserController extends ApiController
 
     public function edit($id)
     {
+        $roles = $this->roleService->getAll();
         $permissions = $this->permissionService->getAll();
         $countries = $this->countryService->getAll();
         $languages = $this->languageService->getAll();
         $row = $this->service->get($id);
-        return view('landlord.tenant.system-users.editor', compact('row', 'permissions', 'countries', 'languages'));
+        return view('landlord.tenant.system-users.editor', compact('row', 'permissions', 'countries', 'languages', 'roles'));
     }
 
     public function update(Request $request, $id)

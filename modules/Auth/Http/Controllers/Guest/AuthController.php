@@ -140,18 +140,25 @@ class AuthController extends ApiController
 
         // Check if the user has an existing 2FA token
         $existingToken = FactorAuthenticateToken::where('user_id', $user->id)->where('token_id', $tokenId)->first();
+        $redirect = $this->handleRedirection($request);
         if (!$existingToken) {
-            $redirect = $this->handleRedirection($request);
             return $this->return(409, '2FA token is not valid.', ['redirect' => $redirect]);
         }
-        return $this->return(200, '2FA token is valid.');
+        return $this->return(200, '2FA token is valid.', ['redirect' => $redirect]);
     }
+
 
 
     private function handleRedirection(Request $request)
     {
-        $tenant = Tenant::current();
-        return TenantHelper::generateURL($tenant->name) . "?redirect=" . $request->redirect;
+        $subDomain = TenantHelper::getSubDomain();
+        if ($subDomain) {
+            $tenant = Tenant::where('domain', $subDomain)->first();
+            if ($tenant) {
+                return TenantHelper::generateURL($tenant->name) . ($request->redirect ? "?redirect=" . $request->redirect : "");
+            }
+        }
+        return '/';
     }
 
     private function handleFailedLogin(LoginUserRequest $request, $tenant): JsonResponse

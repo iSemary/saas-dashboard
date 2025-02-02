@@ -2,16 +2,25 @@
 
 namespace Modules\Email\Http\Controllers;
 
+use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
 use Modules\Email\Services\EmailCampaignService;
 use Illuminate\Http\Request;
+use Modules\Email\Services\EmailCredentialService;
+use Modules\Email\Services\EmailTemplateService;
+use Modules\Email\Services\EmailService;
 
 class EmailCampaignController extends ApiController
 {
     protected $service;
+    protected $emailService;
+    protected $emailCredentialService;
+    protected $emailTemplateService;
 
-    public function __construct(EmailCampaignService $service)
+    public function __construct(EmailCampaignService $service, EmailService $emailService, EmailCredentialService $emailCredentialService, EmailTemplateService $emailTemplateService)
     {
+        $this->emailCredentialService = $emailCredentialService;
+        $this->emailTemplateService = $emailTemplateService;
         $this->service = $service;
     }
     public function index()
@@ -42,7 +51,10 @@ class EmailCampaignController extends ApiController
 
     public function create()
     {
-        return view('landlord.emails.email-campaigns.editor');
+        $emailCredentials = $this->emailCredentialService->getAll(['status' => 'active']);
+        $emailTemplates = $this->emailTemplateService->getAll(['status' => 'active']);
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
+        return view('landlord.emails.email-campaigns.editor', compact('statusOptions', 'emailTemplates', 'emailCredentials'));
     }
 
     public function store(Request $request)
@@ -56,8 +68,11 @@ class EmailCampaignController extends ApiController
 
     public function edit($id)
     {
+        $emailCredentials = $this->emailCredentialService->getAll(['status' => 'active']);
+        $emailTemplates = $this->emailTemplateService->getAll(['status' => 'active']);
         $row = $this->service->get($id);
-        return view('landlord.emails.email-campaigns.editor', compact('row'));
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
+        return view('landlord.emails.email-campaigns.editor', compact('row', 'statusOptions', 'emailTemplates', 'emailCredentials'));
     }
 
     public function update(Request $request, $id)
@@ -72,7 +87,7 @@ class EmailCampaignController extends ApiController
         $this->service->delete($id);
         return $this->return(200, "Deleted successfully");
     }
-    
+
     public function restore($id)
     {
         $this->service->restore($id);

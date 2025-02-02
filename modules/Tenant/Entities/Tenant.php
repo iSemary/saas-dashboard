@@ -8,6 +8,8 @@ use Spatie\Multitenancy\Models\Tenant as BaseTenant;
 
 class Tenant extends BaseTenant
 {
+    protected $connection = 'landlord';
+    
     use HasFactory;
     use SoftDeletes;
 

@@ -27,11 +27,15 @@
         </div>
         <div class="form-group col-6">
             <label for="role_id" class="form-label">@translate('role')</label>
-            <select name="role_id" id="role_id" class="form-control select2" disabled>
-                <option value="">
-                    @translate('landlord')
-                </option>
-            </select>
+            <select name="role_id[]" id="role_id" class="form-control select2" multiple required>
+                <option value="">@translate('select')</option>
+                @foreach ($roles as $role)
+                    <option value="{{ $role->id }}"
+                        {{ isset($row) && in_array($role->id, $row->roles->pluck('id')->toArray()) ? 'selected' : '' }}>
+                        {{ translate($role->name) }}
+                    </option>
+                @endforeach
+            </select>            
         </div>
         <div class="form-group col-6">
             <label for="country_id" class="form-label">@translate('country')</label>
@@ -59,7 +63,7 @@
         <div class="form-group col-6 generate-password-container">
             <label for="password" class="form-label generate-password-field">@translate('password')</label>
             <input type="password" name="password" id="password" class="form-control generate-password-input"
-                value="" required>
+                value="" {{ isset($row) ?: 'required' }}>
             <!-- Password strength indicator -->
             <div class="progress mt-2" style="height: 5px;">
                 <div class="progress-bar" role="progressbar" style="width: 0%"></div>

@@ -91,8 +91,8 @@
                                         'create' => 'create.email_campaigns',
                                     ],
                                     'routes' => [
-                                        'index' => 'landlord.email-templates.index',
-                                        'create' => 'landlord.email-templates.create',
+                                        'index' => 'landlord.email-campaigns.index',
+                                        'create' => 'landlord.email-campaigns.create',
                                     ],
                                 ],
                                 'email_templates' => [

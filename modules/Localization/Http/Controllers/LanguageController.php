@@ -42,7 +42,7 @@ class LanguageController extends ApiController
 
     public function create()
     {
-        $directionOptions = EnumHelper::getEnumFromTable("languages", "direction");
+        $directionOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "direction");
         return view('landlord.localizations.languages.editor', compact('directionOptions'));
     }
 
@@ -57,7 +57,7 @@ class LanguageController extends ApiController
 
     public function edit($id)
     {
-        $directionOptions = EnumHelper::getEnumFromTable("languages", "direction");
+        $directionOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "direction");
         $row = $this->service->get($id);
         return view('landlord.localizations.languages.editor', compact('row', 'directionOptions'));
     }

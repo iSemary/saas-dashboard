@@ -10,5 +10,4 @@ return [
     OwenIt\Auditing\AuditingServiceProvider::class,
     Yajra\DataTables\DataTablesServiceProvider::class,
     Alexusmai\LaravelFileManager\FileManagerServiceProvider::class,
-    Torann\GeoIP\GeoIPServiceProvider::class,
 ];

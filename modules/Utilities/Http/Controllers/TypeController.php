@@ -6,8 +6,10 @@ use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
 use Modules\Utilities\Services\TypeService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class TypeController extends ApiController
+class TypeController extends ApiController implements HasMiddleware
 {
     protected $service;
 
@@ -15,12 +17,26 @@ class TypeController extends ApiController
     {
         $this->service = $service;
     }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.types', only: ['index', 'show']),
+            new Middleware('permission:create.types', only: ['create', 'store']),
+            new Middleware('permission:update.types', only: ['edit', 'update']),
+            new Middleware('permission:delete.types', only: ['destroy']),
+            new Middleware('permission:restore.types', only: ['restore']),
+        ];
+    }
+
     public function index()
     {
         if (request()->ajax()) {
             return $this->service->getDataTables();
         }
+        
         $title = translate($this->service->model->pluralTitle);
+
         $breadcrumbs = [
             ['text' => translate('home'), 'link' => route('home')],
             ['text' => translate($this->service->model->pluralTitle)],
@@ -30,6 +46,7 @@ class TypeController extends ApiController
             [
                 'text' => translate("create") . " " . translate($this->service->model->singleTitle),
                 'class' => 'open-create-modal btn-sm btn-success',
+                'permission' => 'create.types',
                 'attr' => [
                     'data-modal-link' => route('landlord.types.create'),
                     'data-modal-title' => translate("create") . " " . translate($this->service->model->singleTitle),
@@ -42,7 +59,7 @@ class TypeController extends ApiController
 
     public function create()
     {
-        $statusOptions = EnumHelper::getEnumFromTable("types", "status");
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
         return view('landlord.utilities.types.editor', compact('statusOptions'));
     }
 
@@ -57,7 +74,7 @@ class TypeController extends ApiController
 
     public function edit($id)
     {
-        $statusOptions = EnumHelper::getEnumFromTable("types", "status");
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
         $row = $this->service->get($id);
         return view('landlord.utilities.types.editor', compact('row', 'statusOptions'));
     }

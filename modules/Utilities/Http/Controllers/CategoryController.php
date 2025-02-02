@@ -43,7 +43,7 @@ class CategoryController extends ApiController
     public function create()
     {
         $categories = $this->service->getAll();
-        $statusOptions = EnumHelper::getEnumFromTable("categories", "status");
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
         return view('landlord.utilities.categories.editor', compact('categories', 'statusOptions'));
     }
 
@@ -60,7 +60,7 @@ class CategoryController extends ApiController
     {
         $row = $this->service->get($id);
         $categories = $this->service->getAll();
-        $statusOptions = EnumHelper::getEnumFromTable("categories", "status");
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
         return view('landlord.utilities.categories.editor', compact('row', 'categories', 'statusOptions'));
     }
 

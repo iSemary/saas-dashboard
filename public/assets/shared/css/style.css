@@ -439,3 +439,12 @@
 table.dataTable tbody tr.selected>* {
     box-shadow: inset 0 0 0 9999px #4078bd7a !important;
 }
+
+label.required::after {
+    content: " *";
+    color: red;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__display {
+        padding-left: 7px;
+}

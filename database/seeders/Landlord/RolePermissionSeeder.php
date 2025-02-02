@@ -33,11 +33,15 @@ class RolePermissionSeeder extends Seeder
                 'guard_name' => 'api'
             ],
             [
-                'name' => 'super_admin',
+                'name' => 'developer',
                 'guard_name' => 'api'
             ],
             [
-                'name' => 'admin',
+                'name' => 'marketing',
+                'guard_name' => 'api'
+            ],
+            [
+                'name' => 'sales',
                 'guard_name' => 'api'
             ],
             [
@@ -68,7 +72,7 @@ class RolePermissionSeeder extends Seeder
 
     private function seedPermissionsToRoles()
     {
-        $roles = ['landlord', 'super_admin'];
+        $roles = ['landlord'];
         $permissions = Permission::all();
 
         foreach ($roles as $roleName) {

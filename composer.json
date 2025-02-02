@@ -11,7 +11,6 @@
         "aws/aws-sdk-php": "^3.337",
         "bacon/bacon-qr-code": "^3.0",
         "barryvdh/laravel-dompdf": "^3.1",
-        "geoip2/geoip2": "^3.1",
         "google/cloud-translate": "^1.20",
         "intervention/image": "^3.9",
         "laravel/framework": "^11.31",
@@ -29,7 +28,6 @@
         "predis/predis": "^2.3",
         "spatie/laravel-multitenancy": "^4.0",
         "spatie/laravel-permission": "^6.10",
-        "torann/geoip": "^3.0",
         "yajra/laravel-datatables-oracle": "^11.0"
     },
     "require-dev": {

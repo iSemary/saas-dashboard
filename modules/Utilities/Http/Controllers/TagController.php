@@ -6,8 +6,10 @@ use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
 use Modules\Utilities\Services\TagService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class TagController extends ApiController
+class TagController extends ApiController implements HasMiddleware
 {
     protected $service;
 
@@ -15,6 +17,18 @@ class TagController extends ApiController
     {
         $this->service = $service;
     }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.tags', only: ['index', 'show']),
+            new Middleware('permission:create.tags', only: ['create', 'store']),
+            new Middleware('permission:update.tags', only: ['edit', 'update']),
+            new Middleware('permission:delete.tags', only: ['destroy']),
+            new Middleware('permission:restore.tags', only: ['restore']),
+        ];
+    }
+
     public function index()
     {
         if (request()->ajax()) {
@@ -30,6 +44,7 @@ class TagController extends ApiController
             [
                 'text' => translate("create") . " " . translate($this->service->model->singleTitle),
                 'class' => 'open-create-modal btn-sm btn-success',
+                'permission' => 'create.tags',
                 'attr' => [
                     'data-modal-link' => route('landlord.tags.create'),
                     'data-modal-title' => translate("create") . " " . translate($this->service->model->singleTitle),
@@ -42,7 +57,7 @@ class TagController extends ApiController
 
     public function create()
     {
-        $statusOptions = EnumHelper::getEnumFromTable("tags", "status");
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
         return view('landlord.utilities.tags.editor', compact("statusOptions"));
     }
 
@@ -64,7 +79,7 @@ class TagController extends ApiController
 
     public function edit($id)
     {
-        $statusOptions = EnumHelper::getEnumFromTable("tags", "status");
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
         $row = $this->service->get($id);
         return view('landlord.utilities.tags.editor', compact('row', 'statusOptions'));
     }

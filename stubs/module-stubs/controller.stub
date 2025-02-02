@@ -5,8 +5,10 @@ namespace Modules\$MODULE_NAME$\Http\Controllers;
 use App\Http\Controllers\ApiController;
 use Modules\$MODULE_NAME$\Services\$MODEL_NAME$Service;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class $MODEL_NAME$Controller extends ApiController
+class $MODEL_NAME$Controller extends ApiController implements HasMiddleware
 {
     protected $service;
 
@@ -14,11 +16,24 @@ class $MODEL_NAME$Controller extends ApiController
     {
         $this->service = $service;
     }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.$PLURAL_TITLE$', only: ['index', 'show']),
+            new Middleware('permission:create.$PLURAL_TITLE$', only: ['create', 'store']),
+            new Middleware('permission:update.$PLURAL_TITLE$', only: ['edit', 'update']),
+            new Middleware('permission:delete.$PLURAL_TITLE$', only: ['destroy']),
+            new Middleware('permission:restore.$PLURAL_TITLE$', only: ['restore']),
+        ];
+    }
+
     public function index()
     {
         if (request()->ajax()) {
             return $this->service->getDataTables();
         }
+
         $title = translate($this->service->model->pluralTitle);
 
         $breadcrumbs = [
@@ -30,6 +45,7 @@ class $MODEL_NAME$Controller extends ApiController
             [
                 'text' => translate("create") . " " . translate($this->service->model->singleTitle),
                 'class' => 'open-create-modal btn-sm btn-success',
+                'permission' => 'create.$PLURAL_TITLE$',
                 'attr' => [
                     'data-modal-link' => route('landlord.$PLURAL_TITLE$.create'),
                     'data-modal-title' => translate("create") . " " . translate($this->service->model->singleTitle),

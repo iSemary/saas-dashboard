@@ -42,7 +42,7 @@ class ModuleController extends ApiController
 
     public function create()
     {
-        $statusOptions = EnumHelper::getEnumFromTable("modules", "status");
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
         return view('landlord.utilities.modules.editor', compact('statusOptions'));
     }
 
@@ -58,7 +58,7 @@ class ModuleController extends ApiController
     public function edit($id)
     {
         $row = $this->service->get($id);
-        $statusOptions = EnumHelper::getEnumFromTable("modules", "status");
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
         return view('landlord.utilities.modules.editor', compact('row', 'statusOptions'));
     }
 
