@@ -5,7 +5,7 @@
             @include('layouts.shared.filter-date')
         </div>
         <div class="card-body">
-            <table id="table" data-route="{{ route("landlord.$PLURAL_TITLE$.index") }}" class="table table-bordered table-striped table-hover">
+            <table id="table" data-route="{{ route("landlord.$PLURAL_TITLE$.index") }}" data-selectable="false" class="table table-bordered table-striped table-hover">
                 <thead>
                     <tr>
                         <th scope="col">#</th>

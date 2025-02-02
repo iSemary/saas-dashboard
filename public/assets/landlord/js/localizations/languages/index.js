@@ -1,6 +1,7 @@
-let tableID = "#table";
-let route = $(tableID).attr("data-route");
-let cols = [
+var tableID = "#table";
+var route = $(tableID).attr("data-route");
+var selectable = $(tableID).attr("data-selectable") == "true" ? true : false;
+var cols = [
     {
         data: null,
         render: function (data, type, row) {
@@ -38,19 +39,14 @@ let cols = [
     },
 ];
 
-filterTable(
-    route,
-    tableID,
-    null,
-    null,
-    true,
-    cols,
-    null,
-    null,
-    1,
-    "desc",
-    true
-);
+filterTable({
+    route: route,
+    tableID: tableID,
+    cols: cols,
+    selectable: selectable,
+    orderColumnIndex: 1,
+    orderColumnType: "desc",
+});
 
 $(document).on("click", ".check-selected", function (e) {
     // Initialize an array to store selected IDs

@@ -506,11 +506,11 @@ $(document).on("click", ".restore-btn", function (event) {
     restoreRow($(this).attr("data-url"), $(this).attr("data-restore-type"));
 });
 
-function filterTable(
-    Route,
-    TableID = 'table',
-    from_date = null,
-    to_date = null,
+function filterTable({
+    route,
+    tableID = "#table",
+    fromDate = null,
+    toDate = null,
     init = true,
     cols = [],
     colDefs = null,
@@ -518,20 +518,22 @@ function filterTable(
     orderColumnIndex = 0,
     orderColumnType = "desc",
     selectable = false
-) {
+}) {
+
     // init
     if (init) {
         // check if the table already exists
-        if ($.fn.DataTable.isDataTable(TableID)) {
-            $(TableID).DataTable().destroy();
+        if ($.fn.DataTable.isDataTable(tableID)) {
+            $(tableID).DataTable().destroy();
         }
     }
 
     let data = {
-        from_date: from_date ?? null,
-        to_date: to_date ?? null,
+        from_date: fromDate ?? null,
+        to_date: toDate ?? null,
         table: true,
     };
+    
     if (dataExtra) {
         $.extend(data, dataExtra);
     }
@@ -540,16 +542,16 @@ function filterTable(
         order: [[orderColumnIndex, orderColumnType]],
         processing: true,
         serverSide: true,
-        columnDefs: colDefs ?? null,
+        columnDefs: colDefs ?? [],
         ajax: {
-            url: Route,
+            url: route,
             data: data,
         },
         columns: cols,
         createdRow: function (row, data, dataIndex) {
             // Set the data-id attribute for the row
             if (data.id) {
-                $(row).attr('data-id', data.id);
+                $(row).attr("data-id", data.id);
             }
         },
     };
@@ -557,26 +559,26 @@ function filterTable(
     // Add select configuration if selectable is true
     if (selectable) {
         dataTableConfig.select = {
-            style: 'multi',
-            selector: 'td:not(:last-child)' // Exclude the last column (e.g., actions column)
+            style: "multi",
+            selector: "td:not(:last-child)", // Exclude the last column (e.g., actions column)
         };
     }
 
     // Initialize the DataTable
-    var dataTableCoreTable = $(TableID).DataTable(dataTableConfig);
+    var dataTableCoreTable = $(tableID).DataTable(dataTableConfig);
 
     // Select all rows when the header checkbox is clicked
-    $('#selectAllRows').on('click', function () {
-        var rows = dataTableCoreTable.rows({ 'search': 'applied' }).nodes();
-        $('input[type="checkbox"]', rows).prop('checked', this.checked);
+    $("#selectAllRows").on("click", function () {
+        var rows = dataTableCoreTable.rows({ search: "applied" }).nodes();
+        $('input[type="checkbox"]', rows).prop("checked", this.checked);
         updateButtonState(); // Update button state when "Select All" is clicked
     });
 
     // Handle row selection
-    $(TableID).on('change', '.select-row', function () {
+    $(tableID).on("change", ".select-row", function () {
         if (!this.checked) {
-            var el = $('#selectAllRows').get(0);
-            if (el && el.checked && ('indeterminate' in el)) {
+            var el = $("#selectAllRows").get(0);
+            if (el && el.checked && "indeterminate" in el) {
                 el.indeterminate = true;
             }
         }
@@ -584,47 +586,75 @@ function filterTable(
     });
 
     // Make the entire row selectable, except the last <td>
-    $(TableID).on('click', 'tbody tr', function (event) {
+    $(tableID).on("click", "tbody tr", function (event) {
         // Check if the click was on the checkbox itself to avoid double toggling
         if ($(event.target).is('input[type="checkbox"]')) {
             return;
         }
 
         // Check if the click was on the last <td> in the row
-        if ($(event.target).closest('td').is(':last-child')) {
+        if ($(event.target).closest("td").is(":last-child")) {
             return; // Skip toggling if the last <td> was clicked
         }
 
         // Toggle the checkbox
-        var checkbox = $(this).find('.select-row');
-        checkbox.prop('checked', !checkbox.prop('checked')).trigger('change');
+        var checkbox = $(this).find(".select-row");
+        checkbox.prop("checked", !checkbox.prop("checked")).trigger("change");
     });
 
     // Function to update the button state
     function updateButtonState() {
         // Count the number of selected rows
-        let selectedCount = $('.select-row:checked').length;
+        let selectedCount = $(".select-row:checked").length;
 
         // Enable/disable buttons with data-button-listen="select-row"
-        $('button[data-button-listen="select-row"]').prop('disabled', selectedCount < 2);
+        $('button[data-button-listen="select-row"]').prop(
+            "disabled",
+            selectedCount < 2
+        );
     }
 
     // Initial button state update
     updateButtonState();
 }
 
-$(document).on("submit", "#filterTable", function (e) {
+$(document).on("submit", ".filter-table", function (e) {
     e.preventDefault();
-    filterTable(
-        route,
-        tableID,
-        $("#from_date").val(),
-        $("#to_date").val(),
-        true,
-        cols
-    );
+
+    var tableID = "#" + $(this).closest('.card').find('table').attr("id");
+    var route = $(tableID).attr("data-route");
+    var fromDate = $(this).find(".filter-table-from-date").val();
+    var toDate = $(this).find(".filter-table-to-date").val();
+    var cols = $(tableID).DataTable().settings()[0].aoColumns;
+
+    var dt = $(tableID).DataTable();
+    var dtSettings = dt.settings()[0];
+
+    // Get column definitions
+    var colDefs = dtSettings.aoColumnDefs;
+
+    // Get order configuration
+    var order = dtSettings.aaSorting[0] || [0, 'desc'];
+    var orderColumnIndex = order[0];
+    var orderColumnType = order[1];
+
+    // Get selectable status
+    var selectable = $(tableID).attr("data-selectable") == "true" ? true : false;
+
+    filterTable({
+        route: route,
+        tableID: tableID,
+        fromDate: fromDate,
+        toDate: toDate,
+        cols: cols,
+        colDefs: colDefs,
+        orderColumnIndex: orderColumnIndex,
+        orderColumnType: orderColumnType,
+        selectable: selectable
+    });
 });
 
+// fire important dependencies
 function fireDependencies() {
     setTimeout(() => {
         document.querySelectorAll(".select2").forEach(function (element) {

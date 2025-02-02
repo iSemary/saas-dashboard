@@ -1,10 +1,9 @@
 <div class="card">
     <div class="card-header">
-        @translate('tag_values')
+        @include('layouts.shared.filter-date', ['classes'=>'col-md-12'])
     </div>
     <div class="card-body">
-        <table id="showTable" data-route="{{ route('landlord.tags.show', $id) }}"
-            class="table table-bordered table-striped table-hover">
+        <table id="showTable" data-route="{{ route('landlord.tags.show', $id) }}" class="table table-bordered table-striped table-hover">
             <thead>
                 <tr>
                     <th scope="col">#</th>

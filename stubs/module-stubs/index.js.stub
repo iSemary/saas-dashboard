@@ -1,6 +1,6 @@
-let tableID = "#table";
-let route = $(tableID).attr("data-route");
-let cols = [
+var tableID = "#table";
+var route = $(tableID).attr("data-route");
+var cols = [
     {
         data: "id",
         name: "id",
@@ -17,4 +17,4 @@ let cols = [
     },
 ];
 
-filterTable(route, tableID, null, null, true, cols, null);
+filterTable({ route: route, tableID: tableID, cols: cols });

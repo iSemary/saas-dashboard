@@ -31,4 +31,4 @@ var showCols = [
     },
 ];
 
-filterTable(showRoute, showTableID, null, null, true, showCols, null);
+filterTable({ route: showRoute, tableID: showTableID, cols: showCols });
