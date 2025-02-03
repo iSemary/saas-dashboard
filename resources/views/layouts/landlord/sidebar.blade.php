@@ -528,11 +528,19 @@
 
                 @foreach ($sidebarNavigation as $section => $sectionConfig)
                     @php
-                        // Check if the user has permission to see ANY item in this section
-                        $hasVisibleItems = collect($sectionConfig['items'])->contains(function ($item) {
-                            // Check if the item has no permission requirement or the user has the required permission
-                            return !isset($item['permission']) || Gate::check($item['permission']['read'] ?? null);
-                        });
+                        // Check if user has permission for any visible items AND if those items have content
+                        $hasVisibleItems = false;
+                        foreach ($sectionConfig['items'] as $item) {
+                            $hasPermission =
+                                !isset($item['permission']) ||
+                                (is_array($item['permission']) && Gate::check($item['permission']['read'])) ||
+                                (is_string($item['permission']) && Gate::check($item['permission']));
+
+                            if ($hasPermission) {
+                                $hasVisibleItems = true;
+                                break;
+                            }
+                        }
                     @endphp
 
                     @if ($hasVisibleItems)

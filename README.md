@@ -6,6 +6,7 @@
 -   [Modules Requirements](#modules-requirements)
 -   [Commands](#commands)
     -   [Start App Command](#start-app-command)
+    -   [Backup App Command](#backup-app-command)
     -   [Sync Missing Language Translations](#sync-missing-language-translations)
 -   [Databases](#databases)
 -   [Running Landlord-Specific Migrations](#running-landlord-specific-migrations)
@@ -37,6 +38,7 @@
 -   [React Installation](#react-installation)
 -   [React App Routes](#react-app-routes)
 -   [React Components](#react-components)
+-   [Production Commands](#production-commands)
 
 ---
 
@@ -62,6 +64,14 @@ It will run the necessary commands to start the app
 
 ```bash
 php artisan app:start
+```
+
+### Backup App Command
+
+Backup the application and save it in the cloud
+
+```bash
+php artisan app:backup
 ```
 
 ### Sync Missing Language Translations
@@ -189,8 +199,8 @@ Please refer to the README file for the file structure:
 
 ## Global Data Attributes
 
-- `data-toggle="tooltip"`
-- `data-selectable="true"` // for datatable multiple select rows
+-   `data-toggle="tooltip"`
+-   `data-selectable="true"` // for datatable multiple select rows
 
 ---
 
@@ -418,3 +428,11 @@ If you encounter any issues, try the following commands to clean the cache and r
 ---
 
 ## React Components
+
+---
+
+## Production Commands
+
+```bash
+* * * * * cd /var/www/PROJECT_NAME && php artisan schedule:run >> /dev/null 2>&1
+```
