@@ -583,18 +583,29 @@
                                             @endif
                                         @endif
                                     @else
-                                        <li class="nav-item">
+                                    @php
+                                    // Check if any child route is active for this parent
+                                    $isAnyChildActive = false;
+                                    if (isset($item['routes'])) {
+                                        $currentRoute = Request::route()->getName();
+                                        foreach ($item['routes'] as $routeName) {
+                                            if (strpos($currentRoute, $routeName) !== false) {
+                                                $isAnyChildActive = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                @endphp
+                                        <li class="nav-item @if($isAnyChildActive) menu-open @endif">
                                             <a href="#"
-                                                class="nav-link @if (strpos(Request::url(), '/' . $key) !== false) active @endif">
+                                                class="nav-link @if($isAnyChildActive || strpos(Request::url(), '/' . $key) !== false) active @endif">
                                                 <i class="nav-icon fas fa-{{ $item['icon'] ?? '' }}"></i>
                                                 <p>
                                                     @translate($key)
                                                     <i class="right fas fa-angle-left"></i>
                                                 </p>
                                             </a>
-                                            <ul class="nav nav-treeview" style="display: none;">
-                                                {{-- Index Page --}}
-
+                                            <ul class="nav nav-treeview" @if($isAnyChildActive) style="display: block;" @else style="display: none;" @endif>
                                                 @if (isset($item['modal']))
                                                     <li class="nav-item">
                                                         <a href="#"

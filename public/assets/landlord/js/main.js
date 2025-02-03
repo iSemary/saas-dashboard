@@ -542,6 +542,7 @@ function filterTable({
         order: [[orderColumnIndex, orderColumnType]],
         processing: true,
         serverSide: true,
+        autoWidth: false,
         columnDefs: colDefs ?? [],
         ajax: {
             url: route,
