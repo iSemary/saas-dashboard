@@ -10,8 +10,8 @@ let cols = [
         name: "name",
     },
     {
-        data: "type",
-        name: "type",
+        data: "metadata",
+        name: "metadata",
     },
     {
         data: "created_at",

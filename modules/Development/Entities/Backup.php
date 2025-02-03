@@ -16,5 +16,9 @@ class Backup extends Model implements Auditable
     public $singleTitle = "backup";
     public $pluralTitle = "backups";
 
-    protected $fillable = ['name', 'type'];
+    protected $fillable = ['name', 'metadata'];
+
+    protected $casts = [
+        'metadata' => 'array',
+    ];
 }

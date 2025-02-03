@@ -11,7 +11,7 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">@translate('name')</th>
-                        <th scope="col">@translate('type')</th>
+                        <th scope="col">@translate('metadata')</th>
                         <th scope="col">@translate('created_at')</th>
                         <th scope="col">@translate('action')</th>
                     </tr>

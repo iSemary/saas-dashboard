@@ -34,7 +34,6 @@ class BackupRepository implements BackupInterface
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
                     row: $row,
-                    editRoute: 'landlord.development.backups.edit',
                     type: $this->model->pluralTitle,
                     titleType: $this->model->singleTitle,
                     showIconsOnly: false
