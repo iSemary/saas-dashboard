@@ -450,7 +450,6 @@ label.required::after {
 }
 
 .nav-treeview .nav-item {
-    margin-top: 10px;
 }
 .nav-treeview .nav-item .nav-link {
     max-width: 200px;

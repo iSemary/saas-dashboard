@@ -9,7 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BaseMail;
 
-class SendExampleEmail implements ShouldQueue
+class SendBaseEmail implements ShouldQueue
 {
     use InteractsWithQueue, Queueable, SerializesModels;
 
