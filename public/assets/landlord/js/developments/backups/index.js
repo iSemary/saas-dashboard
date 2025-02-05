@@ -17,12 +17,6 @@ let cols = [
         data: "created_at",
         name: "created_at",
     },
-    {
-        data: "actions",
-        name: "actions",
-        orderable: false,
-        searchable: false,
-    },
 ];
 
 filterTable({ route: route, tableID: tableID, cols: cols });

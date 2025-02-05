@@ -24,15 +24,16 @@ class ProfileRequest extends FormRequest
         switch ($type) {
             case 'general':
                 return array_merge($rules, [
-                    'name' => 'required|string|max:255',
-                    'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
-                    'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
+                    'name' => 'required_without:remove_avatar|string|max:255',
+                    'username' => ['required_without:remove_avatar', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
+                    'email' => ['required_without:remove_avatar', 'email', Rule::unique('users')->ignore($user->id)],
                     'phone' => 'nullable|string|max:20',
                     'address' => 'nullable|string|max:255',
                     'gender' => 'nullable|in:male,female,other',
                     'country_id' => 'nullable|exists:countries,id',
                     'language_id' => 'nullable|exists:languages,id',
                     'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:1048',
+                    'remove_avatar' => 'nullable|boolean',
                 ]);
 
             case 'security':

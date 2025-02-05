@@ -31,17 +31,22 @@ class BackupRepository implements BackupInterface
         );
 
         return DataTables::of($rows)
-            ->addColumn('actions', function ($row) {
-                return TableHelper::actionButtons(
-                    row: $row,
-                    type: $this->model->pluralTitle,
-                    titleType: $this->model->singleTitle,
-                    showIconsOnly: false
-                );
+            ->editColumn('metadata', function ($row) {
+                $metadata = $row->metadata; // No need for json_decode
+                $formatted = '';
+
+                foreach ($metadata as $key => $value) {
+                    $statusClass = $value ? 'text-success' : 'text-danger';
+                    $statusText = $value ? 'true' : 'false';
+                    $formatted .= "<div><strong>{$key}:</strong> <span class='{$statusClass}'>{$statusText}</span></div>";
+                }
+
+                return $formatted;
             })
-            ->rawColumns(['actions'])
+            ->rawColumns(['metadata'])
             ->make(true);
     }
+
 
     public function find($id)
     {

@@ -16,7 +16,6 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_
 
         // Backup Monitor
         Route::get('backups', [BackupController::class, "index"])->name('backups.index');
-        Route::post('backups/{id}', [BackupController::class, "download"])->name('backups.download');
 
         // IP Black List
         Route::resource('ip-blacklists', IpBlacklistController::class)->names('ip-blacklists');

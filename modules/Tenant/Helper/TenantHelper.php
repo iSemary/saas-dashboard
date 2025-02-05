@@ -4,6 +4,7 @@ namespace Modules\Tenant\Helper;
 
 use Modules\Auth\Entities\User;
 use Modules\Tenant\Entities\Tenant;
+use Illuminate\Http\Request;
 
 class TenantHelper
 {
@@ -11,7 +12,7 @@ class TenantHelper
      * Get the subdomain from the current request's host.
      *
      * This method retrieves the host from the current request and splits it into segments.
-     * If the host contains more than two segments (indicating the presence of a subdomain),
+     * If the host contains more than two segments (indicatin$tenantExists->subdomaing the presence of a subdomain),
      * it returns the first segment as the subdomain. Otherwise, it returns null.
      *
      * @return string|null The subdomain if present, otherwise null.
@@ -85,5 +86,32 @@ class TenantHelper
     public static function generateURL($customerUsername)
     {
         return config("settings.protocol") . "://" . $customerUsername . "." . config("settings.domain");
+    }
+
+    public static function handleRedirection(Request $request, $customSubDomain = null, $customRedirection = null, $withoutQuery = false)
+    {
+        $subDomain = $customSubDomain ?? self::getSubDomain();
+
+        if (!$subDomain || (!$customSubDomain && !Tenant::where('domain', $subDomain)->exists())) {
+            return '/';
+        }
+
+        $redirection = self::generateURL($subDomain) . self::getRedirectQueryString($request, $customRedirection);
+        if ($withoutQuery) {
+            $redirection = str_replace(['?redirect='], [''], $redirection);
+        }
+
+        return $redirection;
+    }
+
+    private static function getRedirectQueryString(Request $request, $customRedirection = null): string
+    {
+        if ($customRedirection) {
+            return "?redirect=" . $customRedirection;
+        }
+        if ($request->redirect && !empty($request->redirect)) {
+            return "?redirect=" . $request->redirect;
+        }
+        return "";
     }
 }

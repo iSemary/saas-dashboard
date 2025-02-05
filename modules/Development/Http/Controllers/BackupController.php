@@ -41,6 +41,4 @@ class BackupController extends ApiController implements HasMiddleware
 
         return view('landlord.developments.backups.index', compact('breadcrumbs', 'title'));
     }
-
-    public function download(int $id) {}
 }

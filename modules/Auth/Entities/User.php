@@ -13,6 +13,7 @@ use Modules\Auth\Entities\EmailToken;
 use Spatie\Permission\Traits\HasRoles;
 use Laravolt\Avatar\Facade as Avatar;
 use Modules\FileManager\Traits\FileHandler;
+use Modules\Geography\Entities\Country;
 use Modules\Localization\Entities\Language;
 use Modules\Notification\Entities\Notification;
 
@@ -39,7 +40,7 @@ class User extends Authenticatable
 
     protected $guard_name = 'api';
 
-    protected $metaKeys = ['avatar', 'gender', 'address', 'phone'];
+    protected $metaKeys = ['avatar', 'gender', 'address', 'phone', 'timezone', 'currency_id'];
 
     protected $fileColumns = [
         'avatar' => [
@@ -267,6 +268,56 @@ class User extends Authenticatable
                 ['meta_key' => 'avatar'],
                 ['meta_value' => $media->id]
             );
+        } else {
+            $this->userMeta()->where('meta_key', 'avatar')->delete();
         }
+    }
+
+    /**
+     * Get user's currency based on their meta data or country
+     * 
+     * @return string|null The currency code
+     */
+    public function getCurrency()
+    {
+        // First check meta data
+        $currencyId = $this->currency_id;
+        if ($currencyId) {
+            return $currencyId;
+        }
+
+        // Then fallback to country's currency if country_id exists
+        if ($this->country_id) {
+            // Assuming there's a Country model with a currency relationship/attribute
+            $country = Country::find($this->country_id);
+            return $country?->currency;
+        }
+
+        // Return default currency if nothing is set
+        return config('app.default_currency', 'USD');
+    }
+
+    /**
+     * Get user's timezone based on their meta data or country
+     * 
+     * @return string The timezone identifier
+     */
+    public function getTimezone()
+    {
+        // First check meta data
+        $timezone = $this->timezone;
+        if ($timezone) {
+            return $timezone;
+        }
+
+        // Then fallback to country's timezone if country_id exists
+        if ($this->country_id) {
+            // Assuming there's a Country model with a timezone relationship/attribute
+            $country = Country::find($this->country_id);
+            return $country?->timezone ?? config('app.timezone', 'UTC');
+        }
+
+        // Return default timezone if nothing is set
+        return config('app.timezone', 'UTC');
     }
 }

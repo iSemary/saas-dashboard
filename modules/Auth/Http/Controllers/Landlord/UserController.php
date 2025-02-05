@@ -54,6 +54,12 @@ class UserController extends ApiController
 
     protected function updateGeneralInfo($user, array $data)
     {
+        // Handle avatar removal
+        if (isset($data['remove_avatar'])) {
+            $user->setMeta(['avatar' => null]);
+            return;
+        }
+
         // Update basic user information
         $user->update([
             'name' => $data['name'],
@@ -73,7 +79,6 @@ class UserController extends ApiController
 
         $language = Language::where('id', $data['language_id'])->first();
         Session::put('language', $language);
-
     }
 
     protected function updateSecurity($user, array $data)

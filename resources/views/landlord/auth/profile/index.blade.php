@@ -36,43 +36,55 @@
                         @method('PUT')
                         <input type="hidden" name="type" value="general">
 
-                    <div class="row">
-                        <div class="col-12 col-md-6">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group mb-3">
-                                        <label for="name" class="form-label">@translate('name')</label>
-                                        <input type="text" name="name" id="name" class="form-control"
-                                            value="{{ isset($user) ? $user->name : '' }}" required>
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group mb-3">
+                                            <label for="name" class="form-label">@translate('name')</label>
+                                            <input type="text" name="name" id="name" class="form-control"
+                                                value="{{ isset($user) ? $user->name : '' }}" required>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="form-group mb-3">
-                                        <label for="username" class="form-label">@translate('username')</label>
-                                        <input type="text" name="username" id="username" class="form-control"
-                                            value="{{ isset($user) ? $user->username : '' }}" required>
+                                    <div class="col-md-12">
+                                        <div class="form-group mb-3">
+                                            <label for="username" class="form-label">@translate('username')</label>
+                                            <input type="text" name="username" id="username" class="form-control"
+                                                value="{{ isset($user) ? $user->username : '' }}" required>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <label for="avatar" class="form-label">@translate('avatar')</label>
-                                        <input type="file" name="avatar" id="avatar" class="border-0 form-control upload-image"
-                                            accept="image/*">        
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="preview-image-container mt-2">
-                                            <img src="{{ $user->avatar }}" width="150px" height="150px" alt="Preview"
-                                                class="preview-image view-image" />
+                            <div class="col-12 col-md-6">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <label for="avatar" class="form-label">@translate('avatar')</label>
+                                                </div>
+                                            </div>
+                                            <input type="file" name="avatar" id="avatar"
+                                                class="border-0 form-control upload-image" accept="image/*">
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-revert">
+                                                @if ($user->avatar)
+                                                    <button type="button" class="btn btn-sm mt-2"
+                                                        title="@translate('remove_avatar')" id="removeAvatar">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                @endif
+                                            </div>
+                                            <div class="preview-image-container mt-2">
+                                                <img src="{{ $user->avatar }}" width="150px" height="150px" alt="Preview"
+                                                    class="preview-image view-image" />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
@@ -83,9 +95,10 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group mb-3 w-100">
-                                    <label for="phone" class="form-label">@translate('phone')</label><br/>
-                                    <input type="tel" name="phone" id="phone" class="form-control intl-tel-input" required
-                                        value="{{ (isset($user) && $user->phone ? ("+".$user->phone) : "")}}">
+                                    <label for="phone" class="form-label">@translate('phone')</label><br />
+                                    <input type="tel" name="phone" id="phone"
+                                        class="form-control intl-tel-input" required
+                                        value="{{ isset($user) && $user->phone ? '+' . $user->phone : '' }}">
                                 </div>
                             </div>
                         </div>

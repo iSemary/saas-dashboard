@@ -50,12 +50,9 @@ class EmailController extends ApiController implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:read.emails', only: ['index', 'show']),
-            new Middleware('permission:create.emails', only: ['create', 'store', 'compose']),
-            new Middleware('permission:update.emails', only: ['edit', 'update']),
-            new Middleware('permission:delete.emails', only: ['destroy']),
-            new Middleware('permission:restore.emails', only: ['restore']),
-            new Middleware('permission:send.emails', only: ['send', 'resend']),
+            new Middleware('permission:read.email_logs', only: ['index']),
+            new Middleware('permission:send.emails', only: ['send']),
+            new Middleware('permission:resend.email_logs', only: ['resend']),
         ];
     }
 }

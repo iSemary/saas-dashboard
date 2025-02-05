@@ -16,9 +16,10 @@ $("#organizationForm").on("submit", function (e) {
         },
         success: function (response) {
             if (response.success) {
-                $("#organizationForm").hide();
-                $("#loginOrganizationName").val(organizationName);
-                $("#loginForm").show();
+                // $("#organizationForm").hide();
+                // $("#loginOrganizationName").val(organizationName);
+                // $("#loginForm").show();
+                window.location.href = response.data.redirect;
             } else {
                 alert(response.message || "Invalid organization name.");
             }
