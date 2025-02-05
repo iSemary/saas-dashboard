@@ -1,4 +1,4 @@
-# SaSS - All in one
+# SaaS - All in one
 
 # Table of Contents
 
