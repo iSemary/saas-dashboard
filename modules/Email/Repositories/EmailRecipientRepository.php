@@ -70,6 +70,11 @@ class EmailRecipientRepository implements EmailRecipientInterface
         return $this->model->find($id);
     }
 
+    public function getByEmail($email)
+    {
+        return $this->model->whereEmail($email)->first();
+    }
+
     public function create(array $data)
     {
         $emailRecipient = $this->model->create($data);

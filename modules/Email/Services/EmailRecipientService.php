@@ -41,6 +41,11 @@ class EmailRecipientService
         return $this->repository->find($id);
     }
 
+    public function getByEmail($email)
+    {
+        return $this->repository->getByEmail($email);
+    }
+
     public function create(array $data)
     {
         return $this->repository->create($data);

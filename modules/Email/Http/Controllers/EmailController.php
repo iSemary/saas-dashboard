@@ -2,13 +2,16 @@
 
 namespace Modules\Email\Http\Controllers;
 
+use App\Constants\EmailType;
 use App\Http\Controllers\ApiController;
+use Exception;
 use Modules\Email\Services\EmailCredentialService;
 use Modules\Email\Services\EmailTemplateService;
 use Illuminate\Http\Request;
 use Modules\Email\Services\EmailService;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Routing\Controllers\HasMiddleware;
+use ReflectionClass;
 
 class EmailController extends ApiController implements HasMiddleware
 {
@@ -29,15 +32,19 @@ class EmailController extends ApiController implements HasMiddleware
     {
         $emailCredentials = $this->emailCredentialService->getAll(['status' => 'active']);
         $emailTemplates = $this->emailTemplateService->getAll(['status' => 'active']);
-        return view("landlord.emails.compose", ['emailCredentials' => $emailCredentials, 'emailTemplates' => $emailTemplates]);
+        $emailTypes = (new ReflectionClass(EmailType::class))->getConstants();
+        return view("landlord.emails.compose", ['emailCredentials' => $emailCredentials, 'emailTemplates' => $emailTemplates, 'emailTypes' => $emailTypes]);
     }
 
     public function resend() {}
 
     public function send(Request $request)
     {
-        $this->emailService->send($request->all());
-        return $this->return(200, translate('email_sent_successfully'));
+        $response = $this->emailService->send($request->all());
+        if ($response['status']) {
+            return $this->return(200, translate('email_sent_successfully'), debug: $response ?? null);
+        }
+        return $this->return(200, translate('something_went_wrong'), debug: $response ?? null);
     }
 
     // Recipients and Subscribers

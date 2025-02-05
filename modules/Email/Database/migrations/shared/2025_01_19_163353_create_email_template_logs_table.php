@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('email_template_logs', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('description');
+            $table->string('subject');
             $table->text('body');
             $table->timestamps();
         });

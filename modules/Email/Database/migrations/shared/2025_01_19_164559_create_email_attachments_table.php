@@ -9,9 +9,9 @@ return new class extends Migration {
     {
         Schema::create('email_attachments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('campaign_id')->constrained('email_campaigns');
-            $table->foreignId('template_id')->constrained('email_templates');
-            $table->foreignId('file_id')->constrained('files')->nullable();
+            $table->foreignId('email_campaign_id')->nullable();
+            $table->foreignId('email_template_log_id')->nullable();
+            $table->foreignId('file_id')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

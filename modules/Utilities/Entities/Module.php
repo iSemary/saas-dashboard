@@ -61,4 +61,9 @@ class Module extends Model implements Auditable
             $this->attributes['icon'] = $value;
         }
     }
+
+    public function moduleEntities()
+    {
+        return $this->hasMany(ModuleEntity::class);
+    }
 }

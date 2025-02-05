@@ -4,6 +4,7 @@ namespace Modules\Auth\Http\Controllers\Guest;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Controller;
+use Cookie;
 use DB;
 use Exception;
 use Illuminate\Http\Request;
@@ -83,5 +84,36 @@ class PasswordController extends ApiController
         } else {
             return $this->return(400, "User not exists");
         }
+    }
+
+    public function showLock()
+    {
+        if (request()->cookie('lock') == 1) {
+            return view("guest.auth.lock.index");
+        }
+        return redirect()->route('home');
+    }
+
+    public function lock()
+    {
+        Cookie::queue(Cookie::forever('lock', 1));
+
+        return redirect()->route('lock.show');
+    }
+
+    // validate the user
+    public function unlock(Request $request)
+    {
+        if (!auth()->validate([
+            'email' => auth()->user()->email,
+            'password' => $request->password
+        ])) {
+            return $this->return(422, translate('incorrect_password'));
+        }
+
+        Cookie::queue(Cookie::forget('lock'));
+        return $this->return(200, 'Unlocked successfully', [
+            'redirect' => route('home')
+        ]);
     }
 }

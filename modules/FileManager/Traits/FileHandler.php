@@ -49,7 +49,6 @@ trait FileHandler
     public function upload(UploadedFile $file, string $column = 'icon')
     {
         try {
-
             $hashName = $file->hashName();
             $disk = $this->getDiskFromColumn($column);
             $host = $this->getCurrentHost();

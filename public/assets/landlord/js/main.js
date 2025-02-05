@@ -54,7 +54,15 @@ $(".logout-btn").on("click", function (e) {
     let Form = $(this).data("form");
     localStorage.removeItem("auth_token");
     localStorage.removeItem("user_id");
-    localStorage.removeItem("order_number");
+
+    $("#" + Form).submit();
+});
+
+// Lock Handler
+$(".lock-btn").on("click", function (e) {
+    e.preventDefault();
+
+    let Form = $(this).data("form");
 
     $("#" + Form).submit();
 });
@@ -517,9 +525,8 @@ function filterTable({
     dataExtra = null,
     orderColumnIndex = 0,
     orderColumnType = "desc",
-    selectable = false
+    selectable = false,
 }) {
-
     // init
     if (init) {
         // check if the table already exists
@@ -533,7 +540,7 @@ function filterTable({
         to_date: toDate ?? null,
         table: true,
     };
-    
+
     if (dataExtra) {
         $.extend(data, dataExtra);
     }
@@ -622,7 +629,7 @@ function filterTable({
 $(document).on("submit", ".filter-table", function (e) {
     e.preventDefault();
 
-    var tableID = "#" + $(this).closest('.card').find('table').attr("id");
+    var tableID = "#" + $(this).closest(".card").find("table").attr("id");
     var route = $(tableID).attr("data-route");
     var fromDate = $(this).find(".filter-table-from-date").val();
     var toDate = $(this).find(".filter-table-to-date").val();
@@ -635,12 +642,13 @@ $(document).on("submit", ".filter-table", function (e) {
     var colDefs = dtSettings.aoColumnDefs;
 
     // Get order configuration
-    var order = dtSettings.aaSorting[0] || [0, 'desc'];
+    var order = dtSettings.aaSorting[0] || [0, "desc"];
     var orderColumnIndex = order[0];
     var orderColumnType = order[1];
 
     // Get selectable status
-    var selectable = $(tableID).attr("data-selectable") == "true" ? true : false;
+    var selectable =
+        $(tableID).attr("data-selectable") == "true" ? true : false;
 
     filterTable({
         route: route,
@@ -651,7 +659,7 @@ $(document).on("submit", ".filter-table", function (e) {
         colDefs: colDefs,
         orderColumnIndex: orderColumnIndex,
         orderColumnType: orderColumnType,
-        selectable: selectable
+        selectable: selectable,
     });
 });
 
@@ -673,11 +681,13 @@ function fireDependencies() {
                 searchPosition: "bottom",
             });
         });
-        document.querySelectorAll('[data-toggle="tooltip"]').forEach(function(element) {
-            $(element).tooltip({
-                trigger: 'hover'
+        document
+            .querySelectorAll('[data-toggle="tooltip"]')
+            .forEach(function (element) {
+                $(element).tooltip({
+                    trigger: "hover",
+                });
             });
-        });
         fireCKEditor();
         $('[data-toggle="tooltip"]').tooltip();
         // Force select2 search to work inside modals

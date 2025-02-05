@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Modules\Auth\Entities\FactorAuthenticateToken;
 use Modules\Auth\Entities\User;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Route;
 
 class Validate2FA
 {
@@ -46,6 +47,11 @@ class Validate2FA
                     return redirect()->route('2fa.setup', ['redirect' => $redirectUrl]);
                 }
             }
+        }
+
+        // lock screen checker
+        if ($request->cookie('lock') == 1 && !in_array(Route::currentRouteName(), ['lock.show', 'unlock.submit', 'logout'])) {
+            return redirect()->route('lock.show');
         }
         return $next($request);
     }

@@ -37,11 +37,12 @@
                     data-recipients-route="{{ route('landlord.email-recipients.list') }}"
                     data-all-users-route="{{ route('landlord.emails.users.all') }}"
                     class="form-control select2 select-recipients-type" required>
-                    <option value="all_users">@translate('all_users')</option>
-                    <option value="recipients_only">@translate('recipients_only')</option>
-                    <option value="multiple">@translate('multiple')</option>
-                    <option value="single" selected>@translate('single')</option>
-                    <option value="upload_excel">@translate('upload_excel')</option>
+                    @foreach ($emailTypes as $key => $value)
+                        <option value="{{ $value }}"
+                            {{ $value === \App\Constants\EmailType::SINGLE ? 'selected' : '' }}>
+                            @translate($value)
+                        </option>
+                    @endforeach
                 </select>
             </div>
 
@@ -56,8 +57,8 @@
 
             {{-- Subject --}}
             <div class="form-group">
-                <input class="form-control email-subject" placeholder="@translate('subject'):" type="text"
-                    name="subject" id="subject" required>
+                <input class="form-control email-subject" placeholder="@translate('subject'):" type="text" name="subject"
+                    id="subject" required>
             </div>
 
             {{-- Body --}}

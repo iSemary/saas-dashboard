@@ -17,9 +17,13 @@ class EmailLog extends Model implements Auditable
         'email_recipient_id',
         'email_template_log_id',
         'email_campaign_id',
+        'email_credential_id',
         'email',
         'status',
         'error_message',
+        'subject',
+        'body',
+        'email_recipient_meta',
         'opened_at',
         'clicked_at',
     ];

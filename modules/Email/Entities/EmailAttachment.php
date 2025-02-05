@@ -16,8 +16,8 @@ class EmailAttachment extends Model implements Auditable
     public $pluralTitle = "email_attachments";
 
     protected $fillable = [
-        'campaign_id',
-        'template_id',
+        'email_campaign_id',
+        'email_template_log_id',
         'file_id',
     ];
 }

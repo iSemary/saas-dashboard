@@ -507,6 +507,13 @@
                                     'single' => true,
                                     'translate' => false,
                                 ],
+                                'modules_entities' => [
+                                    'icon' => 'fas fa-vector-square',
+                                    'permission' => 'read.modules_flow',
+                                    'route' => 'landlord.development.entities.index',
+                                    'single' => true,
+                                    'translate' => false,
+                                ],
                                 'modules_flow' => [
                                     'icon' => 'fas fa-bezier-curve',
                                     'permission' => 'read.modules_flow',

@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->bigInteger('email_campaign_id')->constrained('email_campaigns')->nullable();
             $table->bigInteger('email_credential_id')->constrained('email_credentials')->nullable();
             $table->string('email');
-            $table->enum('status', ['active', 'inactive']);
+            $table->enum('status', ['active', 'inactive', 'processing'])->default('inactive');
             $table->string('subject')->nullable();
             $table->text('body')->nullable();
             $table->text('error_message')->nullable();

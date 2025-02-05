@@ -39,8 +39,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [TenantController::class, "index"])->name('home');
     });
 
+    // Logout
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
-   
+
+    // Lock
+    Route::middleware('2fa')->group(function () {
+        Route::get('lock', [PasswordController::class, 'showLock'])->name('lock.show');
+        Route::post('lock', [PasswordController::class, 'lock'])->name('lock.submit');
+        Route::post('unlock', [PasswordController::class, 'unlock'])->name('unlock.submit');
+    });
+
     // 2FA
     Route::get('2fa/setup', [TwoFactorAuthController::class, 'showSetupForm'])->name('2fa.setup');
     Route::get('2fa/validate', [TwoFactorAuthController::class, 'showValidateForm'])->name('2fa.validate');

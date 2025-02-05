@@ -252,12 +252,12 @@ ul {
     margin-left: 0;
 }
 
-.lockscreen-image {
+.lock-screen-image {
     left: auto;
     right:-10px;
 }
 
-.lockscreen-credentials {
+.lock-screen-credentials {
     margin-left: 0px;
     margin-right: 70px;
 }

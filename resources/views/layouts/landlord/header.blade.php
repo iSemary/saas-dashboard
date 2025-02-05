@@ -65,6 +65,17 @@
                     <i class="fas fa-user"></i> @translate('my_account')
                 </a>
 
+
+
+                <div class="lock-container">
+                    <a style="cursor: pointer" data-form="lock-form" class="lock-btn dropdown-item">
+                        <i class="fas fa-lock"></i> @translate('lock_screen')
+                    </a>
+                    <form id="lock-form" action="{{ route('lock.submit') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                </div>
+
                 <div class="logout-container">
                     <a style="cursor: pointer" data-form="logout-form" class="logout-btn dropdown-item">
                         <i class="fas fa-sign-out-alt"></i> @translate('logout')
@@ -82,7 +93,6 @@
                         @csrf
                     </form>
                 @endif
-
             </div>
         </li>
     </ul>

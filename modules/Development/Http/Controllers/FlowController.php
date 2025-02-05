@@ -3,9 +3,19 @@
 namespace Modules\Development\Http\Controllers;
 
 use App\Http\Controllers\ApiController;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class FlowController extends ApiController
+class FlowController extends ApiController implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.modules_flow', only: ['modules']),
+            new Middleware('permission:read.database_flow', only: ['database']),
+        ];
+    }
+
     public function modules()
     {
         $title = translate("flows");
