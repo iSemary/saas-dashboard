@@ -4,14 +4,18 @@ namespace Modules\Email\Repositories;
 
 use App\Constants\EmailType;
 use App\Helpers\FileHelper;
+use App\Helpers\TableHelper;
+use DataTables;
 use DB;
 use Exception;
+use Gate;
 use Modules\Email\Entities\EmailCredential;
 use Modules\Email\Entities\EmailTemplate;
 use Modules\Email\Entities\EmailRecipient;
 use Modules\Email\Entities\EmailAttachment;
 use Modules\Email\Entities\EmailLog;
 use Modules\Email\Entities\EmailRecipientMeta;
+use Modules\Email\Entities\EmailSubscriber;
 use Modules\Email\Entities\EmailTemplateLog;
 use Modules\Email\Services\EmailRecipientService;
 use Modules\Email\Services\EmailSubscriberService;
@@ -19,6 +23,7 @@ use Modules\Email\Services\EmailTemplateService;
 
 class EmailRepository implements EmailInterface
 {
+    protected $service;
     protected $emailRecipientService;
     protected $emailSubscriberService;
     protected $emailTemplateService;
@@ -29,6 +34,72 @@ class EmailRepository implements EmailInterface
         $this->emailSubscriberService = $emailSubscriberService;
         $this->emailTemplateService = $emailTemplateService;
     }
+
+    public function datatables()
+    {
+        $rows = EmailLog::query()
+            ->leftJoin('email_template_logs', 'email_template_logs.id', 'email_logs.email_template_log_id')
+            ->withTrashed()
+            ->select([
+                'email_logs.*',
+                'email_template_logs.name as template_name'
+            ])->where(
+                function ($q) {
+                    if (request()->from_date && request()->to_date) {
+                        TableHelper::loopOverDates(5, $q, 'email_logs', [request()->from_date, request()->to_date]);
+                    }
+                }
+            );
+
+        return DataTables::of($rows)
+            ->editColumn('status', function ($row) {
+                return translate($row->status);
+            })
+            ->addColumn('actions', function ($row) {
+                $actionButtons = "";
+
+                $actionButtons .= '<button type="button" data-modal-title="' . translate("email_details") . '" data-modal-link="' . route('landlord.emails.show', $row->id) . '" class="btn-info btn-sm open-details-btn mx-1">';
+                $actionButtons .=  '<i class="fas fa-info-circle"></i> ' . translate('details');
+                $actionButtons .= '</button>';
+
+                if (Gate::allows('resend.emails')) {
+                    $actionButtons .= '<button type="button" data-route="' . route('landlord.emails.resend', $row->id) . '" class="btn-primary btn-sm resend-email-btn">';
+                    $actionButtons .=  '<i class="far fa-paper-plane"></i> ' . translate('resend');
+                    $actionButtons .= '</button>';
+                }
+
+                return $actionButtons;
+            })
+            ->rawColumns(['actions'])
+            ->make(true);
+    }
+
+    public function getById(int $id)
+    {
+        $email = EmailLog::leftJoin('email_template_logs', 'email_template_logs.id', 'email_logs.email_template_log_id')
+            ->leftJoin('email_credentials', 'email_credentials.id', 'email_logs.email_credential_id')
+            ->select([
+                'email_logs.*',
+                'email_credentials.from_address AS email_from',
+                'email_template_logs.name as template_name'
+            ])->where('email_logs.id', $id)->first();
+
+        $email->attachments = $this->getEmailAttachments($email->email_template_log_id);
+        return $email;
+    }
+
+    public function getEmailAttachments($emailLogId)
+    {
+        return EmailAttachment::leftJoin('files', 'files.id', 'email_attachments.file_id')
+            ->leftJoin('folders', 'folders.id', 'files.folder_id')
+            ->select([
+                'email_attachments.file_id',
+                'files.*',
+                'folders.name'
+            ])
+            ->where("email_template_log_id", $emailLogId)->get();
+    }
+
     /**
      * Send email
      *
@@ -77,7 +148,6 @@ class EmailRepository implements EmailInterface
                 }
             }
 
-
             // Collect recipients as array [id, email, metadata] 
             $emailRecipients = [];
             switch ($data['recipients_type']) {
@@ -90,14 +160,14 @@ class EmailRepository implements EmailInterface
                     $emailRecipients = EmailRecipient::whereIn("email", $data['emails'])->get();
                     break;
                 case EmailType::ALL_USERS:
-                    // $this->emailRecipientService->all() + $this->emailSubscriberService->all();
-                    // $emails = [$data['email']];
+                    $this->saveSubscribersAsRecipients();
+                    $emailRecipients = $this->emailRecipientService->getAll();
                     break;
                 case EmailType::RECIPIENTS_ONLY:
-                    $emailRecipients = $this->emailRecipientService->all();
+                    $emailRecipients = $this->emailRecipientService->getAll();
                     break;
                 case EmailType::UPLOAD_EXCEL:
-                    $emails = [$data['email']];
+                    $emailRecipients = $this->saveRecipientsFromExcel($data);
                     break;
                 default:
                     break;
@@ -134,6 +204,36 @@ class EmailRepository implements EmailInterface
         }
     }
 
+    public function saveSubscribersAsRecipients()
+    {
+        $subscribers = EmailSubscriber::where('status', 'active')->get();
+
+        foreach ($subscribers as $subscriber) {
+            EmailRecipient::firstOrCreate(['email' => $subscriber->email]);
+        }
+    }
+
+    public function saveRecipientsFromExcel($data)
+    {
+        $excelEmailRecipients = [];
+
+        $excelNames = $data['excel_names'] ?? null;
+        foreach ($data['excel_emails'] as $key => $excelEmail) {
+            $excelEmailRecipient = EmailRecipient::firstOrCreate(['email' => $excelEmail]);
+            if ($excelNames && isset($excelNames[$key])) {
+                EmailRecipientMeta::firstOrCreate([
+                    'email_recipient_id' => $excelEmailRecipient->id,
+                    'meta_key' => 'name',
+                    'meta_value' => $excelNames[$key],
+                ]);
+            }
+
+            $excelEmailRecipients[] = $excelEmailRecipient;
+        }
+        
+        return $excelEmailRecipients;
+    }
+
     public function formatEmailMetadata($emailRecipientMeta, $subject, $body): array
     {
         // Create a metadata key-value map
@@ -152,7 +252,7 @@ class EmailRepository implements EmailInterface
 
     private function replacePlaceholders($template, $metadata): string
     {
-        return preg_replace_callback('/\{\{(\w+)\}\}/', function($matches) use ($metadata) {
+        return preg_replace_callback('/\{\{(\w+)\}\}/', function ($matches) use ($metadata) {
             $key = $matches[1];
             return $metadata[$key] ?? '';
         }, $template);

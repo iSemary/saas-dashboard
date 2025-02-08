@@ -70,7 +70,7 @@
                                         <div class="col-6">
                                             <div class="text-revert">
                                                 @if ($user->avatar)
-                                                    <button type="button" class="btn btn-sm mt-2"
+                                                    <button type="button" class="btn text-danger btn-sm mt-2"
                                                         title="@translate('remove_avatar')" id="removeAvatar">
                                                         <i class="fas fa-trash"></i>
                                                     </button>

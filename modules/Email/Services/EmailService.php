@@ -13,9 +13,19 @@ class EmailService
         $this->repository = $repository;
     }
 
+    public function getDataTables()
+    {
+        return $this->repository->datatables();
+    }
+
     public function send(array $data)
     {
         return $this->repository->send($data);
+    }
+
+    public function getById(int $id)
+    {
+        return $this->repository->getById($id);
     }
 
     public function countAllEmails()

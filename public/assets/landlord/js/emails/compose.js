@@ -135,13 +135,14 @@ function showSingleRecipientsContainer() {
 }
 
 function showUploadExcelRecipientsContainer() {
+    var samplePath = $("#recipientsType").attr("data-excel-sample");
     $(".email-to-container").html(`
         <div class="upload-excel-container mb-2">
-            <label for="uploadExcel" class="upload-label">${t('upload_excel_file')}</label><br/>
-            <input type="file" id="uploadExcel" accept=".xlsx, .xls" class="upload-input" />
+            <label for="uploadExcel" class="upload-label">${t('upload_excel_file')} <a href="${samplePath}" target="_blank">${t('view_sample')}</a></label><br/>
+            <input type="file" id="uploadExcel" name="excel_file" accept=".xlsx, .xls" class="upload-input" />
         </div>
         <div class="excel-table">
-            <table class="excel-datatable table table-bordered table-striped table-hover">
+            <table class="excel-datatable table table-bordered table-striped table-hover" data-disable-reload="true">
                 <thead>
                     <tr>
                         <th>${t('email')}<span class="text-danger">*</span></th>
@@ -202,8 +203,8 @@ $(document).on("change", "#uploadExcel", function (e) {
             if (row[0]) {
                 tbody.append(`
                     <tr>
-                        <td>${row[0]}</td>
-                        <td>${row[1] || ""}</td>
+                        <td><input type="hidden" name="excel_emails[]" value="${row[0]}" />${row[0]}</td>
+                        <td><input type="hidden" name="excel_names[]" value="${row[1]}" />${row[1] || ""}</td>
                         <td><button type="button" class="btn btn-sm btn-danger remove-row"><i class="fas fa-trash-alt"></i></button></td>
                     </tr>
                 `);

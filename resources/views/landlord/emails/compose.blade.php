@@ -34,6 +34,7 @@
             <div class="form-group">
                 <label for="recipients_type" class="form-label">@translate('recipients_type')</label>
                 <select name="recipients_type" id="recipientsType"
+                    data-excel-sample="{{ asset('assets/shared/samples/excel/emails.xlsx') }}"
                     data-recipients-route="{{ route('landlord.email-recipients.list') }}"
                     data-all-users-route="{{ route('landlord.emails.users.all') }}"
                     class="form-control select2 select-recipients-type" required>

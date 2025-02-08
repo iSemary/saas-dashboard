@@ -30,5 +30,6 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_
     Route::post('emails/send', [EmailController::class, "send"])->name('emails.send');
     Route::get('emails/compose', [EmailController::class, "compose"])->name('emails.compose');
     Route::get('emails', [EmailController::class, "index"])->name('emails.index');
+    Route::get('emails/{id}', [EmailController::class, "show"])->name('emails.show');
     Route::get('emails/users/all', [EmailController::class, "countAll"])->name('emails.users.all');
 });

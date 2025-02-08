@@ -89,7 +89,7 @@ class PasswordController extends ApiController
     public function showLock()
     {
         if (request()->cookie('lock') == 1) {
-            return view("guest.auth.lock.index");
+            return view("guest.auth.lock.index", ['title'=>translate('lock_screen')]);
         }
         return redirect()->route('home');
     }

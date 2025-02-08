@@ -15,6 +15,7 @@ use ReflectionClass;
 
 class EmailController extends ApiController implements HasMiddleware
 {
+
     protected $emailService;
     protected $emailCredentialService;
     protected $emailTemplateService;
@@ -26,7 +27,39 @@ class EmailController extends ApiController implements HasMiddleware
         $this->emailTemplateService = $emailTemplateService;
     }
 
-    public function index() {}
+    public function index()
+    {
+        if (request()->ajax()) {
+            return $this->emailService->getDataTables();
+        }
+        $title = translate('email_logs');
+
+        $breadcrumbs = [
+            ['text' => translate('home'), 'link' => route('home')],
+            ['text' => translate("email_logs")],
+        ];
+
+        $actionButtons = [
+            [
+                'text' => translate("compose"),
+                'permission' => 'send.emails',
+                'class' => 'btn-sm btn-orange text-white open-details-btn compose-email-btn',
+                'icon' => '<i class="bi bi-plus-circle-dotted"></i>',
+                'attr' => [
+                    'data-modal-link' => route('landlord.emails.compose'),
+                    'data-modal-title' => translate("compose"),
+                ]
+            ]
+        ];
+
+        return view('landlord.emails.index', compact('breadcrumbs', 'title', 'actionButtons'));
+    }
+
+    public function show(int $id)
+    {
+        $data = $this->emailService->getById($id);
+        return view('landlord.emails.details', ['data' => $data]);
+    }
 
     public function compose()
     {
@@ -41,7 +74,7 @@ class EmailController extends ApiController implements HasMiddleware
     public function send(Request $request)
     {
         $response = $this->emailService->send($request->all());
-        if ($response['status']) {
+        if (isset($response['status']) && $response['status']) {
             return $this->return(200, translate('email_sent_successfully'), debug: $response ?? null);
         }
         return $this->return(200, translate('something_went_wrong'), debug: $response ?? null);

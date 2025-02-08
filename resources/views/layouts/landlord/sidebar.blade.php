@@ -149,7 +149,7 @@
                                 ],
                                 'email_log' => [
                                     'icon' => 'fas fa-history',
-                                    'permission' => 'read.email_logs',
+                                    'permission' => 'read.emails',
                                     'route' => 'landlord.emails.index',
                                     'single' => true,
                                     'external' => false,

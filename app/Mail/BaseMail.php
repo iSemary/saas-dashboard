@@ -22,25 +22,22 @@ class BaseMail extends Mailable
         $this->data = $data;
     }
 
-    /**
-     * Get the message envelope.
-     */
+
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Example Email',
+            subject: $this->data['subject'] ?? env("APP_NAME"),
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
         return new Content(
-            view: 'mails.base', // Blade view for the email content
+            view: 'mails.base',
+            with: ['body' => $this->data['body'] ?? '']
         );
     }
+
 
     /**
      * Get the attachments for the message.

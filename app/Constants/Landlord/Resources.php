@@ -142,12 +142,8 @@ class Resources
                 'actions' => ['read', 'create', 'update', 'delete', 'restore']
             ],
             [
-                'name' => 'email_logs',
-                'actions' => ['read', 'resend']
-            ],
-            [
                 'name' => 'emails',
-                'actions' => ['send']
+                'actions' => ['send', 'resend', 'read']
             ],
             [
                 'name' => 'plans',

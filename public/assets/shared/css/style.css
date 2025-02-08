@@ -1,3 +1,15 @@
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+}
+
 .resizable-handle {
     position: absolute;
     top: 0;
@@ -446,13 +458,17 @@ label.required::after {
 }
 
 .select2-container--default .select2-selection--multiple .select2-selection__choice__display {
-        padding-left: 7px;
+    padding-left: 7px;
 }
 
-.nav-treeview .nav-item {
-}
+.nav-treeview .nav-item {}
+
 .nav-treeview .nav-item .nav-link {
     max-width: 200px;
     padding: 6px;
     font-size: 12px;
+}
+
+.brand-link {
+    padding: 0.600rem .5rem;
 }

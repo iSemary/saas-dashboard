@@ -29,11 +29,16 @@
                     @translate('enter_your_password_to_retrieve_your_session')
                 </div>
                 <div class="text-center">
-                    <a href="{{ route('logout') }}">@translate('or_sign_in_as_a_different_user')</a>
+                    <a style="cursor: pointer" data-form="logout-form" class="logout-btn">
+                        @translate('or_sign_in_as_a_different_user')
+
+                    </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
                 </div>
             </div>
         </div>
-
         <div class="d-none">
             <img src="{{ asset('assets/shared/images/icons/animated/loaders/loader.gif') }}" class="loading-icon" width="20px"
                 height="20px" />

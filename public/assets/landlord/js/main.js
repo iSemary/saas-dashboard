@@ -114,12 +114,8 @@ $(document).on("submit", ".create-form", function (e) {
                     ":input[type=button], :input[type=submit], :input[type=hidden], :input[type=reset]"
                 )
                 .val("");
-            if ($(".dataTable").length > 0) {
-                var dataTable = $(".dataTable").DataTable();
-                if (dataTable?.settings()[0]?.ajax) {
-                    dataTable.ajax.reload();
-                }
-            }
+
+                refreshDataTable();
         },
         error: function (data) {
             form.find(".form-status").html("");
@@ -180,12 +176,8 @@ $(document).on("submit", ".import-excel-form", function (e) {
                     ":input[type=button], :input[type=submit], :input[type=hidden], :input[type=reset]"
                 )
                 .val("");
-            if ($(".dataTable").length > 0) {
-                var dataTable = $(".dataTable").DataTable();
-                if (dataTable?.settings()[0]?.ajax) {
-                    dataTable.ajax.reload();
-                }
-            }
+            
+                refreshDataTable()
         },
         error: function (xhr) {
             $(".import-status").html("");
@@ -244,12 +236,7 @@ $(document).on("submit", ".edit-form", function (e) {
             // reload the page if came from the back
             if (data.data.reload) location.reload();
 
-            if ($(".dataTable").length > 0) {
-                var dataTable = $(".dataTable").DataTable();
-                if (dataTable?.settings()[0]?.ajax) {
-                    dataTable.ajax.reload();
-                }
-            }
+            refreshDataTable();
         },
         error: function (xhr) {
             form.find(".form-status").html("");
@@ -424,12 +411,8 @@ function deleteRow(link, ModelDeleteType) {
                             position: "bottom",
                         });
                     }
-                    if ($(".dataTable").length > 0) {
-                        var dataTable = $(".dataTable").DataTable();
-                        if (dataTable?.settings()[0]?.ajax) {
-                            dataTable.ajax.reload();
-                        }
-                    }
+                    
+                    refreshDataTable();
                 })
                 .fail(function (data) {
                     Swal.fire({
@@ -485,12 +468,8 @@ function restoreRow(link, ModelDeleteType) {
                             position: "bottom",
                         });
                     }
-                    if ($(".dataTable").length > 0) {
-                        var dataTable = $(".dataTable").DataTable();
-                        if (dataTable?.settings()[0]?.ajax) {
-                            dataTable.ajax.reload();
-                        }
-                    }
+                    
+                    refreshDataTable();
                 })
                 .fail(function (data) {
                     Swal.fire({
@@ -723,3 +702,18 @@ $(document).on("click", ".copy-to-clipboard-btn", function (e) {
         timer: 1500,
     });
 });
+
+
+function refreshDataTable()
+{
+    if ($(".dataTable").length > 0) {
+        $(".dataTable").each(function () {
+            if (!$(this).attr("data-disable-refresh")) {
+                var dataTable = $(this).DataTable();
+                if (dataTable?.settings()[0]?.ajax) {
+                    dataTable.ajax.reload();
+                }
+            }
+        });
+    }
+}
