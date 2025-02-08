@@ -7,7 +7,7 @@ textarea:-webkit-autofill:focus,
 select:-webkit-autofill,
 select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
 }
 
 .resizable-handle {
@@ -363,6 +363,14 @@ select:-webkit-autofill:focus {
     text-align: right !important;
 }
 
+.rtl .text-revert-only {
+    text-align: left !important;
+}
+
+.ltr .text-revert-only {
+    text-align: right !important;
+}
+
 .rtl .modal-header .close,
 .modal-header .mailbox-attachment-close {
     margin: -1rem -1rem auto -1rem;
@@ -471,4 +479,117 @@ label.required::after {
 
 .brand-link {
     padding: 0.600rem .5rem;
+}
+
+.activity-timeline {
+    position: relative;
+    padding: 20px;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 20px;
+    border-left: 2px solid #e9ecef;
+}
+
+.timeline-icon {
+    position: absolute;
+    left: -11px;
+    background: white;
+    padding: 5px;
+}
+
+.timeline-content {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-left: 20px;
+}
+
+.module-group {
+    margin-bottom: 30px;
+}
+
+.changes-list {
+    margin-top: 10px;
+    padding: 10px;
+    background: #fff;
+    border-radius: 4px;
+}
+
+.change-item {
+    padding: 5px 0;
+    border-bottom: 1px dashed #e9ecef;
+}
+
+.change-item:last-child {
+    border-bottom: none;
+}
+
+.rtl .timeline-item {
+    padding-left: 0;
+    padding-right: 20px;
+    border-right: 2px solid #e9ecef;
+}
+
+.rtl .timeline-icon {
+    right: -30px;
+    left: unset;
+}
+
+.timeline-content {
+    width: 100%;
+}
+
+.rtl .breadcrumb-item+.breadcrumb-item::before {
+    padding-left: .5rem;
+}
+
+.rtl .card-title {
+    float: right;
+}
+
+/* Pagination Styles */
+.pagination {
+    margin: 0;
+}
+
+.page-link {
+    padding: 0.5rem 0.75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: #007bff;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+}
+
+.page-item.active .page-link {
+    z-index: 3;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    cursor: auto;
+    background-color: #fff;
+    border-color: #dee2e6;
+}
+
+.w-5 {
+    width: 25px;
+}
+
+.h-5 {
+    height: 25px;
+}
+
+.direction-ltr {
+    direction: ltr !important;
+}
+
+.direction-rtl {
+    direction: rtl !important;
 }

@@ -215,6 +215,8 @@ Please refer to the README file for the file structure:
 
 -   `render_number()`: // Output: <span title="1,000,000">1m</span>
 
+-   `$pagination->render('layouts.pagination.default')`
+
 ### JS
 
 -   `translate('home')` OR `t('home')` OR t('unknown_key', { var1: 'test1' })

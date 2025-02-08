@@ -126,6 +126,7 @@ class AuthController extends ApiController
 
         $language = auth()->user()->language;
         Session::put('language', $language);
+        Carbon::setLocale($language->locale);
 
         return $this->return(200, 'User Logged in Successfully', [
             'user' => $response,

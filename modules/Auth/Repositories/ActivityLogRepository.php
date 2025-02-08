@@ -4,6 +4,8 @@ namespace Modules\Auth\Repositories;
 
 use App\Helpers\IconHelper;
 use App\Helpers\TableHelper;
+use Carbon\Carbon;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use OwenIt\Auditing\Models\Audit;
 use Yajra\DataTables\DataTables;
@@ -11,6 +13,7 @@ use Yajra\DataTables\DataTables;
 class ActivityLogRepository implements ActivityLogInterface
 {
     protected $model;
+    protected $perPage = 10;
 
     public function __construct(Audit $audit)
     {
@@ -54,6 +57,54 @@ class ActivityLogRepository implements ActivityLogInterface
             ])
             ->make(true);
     }
+
+    public function getTimelineData($userId, $page = 1, $type = null)
+    {
+        // Calculate offset
+        $offset = ($page - 1) * $this->perPage;
+    
+        // Modify query based on type
+        $query = $this->model->where('user_id', $userId);
+    
+        if ($type === 'deleted') {
+            $query->where('event', 'deleted'); // Filter events where event = 'deleted'
+        }
+    
+    
+        // Get total count for pagination
+        $total = $query->count();
+        
+        // Get paginated activities
+        $activities = $query
+            ->orderBy('created_at', 'desc')
+            ->offset($offset)
+            ->limit($this->perPage)
+            ->get()
+            ->groupBy(function($date) {
+                return Carbon::parse($date->created_at)->format('Y-m-d');
+            })
+            ->map(function($dayActivities) {
+                return $dayActivities->groupBy('auditable_type');
+            });
+    
+    
+        // Create paginator instance
+        $paginator = new LengthAwarePaginator(
+            $activities,
+            $total,
+            $this->perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+    
+        return [
+            'activities' => $activities,
+            'pagination' => $paginator
+        ];
+    }
+    
+
+
 
     private function formatValuesColumn($values)
     {

@@ -4,6 +4,7 @@ namespace Modules\Auth\Http\Controllers\Landlord;
 
 use App\Helpers\PhoneNumberHelper;
 use App\Http\Controllers\ApiController;
+use Carbon\Carbon;
 use Modules\Auth\Http\Requests\Landlord\ProfileRequest;
 use Illuminate\Support\Facades\Hash;
 use Modules\Geography\Services\CountryService;
@@ -79,6 +80,7 @@ class UserController extends ApiController
 
         $language = Language::where('id', $data['language_id'])->first();
         Session::put('language', $language);
+        Carbon::setLocale($language->locale);
     }
 
     protected function updateSecurity($user, array $data)

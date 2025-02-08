@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Helpers\TranslateHelper;
+use Carbon\Carbon;
 use Illuminate\Support\ServiceProvider;
 
 class ViewServiceProvider extends ServiceProvider
@@ -33,6 +34,7 @@ class ViewServiceProvider extends ServiceProvider
             });
 
             $language = TranslateHelper::getLanguage();
+            Carbon::setLocale($language->locale);
 
             $view->with('language', $language);
             $view->with('notificationsCount', $notificationsCount);

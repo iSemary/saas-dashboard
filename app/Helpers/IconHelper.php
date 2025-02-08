@@ -37,4 +37,16 @@ class IconHelper
 
         return $icons ?: '<span><i class="fa-solid fa-globe" title="' . $agent . '"></i><span>' . translate("unknown_browser") . '</span>';
     }
+
+    public static function formatEventIcon($event)
+    {
+        $icons = [
+            'created' => '<i class="fas fa-plus-circle text-success"></i>',
+            'updated' => '<i class="fas fa-edit text-primary"></i>',
+            'deleted' => '<i class="fas fa-trash text-danger"></i>',
+            'restored' => '<i class="fas fa-history text-warning"></i>'
+        ];
+
+        return $icons[$event] ?? '<i class="fas fa-info-circle"></i>';
+    }
 }

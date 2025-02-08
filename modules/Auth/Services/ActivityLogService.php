@@ -30,4 +30,9 @@ class ActivityLogService
     {
         return $this->repository->getByAuth();
     }
+
+    public function getTimelineData($id, $page = 1, $type = null)
+    {
+        return $this->repository->getTimelineData($id, $page, $type);
+    }
 }

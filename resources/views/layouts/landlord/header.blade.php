@@ -65,7 +65,9 @@
                     <i class="fas fa-user"></i> @translate('my_account')
                 </a>
 
-
+                <a class="dropdown-item" href="{{ route('activity-logs.index') }}">
+                    <i class="fas fa-user-clock"></i> @translate('activity_logs')
+                </a>
 
                 <div class="lock-container">
                     <a style="cursor: pointer" data-form="lock-form" class="lock-btn dropdown-item">

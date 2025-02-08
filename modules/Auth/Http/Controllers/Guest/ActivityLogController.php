@@ -30,18 +30,31 @@ class ActivityLogController extends ApiController
         /***
             Name, email, id, created at
             Who created this user
-        */
+         */
 
         /**
          *  Modules
          *      - Entities of each module
          */
 
-         /**
-          * Each entity as a tab viewing the the changes as a datatable
-          */
+        /**
+         * Each entity as a tab viewing the the changes as a datatable
+         */
 
-        return view('user.auth.activity-logs.index', ['id' => $id, 'title' => $title, 'layoutPrefix' => $layoutPrefix, 'breadcrumbs' => $breadcrumbs]);
+        $page = $request->get('page', 1);
+        $type = $request->get('type', null);
+
+        $result = $this->service->getTimelineData($id ?? auth()->id(), $page, $type);
+
+        return view('user.auth.activity-logs.index', [
+            'id' => $id,
+            'title' => $title,
+            'layoutPrefix' => $layoutPrefix,
+            'breadcrumbs' => $breadcrumbs,
+
+
+            'activities' => $result['activities'],
+            'pagination' => $result['pagination']        ]);
     }
 
     public function modal(Request $request, int $id = null)
