@@ -5,14 +5,14 @@
         @method('PUT')
     @endif
     <div class="form-group">
-        <label for="name" class="form-label">@translate('name')</label>
+        <label for="name" class="form-label">@translate('name') <span class="text-danger">*</span></label>
         <input type="text" name="name" id="name" class="form-control"
             value="{{ isset($row) ? $row->name : '' }}" required>
     </div>
 
     <div class="form-group">
-        <label for="name" class="form-label">@translate('object_model')</label>
-        <select name="object_model" id="object_model" class="select2 form-control">
+        <label for="name" class="form-label">@translate('object_model') <span class="text-danger">*</span></label>
+        <select name="object_model" id="object_model" class="select2 form-control" required>
             @foreach ($modelOptions as $model)
                 <option value="{{ $model }}" {{ isset($row) && $row->object_model == $model ? 'selected' : '' }}>
                     @translate($model)
@@ -22,19 +22,19 @@
     </div>
 
     <div class="form-group">
-        <label for="object_id" class="form-label">@translate('object_id')</label>
+        <label for="object_id" class="form-label">@translate('object_id') <span class="text-danger">*</span></label>
         <input type="text" name="object_id" id="object_id" class="form-control"
             value="{{ isset($row) ? $row->object_id : '' }}" required>
     </div>
 
     <div class="form-group">
-        <label for="version" class="form-label">@translate('version')</label>
+        <label for="version" class="form-label">@translate('version') <span class="text-danger">*</span></label>
         <input type="text" name="version" id="version" class="form-control"
             value="{{ isset($row) ? $row->version : '' }}" required>
     </div>
 
     <div class="form-group">
-        <label for="slug" class="form-label">@translate('slug')</label>
+        <label for="slug" class="form-label">@translate('slug') <span class="text-danger">*</span></label>
         <input type="text" name="slug" id="slug" class="form-control slug-input"
             value="{{ isset($row) ? $row->slug : '' }}" required>
     </div>

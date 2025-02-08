@@ -6,14 +6,14 @@
         @method('PUT')
     @endif
     <div class="form-group">
-        <label for="email" class="form-label">@translate('email')</label>
+        <label for="email" class="form-label">@translate('email') <span class="text-danger">*</span></label>
         <input type="email" name="email" id="email" class="form-control"
             value="{{ isset($row) ? $row->email : '' }}" required>
     </div>
 
     <div class="form-group">
-        <label for="status" class="form-label">@translate('status')</label>
-        <select name="status" id="status" class="form-control select2">
+        <label for="status" class="form-label">@translate('status') <span class="text-danger">*</span></label>
+        <select name="status" id="status" class="form-control select2" required>
             @foreach ($statusOptions as $status)
                 <option value="{{ $status }}" {{ isset($row) && $row->status == $status ? 'selected' : '' }}>
                     @translate($status)

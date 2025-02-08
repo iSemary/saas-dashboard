@@ -5,13 +5,13 @@
         @method('PUT')
     @endif
     <div class="form-group">
-        <label for="name" class="form-label">@translate('name')</label>
+        <label for="name" class="form-label">@translate('name') <span class="text-danger">*</span></label>
         <input type="text" name="name" id="name" class="form-control"
             value="{{ isset($row) ? $row->name : '' }}" required>
     </div>
 
     <div class="form-group">
-        <label for="town" class="form-label">@translate('town')</label>
+        <label for="town" class="form-label">@translate('town') <span class="text-danger">*</span></label>
         <select class="select2 form-control" name="town_id" required>
             <option value="">@translate('select')</option>
             @foreach ($towns as $town)

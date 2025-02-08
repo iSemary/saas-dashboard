@@ -6,7 +6,7 @@
     @endif
 
     <div class="form-group">
-        <label for="country_id" class="form-label">@translate('country')</label>
+        <label for="country_id" class="form-label">@translate('country') <span class="text-danger">*</span></label>
         <select class="select2 form-control" name="country_id" required>
             <option value="">@translate('select')</option>
             @foreach ($countries as $country)
@@ -18,7 +18,7 @@
     </div>
 
     <div class="form-group">
-        <label for="name" class="form-label">@translate('name')</label>
+        <label for="name" class="form-label">@translate('name') <span class="text-danger">*</span></label>
         <input type="text" name="name" id="name" class="form-control"
             value="{{ isset($row) ? $row->name : '' }}" required>
     </div>

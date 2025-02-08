@@ -21,9 +21,13 @@
                     aria-labelledby="heading{{ $index }}" data-parent="#accordionExample">
                     <div class="card-body">
                         <div class="form-group">
-                            <label for="{{ $key }}_{{ $index }}" class="form-label">{{ translate($key) }}</label>
-                            <input type="text" name="{{ $key }}[{{ $language->locale }}]" id="{{ $key }}_{{ $index }}"
-                                class="form-control" value="{{ $row->getTranslatable($key ,$language->locale) }}" required>
+                            <label for="{{ $key }}_{{ $index }}"
+                                class="form-label">{{ translate($key) }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" name="{{ $key }}[{{ $language->locale }}]"
+                                id="{{ $key }}_{{ $index }}" class="form-control"
+                                value="{{ $row->getTranslatable($key, $language->locale) }}" required>
                         </div>
                     </div>
                 </div>

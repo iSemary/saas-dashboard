@@ -6,7 +6,7 @@
         @method('PUT')
     @endif
     <div class="form-group">
-        <label for="ip_address" class="form-label">@translate('ip_address')</label>
+        <label for="ip_address" class="form-label">@translate('ip_address') <span class="text-danger">*</span></label>
         <input type="text" name="ip_address" id="ip_address" class="form-control"
             value="{{ isset($row) ? $row->ip_address : '' }}" required>
     </div>

@@ -7,15 +7,15 @@
     @endif
     <div class="row">
         <div class="form-group col-12">
-            <label for="name" class="form-label">@translate('name')</label>
+            <label for="name" class="form-label">@translate('name') <span class="text-danger">*</span></label>
             <input type="text" name="name" id="name" class="form-control"
                 value="{{ isset($row) ? $row->name : '' }}" required>
         </div>
 
         {{-- Email Template --}}
         <div class="form-group col-xl-6 col-md-12 col-sm-12">
-            <label for="email_template_id" class="form-label">@translate('email_template')</label>
-            <select name="email_template_id" id="emailTemplateId" class="form-control select2 select-email-template">
+            <label for="email_template_id" class="form-label">@translate('email_template') <span class="text-danger">*</span></label>
+            <select name="email_template_id" id="emailTemplateId" class="form-control select2 select-email-template" required>
                 <option value="">@translate('select')</option>
                 @foreach ($emailTemplates as $emailTemplate)
                     <option data-route="{{ route('landlord.email-templates.show', $emailTemplate->id) }}"
@@ -28,7 +28,7 @@
 
         {{-- Email Credential --}}
         <div class="form-group col-xl-6 col-md-12 col-sm-12">
-            <label for="email_credential_id" class="form-label">@translate('from'):</label>
+            <label for="email_credential_id" class="form-label">@translate('from'): <span class="text-danger">*</span></label>
             <select name="email_credential_id" id="email_credential_id" class="form-control select2" required>
                 <option value="">@translate('select')</option>
                 @foreach ($emailCredentials as $emailCredential)
@@ -41,7 +41,7 @@
 
         {{-- Select Recipients Type --}}
         <div class="form-group col-12">
-            <label for="recipients_type" class="form-label">@translate('recipients_type')</label>
+            <label for="recipients_type" class="form-label">@translate('recipients_type') <span class="text-danger">*</span></label>
             <select name="recipients_type" id="recipientsType"
                 data-recipients-route="{{ route('landlord.email-recipients.list') }}"
                 data-all-users-route="{{ route('landlord.emails.users.all') }}"

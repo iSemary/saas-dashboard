@@ -5,7 +5,7 @@
         @method('PUT')
     @endif
     <div class="form-group">
-        <label for="name" class="form-label">@translate('name')</label>
+        <label for="name" class="form-label">@translate('name') <span class="text-danger">*</span></label>
         <input type="text" name="name" id="name" class="form-control"
             value="{{ isset($row) ? $row->name : '' }}" required>
     </div>

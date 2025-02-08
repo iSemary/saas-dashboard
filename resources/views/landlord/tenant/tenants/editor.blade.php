@@ -4,20 +4,21 @@
     @if (isset($row))
         @method('PUT')
     @endif
+
     <div class="form-group">
-        <label for="name" class="form-label">@translate('name')</label>
+        <label for="name" class="form-label">@translate('name') <span class="text-danger">*</span></label>
         <input type="text" name="name" id="name" class="form-control"
             value="{{ isset($row) ? $row->name : '' }}" required>
     </div>
 
     <div class="form-group">
-        <label for="domain" class="form-label">@translate('domain')</label>
+        <label for="domain" class="form-label">@translate('domain') <span class="text-danger">*</span></label>
         <input type="text" name="domain" id="domain" class="form-control"
             value="{{ isset($row) ? $row->domain : '' }}" required>
     </div>
 
     <div class="form-group">
-        <label for="database" class="form-label">@translate('database')</label>
+        <label for="database" class="form-label">@translate('database') <span class="text-danger">*</span></label>
         <input type="text" name="database" id="database" class="form-control"
             value="{{ isset($row) ? $row->database : '' }}" required>
     </div>

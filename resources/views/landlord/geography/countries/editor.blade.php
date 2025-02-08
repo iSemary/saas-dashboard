@@ -5,19 +5,19 @@
         @method('PUT')
     @endif
     <div class="form-group">
-        <label for="name" class="form-label">@translate('name')</label>
+        <label for="name" class="form-label">@translate('name') <span class="text-danger">*</span></label>
         <input type="text" name="name" id="name" class="form-control"
             value="{{ isset($row) ? $row->name : '' }}" required>
     </div>
 
     <div class="form-group">
-        <label for="code" class="form-label">@translate('code')</label>
+        <label for="code" class="form-label">@translate('code') <span class="text-danger">*</span></label>
         <input type="text" name="code" id="code" class="form-control"
             value="{{ isset($row) ? $row->code : '' }}" required>
     </div>
 
     <div class="form-group">
-        <label for="region" class="form-label">@translate('region')</label>
+        <label for="region" class="form-label">@translate('region') <span class="text-danger">*</span></label>
         <input type="text" name="region" id="region" class="form-control"
             value="{{ isset($row) ? $row->region : '' }}" required>
     </div>
@@ -32,14 +32,14 @@
     </div>
 
     <div class="form-group">
-        <label for="phone_code" class="form-label">@translate('phone_code')</label>
+        <label for="phone_code" class="form-label">@translate('phone_code') <span class="text-danger">*</span></label>
         <input type="text" name="phone_code" id="phone_code" class="form-control"
             value="{{ isset($row) ? $row->phone_code : '' }}" required>
     </div>
 
 
     <div class="form-group">
-        <label for="timezone" class="form-label">@translate('timezone')</label>
+        <label for="timezone" class="form-label">@translate('timezone') <span class="text-danger">*</span></label>
         <input type="text" name="timezone" id="timezone" class="form-control"
             value="{{ isset($row) ? $row->timezone : '' }}" required>
     </div>

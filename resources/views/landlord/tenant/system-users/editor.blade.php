@@ -7,12 +7,12 @@
 
     <div class="row">
         <div class="form-group col-6">
-            <label for="name" class="form-label">@translate('name')</label>
+            <label for="name" class="form-label">@translate('name') <span class="text-danger">*</span></label>
             <input type="text" name="name" id="name" class="form-control"
                 value="{{ isset($row) ? $row->name : '' }}" required>
         </div>
         <div class="form-group col-6">
-            <label for="username" class="form-label">@translate('username')</label>
+            <label for="username" class="form-label">@translate('username') <span class="text-danger">*</span></label>
             <input type="text" name="username" id="username" class="form-control"
                 value="{{ isset($row) ? $row->username : '' }}" required>
         </div>
@@ -21,12 +21,12 @@
             data-invalid-email-format-message="{{ translate('please_enter_a_valid_email_address') }}"
             data-id="{{ isset($row) ? $row->id : '' }}"
             data-email-check-route="{{ route('landlord.system-users.check-email') }}">
-            <label for="email" class="form-label">@translate('email')</label>
+            <label for="email" class="form-label">@translate('email') <span class="text-danger">*</span></label>
             <input type="email" name="email" id="email" class="form-control email-checker"
                 value="{{ isset($row) ? $row->email : '' }}" required>
         </div>
         <div class="form-group col-6">
-            <label for="role_id" class="form-label">@translate('role')</label>
+            <label for="role_id" class="form-label">@translate('role') <span class="text-danger">*</span></label>
             <select name="role_id[]" id="role_id" class="form-control select2" multiple required>
                 <option value="">@translate('select')</option>
                 @foreach ($roles as $role)
@@ -38,7 +38,7 @@
             </select>            
         </div>
         <div class="form-group col-6">
-            <label for="country_id" class="form-label">@translate('country')</label>
+            <label for="country_id" class="form-label">@translate('country') <span class="text-danger">*</span></label>
             <select class="select2 form-control" name="country_id" required>
                 <option value="">@translate('select')</option>
                 @foreach ($countries as $country)
@@ -49,7 +49,7 @@
             </select>
         </div>
         <div class="form-group col-6">
-            <label for="language_id" class="form-label">@translate('language')</label>
+            <label for="language_id" class="form-label">@translate('language') <span class="text-danger">*</span></label>
             <select class="select2 form-control" name="language_id" required>
                 <option value="">@translate('select')</option>
                 @foreach ($languages as $language)
@@ -61,7 +61,11 @@
             </select>
         </div>
         <div class="form-group col-6 generate-password-container">
-            <label for="password" class="form-label generate-password-field">@translate('password')</label>
+            <label for="password" class="form-label generate-password-field">@translate('password')
+                @if (!isset($row))
+                    <span class="text-danger">*</span>
+                @endif
+            </label>
             <input type="password" name="password" id="password" class="form-control generate-password-input"
                 value="" {{ isset($row) ?: 'required' }}>
             <!-- Password strength indicator -->

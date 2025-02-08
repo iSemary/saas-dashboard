@@ -33,13 +33,13 @@
             @endif
             <input type="hidden" name="parent_id" value="{{ $id }}" required>
             <div class="form-group">
-                <label for="name" class="form-label">@translate('name')</label>
+                <label for="name" class="form-label">@translate('name') <span class="text-danger">*</span></label>
                 <input type="text" name="name" id="name" class="form-control"
                     value="{{ isset($row) ? $row->name : '' }}" required>
             </div>
 
             <div class="form-group">
-                <label for="slug" class="form-label">@translate('slug')</label>
+                <label for="slug" class="form-label">@translate('slug') <span class="text-danger">*</span></label>
                 <input type="text" name="slug" id="slug" class="form-control slug-input"
                     value="{{ isset($row) ? $row->slug : '' }}" required>
             </div>

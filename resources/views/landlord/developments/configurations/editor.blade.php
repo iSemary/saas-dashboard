@@ -6,13 +6,13 @@
         @method('PUT')
     @endif
     <div class="form-group">
-        <label for="configuration_key" class="form-label">@translate('configuration_key')</label>
+        <label for="configuration_key" class="form-label">@translate('configuration_key') <span class="text-danger">*</span></label>
         <input type="text" name="configuration_key" id="configuration_key" class="form-control snake-input"
             value="{{ isset($row) ? $row->configuration_key : '' }}" required>
     </div>
 
     <div class="form-group">
-        <label for="inputType" class="form-label">@translate('input_type')</label>
+        <label for="inputType" class="form-label">@translate('input_type') <span class="text-danger">*</span></label>
         <select class="select2 form-control" name="input_type" id="inputType" required>
             <option value="">@translate('select')</option>
             @foreach ($inputTypes as $inputType)
@@ -25,7 +25,7 @@
 
 
     <div class="form-group">
-        <label for="configuration_value" class="form-label">@translate('configuration_value')</label>
+        <label for="configuration_value" class="form-label">@translate('configuration_value') <span class="text-danger">*</span></label>
          <div class="form-group" id="inputTypeFields">
                <input name="configuration_value" type="text" id="configuration_value" value="{{ isset($row) ? $row->configuration_value : '' }}" class="form-control" required /></input>
          </div>
@@ -37,7 +37,7 @@
     </div>
 
     <div class="form-group">
-        <label for="type_id" class="form-label">@translate('type')</label>
+        <label for="type_id" class="form-label">@translate('type') <span class="text-danger">*</span></label>
         <select class="select2 form-control" name="type_id" required>
             <option value="">@translate('select')</option>
             @foreach ($types as $type)

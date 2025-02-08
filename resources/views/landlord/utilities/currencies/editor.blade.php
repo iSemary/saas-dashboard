@@ -6,13 +6,13 @@
     @endif
 
     <div class="form-group">
-        <label for="code" class="form-label">@translate("code")</label>
+        <label for="code" class="form-label">@translate("code") <span class="text-danger">*</span></label>
         <input type="text" name="code" id="code" class="form-control"
             value="{{ isset($row) ? $row->code : '' }}" required>
     </div>
 
     <div class="form-group">
-        <label for="name" class="form-label">@translate("name")</label>
+        <label for="name" class="form-label">@translate("name") <span class="text-danger">*</span></label>
         <input type="text" name="name" id="name" class="form-control"
             value="{{ isset($row) ? $row->name : '' }}" required>
     </div>
@@ -42,7 +42,8 @@
     </div>
 
     <div class="form-group">
-        <label for="symbol_position" class="form-label">@translate("symbol_position")</label>
+        <label for="symbol_position" class="form-label">@translate("symbol_position") <span
+                class="text-danger">*</span></label>
         <select name="symbol_position" id="symbol_position" class="form-control" required>
             <option value="left" {{ isset($row) && $row->symbol_position == 'left' ? 'selected' : '' }}>
                 @translate("left")

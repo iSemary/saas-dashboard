@@ -19,7 +19,7 @@
 
             {{-- Email Credential --}}
             <div class="form-group">
-                <label for="email_credential_id" class="form-label">@translate('from'):</label>
+                <label for="email_credential_id" class="form-label">@translate('from'): <span class="text-danger">*</span></label>
                 <select name="email_credential_id" id="email_credential_id" class="form-control select2" required>
                     <option value="">@translate('select')</option>
                     @foreach ($emailCredentials as $emailCredential)
@@ -32,7 +32,7 @@
 
             {{-- Select Recipients Type --}}
             <div class="form-group">
-                <label for="recipients_type" class="form-label">@translate('recipients_type')</label>
+                <label for="recipients_type" class="form-label">@translate('recipients_type') <span class="text-danger">*</span></label>
                 <select name="recipients_type" id="recipientsType"
                     data-excel-sample="{{ asset('assets/shared/samples/excel/emails.xlsx') }}"
                     data-recipients-route="{{ route('landlord.email-recipients.list') }}"
