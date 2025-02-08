@@ -39,7 +39,8 @@ class EmailCampaignRepository implements EmailCampaignInterface
                     restoreRoute: 'landlord.email-campaigns.restore',
                     type: $this->model->pluralTitle,
                     titleType: $this->model->singleTitle,
-                    showIconsOnly: false
+                    showIconsOnly: false,
+                    showActivityLogs: $this->model
                 );
             })
             ->rawColumns(['actions'])

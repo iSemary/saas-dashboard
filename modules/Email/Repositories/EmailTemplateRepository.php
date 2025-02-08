@@ -29,15 +29,15 @@ class EmailTemplateRepository implements EmailTemplateInterface
     public function datatables()
     {
         $rows = $this->model->query()->withTrashed()->where(
-                function ($q) {
-                    if (request()->from_date && request()->to_date) {
-                        TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
-                    }
+            function ($q) {
+                if (request()->from_date && request()->to_date) {
+                    TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
                 }
-            );
+            }
+        );
 
         return DataTables::of($rows)
-            ->editColumn('status', function($row) {
+            ->editColumn('status', function ($row) {
                 return translate($row->status);
             })
             ->addColumn('actions', function ($row) {
@@ -48,7 +48,8 @@ class EmailTemplateRepository implements EmailTemplateInterface
                     restoreRoute: 'landlord.email-templates.restore',
                     type: $this->model->pluralTitle,
                     titleType: $this->model->singleTitle,
-                    showIconsOnly: false
+                    showIconsOnly: false,
+                    showActivityLogs: $this->model
                 );
             })
             ->rawColumns(['actions'])

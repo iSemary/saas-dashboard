@@ -58,7 +58,8 @@ class EmailRecipientRepository implements EmailRecipientInterface
                     restoreRoute: 'landlord.email-recipients.restore',
                     type: $this->model->pluralTitle,
                     titleType: $this->model->singleTitle,
-                    showIconsOnly: false
+                    showIconsOnly: false,
+                    showActivityLogs: $this->model
                 );
             })
             ->rawColumns(['actions'])

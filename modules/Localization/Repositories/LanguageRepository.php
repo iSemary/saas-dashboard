@@ -44,7 +44,8 @@ class LanguageRepository implements LanguageInterface
                     restoreRoute: 'landlord.languages.restore',
                     type: $this->model->pluralTitle,
                     titleType: $this->model->singleTitle,
-                    showIconsOnly: false
+                    showIconsOnly: false,
+                    showActivityLogs: $this->model
                 );
             })
             ->addColumn('total_translations', function ($row) use ($totalEnglishTranslations) {

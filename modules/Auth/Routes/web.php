@@ -61,6 +61,7 @@ Route::middleware('auth')->group(function () {
     // Activity logs
     Route::get('activity-logs', [ActivityLogController::class, "index"])->name('activity-logs.index');
     Route::get('activity-logs/modal', [ActivityLogController::class, "modal"])->name('activity-logs.modal');
+    Route::get('activity-logs/row/{id}', [ActivityLogController::class, "row"])->name('activity-logs.row');
 });
 
 // Landlord Routes

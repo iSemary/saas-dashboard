@@ -2,6 +2,7 @@
 
 namespace Modules\Auth\Http\Controllers\Guest;
 
+use App\Helpers\CryptHelper;
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
 use Modules\Auth\Services\ActivityLogService;
@@ -54,7 +55,8 @@ class ActivityLogController extends ApiController
 
 
             'activities' => $result['activities'],
-            'pagination' => $result['pagination']        ]);
+            'pagination' => $result['pagination']
+        ]);
     }
 
     public function modal(Request $request, int $id = null)
@@ -63,5 +65,16 @@ class ActivityLogController extends ApiController
             return $this->service->getDataTables($id);
         }
         return view('user.auth.activity-logs.modal', ['id' => $id]);
+    }
+
+    public function row(Request $request, int $id = null)
+    {
+        $objectType = $request->get('object_type');
+        $model = CryptHelper::decrypt($objectType);
+
+        if (request()->ajax() && request()->get('table')) {
+            return $this->service->getDataTablesByRow($id, $model);
+        }
+        return view('user.auth.activity-logs.row', ['id' => $id, 'objectType' => $objectType]);
     }
 }

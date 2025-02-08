@@ -20,6 +20,45 @@ class ActivityLogRepository implements ActivityLogInterface
         $this->model = $audit;
     }
 
+    public function getDataTablesByRow($id, $model) {
+        $rows = $this->model->query()
+        ->where('auditable_id', $id)
+        ->where('auditable_type', $model);
+
+        return DataTables::of($rows)
+            ->editColumn('event', function ($row) {
+                return $this->formatEventColumn($row->event);
+            })
+            ->editColumn('type', function ($row) {
+                return translate($row->auditable_type);
+            })
+            ->editColumn('type_id', function ($row) {
+                return ($row->auditable_id);
+            })
+            ->editColumn('old_values', function ($row) {
+                return $this->formatValuesColumn($row->old_values);
+            })
+            ->editColumn('new_values', function ($row) {
+                return $this->formatValuesColumn($row->new_values);
+            })
+            ->editColumn('ip_address', function ($row) {
+                return translate($row->ip_address);
+            })
+            ->editColumn('user_agent', function ($row) {
+                return IconHelper::formatAgentIcons($row->user_agent);
+            })
+            ->rawColumns([
+                'event',
+                'type',
+                'type_id',
+                'old_values',
+                'new_values',
+                'ip_address',
+                'user_agent',
+            ])
+            ->make(true);
+    }
+
     public function datatables($id)
     {
         $rows =  $this->model->query()->where('user_id', $id);

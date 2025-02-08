@@ -46,7 +46,8 @@ class TableHelper
         $restoreRoute = null,
         $type = null,
         $titleType = null,
-        $showIconsOnly = false
+        $showIconsOnly = false,
+        $showActivityLogs = false,
     ) {
         $btn = '';
 
@@ -68,6 +69,14 @@ class TableHelper
         if (isset($row->deleted_at) && $row->deleted_at && $restoreRoute && Gate::allows('restore.' . $type)) {
             $btn .= '<button type="button" data-restore-type="' . translate($titleType) . '" data-url="' . route($restoreRoute, $row->id) . '" class="btn-warning mx-1 text-white btn-sm restore-btn">';
             $btn .= $showIconsOnly ? '<i class="fas fa-redo-alt"></i>' : '<i class="fas fa-redo-alt fa-fw"></i> ' . translate('restore');
+            $btn .= '</button>';
+        }
+
+        // Activity Logs button
+        if ($showActivityLogs) {
+            $objectType = CryptHelper::encrypt(get_class($showActivityLogs));
+            $btn .= '<button type="button" data-modal-title="' . translate($titleType) . " " . translate("activity_log") . '" data-modal-link="' . route('activity-logs.row', $row->id) . '?object_type=' . $objectType . '" class="btn-teal mx-1 btn-sm open-details-btn">';
+            $btn .= $showIconsOnly ? '<i class="fas fa-history"></i>' : '<i class="fas fa-history fa-fw"></i> ' . translate('activity_log');
             $btn .= '</button>';
         }
 
