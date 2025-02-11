@@ -17,6 +17,7 @@ use Modules\Email\Entities\EmailLog;
 use Modules\Email\Entities\EmailRecipientMeta;
 use Modules\Email\Entities\EmailSubscriber;
 use Modules\Email\Entities\EmailTemplateLog;
+use Modules\Email\Services\EmailGroupService;
 use Modules\Email\Services\EmailRecipientService;
 use Modules\Email\Services\EmailSubscriberService;
 use Modules\Email\Services\EmailTemplateService;
@@ -27,12 +28,14 @@ class EmailRepository implements EmailInterface
     protected $emailRecipientService;
     protected $emailSubscriberService;
     protected $emailTemplateService;
+    protected $emailGroupService;
 
-    public function __construct(EmailRecipientService $emailRecipientService, EmailSubscriberService $emailSubscriberService, EmailTemplateService $emailTemplateService)
+    public function __construct(EmailRecipientService $emailRecipientService, EmailSubscriberService $emailSubscriberService, EmailTemplateService $emailTemplateService, EmailGroupService $emailGroupService)
     {
         $this->emailRecipientService = $emailRecipientService;
         $this->emailSubscriberService = $emailSubscriberService;
         $this->emailTemplateService = $emailTemplateService;
+        $this->emailGroupService = $emailGroupService;
     }
 
     public function datatables()
@@ -48,6 +51,10 @@ class EmailRepository implements EmailInterface
                     if (request()->from_date && request()->to_date) {
                         TableHelper::loopOverDates(5, $q, 'email_logs', [request()->from_date, request()->to_date]);
                     }
+
+                    if (request()->campaign_id && !empty(request()->campaign_id)) {
+                        $q->where("email_logs.email_campaign_id", request()->campaign_id);
+                    }
                 }
             );
 
@@ -62,7 +69,7 @@ class EmailRepository implements EmailInterface
                 $actionButtons .=  '<i class="fas fa-info-circle"></i> ' . translate('details');
                 $actionButtons .= '</button>';
 
-                if (Gate::allows('resend.emails')) {
+                if (Gate::allows('resend.emails') && $row->status != "processing") {
                     $actionButtons .= '<button type="button" data-route="' . route('landlord.emails.resend', $row->id) . '" class="btn-primary btn-sm resend-email-btn">';
                     $actionButtons .=  '<i class="far fa-paper-plane"></i> ' . translate('resend');
                     $actionButtons .= '</button>';
@@ -78,10 +85,12 @@ class EmailRepository implements EmailInterface
     {
         $email = EmailLog::leftJoin('email_template_logs', 'email_template_logs.id', 'email_logs.email_template_log_id')
             ->leftJoin('email_credentials', 'email_credentials.id', 'email_logs.email_credential_id')
+            ->leftJoin('email_campaigns', 'email_campaigns.id', 'email_logs.email_campaign_id')
             ->select([
                 'email_logs.*',
                 'email_credentials.from_address AS email_from',
-                'email_template_logs.name as template_name'
+                'email_template_logs.name as template_name',
+                'email_campaigns.name as campaign_name'
             ])->where('email_logs.id', $id)->first();
 
         $email->attachments = $this->getEmailAttachments($email->email_template_log_id);
@@ -115,93 +124,127 @@ class EmailRepository implements EmailInterface
      */
     public function send(array $data)
     {
-
         try {
             DB::beginTransaction();
 
-            $emailTemplate = null;
-            if ($data['email_template_id']) {
-                $emailTemplate = $this->emailTemplateService->get($data['email_template_id']);
+            $emailTemplate = $this->getEmailTemplate($data);
+            $emailTemplateLog = $this->createEmailTemplateLog($data, $emailTemplate);
+
+            $campaign = isset($data['campaign']) ? $data['campaign'] : null;
+            if (isset($data['files'])) {
+                $this->handleAttachments($data['files'], $campaign, $emailTemplateLog);
             }
 
-            // Save current details as email template log [even if it's not email template]
-            $emailTemplateLog = EmailTemplateLog::create([
-                'name' => $emailTemplate ? $emailTemplate->name : '-',
-                'subject' => $data['subject'],
-                'body' => $data['body'],
-            ]);
-            $campaign = null;
-            // Save attachment files
-            if (isset($data['files']) && count($data['files'])) {
-                $attachments = $data['files'];
-                foreach ($attachments as $attachment) {
-                    if ($attachment instanceof \Illuminate\Http\UploadedFile) {
-                        // upload the file
-                        $file = app(FileHelper::class)->directUpload($attachment, 'emails');
-                        // create email attachment row
-                        EmailAttachment::create([
-                            'email_campaign_id' => $campaign ? $campaign->id : null,
-                            'email_template_log_id' => $emailTemplateLog->id,
-                            'file_id' => $file->id,
-                        ]);
-                    }
-                }
-            }
+            $emailRecipients = $this->getEmailRecipients($data);
+            $this->createEmailLogs($emailRecipients, $emailTemplateLog, $data, $campaign);
 
-            // Collect recipients as array [id, email, metadata] 
-            $emailRecipients = [];
-            switch ($data['recipients_type']) {
-                case EmailType::SINGLE:
-                    $emailRecipients = [EmailRecipient::firstOrCreate([
-                        'email' => $data['email']
-                    ])];
-                    break;
-                case EmailType::MULTIPLE:
-                    $emailRecipients = EmailRecipient::whereIn("email", $data['emails'])->get();
-                    break;
-                case EmailType::ALL_USERS:
-                    $this->saveSubscribersAsRecipients();
-                    $emailRecipients = $this->emailRecipientService->getAll();
-                    break;
-                case EmailType::RECIPIENTS_ONLY:
-                    $emailRecipients = $this->emailRecipientService->getAll();
-                    break;
-                case EmailType::UPLOAD_EXCEL:
-                    $emailRecipients = $this->saveRecipientsFromExcel($data);
-                    break;
-                default:
-                    break;
-            }
-
-            // Save the log
-            foreach ($emailRecipients as $emailRecipient) {
-                $emailRecipientMeta = EmailRecipientMeta::where("email_recipient_id", $emailRecipient->id)->get();
-
-                $formattedEmail = $this->formatEmailMetadata($emailRecipientMeta, $data['subject'], $data['body']);
-
-                EmailLog::create([
-                    'email_recipient_id' => $emailRecipient->id,
-                    'email_template_log_id' => $emailTemplateLog->id,
-                    'email_credential_id' => $data['email_credential_id'],
-                    'email_campaign_id' => $campaign ? $campaign->id : null,
-                    'email' => $emailRecipient->email,
-                    'status' => 'inactive',
-                    'subject' => $emailRecipientMeta ? $formattedEmail['subject'] : $data['subject'],
-                    'body' => $emailRecipientMeta ? $formattedEmail['body'] : $data['body'],
-                    'email_recipient_meta' => $emailRecipientMeta ? $formattedEmail['metadata'] : null,
-                ]);
-            }
-
-            // Commit the transactions
             DB::commit();
-
-            // Send emails by the job
-
             return ['success' => true];
         } catch (Exception $e) {
             DB::rollBack();
-            return ['success' => false, 'message' => $e->getMessage(), 'line' => $e->getLine(), 'file' => $e->getFile()];
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile()
+            ];
         }
+    }
+
+    private function getEmailTemplate(array $data): ?object
+    {
+        if (!empty($data['email_template_id'])) {
+            return $this->emailTemplateService->get($data['email_template_id']);
+        }
+        return null;
+    }
+
+    private function createEmailTemplateLog(array $data, ?object $emailTemplate): EmailTemplateLog
+    {
+        return EmailTemplateLog::create([
+            'name' => $emailTemplate ? $emailTemplate->name : '-',
+            'subject' => $data['subject'],
+            'body' => $data['body'],
+        ]);
+    }
+
+    private function handleAttachments(array $files, ?object $campaign, EmailTemplateLog $emailTemplateLog): void
+    {
+        foreach ($files as $attachment) {
+            if ($attachment instanceof \Illuminate\Http\UploadedFile) {
+                $file = app(FileHelper::class)->directUpload($attachment, 'emails');
+                EmailAttachment::create([
+                    'email_campaign_id' => $campaign ? $campaign->id : null,
+                    'email_template_log_id' => $emailTemplateLog->id,
+                    'file_id' => $file->id,
+                ]);
+            }
+        }
+    }
+
+    private function getEmailRecipients($data)
+    {
+        switch ($data['recipients_type']) {
+            case EmailType::SINGLE:
+                return [EmailRecipient::firstOrCreate(['email' => $data['email']])];
+
+            case EmailType::MULTIPLE:
+                return EmailRecipient::whereIn("email", $data['emails'])->get();
+
+            case EmailType::ALL_USERS:
+                $this->saveSubscribersAsRecipients();
+                return $this->emailRecipientService->getAll();
+
+            case EmailType::RECIPIENTS_ONLY:
+                return $this->emailRecipientService->getAll();
+
+            case EmailType::UPLOAD_EXCEL:
+                return $this->saveRecipientsFromExcel($data);
+
+            case EmailType::GROUPS:
+                return $this->emailGroupService->getRecipientsByIds($data['groups']);
+
+            default:
+                return [];
+        }
+    }
+
+    private function createEmailLogs($emailRecipients, EmailTemplateLog $emailTemplateLog, array $data, ?object $campaign): void
+    {
+        foreach ($emailRecipients as $emailRecipient) {
+            $emailRecipientMeta = $this->getRecipientMeta($emailRecipient);
+            $formattedEmail = $this->getFormattedEmail($emailRecipientMeta, $data);
+
+            EmailLog::create([
+                'email_recipient_id' => $emailRecipient->id,
+                'email_template_log_id' => $emailTemplateLog->id,
+                'email_credential_id' => $data['email_credential_id'],
+                'email_campaign_id' => $campaign ? $campaign->id : null,
+                'email' => $emailRecipient->email,
+                'status' => 'processing',
+                'subject' => $formattedEmail['subject'],
+                'body' => $formattedEmail['body'],
+                'email_recipient_meta' => $formattedEmail['metadata'] ?? null,
+            ]);
+        }
+    }
+
+    private function getRecipientMeta(EmailRecipient $emailRecipient)
+    {
+        return EmailRecipientMeta::where("email_recipient_id", $emailRecipient->id)->get();
+    }
+
+    private function getFormattedEmail($emailRecipientMeta, array $data): array
+    {
+        if ($emailRecipientMeta) {
+            return $this->formatEmailMetadata($emailRecipientMeta, $data['subject'], $data['body']);
+        }
+
+        return [
+            'subject' => $data['subject'],
+            'body' => $data['body'],
+            'metadata' => null
+        ];
     }
 
     public function saveSubscribersAsRecipients()
@@ -230,7 +273,7 @@ class EmailRepository implements EmailInterface
 
             $excelEmailRecipients[] = $excelEmailRecipient;
         }
-        
+
         return $excelEmailRecipients;
     }
 
@@ -269,7 +312,7 @@ class EmailRepository implements EmailInterface
         return EmailCredential::where('status', 'active')->get();
     }
 
-    public function getEmailTemplate(array $data)
+    public function getEmailTemplates(array $data)
     {
         return EmailTemplate::where('status', 'active')->get();
     }

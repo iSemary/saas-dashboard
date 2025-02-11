@@ -10,16 +10,12 @@ let cols = [
         name: "name",
     },
     {
-        data: "status",
-        name: "status",
-    },
-    {
-        data: "scheduled_at",
-        name: "scheduled_at",
-    },
-    {
         data: "total_users",
         name: "total_users",
+    },
+    {
+        data: "status",
+        name: "status",
     },
     {
         data: "actions",

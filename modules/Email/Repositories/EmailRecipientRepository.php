@@ -3,6 +3,7 @@
 namespace Modules\Email\Repositories;
 
 use App\Helpers\TableHelper;
+use Gate;
 use Modules\Email\Entities\EmailRecipient;
 use Yajra\DataTables\DataTables;
 
@@ -27,8 +28,16 @@ class EmailRecipientRepository implements EmailRecipientInterface
 
     public function getPaginated()
     {
-        return $this->model->paginate(20);
+        $query = $this->model;
+    
+        if (request()->has('term')) {
+            $term = request()->input('term');
+            $query = $query->where('email', 'like', "%{$term}%");
+        }
+    
+        return $query->paginate(20);
     }
+    
 
     public function datatables()
     {
@@ -41,6 +50,15 @@ class EmailRecipientRepository implements EmailRecipientInterface
         );
 
         return DataTables::of($rows)
+            ->addColumn('groups', function ($row) {
+                $groupNames = $row->groups()
+                ->whereNull('email_groups.deleted_at')
+                ->whereNull('email_recipient_groups.deleted_at')
+                ->pluck('email_groups.name')
+                ->toArray();
+            
+                return implode(' ', array_map(fn($name) => "<span class='badge badge-info'>{$name}</span>", $groupNames));
+            })
             ->addColumn('total_metadata', function ($row) {
                 return $row->metas->count();
             })
@@ -51,7 +69,7 @@ class EmailRecipientRepository implements EmailRecipientInterface
                 return translate($row->status);
             })
             ->addColumn('actions', function ($row) {
-                return TableHelper::actionButtons(
+                $actionButtons = TableHelper::actionButtons(
                     row: $row,
                     editRoute: 'landlord.email-recipients.edit',
                     deleteRoute: 'landlord.email-recipients.destroy',
@@ -61,8 +79,16 @@ class EmailRecipientRepository implements EmailRecipientInterface
                     showIconsOnly: false,
                     showActivityLogs: $this->model
                 );
+
+                if (Gate::allows('read.email_groups')) {
+                    $actionButtons .= '<button type="button" data-modal-title="' . translate('assign_to_groups') . '" data-modal-link="' . route('landlord.email-recipients.groups', $row->id) . '" class="btn-orange m-1 btn-sm open-details-btn">';
+                    $actionButtons .= '<i class="fas fa-user-friends fa-fw"></i> ' . translate('assign_to_groups');
+                    $actionButtons .= '</button>';
+                }
+
+                return $actionButtons;
             })
-            ->rawColumns(['actions'])
+            ->rawColumns(['groups','actions'])
             ->make(true);
     }
 

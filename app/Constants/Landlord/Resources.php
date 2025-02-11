@@ -126,6 +126,10 @@ class Resources
                 'actions' => ['read', 'create', 'update', 'delete', 'restore']
             ],
             [
+                'name' => 'email_groups',
+                'actions' => ['read', 'create', 'update', 'delete', 'restore']
+            ],
+            [
                 'name' => 'email_campaigns',
                 'actions' => ['read', 'create', 'update', 'delete', 'restore']
             ],
@@ -187,6 +191,10 @@ class Resources
             ],
             [
                 'name' => 'units',
+                'actions' => ['read', 'create', 'update', 'delete', 'restore']
+            ],
+            [
+                'name' => 'static_pages',
                 'actions' => ['read', 'create', 'update', 'delete', 'restore']
             ],
             [

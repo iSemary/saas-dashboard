@@ -1,30 +1,20 @@
 <?php
 
-namespace Modules\Email\Http\Controllers;
+namespace Modules\Utilities\Http\Controllers;
 
-use App\Constants\EmailType;
 use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
-use Modules\Email\Services\EmailCampaignService;
+use Modules\Utilities\Services\StaticPageService;
 use Illuminate\Http\Request;
-use Modules\Email\Services\EmailCredentialService;
-use Modules\Email\Services\EmailTemplateService;
-use Modules\Email\Services\EmailService;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Routing\Controllers\HasMiddleware;
-use ReflectionClass;
 
-class EmailCampaignController extends ApiController implements HasMiddleware
+class StaticPageController extends ApiController implements HasMiddleware
 {
     protected $service;
-    protected $emailService;
-    protected $emailCredentialService;
-    protected $emailTemplateService;
 
-    public function __construct(EmailCampaignService $service, EmailService $emailService, EmailCredentialService $emailCredentialService, EmailTemplateService $emailTemplateService)
+    public function __construct(StaticPageService $service)
     {
-        $this->emailCredentialService = $emailCredentialService;
-        $this->emailTemplateService = $emailTemplateService;
         $this->service = $service;
     }
     public function index()
@@ -33,7 +23,6 @@ class EmailCampaignController extends ApiController implements HasMiddleware
             return $this->service->getDataTables();
         }
         $title = translate($this->service->model->pluralTitle);
-
         $breadcrumbs = [
             ['text' => translate('home'), 'link' => route('home')],
             ['text' => translate($this->service->model->pluralTitle)],
@@ -44,22 +33,21 @@ class EmailCampaignController extends ApiController implements HasMiddleware
                 'text' => translate("create") . " " . translate($this->service->model->singleTitle),
                 'class' => 'open-create-modal btn-sm btn-success',
                 'attr' => [
-                    'data-modal-link' => route('landlord.email-campaigns.create'),
+                    'data-modal-link' => route('landlord.static-pages.create'),
                     'data-modal-title' => translate("create") . " " . translate($this->service->model->singleTitle),
                 ]
             ],
         ];
 
-        return view('landlord.emails.email-campaigns.index', compact('breadcrumbs', 'title', 'actionButtons'));
+        return view('landlord.utilities.static-pages.index', compact('breadcrumbs', 'title', 'actionButtons'));
     }
 
     public function create()
     {
-        $emailCredentials = $this->emailCredentialService->getAll(['status' => 'active']);
-        $emailTemplates = $this->emailTemplateService->getAll(['status' => 'active']);
         $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
-        $emailTypes = (new ReflectionClass(EmailType::class))->getConstants();
-        return view('landlord.emails.email-campaigns.editor', compact('statusOptions', 'emailTemplates', 'emailCredentials', 'emailTypes'));
+        $attributeKeys = EnumHelper::getEnumFromTable('static_page_attributes', "attribute_key");
+        $attributeStatusOptions = EnumHelper::getEnumFromTable('static_page_attributes', "status");
+        return view('landlord.utilities.static-pages.editor', compact('statusOptions','attributeKeys', 'attributeStatusOptions'));
     }
 
     public function store(Request $request)
@@ -73,11 +61,11 @@ class EmailCampaignController extends ApiController implements HasMiddleware
 
     public function edit($id)
     {
-        $emailCredentials = $this->emailCredentialService->getAll(['status' => 'active']);
-        $emailTemplates = $this->emailTemplateService->getAll(['status' => 'active']);
         $row = $this->service->get($id);
         $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
-        return view('landlord.emails.email-campaigns.editor', compact('row', 'statusOptions', 'emailTemplates', 'emailCredentials'));
+        $attributeKeys = EnumHelper::getEnumFromTable('static_page_attributes', "attribute_key");
+        $attributeStatusOptions = EnumHelper::getEnumFromTable('static_page_attributes', "status");
+        return view('landlord.utilities.static-pages.editor', compact('row','attributeKeys', 'statusOptions', 'attributeStatusOptions'));
     }
 
     public function update(Request $request, $id)
@@ -102,11 +90,11 @@ class EmailCampaignController extends ApiController implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:read.email_campaigns', only: ['index', 'show']),
-            new Middleware('permission:create.email_campaigns', only: ['create', 'store']),
-            new Middleware('permission:update.email_campaigns', only: ['edit', 'update']),
-            new Middleware('permission:delete.email_campaigns', only: ['destroy']),
-            new Middleware('permission:restore.email_campaigns', only: ['restore']),
+            new Middleware('permission:read.static_pages', only: ['index', 'show']),
+            new Middleware('permission:create.static_pages', only: ['create', 'store']),
+            new Middleware('permission:update.static_pages', only: ['edit', 'update']),
+            new Middleware('permission:delete.static_pages', only: ['destroy']),
+            new Middleware('permission:restore.static_pages', only: ['restore']),
         ];
     }
 }

@@ -1,0 +1,30 @@
+<?php
+
+namespace Modules\Utilities\Entities;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
+
+class StaticPage extends Model implements Auditable
+{
+    use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable;
+
+    protected $connection = "landlord";
+
+    public $singleTitle = "static_page";
+    public $pluralTitle = "static_pages";
+
+    protected $fillable = [
+        'name',
+        'slug',
+        'description',
+        'status',
+    ];
+
+    public function attributes()
+    {
+        return $this->hasMany(StaticPageAttribute::class, 'static_page_id');
+    }
+}

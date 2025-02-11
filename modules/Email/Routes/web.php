@@ -7,6 +7,7 @@ use Modules\Email\Http\Controllers\EmailSubscriberController;
 use Modules\Email\Http\Controllers\EmailCampaignController;
 use Modules\Email\Http\Controllers\EmailCredentialController;
 use Modules\Email\Http\Controllers\EmailRecipientController;
+use Modules\Email\Http\Controllers\EmailGroupController;
 
 Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_roles', '2fa'])->group(function () {
     // Email Templates
@@ -14,7 +15,13 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_
 
     // Email Recipients
     Route::get('email-recipients/list', [EmailRecipientController::class, "list"])->name('email-recipients.list');
+    Route::get('email-recipients/groups/{id}', [EmailRecipientController::class, "groups"])->name('email-recipients.groups');
+    Route::post('email-recipients/groups/{id}', [EmailRecipientController::class, "assignGroups"])->name('email-recipients.assignGroups');
     Route::resource('email-recipients', EmailRecipientController::class)->names('email-recipients');
+    
+    // Email Groups 
+    Route::get('email-groups/list', [EmailGroupController::class, "list"])->name('email-groups.list');
+    Route::resource('email-groups', EmailGroupController::class)->names('email-groups');
     
     // Email Credentials
     Route::resource('email-credentials', EmailCredentialController::class)->names('email-credentials');

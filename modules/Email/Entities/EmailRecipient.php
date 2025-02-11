@@ -25,4 +25,9 @@ class EmailRecipient extends Model implements Auditable
     {
         return $this->hasMany(EmailRecipientMeta::class);
     }
+
+    public function groups()
+    {
+        return $this->belongsToMany(EmailGroup::class, 'email_recipient_groups', 'email_recipient_id', 'email_group_id');
+    }
 }

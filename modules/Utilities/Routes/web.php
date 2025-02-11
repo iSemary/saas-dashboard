@@ -10,6 +10,7 @@ use Modules\Utilities\Http\Controllers\ReleaseController;
 use Modules\Utilities\Http\Controllers\TagController;
 use Modules\Utilities\Http\Controllers\TypeController;
 use Modules\Utilities\Http\Controllers\UnitController;
+use Modules\Utilities\Http\Controllers\StaticPageController;
 
 
 Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_roles', '2fa'])->group(function () {
@@ -26,4 +27,5 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_
     Route::resource('types', TypeController::class)->names('types');
     Route::resource('industries', IndustryController::class)->names('industries');
     Route::resource('units', UnitController::class)->names('units');
+    Route::resource('static-pages', StaticPageController::class)->names('static-pages');
 });

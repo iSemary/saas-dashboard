@@ -11,8 +11,6 @@
             <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown"
                 data-notifications-list-route="{{ route('notifications.list') }}"
                 data-notifications-route-route="{{ route('notifications.index') }}"
-                data-no-notifications-message="{{ translate('no_notifications_yet') }}"
-                data-notifications-view-all-message="{{ translate('view_all') }}"
                 role="button" data-toggle="dropdown"
                 aria-expanded="false">
                 <i class="fas fa-bell"></i>

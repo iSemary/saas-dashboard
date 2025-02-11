@@ -18,6 +18,10 @@ let cols = [
         name: "total_metadata",
     },
     {
+        data: "groups",
+        name: "groups",
+    },
+    {
         data: "status",
         name: "status",
     },

@@ -128,6 +128,17 @@
                                         'create' => 'landlord.email-recipients.create',
                                     ],
                                 ],
+                                'email_groups' => [
+                                    'icon' => 'fas fa-user-friends',
+                                    'permission' => [
+                                        'read' => 'read.email_groups',
+                                        'create' => 'create.email_groups',
+                                    ],
+                                    'routes' => [
+                                        'index' => 'landlord.email-groups.index',
+                                        'create' => 'landlord.email-groups.create',
+                                    ],
+                                ],
                                 'email_subscribers' => [
                                     'icon' => 'fas fa-users',
                                     'permission' => 'read.email_subscribers',
@@ -394,6 +405,17 @@
                                     'routes' => [
                                         'index' => 'landlord.announcements.index',
                                         'create' => 'landlord.announcements.create',
+                                    ],
+                                ],
+                                'static_pages' => [
+                                    'icon' => 'fas fa-scroll',
+                                    'permission' => [
+                                        'read' => 'read.static_pages',
+                                        'create' => 'create.static_pages',
+                                    ],
+                                    'routes' => [
+                                        'index' => 'landlord.static-pages.index',
+                                        'create' => 'landlord.static-pages.create',
                                     ],
                                 ],
                                 'releases' => [

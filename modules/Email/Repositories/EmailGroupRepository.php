@@ -3,17 +3,17 @@
 namespace Modules\Email\Repositories;
 
 use App\Helpers\TableHelper;
-use Modules\Email\Entities\EmailCampaign;
-use Modules\Email\Entities\EmailLog;
+use Modules\Email\Entities\EmailGroup;
+use Modules\Email\Entities\EmailRecipient;
 use Yajra\DataTables\DataTables;
 
-class EmailCampaignRepository implements EmailCampaignInterface
+class EmailGroupRepository implements EmailGroupInterface
 {
     protected $model;
 
-    public function __construct(EmailCampaign $emailCampaign)
+    public function __construct(EmailGroup $emailGroup)
     {
-        $this->model = $emailCampaign;
+        $this->model = $emailGroup;
     }
 
     public function all()
@@ -21,6 +21,23 @@ class EmailCampaignRepository implements EmailCampaignInterface
         return $this->model->all();
     }
 
+    public function count()
+    {
+        return $this->model->count();
+    }
+
+    public function getPaginated()
+    {
+        $query = $this->model;
+    
+        if (request()->has('term')) {
+            $term = request()->input('term');
+            $query = $query->where('name', 'like', "%{$term}%");
+        }
+    
+        return $query->paginate(20);
+    }
+    
     public function datatables()
     {
         $rows = $this->model->query()->withTrashed()->where(
@@ -32,28 +49,25 @@ class EmailCampaignRepository implements EmailCampaignInterface
         );
 
         return DataTables::of($rows)
+            ->addColumn('total_users', function ($row) {
+                return $row->recipients()->count();
+            })
             ->editColumn('status', function ($row) {
                 return translate($row->status);
-            })
-            ->addColumn('total_users', function ($row) {
-                $count = EmailLog::where('email_campaign_id', $row->id)->count();
-                return '<a class="" href="' . route("landlord.emails.index") . '?campaign_id=' . $row->id . '" target="_blank">' . $count . '</a>';
-            })
-            ->editColumn('scheduled_at', function ($row) {
-                return ($row->scheduled_at ? $row->scheduled_at : translate("instant"));
             })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
                     row: $row,
-                    deleteRoute: 'landlord.email-campaigns.destroy',
-                    restoreRoute: 'landlord.email-campaigns.restore',
+                    editRoute: 'landlord.email-groups.edit',
+                    deleteRoute: 'landlord.email-groups.destroy',
+                    restoreRoute: 'landlord.email-groups.restore',
                     type: $this->model->pluralTitle,
                     titleType: $this->model->singleTitle,
                     showIconsOnly: false,
                     showActivityLogs: $this->model
                 );
             })
-            ->rawColumns(['total_users', 'scheduled_at', 'actions'])
+            ->rawColumns(['actions'])
             ->make(true);
     }
 
@@ -62,12 +76,24 @@ class EmailCampaignRepository implements EmailCampaignInterface
         return $this->model->find($id);
     }
 
+    public function getRecipientsByIds($ids)
+    {
+        return EmailRecipient::whereIn('id', function ($query) use ($ids) {
+            $query->select('email_recipient_id')
+                  ->from('email_recipient_groups')
+                  ->whereIn('email_group_id', $ids);
+        })->get();
+    }
+
+    public function getByEmail($email)
+    {
+        return $this->model->whereEmail($email)->first();
+    }
+
     public function create(array $data)
     {
-        $campaign = $this->model->create($data);
-        $data['campaign'] = $campaign;
-
-        app(EmailRepository::class)->send($data);
+        $emailRecipient = $this->model->create($data);
+        return $emailRecipient;
     }
 
     public function update($id, array $data)

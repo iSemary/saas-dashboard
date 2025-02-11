@@ -1,3 +1,46 @@
+{{-- Log Details --}}
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-6">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item p-1">
+                        <strong>{{ translate('status') }}:</strong>
+                        {{ translate($data->status) }}
+                    </li>
+                    <li class="list-group-item p-1">
+                        <strong>{{ translate('opened_at') }}:</strong>
+                        {{ $data->opened_at ?? '-' }}
+                    </li>
+                    <li class="list-group-item p-1">
+                        <strong>{{ translate('clicked_at') }}:</strong>
+                        {{ $data->clicked_at ?? '-' }}
+                    </li>
+                </ul>
+            </div>
+            <div class="col-6">
+                <ul class="list-group list-group-flush">
+                    @if (!empty($data->template_name))
+                        <li class="list-group-item p-1"><strong>{{ translate('template') }}:</strong>
+                            {{ $data->template_name }}
+                        </li>
+                    @endif
+                    @if (!empty($data->campaign_name))
+                        <li class="list-group-item p-1"><strong>{{ translate('campaign') }}:</strong>
+                            {{ $data->campaign_name }}
+                        </li>
+                    @endif
+                    <li class="list-group-item p-1">
+                        <strong>{{ translate('sent_from') }}:</strong> {{ $data->email_from }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{{-- Email Details --}}
 <div class="card">
     {{-- <div class="card-header">
         <div class="card-tools">

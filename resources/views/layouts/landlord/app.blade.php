@@ -159,6 +159,8 @@
     </script>
     <script src="{{ asset('assets/landlord/js/main.js') . '?v=' . filemtime(public_path('assets/landlord/js/main.js')) }}">
     </script>
+    <script src="{{ asset('assets/shared/js/components/notifications.js') . '?v=' . filemtime(public_path('assets/shared/js/components/notifications.js')) }}">
+    </script>
     
     @yield('scripts')
     @stack('scripts')

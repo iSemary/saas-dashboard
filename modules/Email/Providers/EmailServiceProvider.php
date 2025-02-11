@@ -13,6 +13,8 @@ use Modules\Email\Repositories\EmailCampaignInterface;
 use Modules\Email\Repositories\EmailCampaignRepository;
 use Modules\Email\Repositories\EmailCredentialInterface;
 use Modules\Email\Repositories\EmailCredentialRepository;
+use Modules\Email\Repositories\EmailGroupInterface;
+use Modules\Email\Repositories\EmailGroupRepository;
 
 class EmailServiceProvider extends ServiceProvider
 {
@@ -23,6 +25,7 @@ class EmailServiceProvider extends ServiceProvider
         $this->app->bind(EmailSubscriberInterface::class, EmailSubscriberRepository::class);
         $this->app->bind(EmailCampaignInterface::class, EmailCampaignRepository::class);
         $this->app->bind(EmailCredentialInterface::class, EmailCredentialRepository::class);
+        $this->app->bind(EmailGroupInterface::class, EmailGroupRepository::class);
     }
 
     public function boot() {}

@@ -6,8 +6,20 @@ let cols = [
         name: "id",
     },
     {
+        data: "slug",
+        name: "slug",
+    },
+    {
         data: "name",
         name: "name",
+    },
+    {
+        data: "description",
+        name: "description",
+    },
+    {
+        data: "status",
+        name: "status",
     },
     {
         data: "actions",

@@ -9,4 +9,5 @@ class EmailType
     const MULTIPLE = 'multiple';
     const SINGLE = 'single';
     const UPLOAD_EXCEL = 'upload_excel';
+    const GROUPS = 'groups';
 }

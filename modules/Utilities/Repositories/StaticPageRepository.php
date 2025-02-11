@@ -1,19 +1,18 @@
 <?php
 
-namespace Modules\Email\Repositories;
+namespace Modules\Utilities\Repositories;
 
 use App\Helpers\TableHelper;
-use Modules\Email\Entities\EmailCampaign;
-use Modules\Email\Entities\EmailLog;
+use Modules\Utilities\Entities\StaticPage;
 use Yajra\DataTables\DataTables;
 
-class EmailCampaignRepository implements EmailCampaignInterface
+class StaticPageRepository implements StaticPageInterface
 {
     protected $model;
 
-    public function __construct(EmailCampaign $emailCampaign)
+    public function __construct(StaticPage $staticPage)
     {
-        $this->model = $emailCampaign;
+        $this->model = $staticPage;
     }
 
     public function all()
@@ -35,25 +34,18 @@ class EmailCampaignRepository implements EmailCampaignInterface
             ->editColumn('status', function ($row) {
                 return translate($row->status);
             })
-            ->addColumn('total_users', function ($row) {
-                $count = EmailLog::where('email_campaign_id', $row->id)->count();
-                return '<a class="" href="' . route("landlord.emails.index") . '?campaign_id=' . $row->id . '" target="_blank">' . $count . '</a>';
-            })
-            ->editColumn('scheduled_at', function ($row) {
-                return ($row->scheduled_at ? $row->scheduled_at : translate("instant"));
-            })
             ->addColumn('actions', function ($row) {
                 return TableHelper::actionButtons(
                     row: $row,
-                    deleteRoute: 'landlord.email-campaigns.destroy',
-                    restoreRoute: 'landlord.email-campaigns.restore',
+                    editRoute: 'landlord.static-pages.edit',
+                    deleteRoute: 'landlord.static-pages.destroy',
+                    restoreRoute: 'landlord.static-pages.restore',
                     type: $this->model->pluralTitle,
                     titleType: $this->model->singleTitle,
-                    showIconsOnly: false,
-                    showActivityLogs: $this->model
+                    showIconsOnly: false
                 );
             })
-            ->rawColumns(['total_users', 'scheduled_at', 'actions'])
+            ->rawColumns(['actions'])
             ->make(true);
     }
 
@@ -64,10 +56,7 @@ class EmailCampaignRepository implements EmailCampaignInterface
 
     public function create(array $data)
     {
-        $campaign = $this->model->create($data);
-        $data['campaign'] = $campaign;
-
-        app(EmailRepository::class)->send($data);
+        return $this->model->create($data);
     }
 
     public function update($id, array $data)

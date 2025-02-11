@@ -513,12 +513,23 @@ function filterTable({
             $(tableID).DataTable().destroy();
         }
     }
-
+    
+    let urlParams = new URLSearchParams(window.location.search);
     let data = {
-        from_date: fromDate ?? null,
-        to_date: toDate ?? null,
+        from_date: urlParams.get('from_date') ?? fromDate ?? null,
+        to_date: urlParams.get('to_date') ?? toDate ?? null,
         table: true,
     };
+    
+    // Convert all URL parameters into the data object
+    urlParams.forEach((value, key) => {
+        if (!data.hasOwnProperty(key)) {
+            data[key] = value;
+        }
+    });
+    
+    console.log(data);
+    
 
     if (dataExtra) {
         $.extend(data, dataExtra);

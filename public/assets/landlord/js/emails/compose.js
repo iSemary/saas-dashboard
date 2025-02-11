@@ -3,13 +3,15 @@ $(document).on("change", "#recipientsType", function () {
     const recipientsType = $(this).val();
     const recipientsRoute = $(this).data("recipients-route");
     const allUsersRoute = $(this).data("all-users-route");
-    showRecipientsContainer(recipientsType, recipientsRoute, allUsersRoute);
+    const groupsRoute = $(this).data("groups-route");
+    showRecipientsContainer(recipientsType, recipientsRoute, allUsersRoute, groupsRoute);
 });
 
 function showRecipientsContainer(
     recipientsType,
     recipientsRoute,
-    allUsersRoute
+    allUsersRoute,
+    groupsRoute
 ) {
     $(".email-to-container").html("");
 
@@ -28,6 +30,9 @@ function showRecipientsContainer(
             break;
         case "upload_excel":
             showUploadExcelRecipientsContainer();
+            break;
+        case "groups":
+            showGroupsContainer(groupsRoute);
             break;
         default:
             break;
@@ -119,6 +124,58 @@ function showMultipleRecipientsContainer(recipientsRoute) {
             cache: true,
         },
         placeholder: `${t('search_for_recipients')}...`,
+        language: {
+            searching: function () {
+                return `${t('searching')}...`;
+            },
+        },
+        minimumInputLength: 1,
+    });
+}
+
+function showGroupsContainer(groupsRoute) {
+    $(".email-to-container").html(
+        `<select name="groups[]" class="form-control groups-selector" required multiple></select>`
+    );
+
+    $(".groups-selector").select2({
+        allowClear: true,
+        ajax: {
+            url: groupsRoute,
+            dataType: "json",
+            delay: 250,
+            data: function (params) {
+                return {
+                    term: params.term || "", // Search term
+                    page: params.page || 1, // Current page for pagination
+                };
+            },
+            processResults: function (response, params) {
+                // Extract the data from the nested structure
+                const items = response.data.data.data;
+
+                // Map the data to the format Select2 expects
+                const results = items.map(function (item) {
+                    return {
+                        id: item.id, // Use 'id' as the value
+                        text: item.name, // Use 'name' as the displayed text
+                    };
+                });
+
+                // Check if there are more pages
+                const pagination = response.data.data;
+                const hasMore = pagination.current_page < pagination.last_page;
+
+                return {
+                    results: results,
+                    pagination: {
+                        more: hasMore,
+                    },
+                };
+            },
+            cache: true,
+        },
+        placeholder: `${t('search_for_groups')}...`,
         language: {
             searching: function () {
                 return `${t('searching')}...`;

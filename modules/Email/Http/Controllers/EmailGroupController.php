@@ -4,22 +4,18 @@ namespace Modules\Email\Http\Controllers;
 
 use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
-use Modules\Email\Services\EmailRecipientService;
+use Modules\Email\Services\EmailGroupService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Routing\Controllers\HasMiddleware;
-use Modules\Email\Entities\EmailRecipientGroup;
-use Modules\Email\Services\EmailGroupService;
 
-class EmailRecipientController extends ApiController implements HasMiddleware
+class EmailGroupController extends ApiController implements HasMiddleware
 {
-    protected $service;
-    protected $emailGroupService;
+    protected EmailGroupService $service;
 
-    public function __construct(EmailRecipientService $service, EmailGroupService $emailGroupService)
+    public function __construct(EmailGroupService $service)
     {
         $this->service = $service;
-        $this->emailGroupService = $emailGroupService;
     }
     public function index()
     {
@@ -38,19 +34,19 @@ class EmailRecipientController extends ApiController implements HasMiddleware
                 'text' => translate("create") . " " . translate($this->service->model->singleTitle),
                 'class' => 'open-create-modal btn-sm btn-success',
                 'attr' => [
-                    'data-modal-link' => route('landlord.email-recipients.create'),
+                    'data-modal-link' => route('landlord.email-groups.create'),
                     'data-modal-title' => translate("create") . " " . translate($this->service->model->singleTitle),
                 ]
             ],
         ];
 
-        return view('landlord.emails.email-recipients.index', compact('breadcrumbs', 'title', 'actionButtons'));
+        return view('landlord.emails.email-groups.index', compact('breadcrumbs', 'title', 'actionButtons'));
     }
 
     public function create()
     {
         $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), 'status');
-        return view('landlord.emails.email-recipients.editor', ['statusOptions' => $statusOptions]);
+        return view('landlord.emails.email-groups.editor', ['statusOptions' => $statusOptions]);
     }
 
     public function store(Request $request)
@@ -66,7 +62,7 @@ class EmailRecipientController extends ApiController implements HasMiddleware
     {
         $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), 'status');
         $row = $this->service->get($id);
-        return view('landlord.emails.email-recipients.editor', compact('row', 'statusOptions'));
+        return view('landlord.emails.email-groups.editor', compact('row', 'statusOptions'));
     }
 
     public function update(Request $request, $id)
@@ -94,38 +90,14 @@ class EmailRecipientController extends ApiController implements HasMiddleware
         return $this->return(200, 'All Recipients Fetched', ['data' => $list]);
     }
 
-    public function groups(int $id)
-    {
-        $groups = $this->emailGroupService->getAll();
-        $recipientGroups = EmailRecipientGroup::where("email_recipient_id", $id)->pluck('email_group_id')->toArray();
-
-        return view('landlord.emails.email-recipients.groups', ['id' => $id, 'groups' => $groups, 'recipientGroups' => $recipientGroups]);
-    }
-
-    public function assignGroups(Request $request, int $id)
-    {
-        EmailRecipientGroup::where("email_recipient_id", $id)->delete();
-
-        if ($request->groups) {
-            foreach ($request->groups as $group) {
-                EmailRecipientGroup::create([
-                    'email_recipient_id' => $id,
-                    'email_group_id' => $group
-                ]);
-            }
-        }
-
-        return $this->return(200, 'Recipient assigned successfully');
-    }
-
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:read.email_recipients', only: ['index', 'show']),
-            new Middleware('permission:create.email_recipients', only: ['create', 'store']),
-            new Middleware('permission:update.email_recipients', only: ['edit', 'update']),
-            new Middleware('permission:delete.email_recipients', only: ['destroy']),
-            new Middleware('permission:restore.email_recipients', only: ['restore']),
+            new Middleware('permission:read.email_groups', only: ['index', 'show']),
+            new Middleware('permission:create.email_groups', only: ['create', 'store']),
+            new Middleware('permission:update.email_groups', only: ['edit', 'update']),
+            new Middleware('permission:delete.email_groups', only: ['destroy']),
+            new Middleware('permission:restore.email_groups', only: ['restore']),
         ];
     }
 }

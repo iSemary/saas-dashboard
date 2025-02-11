@@ -21,6 +21,8 @@ use Modules\Utilities\Repositories\IndustryInterface;
 use Modules\Utilities\Repositories\IndustryRepository;
 use Modules\Utilities\Repositories\UnitInterface;
 use Modules\Utilities\Repositories\UnitRepository;
+use Modules\Utilities\Repositories\StaticPageInterface;
+use Modules\Utilities\Repositories\StaticPageRepository;
 
 class UtilitiesServiceProvider extends ServiceProvider
 {
@@ -35,6 +37,7 @@ class UtilitiesServiceProvider extends ServiceProvider
         $this->app->bind(IndustryInterface::class, IndustryRepository::class);
         $this->app->bind(ReleaseInterface::class, ReleaseRepository::class);
         $this->app->bind(UnitInterface::class, UnitRepository::class);
+        $this->app->bind(StaticPageInterface::class, StaticPageRepository::class);
     }
 
     public function boot() {}
