@@ -46,9 +46,7 @@ class TranslateHelper
 
     public static function getLanguage($language = null)
     {
-        if ($language) {
-            $language = $language;
-        } else {
+        if (!$language) {
             if (auth()->check()) {
                 $language = Session::get('language');
                 if (!$language) {
@@ -65,7 +63,7 @@ class TranslateHelper
         return $language;
     }
 
-    public static function returnTranslatableEditor($model, $column)
+    public static function returnTranslatableEditor($model, $column): string
     {
         $objectType = CryptHelper::encrypt(get_class($model));
         $objectKey = CryptHelper::encrypt($column);

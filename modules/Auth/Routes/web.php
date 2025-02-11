@@ -20,10 +20,6 @@ Route::middleware('guest')->group(function () {
     Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('login', [AuthController::class, 'login'])->name('login.submit');
 
-    // Registration
-    Route::get('register', [AuthController::class, 'showRegistrationForm'])->name('register.show');
-    Route::post('register', [AuthController::class, 'register'])->name('register.submit');
-
     // Forget Password
     Route::get('password/forget', [PasswordController::class, 'showForgetForm'])->name('password.forget.show');
     Route::post('password/forget', [PasswordController::class, 'submitForgetForm'])->name('password.forget.submit');

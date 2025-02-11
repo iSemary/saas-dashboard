@@ -120,9 +120,9 @@ class EmailRepository implements EmailInterface
      *  subject: Hello {{name}}
      *  body: <p>Hello</p> {{name}}
      *  attachments: [files or null]
-     * @return void
+     * @return array
      */
-    public function send(array $data)
+    public function send(array $data):array
     {
         try {
             DB::beginTransaction();
@@ -300,30 +300,9 @@ class EmailRepository implements EmailInterface
             return $metadata[$key] ?? '';
         }, $template);
     }
-
-
+    
     public function countAllEmails()
     {
         return $this->emailRecipientService->count() + $this->emailSubscriberService->count();
-    }
-
-    public function getEmailCredential(array $data)
-    {
-        return EmailCredential::where('status', 'active')->get();
-    }
-
-    public function getEmailTemplates(array $data)
-    {
-        return EmailTemplate::where('status', 'active')->get();
-    }
-
-    public function getEmailRecipient(array $data)
-    {
-        return EmailRecipient::where('status', 'active')->get();
-    }
-
-    public function getEmailAttachment(array $data)
-    {
-        return EmailAttachment::where('status', 'active')->get();
     }
 }
