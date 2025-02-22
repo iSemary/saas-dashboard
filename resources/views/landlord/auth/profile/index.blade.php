@@ -41,14 +41,16 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group mb-3">
-                                            <label for="name" class="form-label">@translate('name') <span class="text-danger">*</span></label>
+                                            <label for="name" class="form-label">@translate('name') <span
+                                                    class="text-danger">*</span></label>
                                             <input type="text" name="name" id="name" class="form-control"
                                                 value="{{ isset($user) ? $user->name : '' }}" required>
                                         </div>
                                     </div>
                                     <div class="col-md-12">
                                         <div class="form-group mb-3">
-                                            <label for="username" class="form-label">@translate('username') <span class="text-danger">*</span></label>
+                                            <label for="username" class="form-label">@translate('username') <span
+                                                    class="text-danger">*</span></label>
                                             <input type="text" name="username" id="username" class="form-control"
                                                 value="{{ isset($user) ? $user->username : '' }}" required>
                                         </div>
@@ -88,14 +90,16 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
-                                    <label for="email" class="form-label">@translate('email') <span class="text-danger">*</span></label>
+                                    <label for="email" class="form-label">@translate('email') <span
+                                            class="text-danger">*</span></label>
                                     <input type="email" name="email" id="email" class="form-control"
                                         value="{{ isset($user) ? $user->email : '' }}" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group mb-3 w-100">
-                                    <label for="phone" class="form-label">@translate('phone') <span class="text-danger">*</span></label><br />
+                                    <label for="phone" class="form-label">@translate('phone') <span
+                                            class="text-danger">*</span></label><br />
                                     <input type="tel" name="phone" id="phone"
                                         class="form-control intl-tel-input" required
                                         value="{{ isset($user) && $user->phone ? '+' . $user->phone : '' }}">
@@ -106,7 +110,8 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
-                                    <label for="address" class="form-label">@translate('address') <span class="text-danger">*</span></label>
+                                    <label for="address" class="form-label">@translate('address') <span
+                                            class="text-danger">*</span></label>
                                     <input name="address" id="address" class="form-control"
                                         value="{{ isset($user) ? $user->address : '' }}" />
                                 </div>
@@ -133,7 +138,8 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="translationValue" class="form-label">@translate('language') <span class="text-danger">*</span></label>
+                                    <label for="translationValue" class="form-label">@translate('language') <span
+                                            class="text-danger">*</span></label>
                                     <select class="form-control select2" name="language_id" required>
                                         <option value="">@translate('select')</option>
                                         @foreach ($languages as $language)
@@ -146,7 +152,8 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="country_id" class="form-label">@translate('country') <span class="text-danger">*</span></label>
+                                    <label for="country_id" class="form-label">@translate('country') <span
+                                            class="text-danger">*</span></label>
                                     <select class="select2 form-control" name="country_id" required>
                                         <option value="">@translate('select')</option>
                                         @foreach ($countries as $country)
@@ -176,8 +183,14 @@
                         @method('PUT')
                         <input type="hidden" name="type" value="security">
 
-                        2fa
-
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="d-block">@translate('reset_two_factor_authentication')</label>
+                                <button class="btn btn-danger reset-factor-authentication"
+                                    data-route="{{ route('2fa.reset') }}" type="button">@translate('reset')</button>
+                            </div>
+                        </div>
+                        <hr />
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group mb-3">

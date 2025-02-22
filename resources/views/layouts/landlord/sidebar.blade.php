@@ -146,6 +146,13 @@
                                     'single' => true,
                                     'external' => false,
                                 ],
+                                'email_log' => [
+                                    'icon' => 'fas fa-history',
+                                    'permission' => 'read.emails',
+                                    'route' => 'landlord.emails.index',
+                                    'single' => true,
+                                    'external' => false,
+                                ],
                                 'compose_email' => [
                                     'icon' => 'fas fa-paper-plane',
                                     'permission' => 'send.emails',
@@ -157,13 +164,6 @@
                                     'modal' => true,
                                     'class' => 'open-details-btn compose-email-btn',
                                     'text' => 'compose',
-                                ],
-                                'email_log' => [
-                                    'icon' => 'fas fa-history',
-                                    'permission' => 'read.emails',
-                                    'route' => 'landlord.emails.index',
-                                    'single' => true,
-                                    'external' => false,
                                 ],
                             ],
                         ],

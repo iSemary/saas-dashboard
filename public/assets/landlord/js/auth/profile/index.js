@@ -41,3 +41,22 @@ $("#removeAvatar").on("click", function (e) {
         }
     });
 });
+
+$(document).on("click", ".reset-factor-authentication", function (e) {
+    let url = $(this).data("route");
+    let btn = $(this);
+
+    btn.prop("disable", true);
+    
+    $.ajax({
+        type: "POST",
+        url: url,
+        dataType: "json",
+        success: function (response) {
+            location.reload();
+        },
+        error: function (xhr) {
+            btn.prop("disable", false);
+        },
+    });
+});

@@ -28,6 +28,11 @@ class EmailService
         return $this->repository->getById($id);
     }
 
+    public function resend(array $ids)
+    {
+        return $this->repository->resend($ids);
+    }
+
     public function countAllEmails()
     {
         return $this->repository->countAllEmails();

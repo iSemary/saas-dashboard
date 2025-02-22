@@ -51,6 +51,12 @@ Route::middleware('auth')->group(function () {
     Route::post('2fa/verify', [TwoFactorAuthController::class, 'verify'])->name('2fa.verify');
     Route::post('2fa/check', [TwoFactorAuthController::class, 'check'])->name('2fa.check');
 
+    Route::middleware('2fa')->group(function () {
+        Route::post('/2fa/reset', [TwoFactorAuthController::class, "reset"])->name('2fa.reset');
+    });
+
+
+
     // Login Attempts
     Route::get('attempts', [TwoFactorAuthController::class, 'showAttempts'])->name('attempts.index');
 

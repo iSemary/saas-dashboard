@@ -18,11 +18,11 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_
     Route::get('email-recipients/groups/{id}', [EmailRecipientController::class, "groups"])->name('email-recipients.groups');
     Route::post('email-recipients/groups/{id}', [EmailRecipientController::class, "assignGroups"])->name('email-recipients.assignGroups');
     Route::resource('email-recipients', EmailRecipientController::class)->names('email-recipients');
-    
+
     // Email Groups 
     Route::get('email-groups/list', [EmailGroupController::class, "list"])->name('email-groups.list');
     Route::resource('email-groups', EmailGroupController::class)->names('email-groups');
-    
+
     // Email Credentials
     Route::resource('email-credentials', EmailCredentialController::class)->names('email-credentials');
 
@@ -33,7 +33,8 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_
     Route::resource('email-subscribers', EmailSubscriberController::class)->names('email-subscribers')->only(['index', 'update', 'edit']);
 
     // Email Routes
-    Route::post('emails/resend/{id}', [EmailController::class, "resend"])->name('emails.resend');
+    Route::post('emails/resend/{id?}', [EmailController::class, "resend"])->name('emails.resend');
+    Route::post('emails/resend-multiple', [EmailController::class, "resendMultiple"])->name('emails.resend-multiple');
     Route::post('emails/send', [EmailController::class, "send"])->name('emails.send');
     Route::get('emails/compose', [EmailController::class, "compose"])->name('emails.compose');
     Route::get('emails', [EmailController::class, "index"])->name('emails.index');

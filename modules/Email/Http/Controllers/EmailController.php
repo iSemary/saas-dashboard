@@ -49,7 +49,18 @@ class EmailController extends ApiController implements HasMiddleware
                     'data-modal-link' => route('landlord.emails.compose'),
                     'data-modal-title' => translate("compose"),
                 ]
-            ]
+            ],
+            [
+                'text' => translate("resend"),
+                'icon' => '<i class="far fa-paper-plane"></i>',
+                'class' => 'btn-sm btn-primary text-white resend-multiple-emails',
+                'attr' => [
+                    'data-route' => route('landlord.emails.resend-multiple'),
+                    'data-method' => 'POST',
+                    'disabled' => true,
+                    'data-button-listen' => "select-row"
+                ]
+            ],
         ];
 
         return view('landlord.emails.index', compact('breadcrumbs', 'title', 'actionButtons'));
@@ -69,7 +80,25 @@ class EmailController extends ApiController implements HasMiddleware
         return view("landlord.emails.compose", ['emailCredentials' => $emailCredentials, 'emailTemplates' => $emailTemplates, 'emailTypes' => $emailTypes]);
     }
 
-    public function resend() {}
+    public function resend(int $id)
+    {
+        $response = $this->emailService->resend([$id]);
+        if (isset($response['success']) && $response['success']) {
+            return $this->return(200, translate('email_sent_successfully'), debug: $response ?? null);
+        }
+        return $this->return(200, translate('something_went_wrong'), debug: $response ?? null);
+    }
+
+    public function resendMultiple(Request $request)
+    {
+        $ids = array_map('intval', explode(',', $request->ids));
+        
+        $response = $this->emailService->resend($ids);
+        if (isset($response['success']) && $response['success']) {
+            return $this->return(200, translate('email_sent_successfully'), debug: $response ?? null);
+        }
+        return $this->return(200, translate('something_went_wrong'), debug: $response ?? null);
+    }
 
     public function send(Request $request)
     {

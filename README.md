@@ -17,6 +17,7 @@
     -   [Seed Default Landlord User (Landlord)](#seed-default-landlord-user-landlord)
     -   [Seed Modules (Landlord)](#seed-modules-landlord)
     -   [Seed Configurations (Landlord)](#seed-configurations-landlord)
+-   [Cron Jobs](#cron-jobs)
 -   [Logo Files](#logo-files)
 -   [Modules Stubs](#modules-stubs)
 -   [Global Classes](#global-classes)
@@ -143,6 +144,27 @@ php artisan db:seed --class=Modules\\Utilities\\Database\\Seeders\\ModulesSeeder
 
 ```bash
 php artisan db:seed --class=Modules\\Development\\Database\\Seeders\\ConfigurationsSeeder
+```
+
+---
+
+## Cron Jobs
+
+Email Processing: 
+
+1.Running for a Specific Tenant
+To process emails for a single tenant, use the --tenant option followed by the tenant’s domain.
+
+```bash
+php artisan process:emails --tenant=customer1
+```
+
+2. Running for All Tenants
+To process emails for all tenants in the system, run:
+
+
+```bash
+php artisan process:emails
 ```
 
 ---

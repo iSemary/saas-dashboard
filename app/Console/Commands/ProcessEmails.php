@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Console\Command;
 use Modules\Email\Entities\EmailLog;
 use Modules\Email\Repositories\EmailRepository;
+use Modules\Tenant\Entities\Tenant;
 
 class ProcessEmails extends Command
 {
@@ -15,14 +16,14 @@ class ProcessEmails extends Command
      *
      * @var string
      */
-    protected $signature = 'process:emails';
+    protected $signature = 'process:emails {--tenant= : Process emails for a specific tenant by domain}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Send emails for the pending email logs';
+    protected $description = 'Send emails for the pending email logs, either for a specific tenant or all tenants';
 
     /**
      * Execute the console command.
@@ -30,8 +31,19 @@ class ProcessEmails extends Command
     public function handle()
     {
         try {
+            $tenantDomain = $this->option('tenant');
 
-            $this->performSendingEmails();
+            if ($tenantDomain) {
+                $tenant = Tenant::where('domain', $tenantDomain)->first();
+                if (!$tenant) {
+                    $this->error("Tenant with domain '{$tenantDomain}' not found.");
+                    return;
+                }
+                $this->processForTenant($tenant);
+            } else {
+                Tenant::all()->each(fn ($tenant) => $this->processForTenant($tenant));
+            }
+
             $this->info('Process Emails executed successfully.');
         } catch (Exception $e) {
             $this->error('Error: ' . $e->getMessage());
@@ -39,21 +51,25 @@ class ProcessEmails extends Command
     }
 
     /**
-     * Perform the operation
+     * Process email sending for a specific tenant
      */
-    private function performSendingEmails(): void
+    private function processForTenant(Tenant $tenant): void
     {
-        EmailLog::where("status", "inactive")->chunk(100, function ($emails) {
-            foreach ($emails as $email) {
-                dispatch(new SendBaseEmail([
-                    'log_id' => $email->id,
-                    'email_credential_id' => $email->email_credential_id,
-                    'email' => $email->email,
-                    'subject' => $email->subject,
-                    'body' => $email->body,
-                    'attachments' => app(EmailRepository::class)->getEmailAttachments($email->id)
-                ]));
-            }
+        $tenant->execute(function () use ($tenant) {
+            EmailLog::where("status", "processing")->chunk(100, function ($emails) {
+                foreach ($emails as $email) {
+                    dispatch(new SendBaseEmail([
+                        'log_id' => $email->id,
+                        'email_credential_id' => $email->email_credential_id,
+                        'email' => $email->email,
+                        'subject' => $email->subject,
+                        'body' => $email->body,
+                        'attachments' => app(EmailRepository::class)->getEmailAttachments($email->id)
+                    ]));
+                }
+            });
         });
+
+        $this->info("Processed emails for tenant: {$tenant->domain}");
     }
 }

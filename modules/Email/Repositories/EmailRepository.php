@@ -5,12 +5,11 @@ namespace Modules\Email\Repositories;
 use App\Constants\EmailType;
 use App\Helpers\FileHelper;
 use App\Helpers\TableHelper;
+use App\Jobs\SendBaseEmail;
 use DataTables;
-use DB;
 use Exception;
 use Gate;
-use Modules\Email\Entities\EmailCredential;
-use Modules\Email\Entities\EmailTemplate;
+use Illuminate\Support\Facades\DB;
 use Modules\Email\Entities\EmailRecipient;
 use Modules\Email\Entities\EmailAttachment;
 use Modules\Email\Entities\EmailLog;
@@ -122,7 +121,7 @@ class EmailRepository implements EmailInterface
      *  attachments: [files or null]
      * @return array
      */
-    public function send(array $data):array
+    public function send(array $data): array
     {
         try {
             DB::beginTransaction();
@@ -137,6 +136,26 @@ class EmailRepository implements EmailInterface
 
             $emailRecipients = $this->getEmailRecipients($data);
             $this->createEmailLogs($emailRecipients, $emailTemplateLog, $data, $campaign);
+
+            DB::commit();
+            return ['success' => true];
+        } catch (Exception $e) {
+            DB::rollBack();
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile()
+            ];
+        }
+    }
+
+    public function resend(array $ids)
+    {
+        try {
+            DB::beginTransaction();
+
+            EmailLog::whereIn("id", $ids)->update(['status' => 'processing']);
 
             DB::commit();
             return ['success' => true];
@@ -300,7 +319,7 @@ class EmailRepository implements EmailInterface
             return $metadata[$key] ?? '';
         }, $template);
     }
-    
+
     public function countAllEmails()
     {
         return $this->emailRecipientService->count() + $this->emailSubscriberService->count();

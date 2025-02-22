@@ -5,11 +5,10 @@
             @include('layouts.shared.filter-date')
         </div>
         <div class="card-body">
-            <table id="table" data-route="{{ route('landlord.languages.index') }}" data-selectable="true"
+            <table id="table" data-route="{{ route('landlord.languages.index') }}"
                 class="table table-bordered table-striped table-hover">
                 <thead>
                     <tr>
-                        <th scope="col"><input type="checkbox" name="select_all_rows" id="selectAllRows" /></th>
                         <th scope="col">#</th>
                         <th scope="col">@translate('name')</th>
                         <th scope="col">@translate('locale')</th>

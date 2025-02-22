@@ -2,6 +2,7 @@
 
 namespace Modules\Email\Repositories;
 
+use App\Helpers\CryptHelper;
 use App\Helpers\TableHelper;
 use Modules\Email\Entities\EmailCredential;
 use Yajra\DataTables\DataTables;
@@ -28,7 +29,14 @@ class EmailCredentialRepository implements EmailCredentialInterface
 
     public function datatables()
     {
-        $rows = $this->model->query()->withTrashed()->where(
+        $rows = $this->model->query()->withTrashed()->select([
+            'id',
+            'name',
+            'description',
+            'from_address',
+            'from_name',
+            'status',
+        ])->where(
             function ($q) {
                 if (request()->from_date && request()->to_date) {
                     TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
@@ -37,7 +45,7 @@ class EmailCredentialRepository implements EmailCredentialInterface
         );
 
         return DataTables::of($rows)
-            ->editColumn('status', function($row) {
+            ->editColumn('status', function ($row) {
                 return translate($row->status);
             })
             ->addColumn('actions', function ($row) {
@@ -69,7 +77,11 @@ class EmailCredentialRepository implements EmailCredentialInterface
     {
         $row = $this->model->find($id);
         if ($row) {
-            if (!$data['password'] || empty($data['password'])) $data['password'] = $row->getRawOriginal('password');
+            if (!$data['password'] || empty($data['password'])) {
+                $data['password'] = $row->getRawOriginal('password');
+            } else {
+                $data['password'] = CryptHelper::encrypt($data['password']);
+            }
             $row->update($data);
             return $row;
         }
