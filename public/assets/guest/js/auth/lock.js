@@ -24,7 +24,7 @@ $(document).on("submit", "#unlockForm", function (e) {
     e.preventDefault();
 
     let method = $(this).attr("method");
-    let route = $(this).attr("action");
+    let tableRoute = $(this).attr("action");
 
     let password = $(this).find("#password").val();
     let formStatus = $(".form-status");

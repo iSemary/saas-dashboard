@@ -276,47 +276,52 @@ class TranslationRepository implements TranslationInterface
     public function getUsedTranslationInJs()
     {
         $keys = [];
-
+    
         // Define the directory to scan
         $directory = public_path();
-
+    
         // Create a RecursiveDirectoryIterator to iterate through the directory
         $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
-
+    
         // Filter out the Plugins folder
         $filter = function ($file) {
             return $file->isFile() && $file->getExtension() === 'js' && !str_contains($file->getPathname(), 'plugins');
         };
-
+    
         // Apply the filter
         $filteredIterator = new CallbackFilterIterator($iterator, $filter);
-
-        // Regular expression to match translate.* patterns
-        $pattern = '/translate\.([a-zA-Z0-9_]+)/';
-
+    
+        // Regular expression to match translate('example') or t("example")
+        $pattern = '/\b(translate|t)\([\'"]([a-zA-Z0-9_]+)[\'"]\)/';
+    
         foreach ($filteredIterator as $file) {
             $filePath = $file->getPathname();
             $content = file_get_contents($filePath);
-
-            // Search for translate.* patterns in the file content
+    
+            // Search for translation keys in the file content
             if (preg_match_all($pattern, $content, $matches)) {
-                foreach ($matches[1] as $key) {
-                    $keys[] = [
+                foreach ($matches[2] as $key) { // Use matches[2] to get the translation key
+                    $keys[$key] = [
                         'file' => $filePath,
-                        'key' => $key,
+                        'key' => $key, // Now correctly storing 'example' instead of 'translate' or 't'
                         'exists' => $this->exists($key),
                     ];
                 }
             }
         }
-
+    
+        // Convert associative array to indexed array
+        $keys = array_values($keys);
+    
         // Sort the $keys array by the 'exists' key (false first)
         usort($keys, function ($a, $b) {
             return $a['exists'] <=> $b['exists']; // false comes before true
         });
-
+    
         return $keys;
     }
+    
+
 
     // Scan all .php files in root folder [Excluded (vendor and plugins) folder]
     // then in the $keys array will contain file path and key in the file
@@ -325,12 +330,14 @@ class TranslationRepository implements TranslationInterface
     // it may contain more than one in the file 
     public function getUsedTranslationInPhp()
     {
+        $keys = [];
+    
         // Define the directory to scan (root folder)
         $directory = base_path();
-
+    
         // Create a RecursiveDirectoryIterator to iterate through the directory
         $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
-
+    
         // Filter out the vendor and plugins folders
         $filter = function ($file) {
             return $file->isFile() &&
@@ -338,34 +345,40 @@ class TranslationRepository implements TranslationInterface
                 !str_contains($file->getPathname(), 'vendor') &&
                 !str_contains($file->getPathname(), 'plugins');
         };
-
+    
         // Apply the filter
         $filteredIterator = new CallbackFilterIterator($iterator, $filter);
-
+    
         // Regular expression to match translate(*) and @translate(*) patterns
         $pattern = '/(@?)translate\(([\'"])([a-zA-Z0-9_]+)\2\)/';
-
+    
         foreach ($filteredIterator as $file) {
             $filePath = $file->getPathname();
             $content = file_get_contents($filePath);
-
+    
             // Search for translate(*) and @translate(*) patterns in the file content
             if (preg_match_all($pattern, $content, $matches)) {
                 foreach ($matches[3] as $key) {
-                    $keys[] = [
-                        'file' => $filePath,
-                        'key' => $key,
-                        'exists' => $this->exists($key),
-                    ];
+                    if (!isset($keys[$key])) { // Ensure uniqueness
+                        $keys[$key] = [
+                            'file' => $filePath,
+                            'key' => $key,
+                            'exists' => $this->exists($key),
+                        ];
+                    }
                 }
             }
         }
-
+    
+        // Convert associative array back to indexed array
+        $keys = array_values($keys);
+    
         // Sort the $keys array by the 'exists' key (false first)
         usort($keys, function ($a, $b) {
             return $a['exists'] <=> $b['exists']; // false comes before true
         });
-
+    
         return $keys;
     }
+    
 }

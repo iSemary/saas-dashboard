@@ -17,4 +17,4 @@ var cols = [
     },
 ];
 
-filterTable({ route: route, tableID: tableID, cols: cols });
+filterTable({ route: tableRoute, tableID: tableID, cols: cols });

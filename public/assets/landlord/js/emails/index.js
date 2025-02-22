@@ -39,7 +39,7 @@ var cols = [
 ];
 
 filterTable({
-    route: route,
+    route: tableRoute,
     tableID: tableID,
     cols: cols,
     selectable: selectable,

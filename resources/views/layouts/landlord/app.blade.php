@@ -154,6 +154,8 @@
         CKEDITOR.config.language = "{{ $language->locale }}";
     </script>
 
+    @routes
+
     {{-- Main Scripts --}}
     <script src="{{ asset('assets/shared/js/shared.js') . '?v=' . filemtime(public_path('assets/shared/js/shared.js')) }}">
     </script>

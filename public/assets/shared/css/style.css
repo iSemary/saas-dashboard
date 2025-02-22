@@ -630,8 +630,81 @@ label.required::after {
     .sticky-footer {
         padding: 10px 0;
     }
-    
+
     .sticky-form {
         padding-bottom: 60px;
     }
+}
+
+/* Notification toast */
+
+.notification-toast-container {
+    display: grid !important;
+    padding: 15px 30px !important;
+}
+
+.ltr .notification-toast-container #swal2-content {
+    text-align: left;
+    margin-top: 5px;
+
+}
+
+.rtl .notification-toast-container #swal2-content {
+    margin-top: 5px;
+    text-align: right;
+}
+
+.notification-toast-container .swal2-title {
+    margin: 0 !important;
+}
+
+.notification-toast-container.info-notification {
+    border-left: 3px solid #4690D6;
+}
+
+.notification-toast-container.info-notification .swal2-title {
+    color: #4690D6;
+}
+
+.notification-toast-container.success-notification {
+    border-left: 3px solid #04A55A;
+}
+
+.notification-toast-container.success-notification .swal2-title {
+    color: #04A55A;
+}
+
+.notification-toast-container.danger-notification {
+    border-left: 3px solid #D93053;
+}
+
+.notification-toast-container.danger-notification .swal2-title {
+    color: #D93053;
+}
+
+.notification-toast-container.warning-notification {
+    border-left: 3px solid #FB8621;
+}
+
+.notification-toast-container.warning-notification .swal2-title {
+    color: #FB8621;
+}
+
+.notification-toast-container .swal2-confirm {
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    background-color: transparent !important;
+    background-image: unset;
+    color: #7d7d7d !important;
+    border: 0 !important;
+}
+
+.notification-toast-container .swal2-confirm:active,
+.notification-toast-container .swal2-confirm:focus,
+.notification-toast-container .swal2-confirm:hover {
+    border: 0 !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+    background-image: unset !important;
 }

@@ -9,8 +9,6 @@
     <ul class="navbar-nav ml-auto icons-nav-section">
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown"
-                data-notifications-list-route="{{ route('notifications.list') }}"
-                data-notifications-route-route="{{ route('notifications.index') }}"
                 role="button" data-toggle="dropdown"
                 aria-expanded="false">
                 <i class="fas fa-bell"></i>

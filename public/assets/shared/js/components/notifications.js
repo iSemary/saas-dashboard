@@ -62,19 +62,13 @@ $(".notification-options-menu .dropdown-item").on("click", function (e) {
 $("#notificationsDropdown").on("click", function () {
     let notificationsList = $(".notifications-list");
     if (notificationsList.find(".notification-item").length == 0) {
-        let notificationsListRoute = $(this).data("notifications-list-route");
-        let notificationsRoute = $(this).data("notifications-route");
-        loadNotifications(
-            notificationsListRoute,
-            notificationsList,
-            notificationsRoute
-        );
+        loadNotifications(notificationsList);
     }
 });
 
-function loadNotifications(route, notificationListElement, notificationsRoute) {
+function loadNotifications(notificationListElement) {
     $.ajax({
-        url: route,
+        url: route("notifications.list"),
         type: "GET",
         beforeSend: function () {
             // Loader in the panel
@@ -83,11 +77,7 @@ function loadNotifications(route, notificationListElement, notificationsRoute) {
             );
         },
         success: function (response) {
-            renderNotifications(
-                notificationListElement,
-                notificationsRoute,
-                response
-            );
+            renderNotifications(notificationListElement, response);
         },
         error: function (xhr) {
             console.log(xhr);
@@ -95,11 +85,7 @@ function loadNotifications(route, notificationListElement, notificationsRoute) {
     });
 }
 
-function renderNotifications(
-    notificationListElement,
-    notificationsRoute,
-    response
-) {
+function renderNotifications(notificationListElement, response) {
     let notifications = response.data.data.data;
     let currentPage = response.data.data.current_page;
     let lastPage = response.data.data.last_page;
@@ -147,9 +133,9 @@ function renderNotifications(
                             </a>
                             <div class="row">
                                 <div class="col-10">
-                                    <small class="text-muted text-right">${
+                                    <small class="text-muted text-right" title="${
                                         notification.created_at
-                                    }</small>
+                                    }">${notification.created_at_diff}</small>
                                 </div>
                                 <div class="col-2">
                                     <div class="btn-group dropdown options-dropdown">
@@ -207,10 +193,56 @@ function renderNotifications(
         // Add "View All" link
         notificationListElement.parent("div").find(".view-all-link").remove(); // Remove existing link if any
         notificationListElement.parent("div").append(`
-            <a href="${notificationsRoute}" class="dropdown-item text-center text-primary view-all-link"
+            <a href="${route(
+                "notifications.index"
+            )}" class="dropdown-item text-center text-primary view-all-link"
                data-stopPropagation="true">
                 ${translate("view_all")}
             </a>
         `);
     }
 }
+
+function loadMoreNotifications(page) {
+    const notificationsList = $(".notifications-list");
+
+    $.ajax({
+        url: route("notifications.list"),
+        type: "GET",
+        data: {
+            page: page,
+        },
+        beforeSend: function () {
+            // Add loading indicator to the "Load More" button
+            $(".load-more-btn")
+                .html('<i class="fas fa-spinner fa-spin mr-2"></i>Loading...')
+                .prop("disabled", true);
+        },
+        success: function (response) {
+            // Remove loading state from button
+            $(".load-more-btn").remove();
+
+            // Render the new notifications
+            renderNotifications(notificationsList, response);
+        },
+        error: function (xhr) {
+            console.log(xhr);
+            // Reset button state on error
+            $(".load-more-btn").html("Load More").prop("disabled", false);
+        },
+    });
+}
+
+Swal.fire({
+    title: "New order!",
+    html: "There's a new order created now.<br>Click me to go to it.",
+    position: "bottom-end",
+    toast: true,
+    showConfirmButton: true,
+    timer: 150000,
+    confirmButtonText: '<i class="fas fa-times"></i>',
+    customClass: {
+        popup: "notification-toast-container info-notification",
+        confirmButton: "swal-confirm-button",
+    },
+});

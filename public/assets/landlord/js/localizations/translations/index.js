@@ -1,5 +1,5 @@
 let tableID = "#table";
-let route = $(tableID).attr("data-route");
+let tableRoute = $(tableID).attr("data-route");
 let cols = [
     {
         data: "id",
@@ -33,16 +33,16 @@ let cols = [
     },
 ];
 
-filterTable({ route: route, tableID: tableID, cols: cols });
+filterTable({ route: tableRoute, tableID: tableID, cols: cols });
 
 // Generate json files from the translations
 $(document).on("click", ".generate-translations-json", function () {
     let btn = $(this);
-    let route = $(this).attr("data-route");
+    let tableRoute = $(this).attr("data-route");
     let method = $(this).attr("data-method");
 
     $.ajax({
-        url: route,
+        url: tableRoute,
         type: method,
         beforeSend: function () {
             btn.find(".btn-text").html(t('generating'));
@@ -76,10 +76,10 @@ $(document).on("click", ".generate-translations-json", function () {
 // Generate json files from the translations
 $(document).on("click", ".sync-missing-translations", function () {
     let btn = $(this);
-    let route = $(this).attr("data-route");
+    let tableRoute = $(this).attr("data-route");
     let method = $(this).attr("data-method");
     $.ajax({
-        url: route,
+        url: tableRoute,
         type: method,
         beforeSend: function () {
             btn.find(".btn-text").html(t('processing'));

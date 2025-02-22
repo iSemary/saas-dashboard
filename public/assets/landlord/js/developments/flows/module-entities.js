@@ -1,6 +1,6 @@
 $(document).on("click", ".sync-entities", function () {
     let btn = $(this);
-    let route = $(this).attr("data-route");
+    let tableRoute = $(this).attr("data-route");
     let method = $(this).attr("data-method");
     $.ajax({
         url: route,

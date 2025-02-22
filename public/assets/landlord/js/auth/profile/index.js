@@ -21,7 +21,7 @@ $("#removeAvatar").on("click", function (e) {
         cancelButtonText: t("cancel"),
     }).then((result) => {
         if (result.value) {
-            let route = $(this).parent("form").attr("action");
+            let tableRoute = $(this).parent("form").attr("action");
 
             $.ajax({
                 url: route,

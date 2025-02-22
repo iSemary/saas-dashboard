@@ -15,9 +15,15 @@ class NotificationRepository implements NotificationInterface
 
     public function list()
     {
-        return $this->model->where("user_id", auth()->id())->orderByDesc("id")->paginate(10);
+        return $this->model
+            ->where("user_id", auth()->id())
+            ->orderByDesc("id")
+            ->paginate(5)
+            ->through(fn($item) => $item->toArray() + [
+                'created_at_diff' => $item->created_at->diffForHumans(),
+            ]);
     }
-
+    
     public function markAllAsRead()
     {
         return $this->model->whereNull("seen_at")->where('user_id', auth()->id())->update(['seen_at' => now()]);

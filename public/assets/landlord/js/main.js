@@ -641,7 +641,7 @@ $(document).on("submit", ".filter-table", function (e) {
         $(tableID).attr("data-selectable") == "true" ? true : false;
 
     filterTable({
-        route: route,
+        route: tableRoute,
         tableID: tableID,
         fromDate: fromDate,
         toDate: toDate,
