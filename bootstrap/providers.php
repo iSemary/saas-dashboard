@@ -11,4 +11,5 @@ return [
     Yajra\DataTables\DataTablesServiceProvider::class,
     Alexusmai\LaravelFileManager\FileManagerServiceProvider::class,
     Maatwebsite\Excel\ExcelServiceProvider::class,
+    App\Providers\CustomBroadcastServiceProvider::class,
 ];

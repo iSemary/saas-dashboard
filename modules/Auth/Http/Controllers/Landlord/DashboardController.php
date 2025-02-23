@@ -15,7 +15,6 @@ class DashboardController extends ApiController
     }
     public function index()
     {
-
         return view('landlord.dashboard.index', []);
     }
 }

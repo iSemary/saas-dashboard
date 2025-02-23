@@ -640,7 +640,7 @@ label.required::after {
 
 .notification-toast-container {
     display: grid !important;
-    padding: 15px 30px !important;
+    padding: 15px 30px 15px 10px !important;
 }
 
 .ltr .notification-toast-container #swal2-content {

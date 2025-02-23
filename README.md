@@ -18,6 +18,7 @@
     -   [Seed Modules (Landlord)](#seed-modules-landlord)
     -   [Seed Configurations (Landlord)](#seed-configurations-landlord)
 -   [Cron Jobs](#cron-jobs)
+-   [Web Sockets](#web-sockets)
 -   [Logo Files](#logo-files)
 -   [Modules Stubs](#modules-stubs)
 -   [Global Classes](#global-classes)
@@ -150,7 +151,7 @@ php artisan db:seed --class=Modules\\Development\\Database\\Seeders\\Configurati
 
 ## Cron Jobs
 
-Email Processing: 
+Email Processing:
 
 1.Running for a Specific Tenant
 To process emails for a single tenant, use the --tenant option followed by the tenant’s domain.
@@ -160,11 +161,38 @@ php artisan process:emails --tenant=customer1
 ```
 
 2. Running for All Tenants
-To process emails for all tenants in the system, run:
-
+   To process emails for all tenants in the system, run:
 
 ```bash
 php artisan process:emails
+```
+
+---
+
+## Web Sockets
+
+### Running the Queue Listener
+
+Laravel uses a queue system to broadcast events. To start the queue worker, run:
+
+```bash
+php artisan queue:listen
+```
+
+This will process any queued jobs related to WebSockets and broadcasting.
+
+### Starting the WebSocket Server
+
+Navigate to the WebSocket server directory:
+
+```bash
+cd websocket
+```
+
+Start the WebSocket server using Node.js:
+
+```bash
+node server.js
 ```
 
 ---

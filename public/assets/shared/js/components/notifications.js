@@ -232,17 +232,3 @@ function loadMoreNotifications(page) {
         },
     });
 }
-
-Swal.fire({
-    title: "New order!",
-    html: "There's a new order created now.<br>Click me to go to it.",
-    position: "bottom-end",
-    toast: true,
-    showConfirmButton: true,
-    timer: 150000,
-    confirmButtonText: '<i class="fas fa-times"></i>',
-    customClass: {
-        popup: "notification-toast-container info-notification",
-        confirmButton: "swal-confirm-button",
-    },
-});

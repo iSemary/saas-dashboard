@@ -39,7 +39,7 @@
         media="screen" />
     {{-- Emoji-Area --}}
     <link rel="stylesheet" href="{{ asset('assets/shared/plugins/emoji-area/emojionearea.min.css') }}"
-    media="screen" />
+        media="screen" />
 
     <link rel="stylesheet" href="{{ asset('assets/shared/plugins/jquery-file-upload/fileUpload.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/landlord/css/jquery-ui.min.css') }}">
@@ -68,9 +68,15 @@
         <link rel="stylesheet" href="{{ asset('assets/landlord/css/darkmode-bootstrap.css') }}">
     @endif --}}
     {{-- Main Style --}}
-    <link rel="stylesheet" href="{{ asset('assets/landlord/css/main.css') . '?v=' . filemtime(public_path('assets/landlord/css/main.css')) }}" media="screen">
-    <link rel="stylesheet" href="{{ asset('assets/landlord/css/style.css') . '?v=' . filemtime(public_path('assets/landlord/css/style.css')) }}" media="screen">
-    <link rel="stylesheet" href="{{ asset('assets/shared/css/style.css') . '?v=' . filemtime(public_path('assets/shared/css/style.css')) }}" media="screen">
+    <link rel="stylesheet"
+        href="{{ asset('assets/landlord/css/main.css') . '?v=' . filemtime(public_path('assets/landlord/css/main.css')) }}"
+        media="screen">
+    <link rel="stylesheet"
+        href="{{ asset('assets/landlord/css/style.css') . '?v=' . filemtime(public_path('assets/landlord/css/style.css')) }}"
+        media="screen">
+    <link rel="stylesheet"
+        href="{{ asset('assets/shared/css/style.css') . '?v=' . filemtime(public_path('assets/shared/css/style.css')) }}"
+        media="screen">
 
     @yield('styles')
 </head>
@@ -156,14 +162,23 @@
 
     @routes
 
+    <script>
+        const CURRENT_USER_ID = `{{ auth()->user()->id }}`;
+    </script>
+
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+
+    <script src="{{ asset('assets/shared/js/config/socket.js') }}" data-socket-server="{{ config("broadcasting.connections.redis.node_server") }}"></script>
+
     {{-- Main Scripts --}}
     <script src="{{ asset('assets/shared/js/shared.js') . '?v=' . filemtime(public_path('assets/shared/js/shared.js')) }}">
     </script>
     <script src="{{ asset('assets/landlord/js/main.js') . '?v=' . filemtime(public_path('assets/landlord/js/main.js')) }}">
     </script>
-    <script src="{{ asset('assets/shared/js/components/notifications.js') . '?v=' . filemtime(public_path('assets/shared/js/components/notifications.js')) }}">
+    <script
+        src="{{ asset('assets/shared/js/components/notifications.js') . '?v=' . filemtime(public_path('assets/shared/js/components/notifications.js')) }}">
     </script>
-    
+
     @yield('scripts')
     @stack('scripts')
 
