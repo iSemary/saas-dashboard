@@ -1,5 +1,25 @@
 <?php
 
+/**
+ * Notification Model
+ * 
+ * @package Modules\Notification\Entities
+ * 
+ * This model represents notifications in the system.
+ * 
+ * IMPORTANT: This model has an observer (NotificationObserver) that triggers on creation.
+ * When a notification is created, it automatically broadcasts a NotificationEvent with:
+ * - title (from name field)
+ * - message (from description field)
+ * - type
+ * 
+ * @see \Modules\Notification\Observers\NotificationObserver
+ * @see \Modules\Notification\Events\NotificationEvent
+
+ * 
+ * @property-read \Modules\Auth\Entities\User $user
+ */
+
 namespace Modules\Notification\Entities;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
