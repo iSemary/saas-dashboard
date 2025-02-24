@@ -413,3 +413,15 @@ if (intlInput) {
             .catch(error => console.error("Error fetching IP data:", error));
     }
 }
+
+
+function showToast(type, message) {
+    Swal.fire({
+        type: type, // success, error, warning, info
+        title: message,
+        position: "bottom-end",
+        toast: true,
+        showConfirmButton: false,
+        timer: 150000, // Adjust as needed, or set to null for persistent toast
+    });
+}

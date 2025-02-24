@@ -33,6 +33,15 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_
         // Development Builder
         Route::get("code-builder", [CodeBuilderController::class, "show"])->name("code-builder.show");
         Route::post("code-builder", [CodeBuilderController::class, "submit"])->name("code-builder.submit");
+
         Route::get("env-diff", [AnalysisController::class, "showEnvDiff"])->name("env-diff.show");
+
+        Route::get("system-status", [AnalysisController::class, "showSystemStatus"])->name("system-status.show");
+
+        Route::get('system-status/check', [AnalysisController::class, 'checkSystemStatus'])->name('system_status.check');
+        Route::post('system-status/check-service', [AnalysisController::class, 'checkIndividualService'])->name('system_status.check_service');
+        Route::post('system-status/clear-cache', [AnalysisController::class, 'clearCache'])->name('system_status.clear_cache');
+        Route::post('system-status/restart-queue', [AnalysisController::class, 'restartQueue'])->name('system_status.restart_queue');
+        Route::post('system-status/restart-supervisor', [AnalysisController::class, 'restartSupervisor'])->name('system_status.restart_supervisor');
     });
 });

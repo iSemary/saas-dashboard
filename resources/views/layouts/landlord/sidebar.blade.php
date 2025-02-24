@@ -481,6 +481,13 @@
                             'icon' => 'fas fa-server',
                             'label' => 'development',
                             'items' => [
+                                'system_status' => [
+                                    'icon' => 'fas fa-server',
+                                    'permission' => 'read.system_status',
+                                    'route' => 'landlord.development.system-status.show',
+                                    'single' => true,
+                                    'translate' => false,
+                                ],
                                 'files' => [
                                     'icon' => 'fas fa-photo-video',
                                     'permission' => 'read.files',

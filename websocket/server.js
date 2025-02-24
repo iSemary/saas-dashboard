@@ -35,6 +35,10 @@ const io = socketIO(server, {
     },
 });
 
+app.get("/health", (req, res) => {
+    res.status(200).json({ success: true, message: "Websocket server is running" });
+});
+
 // Handle Laravel broadcasts
 app.post("/broadcast", (req, res) => {
     try {

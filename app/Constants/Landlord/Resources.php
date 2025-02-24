@@ -226,6 +226,10 @@ class Resources
                 'actions' => ['read']
             ],
             [
+                'name' => 'system_status',
+                'actions' => ['read']
+            ],
+            [
                 'name' => 'backups',
                 'actions' => ['read', 'download']
             ],
