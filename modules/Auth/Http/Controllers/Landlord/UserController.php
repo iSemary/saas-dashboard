@@ -76,6 +76,11 @@ class UserController extends ApiController
             'address' => $data['address'] ?? null,
             'gender' => $data['gender'] ?? null,
             'avatar' => $data['avatar'] ?? null,
+            'birthdate' => $data['birthdate'] ?? null,
+            'home_street_1' => $data['home_street_1'] ?? null,
+            'home_street_2' => $data['home_street_2'] ?? null,
+            'home_building_number' => $data['home_building_number'] ?? null,
+            'home_landmark' => $data['home_landmark'] ?? null,
         ]);
 
         $language = Language::where('id', $data['language_id'])->first();

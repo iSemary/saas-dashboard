@@ -12,6 +12,8 @@ class BaseMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $header;
+    public $footer;
     public $data;
 
     /**
@@ -20,6 +22,8 @@ class BaseMail extends Mailable
     public function __construct($data)
     {
         $this->data = $data;
+        $this->header = configuration("emails.header");
+        $this->footer = configuration("emails.footer");
     }
 
 
@@ -34,7 +38,11 @@ class BaseMail extends Mailable
     {
         return new Content(
             view: 'mails.base',
-            with: ['body' => $this->data['body'] ?? '']
+            with: [
+                'header' => $this->header,
+                'body' => $this->data['body'],
+                'footer' => $this->footer,
+            ]
         );
     }
 

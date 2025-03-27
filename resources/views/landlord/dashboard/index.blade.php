@@ -1,6 +1,6 @@
 @extends('layouts.landlord.app')
 @section('content')
-<div>
-    
-</div>
+    <div>
+
+    </div>
 @endsection

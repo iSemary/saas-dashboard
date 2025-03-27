@@ -165,6 +165,47 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="birthdate" class="form-label">@translate('birth_date')</label>
+                                    <input type="date" name="birthdate" id="birthdate" class="form-control"
+                                        value="{{ isset($user) && $user->birthdate ? $user->birthdate : '' }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr />
+                        <h5>@translate('additional_information')</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="home_street_1" class="form-label">@translate('street_1')</label>
+                                    <input type="text" name="home_street_1" id="home_street_1" class="form-control"
+                                        value="{{ isset($user) ? $user->home_street_1 : '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="home_street_2" class="form-label">@translate('street_2')</label>
+                                    <input type="text" name="home_street_2" id="home_street_2" class="form-control"
+                                        value="{{ isset($user) ? $user->home_street_2 : '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="home_building_number" class="form-label">@translate('building_number')</label>
+                                    <input type="text" name="home_building_number" id="home_building_number"
+                                        class="form-control"
+                                        value="{{ isset($user) ? $user->home_building_number : '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="home_landmark" class="form-label">@translate('landmark')</label>
+                                    <input type="text" name="home_landmark" id="home_landmark" class="form-control"
+                                        value="{{ isset($user) ? $user->home_landmark : '' }}">
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-status mb-3"></div>

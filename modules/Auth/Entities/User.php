@@ -40,7 +40,19 @@ class User extends Authenticatable
 
     protected $guard_name = 'api';
 
-    protected $metaKeys = ['avatar', 'gender', 'address', 'phone', 'timezone', 'currency_id'];
+    protected $metaKeys = [
+        'avatar',
+        'gender',
+        'address',
+        'phone',
+        'timezone',
+        'currency_id',
+        'birthdate',
+        'home_street_1',
+        'home_street_2',
+        'home_building_number',
+        'home_landmark'
+    ];
 
     protected $fileColumns = [
         'avatar' => [
@@ -240,10 +252,14 @@ class User extends Authenticatable
             if ($key == 'avatar') {
                 $this->updateAvatar($value);
             } else {
-                $this->userMeta()->updateOrCreate(
-                    ['meta_key' => $key],
-                    ['meta_value' => $value]
-                );
+                if ($value) {
+                    $this->userMeta()->updateOrCreate(
+                        ['meta_key' => $key],
+                        ['meta_value' => $value]
+                    );
+                } else {
+                    $this->userMeta()->where('meta_key', $key)->delete();
+                }
             }
             return;
         }

@@ -7,10 +7,16 @@
     </ul>
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto icons-nav-section">
+        @if (Gate::check('read.system_status'))
+            <li class="nav-item d-none d-sm-inline-block">
+                <a href="{{ route('landlord.development.system-status.show') }}" class="nav-link"
+                    title="@translate('system_health')"><i class="fas fa-server"></i></a>
+            </li>
+        @endif
+
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown"
-                role="button" data-toggle="dropdown"
-                aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button"
+                data-toggle="dropdown" aria-expanded="false">
                 <i class="fas fa-bell"></i>
                 @if ($notificationsCount > 0)
                     <span class="badge badge-danger">{{ $notificationsCount }}</span>
@@ -86,8 +92,7 @@
                     <a style="cursor: pointer" data-form="logout-all-form" class="logout-btn dropdown-item">
                         <i class="fas fa-sign-out-alt"></i> @translate('logout_all')
                     </a>
-                    <form id="logout-all-form" action="{{ route('logout-all') }}" method="POST"
-                        style="display: none;">
+                    <form id="logout-all-form" action="{{ route('logout-all') }}" method="POST" style="display: none;">
                         @csrf
                     </form>
                 @endif

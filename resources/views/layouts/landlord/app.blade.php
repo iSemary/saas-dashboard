@@ -145,9 +145,9 @@
     {{-- <script src="{{ asset('assets/shared/plugins/socketio/socketio.min.js') }}"></script> --}}
     {{-- Socket.io Configurations --}}
     {{-- <script src="{{ asset('assets/landlord/js/socketio/config.js') }}"></script> --}}
-
-    <script src="{{ asset('assets/shared/plugins/jquery-file-upload/fileUpload.js') }}"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.38.0/js/tempusdominus-bootstrap-4.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.38.0/css/tempusdominus-bootstrap-4.min.css" crossorigin="anonymous" />
+    
     {{-- Configurations --}}
     <script>
         let language = {

@@ -36,8 +36,8 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_
 
         Route::get("env-diff", [AnalysisController::class, "showEnvDiff"])->name("env-diff.show");
 
+        // System Status Routes
         Route::get("system-status", [AnalysisController::class, "showSystemStatus"])->name("system-status.show");
-
         Route::get('system-status/check', [AnalysisController::class, 'checkSystemStatus'])->name('system_status.check');
         Route::post('system-status/check-service', [AnalysisController::class, 'checkIndividualService'])->name('system_status.check_service');
         Route::post('system-status/clear-cache', [AnalysisController::class, 'clearCache'])->name('system_status.clear_cache');

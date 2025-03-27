@@ -34,6 +34,11 @@ class ProfileRequest extends FormRequest
                     'language_id' => 'nullable|exists:languages,id',
                     'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:1048',
                     'remove_avatar' => 'nullable|boolean',
+                    'birthdate' => 'nullable|date|before:today',
+                    'home_street_1' => 'nullable|min:1|max:1024',
+                    'home_street_2' => 'nullable|min:1|max:1024',
+                    'home_building_number' => 'nullable|min:1|max:255',
+                    'home_landmark' => 'nullable|min:1|max:255',
                 ]);
 
             case 'security':

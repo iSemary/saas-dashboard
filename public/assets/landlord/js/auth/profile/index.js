@@ -8,7 +8,8 @@ $(document).ready(function () {
 // Handle avatar removal
 $("#removeAvatar").on("click", function (e) {
     e.preventDefault();
-
+    let route = $(".edit-form").attr("action");
+    
     // Add SweetAlert confirmation
     Swal.fire({
         title: t("are_you_sure"),
@@ -22,7 +23,6 @@ $("#removeAvatar").on("click", function (e) {
     }).then((result) => {
         if (result.value) {
             let tableRoute = $(this).parent("form").attr("action");
-
             $.ajax({
                 url: route,
                 type: "POST",
@@ -47,7 +47,7 @@ $(document).on("click", ".reset-factor-authentication", function (e) {
     let btn = $(this);
 
     btn.prop("disable", true);
-    
+
     $.ajax({
         type: "POST",
         url: url,
