@@ -19,6 +19,28 @@ class DatabaseController extends ApiController
         return $this->return(200, 'Database fetched successfully', ['databases' => $databases]);
     }
 
+    public function syncFlow(Request $request)
+    {
+        $validated = $request->validate([
+            'nodes' => 'required|array',
+            'nodes.*.connection' => 'required|string',
+            'nodes.*.table' => 'required|string',
+            'nodes.*.position' => 'required|array',
+            'nodes.*.position.x' => 'required|numeric',
+            'nodes.*.position.y' => 'required|numeric',
+            'nodes.*.color' => 'required|string',
+        ]);
+
+        foreach ($validated['nodes'] as $node) {
+            DatabaseFlow::updateOrCreate(
+                ['table' => $node['table'], 'connection' => $node['connection']],
+                ['position' => $node['position'], 'color' => $node['color']]
+            );
+        }
+
+        return response()->json(['success' => true, 'message' => 'Flow saved successfully.']);
+    }
+    
     protected function getDatabaseStructure($connection)
     {
         $tables = $this->getTables($connection);
@@ -125,27 +147,5 @@ class DatabaseController extends ApiController
         }
 
         return $formattedRelations;
-    }
-
-    public function syncFlow(Request $request)
-    {
-        $validated = $request->validate([
-            'nodes' => 'required|array',
-            'nodes.*.connection' => 'required|string',
-            'nodes.*.table' => 'required|string',
-            'nodes.*.position' => 'required|array',
-            'nodes.*.position.x' => 'required|numeric',
-            'nodes.*.position.y' => 'required|numeric',
-            'nodes.*.color' => 'required|string',
-        ]);
-
-        foreach ($validated['nodes'] as $node) {
-            DatabaseFlow::updateOrCreate(
-                ['table' => $node['table'], 'connection' => $node['connection']],
-                ['position' => $node['position'], 'color' => $node['color']]
-            );
-        }
-
-        return response()->json(['success' => true, 'message' => 'Flow saved successfully.']);
     }
 }

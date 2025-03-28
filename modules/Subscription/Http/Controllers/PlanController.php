@@ -3,28 +3,28 @@
 namespace Modules\Subscription\Http\Controllers;
 
 use App\Http\Controllers\ApiController;
-use Modules\Subscription\Services\SubscriptionService;
+use Modules\Subscription\Services\PlanService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Routing\Controllers\HasMiddleware;
 
-class SubscriptionController extends ApiController implements HasMiddleware
+class PlanController extends ApiController implements HasMiddleware
 {
     protected $service;
 
-    public function __construct(SubscriptionService $service)
+    public function __construct(PlanService $service)
     {
         $this->service = $service;
     }
-    
+
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:read.subscriptions', only: ['index', 'show']),
-            new Middleware('permission:create.subscriptions', only: ['create', 'store']),
-            new Middleware('permission:update.subscriptions', only: ['edit', 'update']),
-            new Middleware('permission:delete.subscriptions', only: ['destroy']),
-            new Middleware('permission:restore.subscriptions', only: ['restore']),
+            new Middleware('permission:read.plans', only: ['index', 'show']),
+            new Middleware('permission:create.plans', only: ['create', 'store']),
+            new Middleware('permission:update.plans', only: ['edit', 'update']),
+            new Middleware('permission:delete.plans', only: ['destroy']),
+            new Middleware('permission:restore.plans', only: ['restore']),
         ];
     }
 
@@ -44,18 +44,18 @@ class SubscriptionController extends ApiController implements HasMiddleware
                 'text' => translate("create") . " " . translate($this->service->model->singleTitle),
                 'class' => 'open-create-modal btn-sm btn-success',
                 'attr' => [
-                    'data-modal-link' => route('landlord.subscriptions.create'),
+                    'data-modal-link' => route('landlord.plans.create'),
                     'data-modal-title' => translate("create") . " " . translate($this->service->model->singleTitle),
                 ]
             ],
         ];
 
-        return view('landlord.subscriptions.subscriptions.index', compact('breadcrumbs', 'title', 'actionButtons'));
+        return view('landlord.subscriptions.plans.index', compact('breadcrumbs', 'title', 'actionButtons'));
     }
 
     public function create()
     {
-        return view('landlord.subscriptions.subscriptions.editor');
+        return view('landlord.subscriptions.plans.editor');
     }
 
     public function store(Request $request)
@@ -70,7 +70,7 @@ class SubscriptionController extends ApiController implements HasMiddleware
     public function edit($id)
     {
         $row = $this->service->get($id);
-        return view('landlord.subscriptions.subscriptions.editor', compact('row'));
+        return view('landlord.subscriptions.plans.editor', compact('row'));
     }
 
     public function update(Request $request, $id)
