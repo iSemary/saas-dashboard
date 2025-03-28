@@ -172,6 +172,20 @@
                                         value="{{ isset($user) && $user->birthdate ? $user->birthdate : '' }}">
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="timezone" class="form-label">@translate('timezone')</label>
+                                    <select name="timezone" id="timezone" class="form-control select2">
+                                        <option value="">@translate('select')</option>
+                                        @foreach ($timezones as $timezone)
+                                            <option value="{{ $timezone->id }}"
+                                                {{ isset($user) && $user->timezone == $timezone->id ? 'selected' : '' }}>
+                                                {{ $timezone->title }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                         </div>
 
                         <hr />

@@ -28,7 +28,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = ['customer_id', 'name', 'email', 'username', 'country_id', 'language_id', 'theme_mode', 'factor_authenticate', 'google2fa_secret', 'password'];
+    protected $fillable = ['customer_id', 'name', 'email', 'username', 'country_id', 'language_id', 'factor_authenticate', 'google2fa_secret', 'password'];
 
 
     /**
@@ -45,6 +45,7 @@ class User extends Authenticatable
         'gender',
         'address',
         'phone',
+        'theme_mode',
         'timezone',
         'currency_id',
         'birthdate',

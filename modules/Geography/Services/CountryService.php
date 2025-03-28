@@ -26,6 +26,10 @@ class CountryService
         return $this->repository->datatables();
     }
 
+    public function getTimeZones () {
+        return $this->repository->getTimeZones();
+    }
+
     public function get($id)
     {
         return $this->repository->find($id);

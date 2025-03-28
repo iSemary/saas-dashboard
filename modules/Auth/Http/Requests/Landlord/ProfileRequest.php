@@ -39,6 +39,7 @@ class ProfileRequest extends FormRequest
                     'home_street_2' => 'nullable|min:1|max:1024',
                     'home_building_number' => 'nullable|min:1|max:255',
                     'home_landmark' => 'nullable|min:1|max:255',
+                    'timezone' => 'nullable|min:1|max:255',
                 ]);
 
             case 'security':

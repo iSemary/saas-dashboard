@@ -3,6 +3,7 @@
 namespace Modules\Geography\Repositories;
 
 use App\Helpers\TableHelper;
+use Illuminate\Support\Facades\DB;
 use Modules\Geography\Entities\Country;
 use Yajra\DataTables\DataTables;
 
@@ -63,6 +64,19 @@ class CountryRepository implements CountryInterface
     public function find($id)
     {
         return $this->model->find($id);
+    }
+
+    public function getTimeZones()
+    {
+        return $this->model->query()
+            ->join('provinces', 'provinces.country_id', '=', 'countries.id')
+            ->select([
+                'provinces.id',
+                DB::raw('CONCAT(countries.name, "/", provinces.name, " (GMT", provinces.timezone, ")") as title'),
+                'provinces.timezone'
+            ])
+            ->whereNotNull('provinces.timezone')
+            ->get();
     }
 
     public function create(array $data)

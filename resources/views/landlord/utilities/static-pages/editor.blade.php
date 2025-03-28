@@ -22,6 +22,11 @@
             <textarea name="description" id="description" class="form-control">{{ isset($row) ? $row->description : '' }}</textarea>
         </div>
 
+        <div class="form-group col-12">
+            <label for="body" class="form-label">@translate('body')</label>
+            <textarea name="body" id="ckInput" class="form-control ckeditor">{{ isset($row) ? $row->body : '' }}</textarea>
+        </div>
+
         <div class="form-group col-6">
             <label for="status" class="form-label">@translate('status')</label>
             <select name="status" id="status" class="form-control select2">
@@ -45,14 +50,15 @@
                     <div class="form-group col-6">
                         <h5 class="attribute-title">{{ translate($attributeKey) }}</h5>
                         <input type="text" class="form-control" name="attribute_value[{{ $attributeKey }}]"
-                            id="attribute-{{ $attributeKey }}" />
+                            id="attribute-{{ $attributeKey }}"
+                            value="{{ isset($row) ? $row->attributes()->where('attribute_key', $attributeKey)->value('attribute_value') : '' }}" />
                     </div>
                     <div class="form-group col-6">
                         <label for="status" class="form-label">@translate('status')</label>
                         <select name="attribute_status[{{ $attributeKey }}]" class="form-control select2">
                             @foreach ($attributeStatusOptions as $status)
                                 <option value="{{ $status }}"
-                                    {{ isset($row) && $row->status == $status ? 'selected' : '' }}>
+                                    {{ isset($row) && $row->attributes()->where('attribute_key', $attributeKey)->value('status') == $status ? 'selected' : '' }}>
                                     @translate($status)
                                 </option>
                             @endforeach

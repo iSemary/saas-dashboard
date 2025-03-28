@@ -17,7 +17,6 @@ return new class extends Migration {
             $table->string('username', 64)->nullable()->unique();
             $table->integer('country_id')->nullable();
             $table->unsignedInteger('language_id')->default(1);
-            $table->tinyInteger('theme_mode')->default(1)->comment('1-> Light | 2-> Dark | 3-> System');
             $table->tinyInteger('factor_authenticate')->default(0);
             $table->string('google2fa_secret')->nullable();
             $table->string('password');

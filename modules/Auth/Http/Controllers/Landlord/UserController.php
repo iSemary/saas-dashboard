@@ -28,7 +28,8 @@ class UserController extends ApiController
         $user = auth()->user();
         $languages = $this->languageService->getAll();
         $countries = $this->countryService->getAll();
-        return view("landlord.auth.profile.index", ['user' => $user, 'languages' => $languages, 'countries' => $countries]);
+        $timezones = $this->countryService->getTimezones();
+        return view("landlord.auth.profile.index", ['user' => $user, 'languages' => $languages, 'countries' => $countries, 'timezones' => $timezones]);
     }
 
     public function updateProfile(ProfileRequest $request)
@@ -77,6 +78,7 @@ class UserController extends ApiController
             'gender' => $data['gender'] ?? null,
             'avatar' => $data['avatar'] ?? null,
             'birthdate' => $data['birthdate'] ?? null,
+            'timezone' => $data['timezone'] ?? null,
             'home_street_1' => $data['home_street_1'] ?? null,
             'home_street_2' => $data['home_street_2'] ?? null,
             'home_building_number' => $data['home_building_number'] ?? null,
@@ -101,14 +103,8 @@ class UserController extends ApiController
 
     protected function updatePreferences($user, array $data)
     {
-        $themeMap = [
-            '1' => 'light',
-            '2' => 'dark',
-            '3' => 'system'
-        ];
-
         $user->setMeta([
-            'theme_mode' => $themeMap[$data['theme_mode']] ?? 'system'
+            'theme_mode' => $data['theme_mode'] ?? '1'
         ]);
     }
 }

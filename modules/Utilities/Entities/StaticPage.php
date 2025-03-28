@@ -20,6 +20,7 @@ class StaticPage extends Model implements Auditable
         'name',
         'slug',
         'description',
+        'body',
         'status',
     ];
 
