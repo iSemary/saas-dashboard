@@ -2,6 +2,7 @@
 
 namespace Modules\Subscription\Http\Controllers;
 
+use App\Helpers\EnumHelper;
 use App\Http\Controllers\ApiController;
 use Modules\Subscription\Services\PlanService;
 use Illuminate\Http\Request;
@@ -55,7 +56,8 @@ class PlanController extends ApiController implements HasMiddleware
 
     public function create()
     {
-        return view('landlord.subscriptions.plans.editor');
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
+        return view('landlord.subscriptions.plans.editor', compact('statusOptions'));
     }
 
     public function store(Request $request)
@@ -70,7 +72,8 @@ class PlanController extends ApiController implements HasMiddleware
     public function edit($id)
     {
         $row = $this->service->get($id);
-        return view('landlord.subscriptions.plans.editor', compact('row'));
+        $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
+        return view('landlord.subscriptions.plans.editor', compact('row', 'statusOptions'));
     }
 
     public function update(Request $request, $id)

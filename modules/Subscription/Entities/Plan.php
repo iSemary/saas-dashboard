@@ -39,6 +39,32 @@ class Plan extends Model implements Auditable
         'priority'
     ];
 
+    /**
+     * Get the icon URL dynamically.
+     *
+     * @return string
+     */
+    public function getIconAttribute($value)
+    {
+        return $this->getFileUrl($value);
+    }
+
+    /**
+     * Set the icon attribute.
+     *
+     * @param  mixed  $value
+     * @return void
+     */
+    public function setIconAttribute($value)
+    {
+        if ($value instanceof \Illuminate\Http\UploadedFile) {
+            $media = $this->upload($value, 'icon');
+            $this->attributes['icon'] = $media->id;
+        } else {
+            $this->attributes['icon'] = $value;
+        }
+    }
+
     public function subscriptions()
     {
         return $this->hasMany(Subscription::class);

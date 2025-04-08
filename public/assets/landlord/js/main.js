@@ -115,18 +115,16 @@ $(document).on("submit", ".create-form", function (e) {
                 )
                 .val("");
 
-                refreshDataTable();
+            refreshDataTable();
         },
         error: function (data) {
             form.find(".form-status").html("");
             formBtn.prop("disabled", false);
-            // $.each(xhr.responseJSON.errors, function(key, value) {
             form.find(".form-status").append(
                 `<h6 class="text-danger"><i class="fas fa-exclamation-triangle"></i> ` +
-                    (data("responseJSON") ?? t("something_went_wrong")) +
+                    (data?.responseJSON?.message ?? t("something_went_wrong")) +
                     `</h6>`
             );
-            // });
             formBtn.prop("disabled", false);
         },
     });
@@ -176,19 +174,17 @@ $(document).on("submit", ".import-excel-form", function (e) {
                     ":input[type=button], :input[type=submit], :input[type=hidden], :input[type=reset]"
                 )
                 .val("");
-            
-                refreshDataTable()
+
+            refreshDataTable();
         },
         error: function (xhr) {
             $(".import-status").html("");
             formBtn.prop("disabled", false);
-            $.each(xhr.responseJSON.errors, function (key, value) {
-                $(".import-status").append(
-                    `<h6 class="text-danger"><i class="fas fa-exclamation-triangle"></i> ` +
-                        value[0] +
-                        `</h6>`
-                );
-            });
+            form.find(".form-status").append(
+                `<h6 class="text-danger"><i class="fas fa-exclamation-triangle"></i> ` +
+                    (data?.responseJSON?.message ?? t("something_went_wrong")) +
+                    `</h6>`
+            );
             formBtn.prop("disabled", false);
         },
     });
@@ -241,13 +237,11 @@ $(document).on("submit", ".edit-form", function (e) {
         error: function (xhr) {
             form.find(".form-status").html("");
             formBtn.prop("disabled", false);
-            $.each(xhr.responseJSON.errors, function (key, value) {
-                form.find(".form-status").append(
-                    `<h6 class="text-danger"><i class="fas fa-exclamation-triangle"></i> ` +
-                        (value[0] ?? t("something_went_wrong")) +
-                        `</h6>`
-                );
-            });
+            form.find(".form-status").append(
+                `<h6 class="text-danger"><i class="fas fa-exclamation-triangle"></i> ` +
+                    (data?.responseJSON?.message ?? t("something_went_wrong")) +
+                    `</h6>`
+            );
         },
     });
 });
@@ -411,7 +405,7 @@ function deleteRow(link, ModelDeleteType) {
                             position: "bottom",
                         });
                     }
-                    
+
                     refreshDataTable();
                 })
                 .fail(function (data) {
@@ -468,7 +462,7 @@ function restoreRow(link, ModelDeleteType) {
                             position: "bottom",
                         });
                     }
-                    
+
                     refreshDataTable();
                 })
                 .fail(function (data) {
@@ -513,23 +507,22 @@ function filterTable({
             $(tableID).DataTable().destroy();
         }
     }
-    
+
     let urlParams = new URLSearchParams(window.location.search);
     let data = {
-        from_date: urlParams.get('from_date') ?? fromDate ?? null,
-        to_date: urlParams.get('to_date') ?? toDate ?? null,
+        from_date: urlParams.get("from_date") ?? fromDate ?? null,
+        to_date: urlParams.get("to_date") ?? toDate ?? null,
         table: true,
     };
-    
+
     // Convert all URL parameters into the data object
     urlParams.forEach((value, key) => {
         if (!data.hasOwnProperty(key)) {
             data[key] = value;
         }
     });
-    
+
     console.log(data);
-    
 
     if (dataExtra) {
         $.extend(data, dataExtra);
@@ -714,9 +707,7 @@ $(document).on("click", ".copy-to-clipboard-btn", function (e) {
     });
 });
 
-
-function refreshDataTable()
-{
+function refreshDataTable() {
     if ($(".dataTable").length > 0) {
         $(".dataTable").each(function () {
             if (!$(this).attr("data-disable-refresh")) {

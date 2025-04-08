@@ -33,7 +33,9 @@ class PlanRepository implements PlanInterface
 
         return DataTables::of($rows)
             ->addColumn('actions', function ($row) {
-                return TableHelper::actionButtons(
+                $buttons = '<button class="btn btn-sm btn-orange"><i class="fas fa-money-bill-wave"></i> ' . t('manage_price') . '</button>';
+
+                $buttons .= TableHelper::actionButtons(
                     row: $row,
                     editRoute: 'landlord.plans.edit',
                     deleteRoute: 'landlord.plans.destroy',
@@ -42,6 +44,8 @@ class PlanRepository implements PlanInterface
                     titleType: $this->model->singleTitle,
                     showIconsOnly: false
                 );
+
+                return $buttons;
             })
             ->rawColumns(['flag', 'actions'])
             ->make(true);
