@@ -10,10 +10,10 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
         using: function () {
-            Route::middleware(['web', 'ip.blacklist'])->group(base_path('routes/web.php'));
-            Route::middleware(['web', 'ip.blacklist'])->group(base_path('routes/landlord/web.php'));
-            Route::middleware(['web', 'ip.blacklist'])->group(base_path('routes/modules.php'));
-            Route::prefix('api')->middleware(['api', 'ip.blacklist'])->group(base_path('routes/api/modules.php'));
+            Route::middleware(['web', 'set-db-connection', 'ip.blacklist'])->group(base_path('routes/web.php'));
+            Route::middleware(['web', 'set-db-connection', 'ip.blacklist'])->group(base_path('routes/landlord/web.php'));
+            Route::middleware(['web', 'set-db-connection', 'ip.blacklist'])->group(base_path('routes/modules.php'));
+            Route::prefix('api')->middleware(['api', 'set-db-connection', 'ip.blacklist'])->group(base_path('routes/api/modules.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware) {

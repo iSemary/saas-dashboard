@@ -60,7 +60,7 @@ class TenantHelper
         if ($customerUsername == env("APP_LANDLORD_ORGANIZATION_NAME")) {
             // Switch to the landlord database
             config(['database.default' => 'landlord']);
-            $tenant = Tenant::on('landlord')->where('name', $customerUsername)->first();
+            $tenant = Tenant::on('landlord')->where('name', 'landlord')->first();
             User::on('landlord');
         } else {
             // Switch to the tenant database
@@ -70,7 +70,9 @@ class TenantHelper
             User::on('tenant');
         }
 
-        $tenant->makeCurrent();
+        if ($tenant) {
+            $tenant->makeCurrent();
+        }
         return $tenant;
     }
 

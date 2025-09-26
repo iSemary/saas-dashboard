@@ -28,15 +28,20 @@ class TranslateHelper
         if ($locale) {
             $locale = $locale;
         } else {
-            if (auth()->check()) {
-                $locale = Session::get('locale');
-                if (!$locale) {
-                    $locale = auth()->user()->language?->locale;
+            try {
+                if (auth()->check()) {
+                    $locale = Session::get('locale');
                     if (!$locale) {
-                        $locale = app()->getLocale();
+                        $locale = auth()->user()->language?->locale;
+                        if (!$locale) {
+                            $locale = app()->getLocale();
+                        }
                     }
+                } else {
+                    $locale = app()->getLocale();
                 }
-            } else {
+            } catch (\Exception $e) {
+                // Database connection not available, use default locale
                 $locale = app()->getLocale();
             }
         }
@@ -47,15 +52,20 @@ class TranslateHelper
     public static function getLanguage($language = null)
     {
         if (!$language) {
-            if (auth()->check()) {
-                $language = Session::get('language');
-                if (!$language) {
-                    $language = auth()->user()->language;
+            try {
+                if (auth()->check()) {
+                    $language = Session::get('language');
                     if (!$language) {
-                        $language = Language::whereLocale(app()->getLocale())->first();
+                        $language = auth()->user()->language;
+                        if (!$language) {
+                            $language = Language::whereLocale(app()->getLocale())->first();
+                        }
                     }
+                } else {
+                    $language = Language::whereLocale(app()->getLocale())->first();
                 }
-            } else {
+            } catch (\Exception $e) {
+                // Database connection not available, use default language
                 $language = Language::whereLocale(app()->getLocale())->first();
             }
         }

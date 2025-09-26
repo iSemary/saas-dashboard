@@ -9,6 +9,7 @@
     -   [Backup App Command](#backup-app-command)
     -   [Sync Missing Language Translations](#sync-missing-language-translations)
 -   [Databases](#databases)
+-   [Troubleshooting](#troubleshooting)
 -   [Running Landlord-Specific Migrations](#running-landlord-specific-migrations)
     -   [Option 1: Direct Migration Commands](#option-1-direct-migration-commands)
     -   [Option 2: Custom Artisan Command](#option-2-custom-artisan-command)
@@ -46,7 +47,75 @@
 
 ## Installation
 
-php artisan storage:link
+1. **Create storage symlink**:
+   ```bash
+   php artisan storage:link
+   ```
+
+2. **Generate OAuth2 keys** (Required for API authentication):
+   ```bash
+   # Fix storage permissions first
+   sudo chown -R www-data:www-data storage/
+   sudo chmod -R 775 storage/
+   
+   # Generate OAuth2 keys
+   sudo -u www-data php artisan passport:keys --force
+   
+   # Create personal access client
+   sudo -u www-data php artisan passport:client --personal --name="SaaS Dashboard Personal Access Client"
+   ```
+
+   **Note**: If you encounter "Invalid key supplied" error after login, this step is required to generate the OAuth2 public and private keys for API authentication.
+
+3. **Configure Environment Variables**:
+   ```bash
+   # Copy environment file
+   cp .env.example .env
+   
+   # Set proper APP_URL (important for asset loading)
+   # Replace with your actual domain
+   sed -i 's|APP_URL=http://localhost|APP_URL=http://landlord.saas.test|' .env
+   
+   # Set landlord organization name (for login validation)
+   echo 'APP_LANDLORD_ORGANIZATION_NAME="Test SaaS Organization"' >> .env
+   
+   # Set default landlord user credentials
+   echo 'DEFAULT_LANDLORD_NAME="Test Landlord"' >> .env
+   echo 'DEFAULT_LANDLORD_EMAIL="landlord@test.com"' >> .env
+   echo 'DEFAULT_LANDLORD_USERNAME="test_landlord"' >> .env
+   echo 'DEFAULT_LANDLORD_PASSWORD="password123"' >> .env
+   ```
+
+4. **Fix File Permissions** (Critical for development):
+   ```bash
+   # Set proper ownership for development
+   sudo chown -R abdelrahman:abdelrahman /var/www/saas-dashboard
+   
+   # Set directory permissions
+   sudo chmod -R 755 /var/www/saas-dashboard
+   
+   # Set writable permissions for Laravel directories
+   sudo chmod -R 775 storage/ bootstrap/cache/
+   
+   # Add user to www-data group for web server access
+   sudo usermod -a -G www-data abdelrahman
+   
+   # Set group ownership for web server directories
+   sudo chgrp -R www-data storage/ bootstrap/cache/
+   sudo chmod -R g+w storage/ bootstrap/cache/
+   ```
+
+5. **Configure Session Driver** (Prevents database connection issues):
+   ```bash
+   # Use file-based sessions to avoid multi-tenancy conflicts
+   echo 'SESSION_DRIVER=file' >> .env
+   ```
+
+6. **Clear Configuration Cache**:
+   ```bash
+   php artisan config:clear
+   php artisan cache:clear
+   ```
 
 ---
 
@@ -119,6 +188,21 @@ php artisan landlord:migrate
 php artisan db:seed --class=Database\\Seeders\\Landlord\\RolePermissionSeeder
 ```
 
+### Seed Languages
+
+```bash
+# Run the language seeder
+php artisan db:seed --class="Modules\Localization\Database\Seeders\LanguageSeeder" --database=landlord
+
+# Or use the convenience script
+./seed-languages.sh
+```
+
+This will seed the following languages:
+- **English** (en) - Left-to-right
+- **Arabic** (ar) - Right-to-left  
+- **German** (de) - Left-to-right
+
 ### Landlord Tenant Seeder (Landlord)
 
 Creates a landlord row in the tenants table:
@@ -134,6 +218,14 @@ Creates a user row in the landlord tenant table:
 ```bash
 php artisan db:seed --class=Modules\\Auth\\Database\\Seeders\\LandlordUserSeeder
 ```
+
+**Default Login Credentials** (after running the seeder):
+- **Organization**: `Test SaaS Organization`
+- **Username**: `test_landlord`
+- **Password**: `password123`
+- **Email**: `landlord@test.com`
+
+**Note**: These credentials are set in the `.env` file and can be customized before running the seeder.
 
 ### Seed Modules (Landlord)
 
@@ -430,6 +522,100 @@ in datatable table you can manage the translation by this
 ```bash
 git config core.fileMode false
 ```
+
+## Troubleshooting
+
+### Common Installation Issues
+
+#### 1. CSS/JS Assets Not Loading (404 errors)
+**Problem**: CSS and JavaScript files return 404 Not Found errors.
+
+**Solution**:
+```bash
+# Check and fix APP_URL in .env
+grep APP_URL .env
+# Should be: APP_URL=http://landlord.saas.test (or your actual domain)
+
+# If incorrect, fix it:
+sed -i 's|APP_URL=.*|APP_URL=http://landlord.saas.test|' .env
+
+# Clear cache
+php artisan config:clear
+php artisan cache:clear
+```
+
+#### 2. "Invalid key supplied" Error After Login
+**Problem**: OAuth2 authentication fails with "Invalid key supplied" error.
+
+**Solution**:
+```bash
+# Generate OAuth2 keys (see Installation step 2)
+sudo -u www-data php artisan passport:keys --force
+sudo -u www-data php artisan passport:client --personal --name="SaaS Dashboard Personal Access Client"
+```
+
+#### 3. Database Connection Errors
+**Problem**: `SQLSTATE[3D000]: Invalid catalog name: 1046 No database selected`
+
+**Solution**:
+```bash
+# Use file-based sessions to avoid multi-tenancy conflicts
+echo 'SESSION_DRIVER=file' >> .env
+
+# Clear cache
+php artisan config:clear
+php artisan cache:clear
+```
+
+#### 4. Permission Denied Errors
+**Problem**: Cannot save files, run commands, or access storage.
+
+**Solution**:
+```bash
+# Fix ownership and permissions (see Installation step 4)
+sudo chown -R abdelrahman:abdelrahman /var/www/saas-dashboard
+sudo chmod -R 755 /var/www/saas-dashboard
+sudo chmod -R 775 storage/ bootstrap/cache/
+sudo chgrp -R www-data storage/ bootstrap/cache/
+sudo chmod -R g+w storage/ bootstrap/cache/
+```
+
+#### 5. Git Tracking File Permission Changes
+**Problem**: Git shows hundreds of "changed" files due to permission changes.
+
+**Solution**:
+```bash
+# Disable file mode tracking
+git config core.fileMode false
+
+# If .git/config is owned by root, fix ownership first
+sudo chown abdelrahman:abdelrahman .git/config
+git config core.fileMode false
+```
+
+#### 6. Seeder Permission Issues
+**Problem**: `php artisan db:seed` fails with permission errors.
+
+**Solution**:
+```bash
+# Fix storage permissions
+sudo chown -R www-data:www-data storage/
+sudo chmod -R 775 storage/
+
+# Run seeder with proper database connection
+php artisan db:seed --class="Modules\Auth\Database\Seeders\LandlordUserSeeder" --database=landlord
+```
+
+### Multi-Tenancy Configuration
+
+The application uses a multi-tenant architecture with the following key components:
+
+- **Landlord Database**: Main application database
+- **Tenant Databases**: Individual tenant databases
+- **Subdomain Routing**: `landlord.saas.test` for landlord, `tenant.saas.test` for tenants
+- **Database Connection Middleware**: Automatically switches connections based on subdomain
+
+**Important**: Always use the `landlord` database connection for seeders and migrations unless specifically working with tenant data.
 
 ---
 

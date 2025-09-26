@@ -31,7 +31,7 @@ var cols = [
 ];
 
 filterTable({
-    route: tableRoute,
+    route: route,
     tableID: tableID,
     cols: cols,
     orderColumnIndex: 1,

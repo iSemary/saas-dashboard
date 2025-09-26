@@ -29,7 +29,23 @@ class LoginUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'subdomain' => 'required|max:64|exists:tenants,name|min:2|regex:/^[a-zA-Z0-9]+$/',
+            'subdomain' => [
+                'required',
+                'max:64',
+                'min:2',
+                'regex:/^[a-zA-Z0-9]+$/',
+                function ($attribute, $value, $fail) {
+                    // Check if it's the landlord organization
+                    if ($value === env("APP_LANDLORD_ORGANIZATION_NAME")) {
+                        return;
+                    }
+                    
+                    // Check if it exists in tenants table
+                    if (!\Modules\Tenant\Entities\Tenant::where('name', $value)->exists()) {
+                        $fail('The selected organization does not exist.');
+                    }
+                },
+            ],
             'username' => 'required|max:255',
             'password' => 'required|max:255|min:8',
             'remember_me' => 'required|boolean',

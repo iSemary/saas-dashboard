@@ -22,7 +22,6 @@ class LandlordUserSeeder extends Seeder
                 'username' => env("DEFAULT_LANDLORD_USERNAME"),
                 'country_id' => '1',
                 'language_id' => '1',
-                'theme_mode' => '1',
                 'factor_authenticate' => 0,
                 'google2fa_secret' => null,
                 'password' => bcrypt(env("DEFAULT_LANDLORD_PASSWORD")),

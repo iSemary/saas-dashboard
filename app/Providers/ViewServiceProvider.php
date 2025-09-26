@@ -22,7 +22,11 @@ class ViewServiceProvider extends ServiceProvider
     public function boot()
     {
         view()->composer('*', function ($view) {
-            if (!auth()->check()) {
+            try {
+                if (!auth()->check()) {
+                    return;
+                }
+            } catch (\Exception $e) {
                 return;
             }
 

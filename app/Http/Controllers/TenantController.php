@@ -13,6 +13,8 @@ class TenantController extends Controller
         $subdomain = TenantHelper::getSubDomain();
 
         if ($subdomain === 'landlord') {
+            // Ensure landlord connection is set
+            config(['database.default' => 'landlord']);
             return app()->call('Modules\Auth\Http\Controllers\Landlord\DashboardController@index');
         }
 

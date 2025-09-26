@@ -15,15 +15,18 @@ class AWSService
     {
         $this->bucket = env('AWS_BUCKET');
 
-        $this->s3Client = new S3Client([
-            'version' => 'latest',
-            'region'  => env('AWS_DEFAULT_REGION'),
-            'credentials' => [
-                'key'    => env('AWS_ACCESS_KEY_ID'),
-                'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            ],
-            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false)
-        ]);
+        // Only initialize S3 client if credentials are provided
+        if (env('AWS_ACCESS_KEY_ID') && env('AWS_SECRET_ACCESS_KEY') && env('AWS_DEFAULT_REGION')) {
+            $this->s3Client = new S3Client([
+                'version' => 'latest',
+                'region'  => env('AWS_DEFAULT_REGION'),
+                'credentials' => [
+                    'key'    => env('AWS_ACCESS_KEY_ID'),
+                    'secret' => env('AWS_SECRET_ACCESS_KEY'),
+                ],
+                'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false)
+            ]);
+        }
     }
 
     /**
@@ -36,6 +39,15 @@ class AWSService
      */
     public function upload(UploadedFile $file, string $path = '', string $visibility = 'public')
     {
+        if (!$this->s3Client) {
+            return [
+                'success' => false,
+                'message' => 'AWS S3 not configured',
+                'path' => null,
+                'url' => null
+            ];
+        }
+
         try {
             // Generate unique filename
             $filename = $path . '/' . $file->hashName();
@@ -83,6 +95,13 @@ class AWSService
      */
     public function delete(string $path): array
     {
+        if (!$this->s3Client) {
+            return [
+                'success' => false,
+                'message' => 'AWS S3 not configured'
+            ];
+        }
+
         try {
             $this->s3Client->deleteObject([
                 'Bucket' => $this->bucket,
@@ -110,6 +129,10 @@ class AWSService
      */
     public function getSignedUrl(string $path, int $minutes = 5)
     {
+        if (!$this->s3Client) {
+            return false;
+        }
+
         try {
             $cmd = $this->s3Client->getCommand('GetObject', [
                 'Bucket' => $this->bucket,

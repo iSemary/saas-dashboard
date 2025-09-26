@@ -21,7 +21,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes, FileHandler;
 
-    // protected $connection = 'tenant';
+    protected $connection = 'landlord';
 
     /**
      * The attributes that are mass assignable.
@@ -71,13 +71,8 @@ class User extends Authenticatable
 
     public function getConnectionName()
     {
-        $currentConnection = config('database.default');
-
-        if ($currentConnection == 'landlord') {
-            return 'landlord';
-        }
-
-        return 'tenant';
+        // Always use landlord connection for authentication
+        return 'landlord';
     }
 
     public function getCurrentTypeName()

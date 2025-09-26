@@ -15,17 +15,21 @@ const loadingSpan = `<span><i class="fa fa-spinner fa-spin"></i> ${t(
 )}</span>`;
 
 // DataTables Config
-$.extend(true, $.fn.dataTable.defaults, {
-    language: {
-        url: language.dataTableLanguageFile,
-    },
-    lengthMenu: [
-        [10, 25, 50, -1],
-        [10, 25, 50, "∞"],
-    ],
-    dom: "Blfrtip",
-    // dom: "lpftrip",
-    buttons: ["copyHtml5", "excelHtml5", "csvHtml5", "pdfHtml5", "print"],
+$(document).ready(function() {
+    if (typeof $.fn.DataTable !== 'undefined') {
+        $.extend(true, $.fn.dataTable.defaults, {
+            language: {
+                url: language.dataTableLanguageFile,
+            },
+            lengthMenu: [
+                [10, 25, 50, -1],
+                [10, 25, 50, "∞"],
+            ],
+            dom: "Blfrtip",
+            // dom: "lpftrip",
+            buttons: ["copyHtml5", "excelHtml5", "csvHtml5", "pdfHtml5", "print"],
+        });
+    }
 });
 
 // Get URL parameter name
@@ -500,6 +504,12 @@ function filterTable({
     orderColumnType = "desc",
     selectable = false,
 }) {
+    // Check if DataTables is available
+    if (typeof $.fn.DataTable === 'undefined') {
+        console.error('DataTables is not available');
+        return;
+    }
+
     // init
     if (init) {
         // check if the table already exists

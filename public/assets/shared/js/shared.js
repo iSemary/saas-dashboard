@@ -386,8 +386,12 @@ $(document).on("change", ".upload-image", function (e) {
 });
 
 // Static datatables
-$('.static-datatables').DataTable({
-    "ordering": false,
+$(document).ready(function() {
+    if (typeof $.fn.DataTable !== 'undefined') {
+        $('.static-datatables').DataTable({
+            "ordering": false,
+        });
+    }
 });
 
 // Initialize intl-tel-input plugin
