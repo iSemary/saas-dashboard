@@ -29,6 +29,11 @@ class File extends Model implements Auditable
         'is_encrypted'
     ];
 
+    protected $casts = [
+        'metadata' => 'array',
+        'is_encrypted' => 'boolean',
+    ];
+
     /**
      * Get the folder that owns the file.
      */

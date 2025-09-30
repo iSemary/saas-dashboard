@@ -38,7 +38,7 @@ class User extends Authenticatable
      */
     protected $hidden = ['password', 'remember_token'];
 
-    protected $guard_name = 'api';
+    protected $guard_name = 'web';
 
     protected $metaKeys = [
         'avatar',

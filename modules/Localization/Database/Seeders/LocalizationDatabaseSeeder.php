@@ -13,6 +13,8 @@ class LocalizationDatabaseSeeder extends Seeder
     {
         $this->call([
             LanguageSeeder::class,
+            TranslationSeeder::class,
+            TranslationObjectSeeder::class,
         ]);
     }
 }

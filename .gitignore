@@ -21,3 +21,4 @@ yarn-error.log
 /.nova
 /.zed
 /storage/backup-sentry/*
+cookies.txt

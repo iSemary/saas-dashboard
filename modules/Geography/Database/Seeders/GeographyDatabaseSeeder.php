@@ -11,6 +11,12 @@ class GeographyDatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // $this->call([]);
+        $this->call([
+            CountrySeeder::class,
+            ProvinceSeeder::class,
+            CitySeeder::class,
+            TownSeeder::class,
+            StreetSeeder::class,
+        ]);
     }
 }

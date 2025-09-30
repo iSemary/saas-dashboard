@@ -9,23 +9,23 @@ class Resources
         return [
             [
                 'name' => 'landlord',
-                'guard_name' => 'api'
+                'guard_name' => 'web'
             ],
             [
                 'name' => 'developer',
-                'guard_name' => 'api'
+                'guard_name' => 'web'
             ],
             [
                 'name' => 'marketing',
-                'guard_name' => 'api'
+                'guard_name' => 'web'
             ],
             [
                 'name' => 'sales',
-                'guard_name' => 'api'
+                'guard_name' => 'web'
             ],
             [
                 'name' => 'viewer',
-                'guard_name' => 'api'
+                'guard_name' => 'web'
             ]
         ];
     }

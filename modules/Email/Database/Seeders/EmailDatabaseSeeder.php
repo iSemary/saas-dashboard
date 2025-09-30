@@ -11,6 +11,12 @@ class EmailDatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // $this->call([]);
+        $this->call([
+            EmailTemplateSeeder::class,
+            EmailGroupSeeder::class,
+            EmailRecipientSeeder::class,
+            EmailSubscriberSeeder::class,
+            EmailCampaignSeeder::class,
+        ]);
     }
 }

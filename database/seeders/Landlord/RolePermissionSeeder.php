@@ -42,8 +42,8 @@ class RolePermissionSeeder extends Seeder
         foreach ($this->resources as $resource) {
             foreach ($resource['actions'] as $action) {
                 Permission::updateOrCreate(
-                    ['name' => "$action.{$resource['name']}", 'guard_name' => 'api'],
-                    ['name' => "$action.{$resource['name']}", 'guard_name' => 'api']
+                    ['name' => "$action.{$resource['name']}", 'guard_name' => 'web'],
+                    ['name' => "$action.{$resource['name']}", 'guard_name' => 'web']
                 );
             }
         }

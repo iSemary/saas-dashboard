@@ -11,6 +11,23 @@ class UtilitiesDatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // $this->call([]);
+        $this->call([
+            // Core entities first (no dependencies)
+            CategorySeeder::class,
+            CurrencySeeder::class,
+            IndustrySeeder::class,
+            TagSeeder::class,
+            TypeSeeder::class,
+            AnnouncementSeeder::class,
+            ModuleSeeder::class,
+            ReleaseSeeder::class,
+            StaticPageSeeder::class,
+            EntitySeeder::class,
+            
+            // Entities with dependencies
+            UnitSeeder::class, // Depends on TypeSeeder
+            StaticPageAttributeSeeder::class, // Depends on StaticPageSeeder
+            ModuleEntitySeeder::class, // Depends on ModuleSeeder and EntitySeeder
+        ]);
     }
 }

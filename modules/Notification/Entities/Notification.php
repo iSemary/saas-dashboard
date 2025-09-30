@@ -51,6 +51,11 @@ class Notification extends Model implements Auditable
         'seen_at',
     ];
 
+    protected $casts = [
+        'metadata' => 'array',
+        'seen_at' => 'datetime',
+    ];
+
     protected $fileColumns = [
         'icon' => [
             'folder' => 'notifications',

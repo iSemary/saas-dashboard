@@ -13,15 +13,11 @@ class UserMeta extends Model implements Auditable
 
     protected $fillable = ['user_id', 'meta_key', 'meta_value'];
 
+    protected $connection = 'landlord';
+
     public function getConnectionName()
     {
-        $currentConnection = config('database.default');
-
-        if ($currentConnection == 'landlord') {
-            return 'landlord';
-        }
-
-        return 'tenant';
+        return 'landlord';
     }
 
     public function getByMetaKey($userId, $metaKey)

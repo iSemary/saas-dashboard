@@ -584,7 +584,7 @@
                         @if (isset($sectionConfig['items']))
                             @foreach ($sectionConfig['items'] as $key => $item)
                                 {{-- Check for routes without permission or with specific permission --}}
-                                @if (!isset($item['permission']) || Gate::check($item['permission']['read'] ?? null))
+                                @if (!isset($item['permission']) || (is_array($item['permission']) && Gate::check($item['permission']['read'] ?? null)) || (is_string($item['permission']) && Gate::check($item['permission'])))
                                     @if (isset($item['external']) && $item['external'])
                                         <li class="nav-item">
                                             <a href="{{ $item['path'] ?? route($item['routes']['index']) }}"
