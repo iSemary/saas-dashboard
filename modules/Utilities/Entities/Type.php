@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 use Modules\FileManager\Traits\FileHandler;
+use Modules\Localization\Traits\Translatable;
 
 class Type extends Model implements Auditable
 {
-    use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable, FileHandler;
+    use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable, FileHandler, Translatable;
 
     protected $connection = "landlord";
 
@@ -25,6 +26,8 @@ class Type extends Model implements Auditable
         'icon',
         'priority'
     ];
+
+    protected $translatableColumns = ['name', 'description'];
 
 
     protected $fileColumns = [

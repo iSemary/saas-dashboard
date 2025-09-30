@@ -18,6 +18,7 @@ class EmailTemplate extends Model implements Auditable
 
     protected $fillable = [
         'name',
+        'description',
         'subject',
         'body',
         'status',

@@ -16,6 +16,7 @@ class EmailTemplateSeeder extends Seeder
             [
                 'name' => 'Welcome Email',
                 'description' => 'Welcome new users to the platform',
+                'subject' => 'Welcome to Our Platform!',
                 'body' => '<!DOCTYPE html>
 <html>
 <head>
@@ -41,6 +42,7 @@ class EmailTemplateSeeder extends Seeder
             [
                 'name' => 'Password Reset',
                 'description' => 'Password reset email template',
+                'subject' => 'Password Reset Request',
                 'body' => '<!DOCTYPE html>
 <html>
 <head>
@@ -66,6 +68,7 @@ class EmailTemplateSeeder extends Seeder
             [
                 'name' => 'Newsletter',
                 'description' => 'Monthly newsletter template',
+                'subject' => 'Monthly Newsletter - {{month}} {{year}}',
                 'body' => '<!DOCTYPE html>
 <html>
 <head>
@@ -98,6 +101,7 @@ class EmailTemplateSeeder extends Seeder
             [
                 'name' => 'Account Verification',
                 'description' => 'Email verification template',
+                'subject' => 'Verify Your Email Address',
                 'body' => '<!DOCTYPE html>
 <html>
 <head>
@@ -124,6 +128,7 @@ class EmailTemplateSeeder extends Seeder
             [
                 'name' => 'Order Confirmation',
                 'description' => 'Order confirmation email template',
+                'subject' => 'Order Confirmation - {{order_number}}',
                 'body' => '<!DOCTYPE html>
 <html>
 <head>
@@ -155,6 +160,61 @@ class EmailTemplateSeeder extends Seeder
             <a href="{{order_url}}" style="background-color: #27ae60; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">View Order</a>
         </div>
         <p>Best regards,<br>The Team</p>
+    </div>
+</body>
+</html>',
+                'status' => 'active',
+            ],
+            [
+                'name' => 'User Registration',
+                'description' => 'User registration confirmation email template',
+                'subject' => 'Thank you for registration',
+                'body' => '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Registration Confirmation</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h1 style="color: #2c3e50;">Registration Confirmation</h1>
+        <p>Dear {{name}},</p>
+        <p>Thank you for registration. To complete the registration process, please click the "Confirm Email" button below.</p>
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{verification_url}}" style="background-color: #3490dc; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Confirm Email</a>
+        </div>
+        <p>If you are having trouble clicking the "Confirm Email" button, you can also copy and paste the following link into your browser:</p>
+        <p style="word-break: break-all; color: #666;">{{verification_url}}</p>
+        <p>If you did not initiate this registration, please ignore this email.</p>
+        <p>Thanks,<br>{{app_name}} Team.</p>
+    </div>
+</body>
+</html>',
+                'status' => 'active',
+            ],
+            [
+                'name' => 'Password Reset Request',
+                'description' => 'Password reset request email template',
+                'subject' => 'Forget Password',
+                'body' => '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Password Reset</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h1 style="color: #e74c3c;">Password Reset Request</h1>
+        <p>Dear {{name}},</p>
+        <p>We received a request to reset your password. If you did not make this request, please ignore this email.</p>
+        <p>To reset your password, click the button below:</p>
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{reset_url}}" style="background-color: #3490dc; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Reset Password</a>
+        </div>
+        <p>If you are having trouble clicking the "Reset Password" button, you can also copy and paste the following link into your browser:</p>
+        <p style="word-break: break-all; color: #666;">{{reset_url}}</p>
+        <p>If you have any questions or need assistance, please contact our support team.</p>
+        <p>Thanks,<br>{{app_name}} Team.</p>
     </div>
 </body>
 </html>',

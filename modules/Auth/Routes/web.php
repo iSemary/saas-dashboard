@@ -9,6 +9,7 @@ use Modules\Auth\Http\Controllers\Guest\OrganizationController;
 use Modules\Auth\Http\Controllers\Guest\PasswordController;
 use Modules\Auth\Http\Controllers\Guest\TwoFactorAuthController;
 use Modules\Auth\Http\Controllers\Guest\ActivityLogController;
+use Modules\Auth\Http\Controllers\Landlord\DashboardController;
 use App\Http\Controllers\TenantController;
 
 // Routes for guests (no auth middleware)
@@ -81,4 +82,13 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_
     // Activity Logs by [id]
     Route::get('activity-logs/{id?}', [ActivityLogController::class, "index"])->name('activity-logs.index');
     Route::get('activity-logs/modal/{id?}', [ActivityLogController::class, "modal"])->name('activity-logs.modal');
+
+    // Dashboard API Routes
+    Route::prefix('dashboard')->name('dashboard.')->group(function () {
+        Route::get('stats', [DashboardController::class, 'getStats'])->name('stats');
+        Route::get('user-chart', [DashboardController::class, 'getUserChartData'])->name('user-chart');
+        Route::get('tenant-chart', [DashboardController::class, 'getTenantChartData'])->name('tenant-chart');
+        Route::get('email-chart', [DashboardController::class, 'getEmailChartData'])->name('email-chart');
+        Route::get('module-stats', [DashboardController::class, 'getModuleStats'])->name('module-stats');
+    });
 });

@@ -153,6 +153,61 @@ It will sync the missed translations by translating it from google translate API
 php artisan translations:translate-missing
 ```
 
+### Email Template Management
+
+Manage dynamic email templates through the command line interface
+
+```bash
+# List all email templates
+php artisan email:templates list
+
+# Create a new email template
+php artisan email:templates create --name="Welcome Email" --subject="Welcome!" --description="Welcome new users" --body="<h1>Welcome {{name}}!</h1>"
+
+# Update an existing template
+php artisan email:templates update --id=1 --subject="Updated Welcome Subject"
+
+# Delete a template
+php artisan email:templates delete --id=1
+
+# Seed default email templates
+php artisan email:templates seed
+```
+
+For detailed documentation on the email system, see [Email System Documentation](documentation/email-system.md).
+
+### Landlord Database Setup
+
+Complete landlord database setup with migrations and seeding in one command
+
+```bash
+# Complete setup (migrations + seeding)
+php artisan landlord:setup
+
+# Force setup without confirmation
+php artisan landlord:setup --force
+
+# Run migrations only
+php artisan landlord:setup --migrate-only
+
+# Run seeding only
+php artisan landlord:setup --seed-only
+
+# Skip real data seeding
+php artisan landlord:setup --skip-real-data
+
+# Skip dummy data seeding
+php artisan landlord:setup --skip-dummy-data
+```
+
+This command will:
+- Run all landlord migrations from various paths
+- Seed essential real data (roles, permissions, users, languages, email templates, etc.)
+- Seed dummy data for development and testing
+- Display next steps and helpful information
+
+For detailed documentation on the landlord setup, see [Environment Setup Documentation](documentation/environment-setup.md).
+
 ---
 
 ## Databases
@@ -161,7 +216,19 @@ php artisan translations:translate-missing
 
 ## Running Landlord-Specific Migrations
 
-### Option 1: Direct Migration Commands
+### Option 1: Complete Setup Command (Recommended)
+
+Use the comprehensive landlord setup command that handles both migrations and seeding:
+
+```bash
+# Complete setup (migrations + seeding)
+php artisan landlord:setup
+
+# Force setup without confirmation
+php artisan landlord:setup --force
+```
+
+### Option 2: Direct Migration Commands
 
 Run individual migration commands for the landlord database:
 
@@ -174,7 +241,7 @@ php artisan migrate --path=modules/*/Database/Migrations/shared --database=landl
 php artisan migrate --path=database/migrations/shared --database=landlord
 ```
 
-### Option 2: Custom Artisan Command
+### Option 3: Custom Artisan Command
 
 You can simplify the migration process by using a custom Artisan command:
 
@@ -182,13 +249,17 @@ You can simplify the migration process by using a custom Artisan command:
 php artisan landlord:migrate
 ```
 
-### Seed Role and Permissions (Landlord)
+### Individual Seeding Commands
+
+If you need to run individual seeders (the `landlord:setup` command handles all of these automatically):
+
+#### Seed Role and Permissions (Landlord)
 
 ```bash
 php artisan db:seed --class=Database\\Seeders\\Landlord\\RolePermissionSeeder
 ```
 
-### Seed Languages
+#### Seed Languages
 
 ```bash
 # Run the language seeder
@@ -203,7 +274,7 @@ This will seed the following languages:
 - **Arabic** (ar) - Right-to-left  
 - **German** (de) - Left-to-right
 
-### Landlord Tenant Seeder (Landlord)
+#### Landlord Tenant Seeder (Landlord)
 
 Creates a landlord row in the tenants table:
 
@@ -211,7 +282,7 @@ Creates a landlord row in the tenants table:
 php artisan db:seed --class=Database\\Seeders\\Landlord\\LandlordTenantSeeder
 ```
 
-### Seed Default Landlord User (Landlord)
+#### Seed Default Landlord User (Landlord)
 
 Creates a user row in the landlord tenant table:
 
@@ -227,16 +298,32 @@ php artisan db:seed --class=Modules\\Auth\\Database\\Seeders\\LandlordUserSeeder
 
 **Note**: These credentials are set in the `.env` file and can be customized before running the seeder.
 
-### Seed Modules (Landlord)
+#### Seed Modules (Landlord)
 
 ```bash
 php artisan db:seed --class=Modules\\Utilities\\Database\\Seeders\\ModulesSeeder
 ```
 
-### Seed Configurations (Landlord)
+#### Seed Configurations (Landlord)
 
 ```bash
 php artisan db:seed --class=Modules\\Development\\Database\\Seeders\\ConfigurationsSeeder
+```
+
+### Quick Setup Commands
+
+For development and testing, you can also use these convenience commands:
+
+```bash
+# Seed real data (languages, email templates, configurations, etc.)
+php artisan seed:real-data
+
+# Seed dummy data for development and testing
+php artisan seed:dummy-data
+
+# Seed specific modules only
+php artisan seed:real-data --modules=Localization,Email
+php artisan seed:dummy-data --modules=Auth,Utilities
 ```
 
 ---

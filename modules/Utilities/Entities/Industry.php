@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\FileManager\Traits\FileHandler;
+use Modules\Localization\Traits\Translatable;
 use OwenIt\Auditing\Contracts\Auditable;
 
 class Industry extends Model implements Auditable
 {
-    use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable, FileHandler;
+    use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable, FileHandler, Translatable;
 
     protected $connection = "landlord";
 
