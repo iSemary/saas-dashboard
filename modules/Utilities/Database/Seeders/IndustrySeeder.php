@@ -217,7 +217,10 @@ class IndustrySeeder extends Seeder
         ];
 
         foreach ($industries as $industryData) {
-            Industry::create($industryData);
+            Industry::firstOrCreate(
+                ['name' => $industryData['name']], 
+                $industryData
+            );
         }
 
         $this->command->info('Industries seeded successfully!');

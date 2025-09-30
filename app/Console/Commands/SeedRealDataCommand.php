@@ -101,25 +101,39 @@ class SeedRealDataCommand extends Command
                     'Modules\\Localization\\Database\\Seeders\\TranslationSeeder',
                 ]
             ],
-            'Email' => [
-                'description' => 'Email templates and credentials',
-                'seeders' => [
-                    'Modules\\Email\\Database\\Seeders\\EmailTemplateSeeder',
-                    'Modules\\Email\\Database\\Seeders\\EmailCredentialSeeder',
-                ]
-            ],
+                'Email' => [
+                    'description' => 'Email templates, credentials, and related entities',
+                    'seeders' => [
+                        'Modules\\Email\\Database\\Seeders\\EmailTemplateSeeder',
+                        'Modules\\Email\\Database\\Seeders\\EmailCredentialSeeder',
+                        'Modules\\Email\\Database\\Seeders\\EmailGroupSeeder',
+                        'Modules\\Email\\Database\\Seeders\\EmailRecipientSeeder',
+                        'Modules\\Email\\Database\\Seeders\\EmailSubscriberSeeder',
+                        'Modules\\Email\\Database\\Seeders\\EmailTemplateLogSeeder',
+                        'Modules\\Email\\Database\\Seeders\\EmailRecipientGroupSeeder',
+                        'Modules\\Email\\Database\\Seeders\\EmailRecipientMetaSeeder',
+                        'Modules\\Email\\Database\\Seeders\\EmailCampaignSeeder',
+                        'Modules\\Email\\Database\\Seeders\\EmailLogSeeder',
+                        'Modules\\Email\\Database\\Seeders\\EmailAttachmentSeeder',
+                    ]
+                ],
             'Development' => [
                 'description' => 'System configurations and settings',
                 'seeders' => [
                     'Modules\\Development\\Database\\Seeders\\ConfigurationsSeeder',
                 ]
             ],
-            'Utilities' => [
-                'description' => 'System modules and utilities',
-                'seeders' => [
-                    'Modules\\Utilities\\Database\\Seeders\\ModulesSeeder',
-                ]
-            ],
+                'Utilities' => [
+                    'description' => 'System modules, currencies, and utilities',
+                    'seeders' => [
+                        'Modules\\Utilities\\Database\\Seeders\\ModulesSeeder',
+                        'Modules\\Utilities\\Database\\Seeders\\CurrencySeeder',
+                        'Modules\\Utilities\\Database\\Seeders\\StaticPageSeeder',
+                        'Modules\\Utilities\\Database\\Seeders\\StaticPageAttributeSeeder',
+                        'Modules\\Utilities\\Database\\Seeders\\UnitSeeder',
+                        'Modules\\Utilities\\Database\\Seeders\\ModuleEntitySeeder',
+                    ]
+                ],
             'Auth' => [
                 'description' => 'Roles, permissions, and default users',
                 'seeders' => [
@@ -127,12 +141,22 @@ class SeedRealDataCommand extends Command
                     'Modules\\Auth\\Database\\Seeders\\LandlordUserSeeder',
                 ]
             ],
-            'Tenant' => [
-                'description' => 'Landlord tenant setup',
-                'seeders' => [
-                    'Database\\Seeders\\Landlord\\LandlordTenantSeeder',
+                'Tenant' => [
+                    'description' => 'Landlord tenant setup',
+                    'seeders' => [
+                        'Database\\Seeders\\Landlord\\LandlordTenantSeeder',
+                    ]
+                ],
+                'Geography' => [
+                    'description' => 'Countries, provinces, cities, towns, and streets',
+                    'seeders' => [
+                        'Modules\\Geography\\Database\\Seeders\\CountrySeeder',
+                        'Modules\\Geography\\Database\\Seeders\\ProvinceSeeder',
+                        'Modules\\Geography\\Database\\Seeders\\CitySeeder',
+                        'Modules\\Geography\\Database\\Seeders\\TownSeeder',
+                        'Modules\\Geography\\Database\\Seeders\\StreetSeeder',
+                    ]
                 ]
-            ]
         ];
 
         // If no specific modules provided, seed all

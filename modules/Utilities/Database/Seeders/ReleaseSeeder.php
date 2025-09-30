@@ -198,7 +198,10 @@ This is a critical security update. Please update immediately.',
         ];
 
         foreach ($releases as $releaseData) {
-            Release::create($releaseData);
+            Release::firstOrCreate(
+                ['version' => $releaseData['version']], 
+                $releaseData
+            );
         }
 
         $this->command->info('Releases seeded successfully!');

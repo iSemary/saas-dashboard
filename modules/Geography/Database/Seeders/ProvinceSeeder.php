@@ -427,7 +427,10 @@ class ProvinceSeeder extends Seeder
             if ($country) {
                 unset($provinceData['country_name']);
                 $provinceData['country_id'] = $country->id;
-                Province::create($provinceData);
+                Province::firstOrCreate(
+                    ['name' => $provinceData['name'], 'country_id' => $provinceData['country_id']], 
+                    $provinceData
+                );
             }
         }
 

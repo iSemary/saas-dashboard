@@ -103,18 +103,28 @@ class SeedDummyDataCommand extends Command
                     'Modules\\Utilities\\Database\\Seeders\\DummyTagSeeder',
                 ]
             ],
-            'Email' => [
-                'description' => 'Email templates and campaigns',
-                'seeders' => [
-                    'Modules\\Email\\Database\\Seeders\\DummyEmailCampaignSeeder',
-                ]
-            ],
-            'Geography' => [
-                'description' => 'Countries, provinces, cities',
-                'seeders' => [
-                    'Modules\\Geography\\Database\\Seeders\\DummyGeographySeeder',
-                ]
-            ],
+                'Email' => [
+                    'description' => 'Email templates, campaigns, and related entities',
+                    'seeders' => [
+                        'Modules\\Email\\Database\\Seeders\\DummyEmailCampaignSeeder',
+                        'Modules\\Email\\Database\\Seeders\\EmailGroupSeeder',
+                        'Modules\\Email\\Database\\Seeders\\EmailRecipientSeeder',
+                        'Modules\\Email\\Database\\Seeders\\EmailSubscriberSeeder',
+                        'Modules\\Email\\Database\\Seeders\\EmailTemplateLogSeeder',
+                        'Modules\\Email\\Database\\Seeders\\EmailRecipientGroupSeeder',
+                        'Modules\\Email\\Database\\Seeders\\EmailRecipientMetaSeeder',
+                        'Modules\\Email\\Database\\Seeders\\EmailLogSeeder',
+                        'Modules\\Email\\Database\\Seeders\\EmailAttachmentSeeder',
+                    ]
+                ],
+                'Geography' => [
+                    'description' => 'Countries, provinces, cities, towns, and streets',
+                    'seeders' => [
+                        'Modules\\Geography\\Database\\Seeders\\DummyGeographySeeder',
+                        'Modules\\Geography\\Database\\Seeders\\TownSeeder',
+                        'Modules\\Geography\\Database\\Seeders\\StreetSeeder',
+                    ]
+                ],
             'Tenant' => [
                 'description' => 'Tenant and customer data',
                 'seeders' => [

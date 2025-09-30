@@ -188,7 +188,10 @@ class EntitySeeder extends Seeder
         ];
 
         foreach ($entities as $entityData) {
-            Entity::create($entityData);
+            Entity::firstOrCreate(
+                ['entity_name' => $entityData['entity_name']], 
+                $entityData
+            );
         }
 
         $this->command->info('Entities seeded successfully!');

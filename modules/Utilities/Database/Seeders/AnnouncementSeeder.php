@@ -73,7 +73,10 @@ class AnnouncementSeeder extends Seeder
         ];
 
         foreach ($announcements as $announcementData) {
-            Announcement::create($announcementData);
+            Announcement::firstOrCreate(
+                ['title' => $announcementData['title']], 
+                $announcementData
+            );
         }
 
         $this->command->info('Announcements seeded successfully!');

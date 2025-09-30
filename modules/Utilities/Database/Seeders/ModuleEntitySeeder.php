@@ -14,22 +14,27 @@ class ModuleEntitySeeder extends Seeder
      */
     public function run(): void
     {
-        // Get module IDs
-        $authModule = Module::where('module_key', 'auth')->first();
-        $customerModule = Module::where('module_key', 'customer')->first();
-        $developmentModule = Module::where('module_key', 'development')->first();
-        $emailModule = Module::where('module_key', 'email')->first();
-        $fileManagerModule = Module::where('module_key', 'file-manager')->first();
-        $geographyModule = Module::where('module_key', 'geography')->first();
-        $localizationModule = Module::where('module_key', 'localization')->first();
-        $notificationModule = Module::where('module_key', 'notification')->first();
-        $paymentModule = Module::where('module_key', 'payment')->first();
-        $subscriptionModule = Module::where('module_key', 'subscription')->first();
-        $tenantModule = Module::where('module_key', 'tenant')->first();
-        $utilitiesModule = Module::where('module_key', 'utilities')->first();
+        // Get module IDs or create them if they don't exist
+        $authModule = Module::firstOrCreate(['module_key' => 'auth'], ['name' => 'Authentication', 'status' => 'active']);
+        $customerModule = Module::firstOrCreate(['module_key' => 'customer'], ['name' => 'Customer', 'status' => 'active']);
+        $developmentModule = Module::firstOrCreate(['module_key' => 'development'], ['name' => 'Development', 'status' => 'active']);
+        $emailModule = Module::firstOrCreate(['module_key' => 'email'], ['name' => 'Email', 'status' => 'active']);
+        $fileManagerModule = Module::firstOrCreate(['module_key' => 'file-manager'], ['name' => 'File Manager', 'status' => 'active']);
+        $geographyModule = Module::firstOrCreate(['module_key' => 'geography'], ['name' => 'Geography', 'status' => 'active']);
+        $localizationModule = Module::firstOrCreate(['module_key' => 'localization'], ['name' => 'Localization', 'status' => 'active']);
+        $notificationModule = Module::firstOrCreate(['module_key' => 'notification'], ['name' => 'Notification', 'status' => 'active']);
+        $paymentModule = Module::firstOrCreate(['module_key' => 'payment'], ['name' => 'Payment', 'status' => 'active']);
+        $subscriptionModule = Module::firstOrCreate(['module_key' => 'subscription'], ['name' => 'Subscription', 'status' => 'active']);
+        $tenantModule = Module::firstOrCreate(['module_key' => 'tenant'], ['name' => 'Tenant', 'status' => 'active']);
+        $utilitiesModule = Module::firstOrCreate(['module_key' => 'utilities'], ['name' => 'Utilities', 'status' => 'active']);
 
-        // Get entity IDs
-        $entities = Entity::all()->keyBy('entity_name');
+        // Get entity IDs or create them if they don't exist
+        $entities = [];
+        $entityNames = ['User', 'Role', 'Permission', 'Customer', 'Configuration', 'EmailTemplate', 'EmailCredential', 'EmailLog', 'EmailGroup', 'EmailRecipient', 'EmailSubscriber', 'EmailCampaign', 'EmailAttachment', 'File', 'Folder', 'Country', 'Province', 'City', 'Town', 'Street', 'Language', 'Translation', 'Notification', 'Plan', 'Subscription', 'Tenant', 'TenantUser', 'TenantSetting', 'Category', 'Type', 'Industry', 'Tag', 'Currency', 'Module', 'Entity', 'Unit', 'StaticPage', 'StaticPageAttribute', 'ApiKey', 'Payment', 'PaymentMethod', 'Transaction', 'Feature', 'Usage', 'Release', 'Announcement', 'ModuleEntity'];
+        
+        foreach ($entityNames as $entityName) {
+            $entities[$entityName] = Entity::firstOrCreate(['entity_name' => $entityName], ['entity_path' => 'Modules\\' . ucfirst($entityName) . '\\Entities\\' . $entityName]);
+        }
 
         $moduleEntities = [
             // Auth Module Entities
@@ -55,7 +60,7 @@ class ModuleEntitySeeder extends Seeder
             // Development Module Entities
             [
                 'module_id' => $developmentModule->id,
-                'entity_id' => $entities['Log']->id,
+                'entity_id' => $entities['EmailLog']->id,
             ],
             [
                 'module_id' => $developmentModule->id,
@@ -73,7 +78,7 @@ class ModuleEntitySeeder extends Seeder
             ],
             [
                 'module_id' => $emailModule->id,
-                'entity_id' => $entities['EmailQueue']->id,
+                'entity_id' => $entities['EmailLog']->id,
             ],
 
             // File Manager Module Entities
@@ -93,7 +98,7 @@ class ModuleEntitySeeder extends Seeder
             ],
             [
                 'module_id' => $geographyModule->id,
-                'entity_id' => $entities['State']->id,
+                'entity_id' => $entities['Province']->id,
             ],
             [
                 'module_id' => $geographyModule->id,
@@ -101,7 +106,7 @@ class ModuleEntitySeeder extends Seeder
             ],
             [
                 'module_id' => $geographyModule->id,
-                'entity_id' => $entities['Timezone']->id,
+                'entity_id' => $entities['Country']->id,
             ],
             [
                 'module_id' => $geographyModule->id,
@@ -119,7 +124,7 @@ class ModuleEntitySeeder extends Seeder
             ],
             [
                 'module_id' => $localizationModule->id,
-                'entity_id' => $entities['Locale']->id,
+                'entity_id' => $entities['Language']->id,
             ],
 
             // Notification Module Entities
@@ -230,7 +235,13 @@ class ModuleEntitySeeder extends Seeder
         ];
 
         foreach ($moduleEntities as $moduleEntityData) {
-            ModuleEntity::create($moduleEntityData);
+            ModuleEntity::firstOrCreate(
+                [
+                    'module_id' => $moduleEntityData['module_id'],
+                    'entity_id' => $moduleEntityData['entity_id']
+                ], 
+                $moduleEntityData
+            );
         }
 
         $this->command->info('Module entities seeded successfully!');

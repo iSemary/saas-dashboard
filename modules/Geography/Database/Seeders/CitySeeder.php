@@ -377,7 +377,10 @@ class CitySeeder extends Seeder
             if ($province) {
                 unset($cityData['province_name']);
                 $cityData['province_id'] = $province->id;
-                City::create($cityData);
+                City::firstOrCreate(
+                    ['name' => $cityData['name'], 'province_id' => $cityData['province_id']], 
+                    $cityData
+                );
             }
         }
 

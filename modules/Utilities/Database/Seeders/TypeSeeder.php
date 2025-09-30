@@ -97,7 +97,10 @@ class TypeSeeder extends Seeder
         ];
 
         foreach ($types as $typeData) {
-            Type::create($typeData);
+            Type::firstOrCreate(
+                ['slug' => $typeData['slug']], 
+                $typeData
+            );
         }
 
         $this->command->info('Types seeded successfully!');

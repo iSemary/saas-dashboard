@@ -13,17 +13,17 @@ class UnitSeeder extends Seeder
      */
     public function run(): void
     {
-        // Get type IDs
-        $weightType = Type::where('slug', 'weight')->first();
-        $lengthType = Type::where('slug', 'length')->first();
-        $volumeType = Type::where('slug', 'volume')->first();
-        $areaType = Type::where('slug', 'area')->first();
-        $temperatureType = Type::where('slug', 'temperature')->first();
-        $timeType = Type::where('slug', 'time')->first();
-        $speedType = Type::where('slug', 'speed')->first();
-        $pressureType = Type::where('slug', 'pressure')->first();
-        $energyType = Type::where('slug', 'energy')->first();
-        $digitalStorageType = Type::where('slug', 'digital-storage')->first();
+        // Get available types or create them if they don't exist
+        $weightType = Type::firstOrCreate(['slug' => 'weight'], ['name' => 'Weight', 'status' => 'active']);
+        $lengthType = Type::firstOrCreate(['slug' => 'length'], ['name' => 'Length', 'status' => 'active']);
+        $volumeType = Type::firstOrCreate(['slug' => 'volume'], ['name' => 'Volume', 'status' => 'active']);
+        $areaType = Type::firstOrCreate(['slug' => 'area'], ['name' => 'Area', 'status' => 'active']);
+        $temperatureType = Type::firstOrCreate(['slug' => 'temperature'], ['name' => 'Temperature', 'status' => 'active']);
+        $timeType = Type::firstOrCreate(['slug' => 'time'], ['name' => 'Time', 'status' => 'active']);
+        $speedType = Type::firstOrCreate(['slug' => 'speed'], ['name' => 'Speed', 'status' => 'active']);
+        $pressureType = Type::firstOrCreate(['slug' => 'pressure'], ['name' => 'Pressure', 'status' => 'active']);
+        $energyType = Type::firstOrCreate(['slug' => 'energy'], ['name' => 'Energy', 'status' => 'active']);
+        $digitalStorageType = Type::firstOrCreate(['slug' => 'digital-storage'], ['name' => 'Digital Storage', 'status' => 'active']);
 
         $units = [
             // Weight Units
@@ -512,7 +512,10 @@ class UnitSeeder extends Seeder
         ];
 
         foreach ($units as $unitData) {
-            Unit::create($unitData);
+            Unit::firstOrCreate(
+                ['name' => $unitData['name'], 'code' => $unitData['code']], 
+                $unitData
+            );
         }
 
         $this->command->info('Units seeded successfully!');

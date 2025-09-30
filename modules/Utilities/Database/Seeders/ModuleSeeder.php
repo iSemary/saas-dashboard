@@ -125,7 +125,10 @@ class ModuleSeeder extends Seeder
         ];
 
         foreach ($modules as $moduleData) {
-            Module::create($moduleData);
+            Module::firstOrCreate(
+                ['module_key' => $moduleData['module_key']], 
+                $moduleData
+            );
         }
 
         $this->command->info('Modules seeded successfully!');

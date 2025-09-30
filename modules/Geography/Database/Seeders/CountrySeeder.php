@@ -176,7 +176,10 @@ class CountrySeeder extends Seeder
         ];
 
         foreach ($countries as $countryData) {
-            Country::create($countryData);
+            Country::firstOrCreate(
+                ['code' => $countryData['code']], 
+                $countryData
+            );
         }
 
         $this->command->info('Countries seeded successfully!');

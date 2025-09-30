@@ -96,7 +96,10 @@ class EmailRecipientSeeder extends Seeder
         ];
 
         foreach ($emailRecipients as $recipientData) {
-            EmailRecipient::create($recipientData);
+            EmailRecipient::firstOrCreate(
+                ['email' => $recipientData['email']], 
+                $recipientData
+            );
         }
 
         $this->command->info('Email recipients seeded successfully!');

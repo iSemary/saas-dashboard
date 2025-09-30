@@ -48,7 +48,10 @@ class EmailGroupSeeder extends Seeder
         ];
 
         foreach ($emailGroups as $groupData) {
-            EmailGroup::create($groupData);
+            EmailGroup::firstOrCreate(
+                ['name' => $groupData['name']], 
+                $groupData
+            );
         }
 
         $this->command->info('Email groups seeded successfully!');

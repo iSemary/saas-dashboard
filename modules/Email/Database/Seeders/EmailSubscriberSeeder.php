@@ -56,7 +56,10 @@ class EmailSubscriberSeeder extends Seeder
         ];
 
         foreach ($emailSubscribers as $subscriberData) {
-            EmailSubscriber::create($subscriberData);
+            EmailSubscriber::firstOrCreate(
+                ['email' => $subscriberData['email']], 
+                $subscriberData
+            );
         }
 
         $this->command->info('Email subscribers seeded successfully!');

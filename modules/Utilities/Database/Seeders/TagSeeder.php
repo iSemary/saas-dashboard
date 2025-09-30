@@ -91,7 +91,10 @@ class TagSeeder extends Seeder
         // Create parent tags first
         $createdTags = [];
         foreach ($tags as $tagData) {
-            $tag = Tag::create($tagData);
+            $tag = Tag::firstOrCreate(
+                ['slug' => $tagData['slug']], 
+                $tagData
+            );
             $createdTags[$tagData['slug']] = $tag->id;
         }
 
@@ -293,7 +296,10 @@ class TagSeeder extends Seeder
             unset($childData['parent_slug']);
             $childData['parent_id'] = $parentId;
             
-            Tag::create($childData);
+            Tag::firstOrCreate(
+                ['slug' => $childData['slug']], 
+                $childData
+            );
         }
 
         $this->command->info('Tags seeded successfully!');

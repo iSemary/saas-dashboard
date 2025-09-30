@@ -180,7 +180,13 @@ class StaticPageAttributeSeeder extends Seeder
         ];
 
         foreach ($staticPageAttributes as $attributeData) {
-            StaticPageAttribute::create($attributeData);
+            StaticPageAttribute::firstOrCreate(
+                [
+                    'static_page_id' => $attributeData['static_page_id'],
+                    'attribute_key' => $attributeData['attribute_key']
+                ], 
+                $attributeData
+            );
         }
 
         $this->command->info('Static page attributes seeded successfully!');

@@ -223,7 +223,10 @@ class EmailTemplateSeeder extends Seeder
         ];
 
         foreach ($emailTemplates as $templateData) {
-            EmailTemplate::create($templateData);
+            EmailTemplate::firstOrCreate(
+                ['name' => $templateData['name']], 
+                $templateData
+            );
         }
 
         $this->command->info('Email templates seeded successfully!');

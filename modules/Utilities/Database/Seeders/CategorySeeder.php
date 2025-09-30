@@ -110,7 +110,10 @@ class CategorySeeder extends Seeder
         $createdCategories = [];
         foreach ($categories as $categoryData) {
             if ($categoryData['parent_id'] === null) {
-                $category = Category::create($categoryData);
+                $category = Category::firstOrCreate(
+                    ['slug' => $categoryData['slug']], 
+                    $categoryData
+                );
                 $createdCategories[$categoryData['slug']] = $category->id;
             }
         }
@@ -196,7 +199,10 @@ class CategorySeeder extends Seeder
             unset($childData['parent_slug']);
             $childData['parent_id'] = $parentId;
             
-            Category::create($childData);
+            Category::firstOrCreate(
+                ['slug' => $childData['slug']], 
+                $childData
+            );
         }
 
         $this->command->info('Categories seeded successfully!');

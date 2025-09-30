@@ -277,7 +277,10 @@ class CurrencySeeder extends Seeder
         ];
 
         foreach ($currencies as $currencyData) {
-            Currency::create($currencyData);
+            Currency::firstOrCreate(
+                ['code' => $currencyData['code']], 
+                $currencyData
+            );
         }
 
         $this->command->info('Currencies seeded successfully!');

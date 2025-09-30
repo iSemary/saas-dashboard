@@ -65,7 +65,10 @@ class EmailCampaignSeeder extends Seeder
         ];
 
         foreach ($emailCampaigns as $campaignData) {
-            EmailCampaign::create($campaignData);
+            EmailCampaign::firstOrCreate(
+                ['name' => $campaignData['name']], 
+                $campaignData
+            );
         }
 
         $this->command->info('Email campaigns seeded successfully!');

@@ -291,7 +291,10 @@ class StaticPageSeeder extends Seeder
         ];
 
         foreach ($staticPages as $pageData) {
-            StaticPage::create($pageData);
+            StaticPage::firstOrCreate(
+                ['slug' => $pageData['slug']], 
+                $pageData
+            );
         }
 
         $this->command->info('Static pages seeded successfully!');
