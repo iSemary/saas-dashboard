@@ -29,6 +29,23 @@ class Validate2FA
         } else {
             $tokenId = $user->getCurrentToken();
 
+            // If no OAuth token exists (web session), check if user has 2FA enabled
+            if (!$tokenId) {
+                $userRecord = User::where("id", $user->id)->first();
+                if ($userRecord && $userRecord->google2fa_secret) {
+                    // User has 2FA enabled but no OAuth token, redirect to 2FA validation
+                    if ($isApiRequest) {
+                        return response()->json(['error' => '2FA token is not valid.'], 409);
+                    } else {
+                        $redirectUrl = $request->query('redirect');
+                        return redirect()->route('2fa.validate', ['redirect' => $redirectUrl]);
+                    }
+                } else {
+                    // User doesn't have 2FA enabled, allow access
+                    return $next($request);
+                }
+            }
+
             $existingToken = FactorAuthenticateToken::where('user_id', $user->id)
                 ->where("token_id", $tokenId)
                 ->first();

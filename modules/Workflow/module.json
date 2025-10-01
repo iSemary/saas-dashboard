@@ -1,0 +1,11 @@
+{
+    "name": "Workflow",
+    "alias": "workflow",
+    "description": "Workflow Engine module for business process automation and workflow management",
+    "keywords": ["workflow", "automation", "process", "business", "rules"],
+    "priority": 4,
+    "providers": [
+        "Modules\\Workflow\\Providers\\WorkflowServiceProvider"
+    ],
+    "files": []
+}

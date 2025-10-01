@@ -17,7 +17,7 @@ class Country extends Model implements Auditable
     public $singleTitle = "country";
     public $pluralTitle = "countries";
 
-    protected $fillable = ['name', 'code', 'region', 'flag', 'phone_code', 'timezone'];
+    protected $fillable = ['name', 'code', 'region', 'flag', 'phone_code', 'timezone', 'latitude', 'longitude', 'currency_code', 'currency_symbol', 'language_code', 'area_km2', 'population'];
 
     protected $hidden = [];
 

@@ -61,9 +61,22 @@ class LandlordSetupCommand extends Command
         
         $migrationPaths = [
             'database/migrations/landlord',
-            'modules/*/Database/migrations/landlord',
-            'modules/*/Database/migrations/shared',
-            'database/migrations/shared'
+            'database/migrations/shared',
+            'modules/Auth/Database/Migrations/landlord',
+            'modules/Auth/Database/Migrations/shared',
+            'modules/Customer/Database/Migrations/landlord',
+            'modules/Development/Database/migrations/landlord',
+            'modules/Email/Database/migrations/landlord',
+            'modules/Email/Database/migrations/shared',
+            'modules/FileManager/Database/migrations/shared',
+            'modules/Geography/Database/migrations/landlord',
+            'modules/Localization/Database/migrations/landlord',
+            'modules/Localization/Database/migrations/shared',
+            'modules/Notification/Database/migrations/shared',
+            'modules/Payment/Database/migrations/landlord',
+            'modules/Subscription/Database/migrations/landlord',
+            'modules/Tenant/Database/Migrations/landlord',
+            'modules/Utilities/Database/migrations/landlord',
         ];
 
         foreach ($migrationPaths as $path) {
@@ -131,6 +144,48 @@ class LandlordSetupCommand extends Command
             // Email system
             'Modules\\Email\\Database\\Seeders\\EmailTemplateSeeder' => 'Email Templates',
             'Modules\\Email\\Database\\Seeders\\EmailCredentialSeeder' => 'Email Credentials',
+            'Modules\\Email\\Database\\Seeders\\EmailGroupSeeder' => 'Email Groups',
+            'Modules\\Email\\Database\\Seeders\\EmailRecipientSeeder' => 'Email Recipients',
+            'Modules\\Email\\Database\\Seeders\\EmailSubscriberSeeder' => 'Email Subscribers',
+            'Modules\\Email\\Database\\Seeders\\EmailTemplateLogSeeder' => 'Email Template Logs',
+            'Modules\\Email\\Database\\Seeders\\EmailRecipientGroupSeeder' => 'Email Recipient Groups',
+            'Modules\\Email\\Database\\Seeders\\EmailRecipientMetaSeeder' => 'Email Recipient Metas',
+            'Modules\\Email\\Database\\Seeders\\EmailCampaignSeeder' => 'Email Campaigns',
+            'Modules\\Email\\Database\\Seeders\\EmailLogSeeder' => 'Email Logs',
+            'Modules\\Email\\Database\\Seeders\\EmailAttachmentSeeder' => 'Email Attachments',
+            
+            // Geography
+            'Modules\\Geography\\Database\\Seeders\\CountrySeeder' => 'Countries',
+            'Modules\\Geography\\Database\\Seeders\\ProvinceSeeder' => 'Provinces',
+            'Modules\\Geography\\Database\\Seeders\\CitySeeder' => 'Cities',
+            'Modules\\Geography\\Database\\Seeders\\TownSeeder' => 'Towns',
+            'Modules\\Geography\\Database\\Seeders\\StreetSeeder' => 'Streets',
+            
+            // Utilities
+            'Modules\\Utilities\\Database\\Seeders\\CurrencySeeder' => 'Currencies',
+            'Modules\\Utilities\\Database\\Seeders\\StaticPageSeeder' => 'Static Pages',
+            'Modules\\Utilities\\Database\\Seeders\\StaticPageAttributeSeeder' => 'Static Page Attributes',
+            'Modules\\Utilities\\Database\\Seeders\\UnitSeeder' => 'Units',
+            'Modules\\Utilities\\Database\\Seeders\\ModuleEntitySeeder' => 'Module Entities',
+            'Modules\\Utilities\\Database\\Seeders\\ReleaseSeeder' => 'Releases',
+            'Modules\\Utilities\\Database\\Seeders\\AnnouncementSeeder' => 'Announcements',
+            'Modules\\Utilities\\Database\\Seeders\\TypeSeeder' => 'Types',
+            'Modules\\Utilities\\Database\\Seeders\\TagSeeder' => 'Tags',
+            'Modules\\Utilities\\Database\\Seeders\\IndustrySeeder' => 'Industries',
+            'Modules\\Utilities\\Database\\Seeders\\CategorySeeder' => 'Categories',
+            'Modules\\Utilities\\Database\\Seeders\\EntitySeeder' => 'Entities',
+            
+            // Customer
+            'Modules\\Customer\\Database\\Seeders\\CustomerSeeder' => 'Customers',
+            
+            // Payment
+            'Modules\\Payment\\Database\\Seeders\\PaymentMethodSeeder' => 'Payment Methods',
+            'Modules\\Payment\\Database\\Seeders\\PaymentSeeder' => 'Payments',
+            
+            // Subscription
+            'Modules\\Subscription\\Database\\Seeders\\PlanSeeder' => 'Subscription Plans',
+            'Modules\\Subscription\\Database\\Seeders\\FeatureSeeder' => 'Subscription Features',
+            'Modules\\Subscription\\Database\\Seeders\\SubscriptionSeeder' => 'Subscriptions',
         ];
 
         foreach ($realDataSeeders as $seeder => $description) {
@@ -173,6 +228,21 @@ class LandlordSetupCommand extends Command
             
             // Tenant module
             'Modules\\Tenant\\Database\\Seeders\\DummyTenantSeeder' => 'Dummy Tenants',
+            
+            // Customer module
+            'Modules\\Customer\\Database\\Seeders\\DummyCustomerSeeder' => 'Dummy Customers',
+            
+            // Payment module
+            'Modules\\Payment\\Database\\Seeders\\DummyPaymentSeeder' => 'Dummy Payments',
+            
+            // Subscription module
+            'Modules\\Subscription\\Database\\Seeders\\DummySubscriptionSeeder' => 'Dummy Subscriptions',
+            
+            // FileManager module
+            'Modules\\FileManager\\Database\\Seeders\\DummyFileSeeder' => 'Dummy Files',
+            
+            // Notification module
+            'Modules\\Notification\\Database\\Seeders\\DummyNotificationSeeder' => 'Dummy Notifications',
         ];
 
         foreach ($dummyDataSeeders as $seeder => $description) {

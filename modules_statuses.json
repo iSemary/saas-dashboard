@@ -11,5 +11,14 @@
     "Payment": true,
     "Development": true,
     "FileManager": true,
-    "Notifications": true
+    "Notifications": true,
+    "CRM": true,
+    "Sales": true,
+    "Reporting": true,
+    "Workflow": true,
+    "Inventory": true,
+    "Accounting": true,
+    "HR": true,
+    "API": true,
+    "StaticPages": true
 }

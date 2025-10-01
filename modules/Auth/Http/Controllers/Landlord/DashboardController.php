@@ -75,7 +75,8 @@ class DashboardController extends ApiController
     private function getUserStats()
     {
         $totalUsers = DB::connection('landlord')->table('users')->count();
-        $activeUsers = DB::connection('landlord')->table('users')->where('status', 'active')->count();
+        // Since users table doesn't have status column, we'll use email_verified_at as active indicator
+        $activeUsers = DB::connection('landlord')->table('users')->whereNotNull('email_verified_at')->count();
         $newUsersThisMonth = DB::connection('landlord')->table('users')
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
@@ -95,7 +96,8 @@ class DashboardController extends ApiController
     private function getTenantStats()
     {
         $totalTenants = DB::connection('landlord')->table('tenants')->count();
-        $activeTenants = DB::connection('landlord')->table('tenants')->where('status', 'active')->count();
+        // Since tenants table doesn't have status column, we'll consider all non-deleted tenants as active
+        $activeTenants = DB::connection('landlord')->table('tenants')->whereNull('deleted_at')->count();
         $newTenantsThisMonth = DB::connection('landlord')->table('tenants')
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
@@ -175,7 +177,8 @@ class DashboardController extends ApiController
     private function getLanguageStats()
     {
         $totalLanguages = DB::connection('landlord')->table('languages')->count();
-        $activeLanguages = DB::connection('landlord')->table('languages')->where('status', 'active')->count();
+        // Since languages table doesn't have status column, we'll consider all non-deleted languages as active
+        $activeLanguages = DB::connection('landlord')->table('languages')->whereNull('deleted_at')->count();
 
         return [
             'total' => $totalLanguages,
@@ -216,7 +219,7 @@ class DashboardController extends ApiController
                 ->orderBy('date')
                 ->get();
 
-            return $this->return(200, 'User chart data retrieved successfully', $data);
+            return $this->return(200, 'User chart data retrieved successfully', $data->toArray());
         } catch (\Exception $e) {
             return $this->return(500, 'Error retrieving user chart data: ' . $e->getMessage());
         }
@@ -235,7 +238,7 @@ class DashboardController extends ApiController
                 ->orderBy('date')
                 ->get();
 
-            return $this->return(200, 'Tenant chart data retrieved successfully', $data);
+            return $this->return(200, 'Tenant chart data retrieved successfully', $data->toArray());
         } catch (\Exception $e) {
             return $this->return(500, 'Error retrieving tenant chart data: ' . $e->getMessage());
         }
@@ -254,7 +257,7 @@ class DashboardController extends ApiController
                 ->orderBy('date')
                 ->get();
 
-            return $this->return(200, 'Email chart data retrieved successfully', $data);
+            return $this->return(200, 'Email chart data retrieved successfully', $data->toArray());
         } catch (\Exception $e) {
             return $this->return(500, 'Error retrieving email chart data: ' . $e->getMessage());
         }

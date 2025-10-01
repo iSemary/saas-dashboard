@@ -1,0 +1,11 @@
+{
+    "name": "CRM",
+    "alias": "crm",
+    "description": "Customer Relationship Management module for managing leads, opportunities, contacts, companies, and activities",
+    "keywords": ["crm", "leads", "opportunities", "contacts", "companies", "activities"],
+    "priority": 1,
+    "providers": [
+        "Modules\\CRM\\Providers\\CRMServiceProvider"
+    ],
+    "files": []
+}

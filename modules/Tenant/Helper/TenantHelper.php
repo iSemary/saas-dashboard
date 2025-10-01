@@ -66,7 +66,7 @@ class TenantHelper
             // Switch to the tenant database
             $tenant = Tenant::where('name', $customerUsername)->first();
             config(['database.default' => 'tenant']);
-            config(['database.logs.database' => $tenant->database]);
+            config(['database.connections.tenant.database' => $tenant->database]);
             User::on('tenant');
         }
 

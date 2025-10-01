@@ -45,6 +45,48 @@
     </div>
 
     <div class="form-group">
+        <label for="latitude" class="form-label">@translate('latitude')</label>
+        <input type="number" step="any" name="latitude" id="latitude" class="form-control"
+            value="{{ isset($row) ? $row->latitude : '' }}">
+    </div>
+
+    <div class="form-group">
+        <label for="longitude" class="form-label">@translate('longitude')</label>
+        <input type="number" step="any" name="longitude" id="longitude" class="form-control"
+            value="{{ isset($row) ? $row->longitude : '' }}">
+    </div>
+
+    <div class="form-group">
+        <label for="currency_code" class="form-label">@translate('currency_code')</label>
+        <input type="text" name="currency_code" id="currency_code" class="form-control"
+            value="{{ isset($row) ? $row->currency_code : '' }}" maxlength="3">
+    </div>
+
+    <div class="form-group">
+        <label for="currency_symbol" class="form-label">@translate('currency_symbol')</label>
+        <input type="text" name="currency_symbol" id="currency_symbol" class="form-control"
+            value="{{ isset($row) ? $row->currency_symbol : '' }}" maxlength="10">
+    </div>
+
+    <div class="form-group">
+        <label for="language_code" class="form-label">@translate('language_code')</label>
+        <input type="text" name="language_code" id="language_code" class="form-control"
+            value="{{ isset($row) ? $row->language_code : '' }}" maxlength="5">
+    </div>
+
+    <div class="form-group">
+        <label for="area_km2" class="form-label">@translate('area_km2')</label>
+        <input type="number" step="0.01" name="area_km2" id="area_km2" class="form-control"
+            value="{{ isset($row) ? $row->area_km2 : '' }}">
+    </div>
+
+    <div class="form-group">
+        <label for="population" class="form-label">@translate('population')</label>
+        <input type="number" name="population" id="population" class="form-control"
+            value="{{ isset($row) ? $row->population : '' }}">
+    </div>
+
+    <div class="form-group">
         <div class="form-status"></div>
     </div>
 

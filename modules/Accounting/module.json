@@ -1,0 +1,11 @@
+{
+    "name": "Accounting",
+    "alias": "accounting",
+    "description": "Accounting & Finance module for chart of accounts, journal entries, and financial reporting",
+    "keywords": ["accounting", "finance", "chart_of_accounts", "journal_entries", "fiscal_year"],
+    "priority": 6,
+    "providers": [
+        "Modules\\Accounting\\Providers\\AccountingServiceProvider"
+    ],
+    "files": []
+}

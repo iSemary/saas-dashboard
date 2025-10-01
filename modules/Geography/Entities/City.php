@@ -16,7 +16,7 @@ class City extends Model implements Auditable
     public $singleTitle = "city";
     public $pluralTitle = "cities";
     
-    protected $fillable = ['name', 'province_id'];
+    protected $fillable = ['name', 'postal_code', 'is_capital', 'phone_code', 'timezone', 'province_id', 'latitude', 'longitude', 'area_km2', 'population', 'elevation_m'];
     
     protected $hidden = [];
 }

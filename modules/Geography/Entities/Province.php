@@ -17,7 +17,7 @@ class Province extends Model implements Auditable
     public $singleTitle = "province";
     public $pluralTitle = "provinces";
 
-    protected $fillable = ['name', 'country_id', 'is_capital', 'flag', 'phone_code', 'timezone'];
+    protected $fillable = ['name', 'country_id', 'is_capital', 'flag', 'phone_code', 'timezone', 'latitude', 'longitude', 'area_km2', 'population', 'currency_code', 'currency_symbol', 'language_code'];
 
     protected $hidden = [];
 

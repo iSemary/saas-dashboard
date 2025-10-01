@@ -1,0 +1,11 @@
+{
+    "name": "API",
+    "alias": "api",
+    "description": "Comprehensive API framework with authentication, rate limiting, and documentation",
+    "keywords": ["api", "rest", "authentication", "rate-limiting", "documentation"],
+    "priority": 1,
+    "providers": [
+        "Modules\\API\\Providers\\APIServiceProvider"
+    ],
+    "files": []
+}

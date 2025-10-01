@@ -328,6 +328,78 @@ php artisan seed:dummy-data --modules=Auth,Utilities
 
 ---
 
+## Tenant Database Setup
+
+### Complete Tenant Setup Command (Recommended)
+
+Use the comprehensive tenant setup command that handles both migrations and seeding for tenant databases (excluding landlord):
+
+```bash
+# Setup all tenants (migrations + seeding)
+php artisan tenant:setup
+
+# Setup specific tenant by ID
+php artisan tenant:setup 1
+
+# Setup specific tenant by name
+php artisan tenant:setup customer1
+
+# Force setup without confirmation
+php artisan tenant:setup --force
+
+# Run migrations only (skip seeding)
+php artisan tenant:setup --migrate-only
+
+# Run seeding only (skip migrations)
+php artisan tenant:setup --seed-only
+
+# Run fresh migrations (drop all tables and re-run)
+php artisan tenant:setup --fresh
+```
+
+This command will:
+- Run all tenant migrations from various paths
+- Seed tenant database with initial data
+- Handle multiple tenants or specific tenant (excluding landlord)
+- Display progress and helpful information
+
+### Manual Tenant Migration Commands
+
+If you need to run individual migration commands for tenant databases:
+
+```bash
+# Migrate tenant-specific migrations
+php artisan tenants:artisan "migrate --path=database/migrations/tenant --database=tenant" --tenant=1
+
+# Migrate module tenant migrations
+php artisan tenants:artisan "migrate --path=modules/*/Database/Migrations/tenant --database=tenant" --tenant=1
+php artisan tenants:artisan "migrate --path=modules/*/Database/migrations/tenant --database=tenant" --tenant=1
+
+# Migrate shared migrations to tenant
+php artisan tenants:artisan "migrate --path=modules/*/Database/migrations/shared --database=tenant" --tenant=1
+php artisan tenants:artisan "migrate --path=modules/*/Database/Migrations/shared --database=tenant" --tenant=1
+
+# Seed tenant database
+php artisan tenants:artisan "migrate --database=tenant --seed" --tenant=1
+```
+
+### Tenant Seeding
+
+The tenant setup command automatically seeds the following data:
+
+- **User Management**: Default tenant users and roles
+- **System Configuration**: Tenant-specific settings
+- **Module Data**: Initial data for all enabled modules
+- **Sample Data**: Development and testing data (if available)
+
+### Current Tenant Information
+
+- **Tenant ID**: 1 (customer1)
+- **Database**: saas_customer1
+- **Domain**: customer1.saas.test
+
+---
+
 ## Cron Jobs
 
 Email Processing:

@@ -1,0 +1,11 @@
+{
+    "name": "Reporting",
+    "alias": "reporting",
+    "description": "Reporting and Analytics module for creating dashboards, reports, and data visualization",
+    "keywords": ["reporting", "analytics", "dashboard", "charts", "reports"],
+    "priority": 3,
+    "providers": [
+        "Modules\\Reporting\\Providers\\ReportingServiceProvider"
+    ],
+    "files": []
+}

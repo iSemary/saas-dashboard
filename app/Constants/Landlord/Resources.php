@@ -240,6 +240,18 @@ class Resources
             [
                 'name' => 'database_flow',
                 'actions' => ['read', 'update']
+            ],
+            [
+                'name' => 'documentation',
+                'actions' => ['read']
+            ],
+            [
+                'name' => 'brands',
+                'actions' => ['read', 'create', 'update', 'delete', 'restore']
+            ],
+            [
+                'name' => 'tenant_owners',
+                'actions' => ['read', 'create', 'update', 'delete', 'restore']
             ]
         ];
     }

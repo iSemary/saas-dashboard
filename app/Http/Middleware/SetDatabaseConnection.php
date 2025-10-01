@@ -19,9 +19,15 @@ class SetDatabaseConnection
             DB::purge('landlord');
         } else if ($subdomain) {
             // For other subdomains, set up tenant connection
-            Config::set('database.connections.tenant.database', $subdomain);
-            DB::purge('tenant');
-            Config::set('database.default', 'tenant');
+            $tenant = \Modules\Tenant\Entities\Tenant::on('landlord')->where('domain', $subdomain)->first();
+            if ($tenant) {
+                Config::set('database.connections.tenant.database', $tenant->database);
+                DB::purge('tenant');
+                Config::set('database.default', 'tenant');
+            } else {
+                // Tenant not found, use landlord connection
+                Config::set('database.default', 'landlord');
+            }
         } else {
             // No subdomain, use default connection
             Config::set('database.default', 'landlord');

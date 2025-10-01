@@ -16,7 +16,7 @@ class Town extends Model implements Auditable
     public $singleTitle = "town";
     public $pluralTitle = "towns";
     
-    protected $fillable = ['name', 'city_id'];
+    protected $fillable = ['name', 'city_id', 'postalcode', 'latitude', 'longitude', 'area_km2', 'population', 'elevation_m'];
 
     protected $hidden = [];
 }

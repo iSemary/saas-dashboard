@@ -16,52 +16,52 @@ class DummyTenantSeeder extends Seeder
             [
                 'name' => 'TechCorp Solutions',
                 'domain' => 'techcorp',
-                'database' => 'tenant_techcorp_' . time(),
+                'database' => 'saas_techcorp',
             ],
             [
                 'name' => 'HealthCare Plus',
                 'domain' => 'healthcare',
-                'database' => 'tenant_healthcare_' . time(),
+                'database' => 'saas_healthcare',
             ],
             [
                 'name' => 'EduLearn Academy',
                 'domain' => 'edulearn',
-                'database' => 'tenant_edulearn_' . time(),
+                'database' => 'saas_edulearn',
             ],
             [
                 'name' => 'RetailMax Store',
                 'domain' => 'retailmax',
-                'database' => 'tenant_retailmax_' . time(),
+                'database' => 'saas_retailmax',
             ],
             [
                 'name' => 'FinancePro Services',
                 'domain' => 'financepro',
-                'database' => 'tenant_financepro_' . time(),
+                'database' => 'saas_financepro',
             ],
             [
                 'name' => 'ManufacturingCo',
                 'domain' => 'manufacturing',
-                'database' => 'tenant_manufacturing_' . time(),
+                'database' => 'saas_manufacturing',
             ],
             [
                 'name' => 'RealEstate Pro',
                 'domain' => 'realestate',
-                'database' => 'tenant_realestate_' . time(),
+                'database' => 'saas_realestate',
             ],
             [
                 'name' => 'TransportLogistics',
                 'domain' => 'transport',
-                'database' => 'tenant_transport_' . time(),
+                'database' => 'saas_transport',
             ],
             [
                 'name' => 'EnergySolutions',
                 'domain' => 'energy',
-                'database' => 'tenant_energy_' . time(),
+                'database' => 'saas_energy',
             ],
             [
                 'name' => 'MediaEntertainment',
                 'domain' => 'media',
-                'database' => 'tenant_media_' . time(),
+                'database' => 'saas_media',
             ],
         ];
 

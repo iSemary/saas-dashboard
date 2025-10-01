@@ -63,7 +63,12 @@ class TwoFactorAuthController extends ApiController
             // Create a new 2FA token
             $tokenId = $user->getCurrentToken();
 
-            FactorAuthenticateToken::create(['user_id' => $user->id, 'token_id' => $tokenId]);
+            if ($tokenId) {
+                FactorAuthenticateToken::create(['user_id' => $user->id, 'token_id' => $tokenId]);
+            } else {
+                // For web sessions without OAuth tokens, create a session-based 2FA token
+                FactorAuthenticateToken::create(['user_id' => $user->id, 'token_id' => 'web_session_' . $user->id . '_' . time()]);
+            }
             $user->update(["google2fa_secret" => $request->secret_key]);
             return $this->return(200, "2FA Verified Successfully", ['redirect' => TenantHelper::handleRedirection($request, withoutQuery: true)]);
         }
@@ -82,7 +87,12 @@ class TwoFactorAuthController extends ApiController
         if ($isValid) {
             $tokenId = $user->getCurrentToken();
             // Create a new 2FA token
-            FactorAuthenticateToken::create(['user_id' => $user->id, 'token_id' => $tokenId]);
+            if ($tokenId) {
+                FactorAuthenticateToken::create(['user_id' => $user->id, 'token_id' => $tokenId]);
+            } else {
+                // For web sessions without OAuth tokens, create a session-based 2FA token
+                FactorAuthenticateToken::create(['user_id' => $user->id, 'token_id' => 'web_session_' . $user->id . '_' . time()]);
+            }
             return $this->return(200, "2FA Verified Successfully", ['redirect' => TenantHelper::handleRedirection($request, withoutQuery: true)]);
         }
         return $this->return(400, "Invalid OTP number");

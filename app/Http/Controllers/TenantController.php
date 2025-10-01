@@ -21,7 +21,7 @@ class TenantController extends Controller
         $tenant = Tenant::where("domain", $subdomain)->first();
         if ($subdomain !== 'www' && $subdomain !== '' && $tenant) {
             TenantHelper::makeCurrent($tenant->name);
-            return view('welcome');
+            return app()->call('Modules\Auth\Http\Controllers\Tenant\DashboardController@index');
         }
 
         return redirect()->route('login');

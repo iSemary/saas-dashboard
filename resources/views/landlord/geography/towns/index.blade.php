@@ -10,6 +10,7 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">@translate('name')</th>
+                        <th scope="col">@translate('postalcode')</th>
                         <th scope="col">@translate('city')</th>
                         <th scope="col">@translate('province')</th>
                         <th scope="col">@translate('country')</th>

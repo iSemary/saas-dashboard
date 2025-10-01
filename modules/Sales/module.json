@@ -1,0 +1,11 @@
+{
+    "name": "Sales",
+    "alias": "sales",
+    "description": "Sales Management module for managing products, quotations, orders, and invoices",
+    "keywords": ["sales", "products", "quotations", "orders", "invoices"],
+    "priority": 2,
+    "providers": [
+        "Modules\\Sales\\Providers\\SalesServiceProvider"
+    ],
+    "files": []
+}

@@ -256,6 +256,40 @@
                                 ],
                             ],
                         ],
+                        'brands' => [
+                            'icon' => 'fas fa-tags',
+                            'label' => 'brands',
+                            'items' => [
+                                'brands' => [
+                                    'icon' => 'fas fa-tag',
+                                    'permission' => [
+                                        'read' => 'read.brands',
+                                        'create' => 'create.brands',
+                                    ],
+                                    'routes' => [
+                                        'index' => 'landlord.brands.index',
+                                        'create' => 'landlord.brands.create',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'tenant_owners' => [
+                            'icon' => 'fas fa-users-cog',
+                            'label' => 'tenant_owners',
+                            'items' => [
+                                'tenant_owners' => [
+                                    'icon' => 'fas fa-user-tie',
+                                    'permission' => [
+                                        'read' => 'read.tenant_owners',
+                                        'create' => 'create.tenant_owners',
+                                    ],
+                                    'routes' => [
+                                        'index' => 'landlord.tenant-owners.index',
+                                        'create' => 'landlord.tenant-owners.create',
+                                    ],
+                                ],
+                            ],
+                        ],
                         'utilities' => [
                             'icon' => 'fas fa-tools',
                             'label' => 'utilities',
@@ -474,6 +508,19 @@
                                     ],
                                     'external' => true,
                                     'path' => '/' . env('LOG_VIEWER_PATH'),
+                                ],
+                            ],
+                        ],
+                        'documentation' => [
+                            'icon' => 'fas fa-book',
+                            'label' => 'documentation',
+                            'items' => [
+                                'documentation' => [
+                                    'icon' => 'fas fa-book-open',
+                                    'permission' => 'read.documentation',
+                                    'route' => 'landlord.documentation.index',
+                                    'single' => true,
+                                    'external' => false,
                                 ],
                             ],
                         ],

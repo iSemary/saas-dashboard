@@ -1,0 +1,11 @@
+{
+    "name": "StaticPages",
+    "alias": "staticpages",
+    "description": "Static pages management with multi-language support and API exposure",
+    "keywords": ["static-pages", "cms", "multi-language", "api", "translations"],
+    "priority": 1,
+    "providers": [
+        "Modules\\StaticPages\\Providers\\StaticPagesServiceProvider"
+    ],
+    "files": []
+}

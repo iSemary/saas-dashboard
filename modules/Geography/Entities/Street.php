@@ -16,7 +16,7 @@ class Street extends Model implements Auditable
     public $singleTitle = "street";
     public $pluralTitle = "streets";
     
-    protected $fillable = ['name', 'town_id'];
+    protected $fillable = ['name', 'postal_code', 'town_id', 'latitude', 'longitude', 'area_km2', 'population', 'elevation_m', 'phone_code', 'timezone'];
     
     protected $hidden = [];
 }

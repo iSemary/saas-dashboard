@@ -34,6 +34,11 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::middleware('2fa')->group(function () {
         Route::get('/', [TenantController::class, "index"])->name('home');
+        
+        // Tenant Dashboard API Routes
+        Route::prefix('dashboard')->name('dashboard.')->group(function () {
+            Route::get('stats', [\Modules\Auth\Http\Controllers\Tenant\DashboardController::class, 'getStats'])->name('stats');
+        });
     });
 
     // Logout
