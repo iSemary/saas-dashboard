@@ -107,6 +107,12 @@ class TranslationRepository implements TranslationInterface
 
     private function generateTranslation($key, $locale = null)
     {
+        // Handle null or empty keys
+        if (empty($key) || $key === null) {
+            app('log')->warning(self::class . "|Empty or null translation key provided");
+            return '';
+        }
+
         $value = str_replace(['_', '.'], ' ', $key);
         $value = ucwords($value);
         $value = trim($value);

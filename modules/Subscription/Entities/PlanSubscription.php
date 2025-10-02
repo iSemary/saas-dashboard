@@ -4,6 +4,7 @@ namespace Modules\Subscription\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Utilities\Entities\Currency;
 use Modules\Customer\Entities\Brand;
 use App\Models\User;
@@ -11,9 +12,12 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 class PlanSubscription extends Model implements Auditable
 {
-    use HasFactory, \OwenIt\Auditing\Auditable;
+    use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable;
 
     protected $connection = "landlord";
+
+    public $singleTitle = "subscription";
+    public $pluralTitle = "subscriptions";
 
     protected $fillable = [
         'subscription_id',

@@ -45,7 +45,7 @@ class CommentReaction extends Model implements Auditable
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\User::class);
+        return $this->belongsTo(\Modules\Auth\Entities\User::class);
     }
 
     /**

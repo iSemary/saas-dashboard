@@ -64,7 +64,7 @@ class TicketStatusLog extends Model implements Auditable
      */
     public function changedBy(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\User::class, 'changed_by');
+        return $this->belongsTo(\Modules\Auth\Entities\User::class, 'changed_by');
     }
 
     /**

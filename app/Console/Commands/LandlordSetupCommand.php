@@ -62,22 +62,35 @@ class LandlordSetupCommand extends Command
         $migrationPaths = [
             'database/migrations/landlord',
             'database/migrations/shared',
-            'modules/Auth/Database/Migrations/landlord',
-            'modules/Auth/Database/Migrations/shared',
-            'modules/Customer/Database/Migrations/landlord',
-            'modules/Development/Database/migrations/landlord',
-            'modules/Email/Database/migrations/landlord',
-            'modules/Email/Database/migrations/shared',
-            'modules/FileManager/Database/migrations/shared',
-            'modules/Geography/Database/migrations/landlord',
-            'modules/Localization/Database/migrations/landlord',
-            'modules/Localization/Database/migrations/shared',
-            'modules/Notification/Database/migrations/shared',
-            'modules/Payment/Database/migrations/landlord',
-            'modules/Subscription/Database/migrations/landlord',
-            'modules/Tenant/Database/Migrations/landlord',
-            'modules/Utilities/Database/migrations/landlord',
         ];
+
+        // Dynamically find all module migration paths
+        $moduleBasePath = base_path('modules');
+        if (is_dir($moduleBasePath)) {
+            $modules = glob($moduleBasePath . '/*/Database/migrations/landlord', GLOB_ONLYDIR);
+            foreach ($modules as $modulePath) {
+                $relativePath = str_replace(base_path() . '/', '', $modulePath);
+                $migrationPaths[] = $relativePath;
+            }
+            
+            $modules = glob($moduleBasePath . '/*/Database/Migrations/landlord', GLOB_ONLYDIR);
+            foreach ($modules as $modulePath) {
+                $relativePath = str_replace(base_path() . '/', '', $modulePath);
+                $migrationPaths[] = $relativePath;
+            }
+            
+            $modules = glob($moduleBasePath . '/*/Database/migrations/shared', GLOB_ONLYDIR);
+            foreach ($modules as $modulePath) {
+                $relativePath = str_replace(base_path() . '/', '', $modulePath);
+                $migrationPaths[] = $relativePath;
+            }
+            
+            $modules = glob($moduleBasePath . '/*/Database/Migrations/shared', GLOB_ONLYDIR);
+            foreach ($modules as $modulePath) {
+                $relativePath = str_replace(base_path() . '/', '', $modulePath);
+                $migrationPaths[] = $relativePath;
+            }
+        }
 
         foreach ($migrationPaths as $path) {
             try {

@@ -75,4 +75,9 @@ class SubscriptionService
     {
         return $this->repository->getTrialSubscriptions();
     }
+
+    public function restore($id)
+    {
+        return $this->repository->restore($id);
+    }
 }

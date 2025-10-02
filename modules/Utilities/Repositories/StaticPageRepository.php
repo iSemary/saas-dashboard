@@ -94,27 +94,66 @@ class StaticPageRepository implements StaticPageInterface
      */
     private function handleAttributes($model, array $data)
     {
+        // Handle new format: attributes[key][language] = value
+        if (isset($data['attributes']) && is_array($data['attributes'])) {
+            foreach ($data['attributes'] as $attributeKey => $languages) {
+                if (is_array($languages)) {
+                    foreach ($languages as $languageCode => $attributeValue) {
+                        // Only process if value is not empty
+                        if (!empty($attributeValue)) {
+                            $existingAttribute = $model->attributes()
+                                ->where('key', $attributeKey)
+                                ->where('language_code', $languageCode)
+                                ->first();
+
+                            if ($existingAttribute) {
+                                // Update existing attribute
+                                $existingAttribute->update([
+                                    'value' => $attributeValue,
+                                    'status' => 'active',
+                                ]);
+                            } else {
+                                // Create new attribute
+                                $model->attributes()->create([
+                                    'key' => $attributeKey,
+                                    'value' => $attributeValue,
+                                    'language_code' => $languageCode,
+                                    'status' => 'active',
+                                ]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Handle old format: attribute_key, attribute_value arrays (fallback)
         if (isset($data['attribute_key']) && is_array($data['attribute_key'])) {
             foreach ($data['attribute_key'] as $key => $attributeKey) {
                 // Check if value exists for this attribute
                 $attributeValue = $data['attribute_value'][$key] ?? null;
-                $attributeStatus = $data['attribute_status'][$key] ?? null;
+                $attributeLanguage = $data['attribute_language'][$key] ?? 'en';
+                $attributeStatus = $data['attribute_status'][$key] ?? 'active';
 
                 // Only process if value is not null
                 if ($attributeValue !== null) {
-                    $existingAttribute = $model->attributes()->where('attribute_key', $attributeKey)->first();
+                    $existingAttribute = $model->attributes()
+                        ->where('key', $attributeKey)
+                        ->where('language_code', $attributeLanguage)
+                        ->first();
 
                     if ($existingAttribute) {
                         // Update existing attribute
                         $existingAttribute->update([
-                            'attribute_value' => $attributeValue,
+                            'value' => $attributeValue,
                             'status' => $attributeStatus,
                         ]);
                     } else {
                         // Create new attribute
                         $model->attributes()->create([
-                            'attribute_key' => $attributeKey,
-                            'attribute_value' => $attributeValue,
+                            'key' => $attributeKey,
+                            'value' => $attributeValue,
+                            'language_code' => $attributeLanguage,
                             'status' => $attributeStatus,
                         ]);
                     }

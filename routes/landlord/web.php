@@ -2,6 +2,7 @@
 
 use App\Events\NotificationEvent;
 use Modules\Customer\Http\Controllers\BrandController;
+use Modules\Customer\Http\Controllers\BrandWebController;
 use Modules\Tenant\Http\Controllers\TenantOwnerController;
 use App\Http\Controllers\Landlord\DocumentationController;
 use Illuminate\Support\Facades\Route;
@@ -19,9 +20,9 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_
         Route::get('documentation/tree/files', [DocumentationController::class, 'getFileTree'])->name('documentation.tree');
     });
 
-    // Brand routes
+    // Brand API routes
     Route::middleware('can:read.brands')->group(function () {
-        Route::apiResource('brands', BrandController::class);
+        Route::resource('brands', BrandController::class);
         Route::get('brands/slug/{slug}', [BrandController::class, 'showBySlug'])->name('brands.show-by-slug');
         Route::get('brands/tenant/{tenantId}', [BrandController::class, 'getByTenant'])->name('brands.by-tenant');
         Route::get('brands/search', [BrandController::class, 'search'])->name('brands.search');
@@ -29,9 +30,15 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_
         Route::get('brands/stats', [BrandController::class, 'stats'])->name('brands.stats');
     });
 
+    // Brand Web Interface routes
+    Route::middleware('can:read.brands')->group(function () {
+        Route::resource('brands-web', BrandWebController::class)->names('brands-web');
+        Route::post('brands-web/{id}/restore', [BrandWebController::class, 'restore'])->name('brands-web.restore');
+    });
+
     // Tenant Owner routes
     Route::middleware('can:read.tenant_owners')->group(function () {
-        Route::apiResource('tenant-owners', TenantOwnerController::class);
+        Route::resource('tenant-owners', TenantOwnerController::class);
         Route::get('tenant-owners/tenant/{tenantId}', [TenantOwnerController::class, 'getByTenant'])->name('tenant-owners.by-tenant');
         Route::get('tenant-owners/tenant/{tenantId}/super-admins', [TenantOwnerController::class, 'getSuperAdmins'])->name('tenant-owners.super-admins');
         Route::get('tenant-owners/search', [TenantOwnerController::class, 'search'])->name('tenant-owners.search');

@@ -60,7 +60,7 @@ class SubscriptionController extends ApiController implements HasMiddleware
         $billingCycleOptions = ['monthly', 'quarterly', 'semi_annually', 'annually', 'biennially', 'triennially', 'lifetime'];
         $plans = \Modules\Subscription\Entities\Plan::where('status', 'active')->get();
         $currencies = \Modules\Utilities\Entities\Currency::where('status', 'active')->get();
-        $users = \App\Models\User::select('id', 'name', 'email')->get();
+        $users = \Modules\Auth\Entities\User::select('id', 'name', 'email')->get();
         $brands = \Modules\Customer\Entities\Brand::select('id', 'name', 'tenant_id')->get();
         
         return view('landlord.subscriptions.subscriptions.editor', compact(
@@ -86,7 +86,7 @@ class SubscriptionController extends ApiController implements HasMiddleware
         $billingCycleOptions = ['monthly', 'quarterly', 'semi_annually', 'annually', 'biennially', 'triennially', 'lifetime'];
         $plans = \Modules\Subscription\Entities\Plan::where('status', 'active')->get();
         $currencies = \Modules\Utilities\Entities\Currency::where('status', 'active')->get();
-        $users = \App\Models\User::select('id', 'name', 'email')->get();
+        $users = \Modules\Auth\Entities\User::select('id', 'name', 'email')->get();
         
         return view('landlord.subscriptions.subscriptions.editor', compact(
             'row', 'statusOptions', 'autoRenewOptions', 'billingCycleOptions', 

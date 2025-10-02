@@ -12,3 +12,7 @@ Important Instructions before work:
 
 
 - If you're adding new .env keys in the code, make sure you add them to the .env.example
+
+- Use mysql user: "user" and password: "password" if you want to access the database
+
+- I prefer the Allman brace style for methods, functions, etc...

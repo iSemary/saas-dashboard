@@ -93,7 +93,7 @@ class CompleteUserJourneyTest extends TestCase
         $this->simulateTenantCreation($userData);
 
         // Step 2: Simulate email verification and login
-        $user = \App\Models\User::where('email', $userData['email'])->first();
+        $user = \Modules\Auth\Entities\User::where('email', $userData['email'])->first();
         $this->actingAs($user);
 
         // Step 3: Test onboarding welcome page
@@ -188,7 +188,7 @@ class CompleteUserJourneyTest extends TestCase
     public function incomplete_onboarding_redirects_to_onboarding()
     {
         // Create user without completing onboarding
-        $user = \App\Models\User::factory()->create();
+        $user = \Modules\Auth\Entities\User::factory()->create();
         $this->actingAs($user);
 
         // Try to access dashboard
@@ -268,7 +268,7 @@ class CompleteUserJourneyTest extends TestCase
         ]);
 
         // Create user
-        $user = \App\Models\User::create([
+        $user = \Modules\Auth\Entities\User::create([
             'name' => $userData['name'],
             'email' => $userData['email'],
             'password' => bcrypt($userData['password']),

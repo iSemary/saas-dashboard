@@ -5,13 +5,19 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
+use Modules\Tenant\Repository\TenantOwnerRepositoryInterface;
+use Modules\Tenant\Repository\TenantOwnerRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
      */
-    public function register(): void {}
+    public function register(): void 
+    {
+        // Register TenantOwner repository binding as fallback
+        $this->app->bind(TenantOwnerRepositoryInterface::class, TenantOwnerRepository::class);
+    }
 
     /**
      * Bootstrap any application services.

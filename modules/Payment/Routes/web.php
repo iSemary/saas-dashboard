@@ -9,6 +9,7 @@ use Modules\Payment\Http\Controllers\PaymentRoutingController;
 use Modules\Payment\Http\Controllers\PaymentAnalyticsController;
 use Modules\Payment\Http\Controllers\PaymentSettingsController;
 use Modules\Payment\Http\Controllers\PaymentDashboardController;
+use Modules\Payment\Http\Controllers\PaymentLogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,4 +68,7 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_
     Route::get('payment-settings', [PaymentSettingsController::class, 'index'])->name('payment-settings.index');
     Route::post('payment-settings', [PaymentSettingsController::class, 'update'])->name('payment-settings.update');
     Route::post('payment-settings/test-webhook', [PaymentSettingsController::class, 'testWebhook'])->name('payment-settings.test-webhook');
+    
+    // Payment Logs
+    Route::resource('payment-logs', PaymentLogController::class)->only(['index', 'show']);
 });

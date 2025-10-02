@@ -142,4 +142,10 @@ class SubscriptionRepository implements SubscriptionInterface
                           ->with(['user', 'plan', 'currency'])
                           ->get();
     }
+
+    public function restore($id)
+    {
+        $subscription = $this->model->withTrashed()->find($id);
+        return $subscription ? $subscription->restore() : false;
+    }
 }

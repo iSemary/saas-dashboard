@@ -45,9 +45,8 @@ class StaticPageController extends ApiController implements HasMiddleware
     public function create()
     {
         $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
-        $attributeKeys = EnumHelper::getEnumFromTable('static_page_attributes', "attribute_key");
         $attributeStatusOptions = EnumHelper::getEnumFromTable('static_page_attributes', "status");
-        return view('landlord.utilities.static-pages.editor', compact('statusOptions','attributeKeys', 'attributeStatusOptions'));
+        return view('landlord.utilities.static-pages.editor', compact('statusOptions', 'attributeStatusOptions'));
     }
 
     public function store(Request $request)
@@ -63,9 +62,8 @@ class StaticPageController extends ApiController implements HasMiddleware
     {
         $row = $this->service->get($id);
         $statusOptions = EnumHelper::getEnumFromTable($this->service->model->getTable(), "status");
-        $attributeKeys = EnumHelper::getEnumFromTable('static_page_attributes', "attribute_key");
         $attributeStatusOptions = EnumHelper::getEnumFromTable('static_page_attributes', "status");
-        return view('landlord.utilities.static-pages.editor', compact('row','attributeKeys', 'statusOptions', 'attributeStatusOptions'));
+        return view('landlord.utilities.static-pages.editor', compact('row', 'statusOptions', 'attributeStatusOptions'));
     }
 
     public function update(Request $request, $id)

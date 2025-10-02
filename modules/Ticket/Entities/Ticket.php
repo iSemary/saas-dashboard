@@ -136,7 +136,7 @@ class Ticket extends Model implements Auditable
      */
     public function creator(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\User::class, 'created_by');
+        return $this->belongsTo(\Modules\Auth\Entities\User::class, 'created_by');
     }
 
     /**
@@ -144,7 +144,7 @@ class Ticket extends Model implements Auditable
      */
     public function assignee(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\User::class, 'assigned_to');
+        return $this->belongsTo(\Modules\Auth\Entities\User::class, 'assigned_to');
     }
 
     /**

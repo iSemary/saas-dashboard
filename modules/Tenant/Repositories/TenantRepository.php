@@ -37,7 +37,10 @@ class TenantRepository implements TenantInterface
                 try {
                     $dbName = $row->database;
                     $tableCount = $this->getTenantTableCount($dbName);
-                    $expectedCount = $this->getExpectedTableCount();
+                    
+                    // Determine expected count based on database type
+                    $isLandlordDb = $dbName === 'saas_landlord' || str_contains($dbName, 'landlord');
+                    $expectedCount = $isLandlordDb ? $this->getExpectedLandlordTableCount() : $this->getExpectedTableCount();
                     
                     $badgeClass = $tableCount >= $expectedCount ? 'bg-success' : 'bg-warning';
                     return '<span class="badge ' . $badgeClass . '">' . $tableCount . '/' . $expectedCount . '</span>';
@@ -258,9 +261,47 @@ class TenantRepository implements TenantInterface
      */
     private function getExpectedTableCount()
     {
-        // This should be updated based on your actual migration count
-        // You can make this dynamic by counting migration files
-        return 45; // Expected number of tables after all migrations
+        // Count tenant migration files for accurate table count
+        $tenantMigrations = 0;
+        $paths = [
+            'database/migrations/tenant',
+            'modules/*/Database/Migrations/tenant',
+            'modules/*/Database/migrations/tenant',
+            'modules/*/Database/migrations/shared',
+            'modules/*/Database/Migrations/shared',
+        ];
+
+        foreach ($paths as $path) {
+            $migrationFiles = glob($path . '/*.php');
+            if ($migrationFiles !== false) {
+                $tenantMigrations += count($migrationFiles);
+            }
+        }
+
+        return $tenantMigrations > 0 ? $tenantMigrations : 50; // Fallback if calculation fails
+    }
+
+    /**
+     * Get the expected number of tables for a complete landlord setup
+     */
+    private function getExpectedLandlordTableCount()
+    {
+        // Count landlord migration files for accurate table count
+        $landlordMigrations = 0;
+        $paths = [
+            'database/migrations',
+            'modules/*/Database/Migrations/landlord',
+            'modules/*/Database/migrations/landlord',
+        ];
+
+        foreach ($paths as $path) {
+            $migrationFiles = glob($path . '/*.php');
+            if ($migrationFiles !== false) {
+                $landlordMigrations += count($migrationFiles);
+            }
+        }
+
+        return $landlordMigrations > 0 ? $landlordMigrations : 78; // Fallback if calculation fails
     }
 
     /**

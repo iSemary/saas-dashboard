@@ -23,6 +23,11 @@ class BrandService
         return $this->brandRepository->getAll($filters, $perPage);
     }
 
+    public function getDataTables()
+    {
+        return $this->brandRepository->datatables();
+    }
+
     public function getById(int $id): ?Brand
     {
         return $this->brandRepository->getById($id);

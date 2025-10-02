@@ -6,6 +6,9 @@ use Modules\Customer\Entities\Brand;
 use Modules\Customer\Repository\BrandRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use App\Helpers\TableHelper;
+use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\DB;
 
 class BrandRepository implements BrandRepositoryInterface
 {
@@ -34,6 +37,67 @@ class BrandRepository implements BrandRepositoryInterface
         }
 
         return $query->orderBy('created_at', 'desc')->paginate($perPage);
+    }
+
+    public function datatables()
+    {
+        $rows = Brand::query()->withTrashed()
+            ->with(['tenant', 'creator', 'updater'])
+            ->select([
+                'brands.*',
+                DB::raw('(SELECT name FROM tenants WHERE tenants.id = brands.tenant_id) AS tenant_name')
+            ])
+            ->where(
+                function ($q) {
+                    if (request()->from_date && request()->to_date) {
+                        TableHelper::loopOverDates(5, $q, 'brands', [request()->from_date, request()->to_date]);
+                    }
+                }
+            );
+
+        return DataTables::of($rows)
+            ->addColumn('logo', function ($row) {
+                if ($row->logo) {
+                    return '<img src="' . asset('storage/' . $row->logo) . '" width="50" height="50" class="rounded">';
+                }
+                return '<img src="' . asset('assets/shared/images/icons/defaults/image.png') . '" width="50" height="50" class="rounded">';
+            })
+            ->addColumn('tenant_name', function ($row) {
+                return $row->tenant ? $row->tenant->name : 'N/A';
+            })
+            ->addColumn('status', function ($row) {
+                $badgeClass = $row->status === 'active' ? 'success' : 'secondary';
+                return '<span class="badge badge-' . $badgeClass . '">' . translate($row->status) . '</span>';
+            })
+            ->addColumn('actions', function ($row) {
+                $actions = '';
+                
+                if (auth()->user()->can('update.brands')) {
+                    $actions .= '<button class="btn btn-sm btn-primary open-edit-modal me-1" 
+                                   data-modal-link="' . route('landlord.brands.edit', $row->id) . '"
+                                   data-modal-title="' . translate('edit') . ' ' . translate('brand') . '">
+                                   <i class="fa fa-edit"></i>
+                                </button>';
+                }
+                
+                if (auth()->user()->can('delete.brands')) {
+                    if ($row->deleted_at) {
+                        $actions .= '<button class="btn btn-sm btn-warning restore-btn me-1" 
+                                       data-route="' . route('landlord.brands.restore', $row->id) . '">
+                                       <i class="fa fa-undo"></i>
+                                    </button>';
+                    } else {
+                        $actions .= '<button class="btn btn-sm btn-danger delete-btn" 
+                                       data-route="' . route('landlord.brands.destroy', $row->id) . '">
+                                       <i class="fa fa-trash"></i>
+                                    </button>';
+                    }
+                }
+                
+                return $actions;
+            })
+            ->rawColumns(['logo', 'status', 'actions'])
+            ->make(true);
     }
 
     public function getById(int $id): ?Brand

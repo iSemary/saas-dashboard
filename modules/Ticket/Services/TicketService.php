@@ -170,7 +170,7 @@ class TicketService
 
         // Add comment about assignment
         if ($comment || $oldAssignee !== $userId) {
-            $assigneeName = \App\Models\User::find($userId)->name ?? 'Unknown';
+            $assigneeName = \Modules\Auth\Entities\User::find($userId)->name ?? 'Unknown';
             $assignmentComment = $comment ?: "Ticket assigned to {$assigneeName}";
             
             $this->addComment($ticketId, [

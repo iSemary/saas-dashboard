@@ -61,7 +61,7 @@ class TicketController extends ApiController implements HasMiddleware
 
         $statusOptions = Ticket::getStatuses();
         $priorityOptions = Ticket::getPriorities();
-        $users = \App\Models\User::select('id', 'name')->get();
+        $users = \Modules\Auth\Entities\User::select('id', 'name')->get();
 
         return view('landlord.ticket.tickets.index', compact(
             'breadcrumbs', 
@@ -77,7 +77,7 @@ class TicketController extends ApiController implements HasMiddleware
     {
         $statusOptions = Ticket::getStatuses();
         $priorityOptions = Ticket::getPriorities();
-        $users = \App\Models\User::select('id', 'name')->get();
+        $users = \Modules\Auth\Entities\User::select('id', 'name')->get();
         $brands = \Modules\Customer\Entities\Brand::select('id', 'name')->get();
 
         return view('landlord.ticket.tickets.editor', compact(
@@ -127,7 +127,7 @@ class TicketController extends ApiController implements HasMiddleware
         ];
 
         $timeline = $this->service->getTicketTimeline($id);
-        $users = \App\Models\User::select('id', 'name')->get();
+        $users = \Modules\Auth\Entities\User::select('id', 'name')->get();
 
         return view('landlord.ticket.tickets.show', compact(
             'ticketData',
@@ -148,7 +148,7 @@ class TicketController extends ApiController implements HasMiddleware
 
         $statusOptions = Ticket::getStatuses();
         $priorityOptions = Ticket::getPriorities();
-        $users = \App\Models\User::select('id', 'name')->get();
+        $users = \Modules\Auth\Entities\User::select('id', 'name')->get();
         $brands = \Modules\Customer\Entities\Brand::select('id', 'name')->get();
 
         return view('landlord.ticket.tickets.editor', compact(
@@ -236,7 +236,7 @@ class TicketController extends ApiController implements HasMiddleware
             ],
         ];
 
-        $users = \App\Models\User::select('id', 'name')->get();
+        $users = \Modules\Auth\Entities\User::select('id', 'name')->get();
         $statusOptions = Ticket::getStatuses();
 
         return view('landlord.ticket.tickets.kanban', compact(

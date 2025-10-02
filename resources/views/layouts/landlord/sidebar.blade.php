@@ -78,6 +78,28 @@
                                     'single' => true,
                                     'external' => false,
                                 ],
+                                'brands' => [
+                                    'icon' => 'fas fa-tags',
+                                    'permission' => [
+                                        'read' => 'read.brands',
+                                        'create' => 'create.brands',
+                                    ],
+                                    'routes' => [
+                                        'index' => 'landlord.brands-web.index',
+                                        'create' => 'landlord.brands-web.create',
+                                    ],
+                                ],
+                                'tenant_owners' => [
+                                    'icon' => 'fas fa-users-cog',
+                                    'permission' => [
+                                        'read' => 'read.tenant_owners',
+                                        'create' => 'create.tenant_owners',
+                                    ],
+                                    'routes' => [
+                                        'index' => 'landlord.tenant-owners.index',
+                                        'create' => 'landlord.tenant-owners.create',
+                                    ],
+                                ],
                             ],
                         ],
                         'mailing' => [
@@ -252,40 +274,6 @@
                                     'routes' => [
                                         'index' => 'landlord.streets.index',
                                         'create' => 'landlord.streets.create',
-                                    ],
-                                ],
-                            ],
-                        ],
-                        'brands' => [
-                            'icon' => 'fas fa-tags',
-                            'label' => 'brands',
-                            'items' => [
-                                'brands' => [
-                                    'icon' => 'fas fa-tag',
-                                    'permission' => [
-                                        'read' => 'read.brands',
-                                        'create' => 'create.brands',
-                                    ],
-                                    'routes' => [
-                                        'index' => 'landlord.brands.index',
-                                        'create' => 'landlord.brands.create',
-                                    ],
-                                ],
-                            ],
-                        ],
-                        'tenant_owners' => [
-                            'icon' => 'fas fa-users-cog',
-                            'label' => 'tenant_owners',
-                            'items' => [
-                                'tenant_owners' => [
-                                    'icon' => 'fas fa-user-tie',
-                                    'permission' => [
-                                        'read' => 'read.tenant_owners',
-                                        'create' => 'create.tenant_owners',
-                                    ],
-                                    'routes' => [
-                                        'index' => 'landlord.tenant-owners.index',
-                                        'create' => 'landlord.tenant-owners.create',
                                     ],
                                 ],
                             ],
