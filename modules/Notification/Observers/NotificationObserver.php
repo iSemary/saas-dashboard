@@ -18,9 +18,14 @@ class NotificationObserver
         broadcast(new NotificationEvent(
             $notification->user_id,
             [
-                "title" => $notification->name,
-                "message" => $notification->description,
-                "type" => $notification->type
+                "title" => $notification->title ?: $notification->name,
+                "message" => $notification->body ?: $notification->description,
+                "type" => $notification->type,
+                "priority" => $notification->priority,
+                "route" => $notification->route,
+                "data" => $notification->data,
+                "id" => $notification->id,
+                "created_at" => $notification->created_at->toISOString(),
             ]
         ));
     }

@@ -29,7 +29,13 @@ class NotificationController extends ApiController
 
     public function list()
     {
-        return $this->return(200, "List of notifications", ['data' => $this->service->list()]);
+        $filters = request()->only(['status', 'type', 'priority', 'search', 'per_page']);
+        return $this->return(200, "List of notifications", ['data' => $this->service->list($filters)]);
+    }
+
+    public function stats()
+    {
+        return $this->return(200, "Notification statistics", $this->service->getStats());
     }
 
     public function markAllAsRead()

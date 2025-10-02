@@ -95,4 +95,9 @@ class TranslationService
     {
         return $this->repository->getUsedTranslationInPhp();
     }
+
+    public function syncJsonFiles()
+    {
+        return $this->repository->syncJsonFiles();
+    }
 }

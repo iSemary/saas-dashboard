@@ -22,3 +22,6 @@ yarn-error.log
 /.zed
 /storage/backup-sentry/*
 cookies.txt
+
+# Translation JSON files (generated dynamically)
+/public/assets/shared/lang/*.json

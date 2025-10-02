@@ -1,0 +1,17 @@
+{
+    "name": "Comment",
+    "alias": "comment",
+    "description": "Reusable comment system for tickets, posts, and other entities",
+    "keywords": [
+        "comment",
+        "discussion",
+        "reaction",
+        "attachment"
+    ],
+    "priority": 0,
+    "providers": [
+        "Modules\\Comment\\Providers\\CommentServiceProvider",
+        "Modules\\Comment\\Providers\\RouteServiceProvider"
+    ],
+    "files": []
+}

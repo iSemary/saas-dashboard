@@ -5,7 +5,9 @@ namespace App\Helpers;
 use Modules\Localization\Entities\Language;
 use Modules\Localization\Repositories\LanguageInterface;
 use Modules\Localization\Repositories\TranslationInterface;
-use Session;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class TranslateHelper
 {
@@ -23,16 +25,75 @@ class TranslateHelper
         return $this->translationInterface->getByKey($key, $attributes, $locale);
     }
 
+    /**
+     * Get translation with JSON-first lookup strategy
+     * Priority: JSON file -> Redis cache -> Database
+     */
+    public function getTranslationWithJsonFirst($key, $attributes = [], $locale = null)
+    {
+        if (!$locale) {
+            $locale = self::getLocale();
+        }
+
+        // First, try to get from JSON file
+        $jsonTranslation = $this->getFromJsonFile($key, $locale);
+        if ($jsonTranslation !== null) {
+            return $this->replaceAttributes($jsonTranslation, $attributes);
+        }
+
+        // Fallback to existing method (Redis -> Database)
+        return $this->translationInterface->getByKey($key, $attributes, $locale);
+    }
+
+    /**
+     * Get translation from JSON file
+     */
+    private function getFromJsonFile($key, $locale)
+    {
+        $jsonPath = public_path("assets/shared/lang/{$locale}.json");
+        
+        if (!file_exists($jsonPath)) {
+            return null;
+        }
+
+        try {
+            $translations = json_decode(file_get_contents($jsonPath), true);
+            return $translations[$key] ?? null;
+        } catch (\Exception $e) {
+            Log::warning("Failed to read translation JSON file for locale {$locale}: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Replace attributes in translation string
+     */
+    private function replaceAttributes($translation, $attributes = [])
+    {
+        if (is_array($attributes) && count($attributes)) {
+            $modifiedAttributes = array_combine(
+                array_map(function ($key) {
+                    return ":$key";
+                }, array_keys($attributes)),
+                array_values($attributes)
+            );
+
+            return str_replace(array_keys($modifiedAttributes), array_values($attributes), $translation);
+        }
+
+        return $translation;
+    }
+
     public static function getLocale($locale = null)
     {
         if ($locale) {
             $locale = $locale;
         } else {
             try {
-                if (auth()->check()) {
+                if (Auth::check()) {
                     $locale = Session::get('locale');
                     if (!$locale) {
-                        $locale = auth()->user()->language?->locale;
+                        $locale = Auth::user()->language?->locale;
                         if (!$locale) {
                             $locale = app()->getLocale();
                         }
@@ -53,10 +114,10 @@ class TranslateHelper
     {
         if (!$language) {
             try {
-                if (auth()->check()) {
+                if (Auth::check()) {
                     $language = Session::get('language');
                     if (!$language) {
-                        $language = auth()->user()->language;
+                        $language = Auth::user()->language;
                         if (!$language) {
                             $language = Language::whereLocale(app()->getLocale())->first();
                         }

@@ -16,9 +16,9 @@ class NotificationService
         $this->repository = $repository;
     }
 
-    public function list()
+    public function list($filters = [])
     {
-        return $this->repository->list();
+        return $this->repository->list($filters);
     }
 
     public function markAllAsRead()
@@ -44,6 +44,21 @@ class NotificationService
     public function restore($id)
     {
         return $this->repository->restore($id);
+    }
+
+    public function getUnreadCount($userId = null)
+    {
+        return $this->repository->getUnreadCount($userId);
+    }
+
+    public function getStats($userId = null)
+    {
+        return $this->repository->getStats($userId);
+    }
+
+    public function create($data)
+    {
+        return $this->repository->create($data);
     }
 }
 

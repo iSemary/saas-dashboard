@@ -9,3 +9,6 @@ Important Instructions before work:
 -   Please use the same way i write translations, like @translate in blade or translate() or t() or @t() same also in js
 
 -   First of all read the project well, then read my requirements, beside my instructions, then write your rich todo-list finally go ahead and work on each todo in a proper way considering the whole thing
+
+
+- If you're adding new .env keys in the code, make sure you add them to the .env.example

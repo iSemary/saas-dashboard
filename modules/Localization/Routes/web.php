@@ -17,5 +17,6 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_
     Route::get('translations/used-translations/php', [TranslationController::class, 'getUsedTranslationInPhp'])->name('translations.used-translation-php');
     Route::post('translations/generate-json', [TranslationController::class, 'generateJson'])->name('translations.generate-json');
     Route::post('translations/sync-missing', [TranslationController::class, 'syncMissing'])->name('translations.sync-missing');
+    Route::post('translations/sync-json-files', [TranslationController::class, 'syncJsonFiles'])->name('translations.sync-json-files');
     Route::resource('translations', TranslationController::class)->names('translations');
 });

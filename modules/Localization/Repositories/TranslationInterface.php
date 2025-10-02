@@ -20,5 +20,6 @@ interface TranslationInterface
     public function updateObjectTranslations(string $decryptedObjectType, string $decryptedObjectKey, int $objectId, array $translations);
     public function getUsedTranslationInJs();
     public function getUsedTranslationInPhp();
+    public function syncJsonFiles();
 }
 

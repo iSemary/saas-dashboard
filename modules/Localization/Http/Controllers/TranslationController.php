@@ -61,6 +61,15 @@ class TranslationController extends ApiController implements HasMiddleware
                 ]
             ],
             [
+                'text' => translate("sync_json_files"),
+                'icon' => '<i class="fas fa-sync-alt"></i>',
+                'class' => 'btn-sm btn-primary text-white sync-json-files',
+                'attr' => [
+                    'data-route' => route('landlord.translations.sync-json-files'),
+                    'data-method' => 'POST',
+                ]
+            ],
+            [
                 'text' => translate("scan_translation_keys_in_js_files"),
                 'icon' => '<i class="fas fa-search"></i>',
                 'class' => 'open-details-btn btn-sm btn-info',
@@ -143,6 +152,15 @@ class TranslationController extends ApiController implements HasMiddleware
     {
         $this->service->syncMissing();
         return $this->return(200, "Synced successfully");
+    }
+
+    public function syncJsonFiles()
+    {
+        $response = $this->service->syncJsonFiles();
+        if ($response['success']) {
+            return $this->return(200, "JSON sync job dispatched successfully");
+        }
+        return $this->return(400, "Failed to dispatch JSON sync job", ['errors' => $response['message']]);
     }
 
     public function getObjectTranslations(Request $request, int $objectId)

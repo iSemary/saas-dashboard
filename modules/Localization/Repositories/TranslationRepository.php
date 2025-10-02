@@ -7,6 +7,7 @@ use App\Helpers\TableHelper;
 use App\Services\CacheService;
 use Modules\Localization\Entities\Language;
 use Modules\Localization\Entities\Translation;
+use Modules\Localization\Jobs\GenerateTranslationJsonJob;
 use Yajra\DataTables\DataTables;
 use RecursiveDirectoryIterator;
 use CallbackFilterIterator;
@@ -160,7 +161,8 @@ class TranslationRepository implements TranslationInterface
         $locale = Language::find($data['language_id'])->locale;
         CacheService::forever("translation_{$locale}_{$translation->translation_key}", $translation->translation_value);
         if ($data['is_shareable']) {
-            $this->generateJson();
+            // Dispatch queue job to generate JSON files
+            GenerateTranslationJsonJob::dispatch();
         }
         return $translation;
     }
@@ -173,7 +175,8 @@ class TranslationRepository implements TranslationInterface
             $row->update($data);
 
             if ($data['is_shareable']) {
-                $this->generateJson();
+                // Dispatch queue job to generate JSON files
+                GenerateTranslationJsonJob::dispatch();
             }
 
             $locale = Language::find($row->language_id)->locale;
@@ -191,6 +194,12 @@ class TranslationRepository implements TranslationInterface
             $locale = Language::find($row->language_id)->locale;
             CacheService::forget("translation_{$locale}_{$row->translation_key}");
             $row->delete();
+            
+            // Dispatch queue job to regenerate JSON files after deletion
+            if ($row->is_shareable) {
+                GenerateTranslationJsonJob::dispatch();
+            }
+            
             return true;
         }
         return false;
@@ -203,6 +212,12 @@ class TranslationRepository implements TranslationInterface
             $locale = Language::find($row->language_id)->locale;
             CacheService::forever("translation_{$locale}_{$row->translation_key}", $row->translation_value);
             $row->restore();
+            
+            // Dispatch queue job to regenerate JSON files after restore
+            if ($row->is_shareable) {
+                GenerateTranslationJsonJob::dispatch();
+            }
+            
             return true;
         }
         return false;
@@ -379,6 +394,15 @@ class TranslationRepository implements TranslationInterface
         });
     
         return $keys;
+    }
+
+    /**
+     * Sync JSON files by dispatching queue job
+     */
+    public function syncJsonFiles()
+    {
+        GenerateTranslationJsonJob::dispatch();
+        return ['success' => true, 'message' => 'JSON sync job dispatched successfully.'];
     }
     
 }
