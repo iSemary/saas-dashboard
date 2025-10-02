@@ -11,5 +11,10 @@ interface PlanInterface
     public function update($id, array $data);
     public function delete($id);
     public function restore($id);
+    public function getActive();
+    public function getPopular();
+    public function getBySlug($slug);
+    public function getWithPricing($currencyCode = 'USD', $countryCode = null);
+    public function getAvailableUpgrades($planId);
+    public function getAvailableDowngrades($planId);
 }
-

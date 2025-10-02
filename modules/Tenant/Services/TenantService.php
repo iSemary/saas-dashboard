@@ -50,4 +50,24 @@ class TenantService
     {
         return $this->repository->init($customerUsername);
     }
+
+    public function reMigrate($id)
+    {
+        return $this->repository->reMigrate($id);
+    }
+
+    public function seedDatabase($id)
+    {
+        return $this->repository->seedDatabase($id);
+    }
+
+    public function reSeedDatabase($id)
+    {
+        return $this->repository->reSeedDatabase($id);
+    }
+
+    public function getDatabaseHealth($id)
+    {
+        return $this->repository->getDatabaseHealth($id);
+    }
 }

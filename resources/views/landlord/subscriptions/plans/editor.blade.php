@@ -7,28 +7,46 @@
 
     <div class="form-group">
         <label for="name" class="form-label">@translate('name') <span class="text-danger">*</span></label>
-        <input type="text" name="name" id="name" class="form-control emoji-input"
+        <input type="text" name="name" id="name" class="form-control"
             value="{{ isset($row) ? $row->name : '' }}" required>
     </div>
 
     <div class="form-group">
-        <label for="description" class="form-label">@translate('description')</label>
-        <textarea name="description" id="description" class="form-control emoji-input">{{ isset($row) ? $row->description : '' }}</textarea>
+        <label for="slug" class="form-label">@translate('slug') <span class="text-danger">*</span></label>
+        <input type="text" name="slug" id="slug" class="form-control slug-input"
+            value="{{ isset($row) ? $row->slug : '' }}" required>
     </div>
 
     <div class="form-group">
-        <label for="icon" class="form-label">@translate('icon')</label>
-        <input type="file" name="icon" id="icon" class="border-0 form-control upload-image" accept="image/*">
-        <div class="preview-image-container mt-2">
-            <img src="{{ isset($row) && $row->icon ? $row->icon : asset('assets/shared/images/icons/defaults/image.png') }}"
-                width="100px" height="100px" alt="Preview" class="preview-image" />
+        <label for="description" class="form-label">@translate('description')</label>
+        <textarea name="description" id="description" class="form-control">{{ isset($row) ? $row->description : '' }}</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="features_summary" class="form-label">@translate('features_summary')</label>
+        <textarea name="features_summary" id="features_summary" class="form-control">{{ isset($row) ? $row->features_summary : '' }}</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="sort_order" class="form-label">@translate('sort_order')</label>
+        <input type="number" name="sort_order" id="sort_order" class="form-control"
+            value="{{ isset($row) ? $row->sort_order : 0 }}">
+    </div>
+
+    <div class="form-group">
+        <div class="form-check">
+            <input type="checkbox" name="is_popular" id="is_popular" class="form-check-input" value="1"
+                {{ isset($row) && $row->is_popular ? 'checked' : '' }}>
+            <label for="is_popular" class="form-check-label">@translate('is_popular')</label>
         </div>
     </div>
 
     <div class="form-group">
-        <label for="priority" class="form-label">@translate('priority')</label>
-        <input type="number" name="priority" id="priority" class="form-control"
-            value="{{ isset($row) ? $row->priority : 0 }}">
+        <div class="form-check">
+            <input type="checkbox" name="is_custom" id="is_custom" class="form-check-input" value="1"
+                {{ isset($row) && $row->is_custom ? 'checked' : '' }}>
+            <label for="is_custom" class="form-check-label">@translate('is_custom')</label>
+        </div>
     </div>
 
     <div class="form-group">

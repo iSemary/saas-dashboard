@@ -91,6 +91,62 @@ class TenantController extends ApiController implements HasMiddleware
     public function restore($id)
     {
         $this->service->restore($id);
-        return $this->return(200, "Deleted successfully");
+        return $this->return(200, "Restored successfully");
+    }
+
+    /**
+     * Re-migrate tenant database
+     */
+    public function reMigrate($id)
+    {
+        $result = $this->service->reMigrate($id);
+        
+        if ($result['success']) {
+            return $this->return(200, $result['message']);
+        } else {
+            return $this->return(500, $result['message']);
+        }
+    }
+
+    /**
+     * Seed tenant database
+     */
+    public function seedDatabase($id)
+    {
+        $result = $this->service->seedDatabase($id);
+        
+        if ($result['success']) {
+            return $this->return(200, $result['message']);
+        } else {
+            return $this->return(500, $result['message']);
+        }
+    }
+
+    /**
+     * Re-seed tenant database
+     */
+    public function reSeedDatabase($id)
+    {
+        $result = $this->service->reSeedDatabase($id);
+        
+        if ($result['success']) {
+            return $this->return(200, $result['message']);
+        } else {
+            return $this->return(500, $result['message']);
+        }
+    }
+
+    /**
+     * Get tenant database health
+     */
+    public function getDatabaseHealth($id)
+    {
+        $health = $this->service->getDatabaseHealth($id);
+        
+        if ($health) {
+            return response()->json($health);
+        } else {
+            return response()->json(['error' => 'Tenant not found'], 404);
+        }
     }
 }

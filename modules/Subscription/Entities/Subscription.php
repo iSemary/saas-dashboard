@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Auth\Entities\User;
+use Modules\Customer\Entities\Brand;
 use Modules\FileManager\Traits\FileHandler;
 use Modules\Tenant\Entities\Tenant;
 use Modules\Utilities\Entities\Currency;
@@ -22,7 +23,8 @@ class Subscription extends Model implements Auditable
     public $pluralTitle = "subscriptions";
 
     protected $fillable = [
-        'tenant_id',
+        'brand_id',
+        'tenant_id', // Keep for backward compatibility
         'user_id',
         'plan_id',
         'start_date',
@@ -35,11 +37,27 @@ class Subscription extends Model implements Auditable
     ];
 
     /**
-     * Get the tenant associated with the subscription
+     * Get the brand associated with the subscription
+     */
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class, 'brand_id');
+    }
+
+    /**
+     * Get the tenant associated with the subscription (through brand)
      */
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class, 'tenant_id');
+    }
+
+    /**
+     * Get the tenant through the brand relationship (preferred method)
+     */
+    public function tenantThroughBrand(): BelongsTo
+    {
+        return $this->hasOneThrough(Tenant::class, Brand::class, 'id', 'id', 'brand_id', 'tenant_id');
     }
 
     /**

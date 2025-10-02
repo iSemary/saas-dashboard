@@ -2,7 +2,7 @@
 
 namespace Modules\Subscription\Services;
 
-use Modules\Subscription\Entities\Subscription;
+use Modules\Subscription\Entities\PlanSubscription;
 use Modules\Subscription\Repositories\SubscriptionInterface;
 
 class SubscriptionService
@@ -10,9 +10,9 @@ class SubscriptionService
     protected $repository;
     public $model;
 
-    public function __construct(SubscriptionInterface $repository, Subscription $plan)
+    public function __construct(SubscriptionInterface $repository, PlanSubscription $subscription)
     {
-        $this->model = $plan;
+        $this->model = $subscription;
         $this->repository = $repository;
     }
 
@@ -46,9 +46,33 @@ class SubscriptionService
         return $this->repository->delete($id);
     }
 
-    public function restore($id)
+    public function getByUser($userId)
     {
-        return $this->repository->restore($id);
+        return $this->repository->getByUser($userId);
+    }
+
+    public function getActiveByUser($userId)
+    {
+        return $this->repository->getActiveByUser($userId);
+    }
+
+    public function getDueForBilling()
+    {
+        return $this->repository->getDueForBilling();
+    }
+
+    public function getExpiringSoon($days = 7)
+    {
+        return $this->repository->getExpiringSoon($days);
+    }
+
+    public function getByStatus($status)
+    {
+        return $this->repository->getByStatus($status);
+    }
+
+    public function getTrialSubscriptions()
+    {
+        return $this->repository->getTrialSubscriptions();
     }
 }
-

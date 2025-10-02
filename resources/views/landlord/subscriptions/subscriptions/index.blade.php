@@ -10,7 +10,14 @@
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">@translate('name')</th>
+                        <th scope="col">@translate('subscription_id')</th>
+                        <th scope="col">@translate('brand')</th>
+                        <th scope="col">@translate('user')</th>
+                        <th scope="col">@translate('plan')</th>
+                        <th scope="col">@translate('price')</th>
+                        <th scope="col">@translate('billing_cycle')</th>
+                        <th scope="col">@translate('next_billing')</th>
+                        <th scope="col">@translate('days_remaining')</th>
                         <th scope="col">@translate('status')</th>
                         <th scope="col">@translate('action')</th>
                     </tr>

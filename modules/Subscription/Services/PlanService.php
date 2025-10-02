@@ -50,5 +50,34 @@ class PlanService
     {
         return $this->repository->restore($id);
     }
-}
 
+    public function getActive()
+    {
+        return $this->repository->getActive();
+    }
+
+    public function getPopular()
+    {
+        return $this->repository->getPopular();
+    }
+
+    public function getBySlug($slug)
+    {
+        return $this->repository->getBySlug($slug);
+    }
+
+    public function getWithPricing($currencyCode = 'USD', $countryCode = null)
+    {
+        return $this->repository->getWithPricing($currencyCode, $countryCode);
+    }
+
+    public function getAvailableUpgrades($planId)
+    {
+        return $this->repository->getAvailableUpgrades($planId);
+    }
+
+    public function getAvailableDowngrades($planId)
+    {
+        return $this->repository->getAvailableDowngrades($planId);
+    }
+}

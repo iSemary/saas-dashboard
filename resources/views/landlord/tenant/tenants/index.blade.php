@@ -12,6 +12,7 @@
                         <th scope="col">@translate('name')</th>
                         <th scope="col">@translate('domain')</th>
                         <th scope="col">@translate('database')</th>
+                        <th scope="col">Tables</th>
                         <th scope="col">@translate('created_at')</th>
                         <th scope="col">@translate('action')</th>
                     </tr>

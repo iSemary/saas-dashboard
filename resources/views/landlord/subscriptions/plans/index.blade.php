@@ -11,7 +11,12 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">@translate('name')</th>
+                        <th scope="col">@translate('slug')</th>
                         <th scope="col">@translate('description')</th>
+                        <th scope="col">@translate('sort_order')</th>
+                        <th scope="col">@translate('popular')</th>
+                        <th scope="col">@translate('subscriptions')</th>
+                        <th scope="col">@translate('active_subscriptions')</th>
                         <th scope="col">@translate('status')</th>
                         <th scope="col">@translate('action')</th>
                     </tr>

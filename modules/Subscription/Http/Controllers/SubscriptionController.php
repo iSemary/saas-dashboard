@@ -55,7 +55,18 @@ class SubscriptionController extends ApiController implements HasMiddleware
 
     public function create()
     {
-        return view('landlord.subscriptions.subscriptions.editor');
+        $statusOptions = ['trial', 'active', 'past_due', 'canceled', 'expired', 'suspended'];
+        $autoRenewOptions = ['enabled', 'disabled', 'pending_cancellation'];
+        $billingCycleOptions = ['monthly', 'quarterly', 'semi_annually', 'annually', 'biennially', 'triennially', 'lifetime'];
+        $plans = \Modules\Subscription\Entities\Plan::where('status', 'active')->get();
+        $currencies = \Modules\Utilities\Entities\Currency::where('status', 'active')->get();
+        $users = \App\Models\User::select('id', 'name', 'email')->get();
+        $brands = \Modules\Customer\Entities\Brand::select('id', 'name', 'tenant_id')->get();
+        
+        return view('landlord.subscriptions.subscriptions.editor', compact(
+            'statusOptions', 'autoRenewOptions', 'billingCycleOptions', 
+            'plans', 'currencies', 'users', 'brands'
+        ));
     }
 
     public function store(Request $request)
@@ -70,7 +81,17 @@ class SubscriptionController extends ApiController implements HasMiddleware
     public function edit($id)
     {
         $row = $this->service->get($id);
-        return view('landlord.subscriptions.subscriptions.editor', compact('row'));
+        $statusOptions = ['trial', 'active', 'past_due', 'canceled', 'expired', 'suspended'];
+        $autoRenewOptions = ['enabled', 'disabled', 'pending_cancellation'];
+        $billingCycleOptions = ['monthly', 'quarterly', 'semi_annually', 'annually', 'biennially', 'triennially', 'lifetime'];
+        $plans = \Modules\Subscription\Entities\Plan::where('status', 'active')->get();
+        $currencies = \Modules\Utilities\Entities\Currency::where('status', 'active')->get();
+        $users = \App\Models\User::select('id', 'name', 'email')->get();
+        
+        return view('landlord.subscriptions.subscriptions.editor', compact(
+            'row', 'statusOptions', 'autoRenewOptions', 'billingCycleOptions', 
+            'plans', 'currencies', 'users'
+        ));
     }
 
     public function update(Request $request, $id)

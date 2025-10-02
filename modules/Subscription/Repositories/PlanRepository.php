@@ -3,7 +3,6 @@
 namespace Modules\Subscription\Repositories;
 
 use App\Helpers\TableHelper;
-use Illuminate\Support\Facades\DB;
 use Modules\Subscription\Entities\Plan;
 use Yajra\DataTables\DataTables;
 
@@ -18,7 +17,7 @@ class PlanRepository implements PlanInterface
 
     public function all()
     {
-        return $this->model->all();
+        return $this->model->with(['features', 'prices', 'trials'])->ordered()->get();
     }
 
     public function datatables()
@@ -29,65 +28,151 @@ class PlanRepository implements PlanInterface
                     TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
                 }
             }
-        );
+        )->with(['subscriptions']);
 
         return DataTables::of($rows)
             ->addColumn('actions', function ($row) {
-                $buttons = '<button class="btn btn-sm btn-orange"><i class="fas fa-money-bill-wave"></i> ' . t('manage_price') . '</button>';
-
-                $buttons .= TableHelper::actionButtons(
+                return TableHelper::actionButtons(
                     row: $row,
                     editRoute: 'landlord.plans.edit',
                     deleteRoute: 'landlord.plans.destroy',
                     restoreRoute: 'landlord.plans.restore',
-                    type: $this->model->pluralTitle,
-                    titleType: $this->model->singleTitle,
+                    type: $row->pluralTitle,
+                    titleType: $row->singleTitle,
                     showIconsOnly: false
                 );
-
-                return $buttons;
             })
-            ->rawColumns(['flag', 'actions'])
+            ->addColumn('status', function ($row) {
+                $statusColors = [
+                    'active' => 'success',
+                    'inactive' => 'secondary',
+                    'archived' => 'warning'
+                ];
+                $color = $statusColors[$row->status] ?? 'secondary';
+                return '<span class="badge bg-' . $color . '">' . ucfirst($row->status) . '</span>';
+            })
+            ->addColumn('subscriptions_count', function ($row) {
+                return $row->subscriptions->count();
+            })
+            ->addColumn('active_subscriptions_count', function ($row) {
+                return $row->subscriptions->whereIn('status', ['trial', 'active'])->count();
+            })
+            ->addColumn('is_popular_badge', function ($row) {
+                return $row->is_popular 
+                    ? '<span class="badge bg-warning">Popular</span>' 
+                    : '';
+            })
+            ->rawColumns(['actions', 'status', 'is_popular_badge'])
             ->make(true);
     }
 
     public function find($id)
     {
-        return $this->model->find($id);
+        return $this->model->with(['features', 'prices.currency', 'trials', 'discounts'])->find($id);
     }
 
     public function create(array $data)
     {
+        $data['status'] = $data['status'] ?? 'active';
+        $data['sort_order'] = $data['sort_order'] ?? 0;
+        $data['is_popular'] = isset($data['is_popular']) && $data['is_popular'] ? true : false;
+        $data['is_custom'] = isset($data['is_custom']) && $data['is_custom'] ? true : false;
+
+        if (empty($data['slug'])) {
+            $data['slug'] = \Str::slug($data['name']);
+        }
+
         return $this->model->create($data);
     }
 
     public function update($id, array $data)
     {
-        $row = $this->model->find($id);
-        if ($row) {
-            $row->update($data);
-            return $row;
+        $plan = $this->find($id);
+        
+        if (!$plan) {
+            return false;
         }
-        return false;
+
+        $data['is_popular'] = isset($data['is_popular']) && $data['is_popular'] ? true : false;
+        $data['is_custom'] = isset($data['is_custom']) && $data['is_custom'] ? true : false;
+
+        if (isset($data['name']) && (empty($data['slug']) || $data['slug'] !== $plan->slug)) {
+            $data['slug'] = \Str::slug($data['name']);
+        }
+
+        return $plan->update($data);
     }
 
     public function delete($id)
     {
-        $row = $this->model->find($id);
-        if ($row) {
-            $row->delete();
-            return true;
-        }
-        return false;
+        return $this->model->find($id)?->delete();
     }
 
     public function restore($id)
     {
-        $row = $this->model->withTrashed()->find($id);
-        if ($row) {
-            $row->restore();
-            return true;
+        return $this->model->withTrashed()->find($id)?->restore();
+    }
+
+    public function getActive()
+    {
+        return $this->model->active()->ordered()->get();
+    }
+
+    public function getPopular()
+    {
+        return $this->model->active()->popular()->ordered()->get();
+    }
+
+    public function getBySlug($slug)
+    {
+        return $this->model->where('slug', $slug)->active()->first();
+    }
+
+    public function getWithPricing($currencyCode = 'USD', $countryCode = null)
+    {
+        return $this->model->active()
+                          ->with(['features' => function ($query) {
+                              $query->active()->ordered();
+                          }])
+                          ->with(['prices' => function ($query) use ($currencyCode, $countryCode) {
+                              $query->active()
+                                   ->valid()
+                                   ->whereHas('currency', function ($q) use ($currencyCode) {
+                                       $q->where('code', $currencyCode);
+                                   })
+                                   ->where(function ($q) use ($countryCode) {
+                                       $q->where('country_code', $countryCode)
+                                         ->orWhereNull('country_code');
+                                   });
+                          }])
+                          ->with(['trials' => function ($query) use ($countryCode) {
+                              $query->active()
+                                   ->where(function ($q) use ($countryCode) {
+                                       $q->where('country_code', $countryCode)
+                                         ->orWhereNull('country_code');
+                                   });
+                          }])
+                          ->ordered()
+                          ->get();
+    }
+
+    public function getAvailableUpgrades($planId)
+    {
+        $plan = $this->find($planId);
+        if (!$plan) {
+            return collect();
         }
-        return false;
+
+        return $plan->getAllowedChanges('upgrade');
+    }
+
+    public function getAvailableDowngrades($planId)
+    {
+        $plan = $this->find($planId);
+        if (!$plan) {
+            return collect();
+        }
+
+        return $plan->getAllowedChanges('downgrade');
     }
 }

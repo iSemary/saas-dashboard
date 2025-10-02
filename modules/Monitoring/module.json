@@ -1,0 +1,11 @@
+{
+    "name": "Monitoring",
+    "alias": "monitoring",
+    "description": "Landlord Monitoring Dashboard for system health, tenant behavior, error management, and developer tools",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Monitoring\\Providers\\MonitoringServiceProvider"
+    ],
+    "files": []
+}
