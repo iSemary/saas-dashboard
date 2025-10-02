@@ -1,9 +1,11 @@
 {
     "name": "Payment",
     "alias": "payment",
-    "description": "",
-    "keywords": [],
-    "priority": 0,
-    "providers": [ ],
+    "description": "Comprehensive payment processing module with multi-gateway support, routing, and analytics",
+    "keywords": ["payment", "gateway", "stripe", "paypal", "transactions", "refunds"],
+    "priority": 5,
+    "providers": [
+        "Modules\\Payment\\Providers\\PaymentServiceProvider"
+    ],
     "files": []
 }
