@@ -18,7 +18,7 @@ class TenantOwnerController extends Controller
         $this->tenantOwnerService = $tenantOwnerService;
     }
 
-    public function index(Request $request): JsonResponse
+    public function index(Request $request)
     {
         try {
             $filters = $request->only([
@@ -26,96 +26,168 @@ class TenantOwnerController extends Controller
                 'search', 'created_by', 'date_from', 'date_to'
             ]);
 
-            $tenantOwners = $this->tenantOwnerService->getAll($filters, $request->get('per_page', 15));
+            // If it's an AJAX request, return JSON for DataTable
+            if ($request->ajax()) {
+                $tenantOwners = $this->tenantOwnerService->getAll($filters, $request->get('per_page', 15));
 
-            return response()->json([
-                'success' => true,
-                'data' => $tenantOwners,
-                'message' => 'Tenant owners retrieved successfully'
-            ]);
+                return response()->json([
+                    'success' => true,
+                    'data' => $tenantOwners,
+                    'message' => 'Tenant owners retrieved successfully'
+                ]);
+            }
+
+            // For regular page view, return the view with data
+            $tenants = \Modules\Tenant\Entities\Tenant::all();
+            $users = \Modules\Auth\Entities\User::all();
+
+            return view('landlord.tenant-owners.index', compact('tenants', 'users'));
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve tenant owners: ' . $e->getMessage()
-            ], 500);
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to retrieve tenant owners: ' . $e->getMessage()
+                ], 500);
+            }
+            
+            return redirect()->back()->with('error', 'Failed to retrieve tenant owners: ' . $e->getMessage());
         }
     }
 
-    public function store(TenantOwnerFormRequest $request): JsonResponse
+    public function create()
+    {
+        $tenants = \Modules\Tenant\Entities\Tenant::all();
+        $users = \Modules\Auth\Entities\User::all();
+        
+        return view('landlord.tenant-owners.create', compact('tenants', 'users'));
+    }
+
+    public function edit(string $id)
+    {
+        $tenantOwner = $this->tenantOwnerService->getById((int) $id);
+        
+        if (!$tenantOwner) {
+            return redirect()->back()->with('error', 'Tenant owner not found');
+        }
+        
+        $tenants = \Modules\Tenant\Entities\Tenant::all();
+        $users = \Modules\Auth\Entities\User::all();
+        
+        return view('landlord.tenant-owners.edit', compact('tenantOwner', 'tenants', 'users'));
+    }
+
+    public function store(TenantOwnerFormRequest $request)
     {
         try {
             $tenantOwner = $this->tenantOwnerService->create($request->validated());
 
-            return response()->json([
-                'success' => true,
-                'data' => $tenantOwner->load(['tenant', 'user', 'creator', 'updater']),
-                'message' => 'Tenant owner created successfully'
-            ], 201);
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'data' => $tenantOwner->load(['tenant', 'user', 'creator', 'updater']),
+                    'message' => 'Tenant owner created successfully'
+                ], 201);
+            }
+            
+            return redirect()->back()->with('success', 'Tenant owner created successfully');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to create tenant owner: ' . $e->getMessage()
-            ], 500);
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to create tenant owner: ' . $e->getMessage()
+                ], 500);
+            }
+            
+            return redirect()->back()->with('error', 'Failed to create tenant owner: ' . $e->getMessage());
         }
     }
 
-    public function show(string $id): JsonResponse
+    public function show(string $id)
     {
         try {
             $tenantOwner = $this->tenantOwnerService->getById((int) $id);
 
             if (!$tenantOwner) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Tenant owner not found'
-                ], 404);
+                if (request()->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Tenant owner not found'
+                    ], 404);
+                }
+                return redirect()->back()->with('error', 'Tenant owner not found');
             }
 
-            return response()->json([
-                'success' => true,
-                'data' => $tenantOwner,
-                'message' => 'Tenant owner retrieved successfully'
-            ]);
+            // If it's an AJAX request, return JSON
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'data' => $tenantOwner,
+                    'message' => 'Tenant owner retrieved successfully'
+                ]);
+            }
+
+            // For modal view, return the view
+            return view('landlord.tenant-owners.show', compact('tenantOwner'));
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve tenant owner: ' . $e->getMessage()
-            ], 500);
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to retrieve tenant owner: ' . $e->getMessage()
+                ], 500);
+            }
+            
+            return redirect()->back()->with('error', 'Failed to retrieve tenant owner: ' . $e->getMessage());
         }
     }
 
-    public function update(TenantOwnerFormRequest $request, string $id): JsonResponse
+    public function update(TenantOwnerFormRequest $request, string $id)
     {
         try {
             $tenantOwner = $this->tenantOwnerService->getById((int) $id);
 
             if (!$tenantOwner) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Tenant owner not found'
-                ], 404);
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Tenant owner not found'
+                    ], 404);
+                }
+                return redirect()->back()->with('error', 'Tenant owner not found');
             }
 
             $updated = $this->tenantOwnerService->update((int) $id, $request->validated());
 
             if ($updated) {
                 $tenantOwner = $this->tenantOwnerService->getById((int) $id);
-                return response()->json([
-                    'success' => true,
-                    'data' => $tenantOwner,
-                    'message' => 'Tenant owner updated successfully'
-                ]);
+                
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => true,
+                        'data' => $tenantOwner,
+                        'message' => 'Tenant owner updated successfully'
+                    ]);
+                }
+                
+                return redirect()->back()->with('success', 'Tenant owner updated successfully');
             }
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to update tenant owner'
-            ], 500);
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to update tenant owner'
+                ], 500);
+            }
+            
+            return redirect()->back()->with('error', 'Failed to update tenant owner');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to update tenant owner: ' . $e->getMessage()
-            ], 500);
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to update tenant owner: ' . $e->getMessage()
+                ], 500);
+            }
+            
+            return redirect()->back()->with('error', 'Failed to update tenant owner: ' . $e->getMessage());
         }
     }
 
@@ -178,7 +250,7 @@ class TenantOwnerController extends Controller
         }
     }
 
-    public function getByTenant(Request $request, string $tenantId): JsonResponse
+    public function getByTenant(Request $request, string $tenantId)
     {
         try {
             $filters = $request->only([
@@ -186,22 +258,35 @@ class TenantOwnerController extends Controller
                 'created_by', 'date_from', 'date_to'
             ]);
 
-            $tenantOwners = $this->tenantOwnerService->getTenantOwnersForTenant(
-                (int) $tenantId, 
-                $filters, 
-                $request->get('per_page', 15)
-            );
+            // If it's an AJAX request, return JSON
+            if ($request->ajax()) {
+                $tenantOwners = $this->tenantOwnerService->getTenantOwnersForTenant(
+                    (int) $tenantId, 
+                    $filters, 
+                    $request->get('per_page', 15)
+                );
 
-            return response()->json([
-                'success' => true,
-                'data' => $tenantOwners,
-                'message' => 'Tenant owners retrieved successfully'
-            ]);
+                return response()->json([
+                    'success' => true,
+                    'data' => $tenantOwners,
+                    'message' => 'Tenant owners retrieved successfully'
+                ]);
+            }
+
+            // For modal view, return the view
+            $tenant = \Modules\Tenant\Entities\Tenant::findOrFail($tenantId);
+            $tenantOwners = $this->tenantOwnerService->getTenantOwnersForTenant((int) $tenantId, [], 100)->getCollection();
+
+            return view('landlord.tenant-owners.tenant-users', compact('tenant', 'tenantOwners'));
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve tenant owners: ' . $e->getMessage()
-            ], 500);
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to retrieve tenant owners: ' . $e->getMessage()
+                ], 500);
+            }
+            
+            return redirect()->back()->with('error', 'Failed to retrieve tenant owners: ' . $e->getMessage());
         }
     }
 

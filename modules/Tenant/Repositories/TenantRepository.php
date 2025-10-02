@@ -34,7 +34,7 @@ class TenantRepository implements TenantInterface
 
         return DataTables::of($rows)
             ->addColumn('actions', function ($row) {
-                return TableHelper::actionButtons(
+                $actionButtons = TableHelper::actionButtons(
                     row: $row,
                     editRoute: 'landlord.tenants.edit',
                     deleteRoute: 'landlord.tenants.destroy',
@@ -43,6 +43,15 @@ class TenantRepository implements TenantInterface
                     titleType: "tenant",
                     showIconsOnly: true
                 );
+
+                // Add View Users button
+                if (auth()->user()->hasPermissionTo('read.tenant_owners')) {
+                    $actionButtons .= '<button type="button" title="' . translate("view_tenant_users") . '" data-modal-title="' . translate("tenant_users") . ' - ' . $row->name . '" data-modal-link="' . route('landlord.tenant-owners.by-tenant', $row->id) . '" class="btn-info mx-1 btn-sm open-details-btn">';
+                    $actionButtons .= '<i class="fas fa-users"></i>';
+                    $actionButtons .= '</button>';
+                }
+
+                return $actionButtons;
             })
             ->rawColumns(['actions'])
             ->make(true);
