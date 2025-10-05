@@ -39,6 +39,11 @@ class AppServiceProvider extends ServiceProvider
             return "<?php echo configuration($expression); ?>";
         });
 
+        // Tenant-aware asset URL directive
+        Blade::directive('tenantAsset', function ($expression) {
+            return "<?php echo request()->getSchemeAndHttpHost() . '/assets/' . ltrim($expression, '/'); ?>";
+        });
+
         // if app is production then it will prohibits these commands:
         // db:wipe, migrate:refresh, migrate:fresh, migrate:reset
         DB::prohibitDestructiveCommands((env("APP_ENV") == "production"));

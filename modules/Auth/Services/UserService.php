@@ -111,80 +111,40 @@ class UserService
     }
 
     /**
-     * Get active users count
-     */
-    public function countActive(): int
-    {
-        return User::whereNull('deleted_at')->count();
-    }
-
-    /**
-     * Get users with specific role
-     */
-    public function getByRole(string $roleName): Collection
-    {
-        return User::role($roleName)->get();
-    }
-
-    /**
-     * Get users created in date range
-     */
-    public function getByDateRange(string $startDate, string $endDate): Collection
-    {
-        return User::whereBetween('created_at', [$startDate, $endDate])->get();
-    }
-
-    /**
-     * Get recent users
-     */
-    public function getRecent(int $limit = 10): Collection
-    {
-        return User::latest()->limit($limit)->get();
-    }
-
-    /**
-     * Search users
-     */
-    public function search(string $query): Collection
-    {
-        return User::where('name', 'like', "%{$query}%")
-            ->orWhere('email', 'like', "%{$query}%")
-            ->orWhere('username', 'like', "%{$query}%")
-            ->get();
-    }
-
-    /**
      * Get user statistics
      */
     public function getStats(): array
     {
         return [
-            'total' => $this->count(),
-            'active' => $this->countActive(),
-            'deleted' => User::onlyTrashed()->count(),
-            'verified' => User::whereNotNull('email_verified_at')->count(),
-            'unverified' => User::whereNull('email_verified_at')->count(),
+            'total' => User::count(),
+            'active' => User::whereNotIn('status', ['inactive'])->orWhereNull('status')->count(),
+            'inactive' => User::where('status', 'inactive')->count(),
+            'new_this_month' => User::whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)->count(),
         ];
     }
 
     /**
-     * Get user growth data for charts
+     * Get total count
      */
-    public function getGrowthData(int $days = 30): array
+    public function getTotalCount(): int
     {
-        $data = [];
-        $startDate = now()->subDays($days);
+        return User::count();
+    }
 
-        for ($i = 0; $i < $days; $i++) {
-            $date = $startDate->copy()->addDays($i);
-            $count = User::whereDate('created_at', $date)->count();
-            
-            $data[] = [
-                'date' => $date->format('Y-m-d'),
-                'count' => $count,
-            ];
-        }
+    /**
+     * Get active count
+     */
+    public function getActiveCount(): int
+    {
+        return User::whereNotIn('status', ['inactive'])->orWhereNull('status')->count();
+    }
 
-        return $data;
+    /**
+     * Get users with specific role
+     */
+    public function getUsersByRole(string $role): Collection
+    {
+        return User::role($role)->get();
     }
 }

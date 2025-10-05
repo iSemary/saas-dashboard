@@ -28,6 +28,11 @@ class BrandService
         return $this->brandRepository->datatables();
     }
 
+    public function getTenantDataTables(int $tenantId)
+    {
+        return $this->brandRepository->tenantDataTables($tenantId);
+    }
+
     public function getById(int $id): ?Brand
     {
         return $this->brandRepository->getById($id);

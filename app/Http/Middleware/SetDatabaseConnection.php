@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Modules\Tenant\Helper\TenantHelper;
+use Modules\Tenant\Entities\Tenant;
 
 class SetDatabaseConnection
 {
@@ -19,11 +20,15 @@ class SetDatabaseConnection
             DB::purge('landlord');
         } else if ($subdomain) {
             // For other subdomains, set up tenant connection
-            $tenant = \Modules\Tenant\Entities\Tenant::on('landlord')->where('domain', $subdomain)->first();
+            $tenant = Tenant::on('landlord')->where('domain', $subdomain)->first();
             if ($tenant) {
+                // Set the tenant database connection
                 Config::set('database.connections.tenant.database', $tenant->database);
                 DB::purge('tenant');
                 Config::set('database.default', 'tenant');
+                
+                // Make the tenant current for Spatie's multitenancy package
+                $tenant->makeCurrent();
             } else {
                 // Tenant not found, use landlord connection
                 Config::set('database.default', 'landlord');

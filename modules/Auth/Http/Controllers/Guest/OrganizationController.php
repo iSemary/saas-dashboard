@@ -15,9 +15,9 @@ class OrganizationController extends ApiController
             return $this->return(200, "Organization checked successfully.", ['redirect' => TenantHelper::handleRedirection($request, env("APP_LANDLORD_ORGANIZATION_NAME"), "/login")]);
         }
 
-        $tenantExists = Tenant::where("name", $request->organization_name)->exists();
-        if ($tenantExists) {
-            return $this->return(200, "Organization checked successfully.", ['redirect' => TenantHelper::handleRedirection($request, $tenantExists->subdomain, "/login")]);
+        $tenant = Tenant::where("name", $request->organization_name)->first();
+        if ($tenant) {
+            return $this->return(200, "Organization checked successfully.", ['redirect' => TenantHelper::generateURL($tenant->name) . "/login"]);
         }
 
         return $this->return(400, "Organization does not exist.");

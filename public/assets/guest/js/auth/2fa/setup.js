@@ -73,11 +73,48 @@ $(document).on("submit", "#twoFactorSetupForm", function (e) {
         },
         success: function (response) {
             if (response.success) {
-                window.location.href = response.data.redirect;
+                Swal.fire({
+                    icon: 'success',
+                    title: '2FA Setup Complete',
+                    text: 'Two-factor authentication has been enabled successfully.',
+                    showConfirmButton: false,
+                    timer: 2000
+                }).then(() => {
+                    window.location.href = response.data.redirect;
+                });
+            } else {
+                // Clear OTP inputs on error
+                $(".otp-input").val('');
+                $(".otp-input").first().focus();
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Setup Failed',
+                    text: response.message || 'Unable to setup 2FA. Please try again.',
+                    toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true
+                });
             }
         },
         error: function (error) {
             console.error(error);
+            // Clear OTP inputs on error
+            $(".otp-input").val('');
+            $(".otp-input").first().focus();
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'Setup Error',
+                text: 'Unable to setup 2FA. Please check your connection and try again.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true
+            });
         },
         complete: function () {
             btn.prop("disabled", false);

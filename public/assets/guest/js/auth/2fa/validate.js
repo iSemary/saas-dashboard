@@ -70,11 +70,51 @@ $(document).on("submit", "#twoFactorValidateForm", function (e) {
         },
         success: function (response) {
             if (response.success) {
-                window.location.href = response.data.redirect;
+                Swal.fire({
+                    icon: 'success',
+                    title: '2FA Verified',
+                    text: 'Redirecting to dashboard...',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    timerProgressBar: true
+                }).then(() => {
+                    window.location.href = response.data.redirect;
+                });
+            } else {
+                // Clear OTP inputs on error
+                $(".otp-input").val('');
+                $(".otp-input").first().focus();
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Code',
+                    text: response.message || 'Please enter the correct verification code.',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 4000,
+                    timerProgressBar: true
+                });
             }
         },
         error: function (error) {
             console.error(error);
+            // Clear OTP inputs on error
+            $(".otp-input").val('');
+            $(".otp-input").first().focus();
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'Connection Error',
+                text: 'Unable to verify code. Please check your connection and try again.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true
+            });
         },
         complete: function () {
             btn.prop("disabled", false);

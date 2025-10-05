@@ -3,10 +3,19 @@ $("#organizationForm").on("submit", function (e) {
 
     const organizationName = $("#organizationName").val();
     let url = $(this).attr("action");
-    if (!organizationName) {
-        alert("Organization name is required");
-        return;
-    }
+        if (!organizationName) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Organization Required',
+                text: 'Organization name is required',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+            return;
+        }
     $.ajax({
         url: url,
         method: "POST",
@@ -20,11 +29,29 @@ $("#organizationForm").on("submit", function (e) {
                 $("#forgetPasswordOrganizationName").val(organizationName);
                 $("#forgetPasswordForm").show();
             } else {
-                alert(response.message || "Invalid organization name.");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Organization Error',
+                        text: response.message || "Invalid organization name.",
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 4000,
+                        timerProgressBar: true
+                    });
             }
         },
         error: function () {
-            alert("An error occurred. Please try again.");
+            Swal.fire({
+                icon: 'error',
+                title: 'Server Error',
+                text: 'An error occurred. Please try again.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true
+            });
         },
     });
 });
@@ -39,11 +66,29 @@ $("#forgetPasswordForm").on("submit", function (e) {
 
     // Validate fields
     if (!organizationName) {
-        alert("Organization name is required.");
+        Swal.fire({
+            icon: 'warning',
+            title: 'Validation Error',
+            text: 'Organization name is required.',
+            toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true
+        });
         return;
     }
     if (!email) {
-        alert("email is required.");
+        Swal.fire({
+            icon: 'warning',
+            title: 'Validation Error',
+            text: 'Email is required.',
+            toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true
+        });
         return;
     }
 
@@ -58,11 +103,45 @@ $("#forgetPasswordForm").on("submit", function (e) {
         dataType: "json",
         success: function (response) {
             if (response.success) {
-                // window.location.href = response.data.redirect;
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Password Reset Email Sent',
+                    text: 'Please check your email for password reset instructions.',
+                    showConfirmButton: true,
+                    toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true
+                }).then(() => {
+                    if (response.data.redirect) {
+                        window.location.href = response.data.redirect;
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Send Failed',
+                    text: response.message || 'Unable to send reset email. Please try again.',
+                    toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true
+                });
             }
         },
         error: function () {
-            alert("An error occurred. Please try again.");
+            Swal.fire({
+                icon: 'error',
+                title: 'Server Error',
+                text: 'An error occurred. Please try again.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true
+            });
         },
     });
 });

@@ -1,16 +1,27 @@
 @extends('layouts.errors.app')
 @section('content')
-    <div class="notfound-container">
-        <div class="notfound">
-            <div>
-                <div class="notfound-404">
-                    <h1>!</h1>
-                </div>
-                <h2>@translate('error_pages.error')<br>{{  $exception->getStatusCode() }}</h2>
-            </div>
-            <p>{{ $exception->getMessage() !==null ? $exception->getMessage() : translate('error_pages.default_message') }}
-                <a href="/">@translate('error_pages.back_to_homepage')</a>
-            </p>
+    <div class="error-container">
+        <div class="error-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        
+        <div class="error-code">500</div>
+        
+        <h1 class="error-title">@translate('error_pages.server_error')</h1>
+        
+        <p class="error-message">
+            {{ $exception->getMessage() !== null ? $exception->getMessage() : translate('error_pages.server_error_message') }}
+        </p>
+        
+        <div class="error-actions">
+            <a href="/" class="btn btn-primary">
+                <i class="fas fa-home"></i>
+                @translate('error_pages.back_to_homepage')
+            </a>
+            <a href="javascript:history.back()" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                @translate('error_pages.go_back')
+            </a>
         </div>
     </div>
 @endsection

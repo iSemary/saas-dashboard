@@ -89,6 +89,17 @@
                                         'create' => 'landlord.brands-web.create',
                                     ],
                                 ],
+                                'branches' => [
+                                    'icon' => 'fas fa-building',
+                                    'permission' => [
+                                        'read' => 'read.branches',
+                                        'create' => 'create.branches',
+                                    ],
+                                    'routes' => [
+                                        'index' => 'landlord.branches.index',
+                                        'create' => 'landlord.branches.create',
+                                    ],
+                                ],
                                 'tenant_owners' => [
                                     'icon' => 'fas fa-users-cog',
                                     'permission' => [

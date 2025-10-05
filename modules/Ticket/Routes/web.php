@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Ticket\Http\Controllers\TicketController;
+use Modules\Ticket\Http\Controllers\Tenant\TicketController as TenantTicketController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,21 +39,23 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'role:land
 
 // Tenant routes (for tenant users)
 Route::prefix('tenant')->name('tenant.')->middleware(['auth:web', 'tenant', '2fa'])->group(function () {
-    Route::resource('tickets', TicketController::class)->names('tickets');
+    Route::resource('tickets', TenantTicketController::class)->names('tickets');
     
     // Ticket-specific routes for tenant users
     Route::prefix('tickets')->name('tickets.')->group(function () {
-        Route::get('kanban', [TicketController::class, 'kanban'])->name('kanban');
-        Route::get('kanban-data', [TicketController::class, 'getKanbanData'])->name('kanban-data');
-        Route::patch('{id}/status', [TicketController::class, 'updateStatus'])->name('update-status');
-        Route::patch('{id}/assign', [TicketController::class, 'assign'])->name('assign');
-        Route::patch('{id}/close', [TicketController::class, 'close'])->name('close');
-        Route::patch('{id}/reopen', [TicketController::class, 'reopen'])->name('reopen');
-        Route::get('my-tickets', [TicketController::class, 'myTickets'])->name('my-tickets');
-        Route::get('overdue', [TicketController::class, 'overdueTickets'])->name('overdue');
-        Route::get('search', [TicketController::class, 'search'])->name('search');
-        Route::get('stats', [TicketController::class, 'getStats'])->name('stats');
-        Route::get('{id}/timeline', [TicketController::class, 'getTimeline'])->name('timeline');
-        Route::get('metrics', [TicketController::class, 'getMetrics'])->name('metrics');
+        Route::get('kanban', [TenantTicketController::class, 'kanban'])->name('kanban');
+        Route::get('kanban-data', [TenantTicketController::class, 'getKanbanData'])->name('kanban-data');
+        Route::patch('{id}/status', [TenantTicketController::class, 'updateStatus'])->name('update-status');
+        Route::patch('{id}/assign', [TenantTicketController::class, 'assign'])->name('assign');
+        Route::patch('{id}/close', [TenantTicketController::class, 'close'])->name('close');
+        Route::patch('{id}/reopen', [TenantTicketController::class, 'reopen'])->name('reopen');
+        Route::get('my-tickets', [TenantTicketController::class, 'myTickets'])->name('my-tickets');
+        Route::get('overdue', [TenantTicketController::class, 'overdueTickets'])->name('overdue');
+        Route::get('search', [TenantTicketController::class, 'search'])->name('search');
+        Route::get('stats', [TenantTicketController::class, 'getStats'])->name('stats');
+        Route::get('dashboard-data', [TenantTicketController::class, 'getDashboardData'])->name('dashboard-data');
+        Route::get('{id}/timeline', [TenantTicketController::class, 'getTimeline'])->name('timeline');
+        Route::patch('bulk-update', [TenantTicketController::class, 'bulkUpdate'])->name('bulk-update');
+        Route::get('metrics', [TenantTicketController::class, 'getMetrics'])->name('metrics');
     });
 });

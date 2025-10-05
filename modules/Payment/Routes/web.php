@@ -29,7 +29,6 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_
     
     // Payment Methods
     Route::resource('payment-methods', PaymentMethodController::class);
-    Route::post('payment-methods/{id}/restore', [PaymentMethodController::class, 'restore'])->name('payment-methods.restore');
     Route::post('payment-methods/{id}/test', [PaymentMethodController::class, 'test'])->name('payment-methods.test');
     Route::get('payment-methods/gateway-config/{processor}', [PaymentMethodController::class, 'getGatewayConfig'])->name('payment-methods.gateway-config');
     Route::get('payment-methods/export', [PaymentMethodController::class, 'export'])->name('payment-methods.export');

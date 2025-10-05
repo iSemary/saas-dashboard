@@ -129,6 +129,15 @@
         box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     }
 
+    .stat-card.clickable-card {
+        cursor: pointer;
+    }
+
+    .stat-card.clickable-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    }
+
     .stat-card.users {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
@@ -151,6 +160,14 @@
 
     .stat-card.email-templates {
         background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    }
+
+    .stat-card.brands {
+        background: linear-gradient(135deg, #fd79a8 0%, #fdcb6e 100%);
+    }
+
+    .stat-card.brand-modules {
+        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
     }
 
     .stat-card.languages {
@@ -354,14 +371,27 @@ function renderStatsCards(stats) {
             </div>
         </div>
         <div class="col-xl-3 col-lg-6 col-md-6">
-            <div class="card stat-card email-templates">
+            <div class="card stat-card brands clickable-card" data-module="brands">
                 <div class="card-body text-center">
-                    <i class="mdi mdi-email-multiple stat-icon"></i>
-                    <h3 class="stat-number">${stats.email_templates.total}</h3>
-                    <p class="stat-label">Email Templates</p>
+                    <i class="mdi mdi-store stat-icon"></i>
+                    <h3 class="stat-number">${stats.brands.total}</h3>
+                    <p class="stat-label">{{ translate('brands') }}</p>
+                    <div class="stat-change ${stats.brands.growth_rate >= 0 ? 'positive' : 'negative'}">
+                        <i class="mdi mdi-${stats.brands.growth_rate >= 0 ? 'trending-up' : 'trending-down'}"></i>
+                        ${Math.abs(stats.brands.growth_rate)}% {{ translate('this_month') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-6 col-md-6">
+            <div class="card stat-card brand-modules">
+                <div class="card-body text-center">
+                    <i class="mdi mdi-puzzle stat-icon"></i>
+                    <h3 class="stat-number">${stats.brand_modules.active_subscriptions}</h3>
+                    <p class="stat-label">{{ translate('active_module_subscriptions') }}</p>
                     <div class="stat-change positive">
                         <i class="mdi mdi-check-circle"></i>
-                        ${stats.email_templates.active} active
+                        ${stats.brand_modules.brands_with_modules} {{ translate('brands_with_modules') }}
                     </div>
                 </div>
             </div>
@@ -586,5 +616,15 @@ function showError(message) {
     // You can implement a toast notification or alert here
     console.error(message);
 }
+
+// Handle clickable dashboard cards
+$(document).on('click', '.clickable-card', function() {
+    const module = $(this).data('module');
+    
+    if (module === 'brands') {
+        // Navigate to brands page where super admin can select brand modules
+        window.location.href = '{{ route("landlord.brands.index") }}';
+    }
+});
 </script>
 @endpush

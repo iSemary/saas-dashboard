@@ -29,7 +29,13 @@ class Authenticate extends Middleware
      */
     protected function unauthenticated($request, array $guards)
     {
-        $redirectUrl = $request->query('redirect', urlencode($request->getRequestUri()));  // Check for redirect parameter or fallback to current URL
-        abort(redirect()->route('login', ['redirect' => $redirectUrl]));
+        if ($request->expectsJson()) {
+            throw new \Illuminate\Auth\AuthenticationException;
+        }
+        
+        // The redirectTo method will handle the redirect properly
+        throw new \Illuminate\Auth\AuthenticationException(
+            'Unauthenticated.', $guards, $this->redirectTo($request)
+        );
     }
 }

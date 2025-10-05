@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
+// Include NextJS Admin API Routes
+require __DIR__.'/nextjs/admin.php';
+
 // Define the modules directory path
 $modulesPath = base_path('modules');
 

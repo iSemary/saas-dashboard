@@ -26,14 +26,12 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_
         Route::get('brands/slug/{slug}', [BrandController::class, 'showBySlug'])->name('brands.show-by-slug');
         Route::get('brands/tenant/{tenantId}', [BrandController::class, 'getByTenant'])->name('brands.by-tenant');
         Route::get('brands/search', [BrandController::class, 'search'])->name('brands.search');
-        Route::post('brands/{id}/restore', [BrandController::class, 'restore'])->name('brands.restore');
         Route::get('brands/stats', [BrandController::class, 'stats'])->name('brands.stats');
     });
 
     // Brand Web Interface routes
     Route::middleware('can:read.brands')->group(function () {
         Route::resource('brands-web', BrandWebController::class)->names('brands-web');
-        Route::post('brands-web/{id}/restore', [BrandWebController::class, 'restore'])->name('brands-web.restore');
     });
 
     // Tenant Owner routes
@@ -42,7 +40,6 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_
         Route::get('tenant-owners/tenant/{tenantId}', [TenantOwnerController::class, 'getByTenant'])->name('tenant-owners.by-tenant');
         Route::get('tenant-owners/tenant/{tenantId}/super-admins', [TenantOwnerController::class, 'getSuperAdmins'])->name('tenant-owners.super-admins');
         Route::get('tenant-owners/search', [TenantOwnerController::class, 'search'])->name('tenant-owners.search');
-        Route::post('tenant-owners/{id}/restore', [TenantOwnerController::class, 'restore'])->name('tenant-owners.restore');
         Route::post('tenant-owners/{id}/promote', [TenantOwnerController::class, 'promoteToSuperAdmin'])->name('tenant-owners.promote');
         Route::post('tenant-owners/{id}/demote', [TenantOwnerController::class, 'demoteFromSuperAdmin'])->name('tenant-owners.demote');
         Route::put('tenant-owners/{id}/status', [TenantOwnerController::class, 'updateStatus'])->name('tenant-owners.update-status');

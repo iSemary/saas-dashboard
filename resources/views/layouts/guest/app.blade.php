@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="{{ asset('assets/shared/plugins/bootstrap-5.3.3/css/bootstrap.min.css') }}" media="screen">
     {{-- Font Awesome --}}
     <link rel="stylesheet" href="{{ asset('assets/landlord/plugins/fontawesome-free/css/all.min.css') }}" media="screen">
+    {{-- SweetAlert2 --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="{{ asset('assets/guest/css/style.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>

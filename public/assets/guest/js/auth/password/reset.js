@@ -8,25 +8,61 @@ $("#resetPasswordForm").on("submit", function (e) {
     let passwordConfirmation = $("#passwordConfirmation").val().trim();
 
     // Validation
-    if (!token) {
-        alert("Token is required.");
-        return;
-    }
+        if (!token) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Token Required',
+                text: 'Token is required.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+            return;
+        }
 
-    if (!password) {
-        alert("Password is required.");
-        return;
-    }
+        if (!password) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Password Required',
+                text: 'Password is required.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+            return;
+        }
 
-    if (password.length < 6) {
-        alert("Password must be at least 6 characters.");
-        return;
-    }
+        if (password.length < 6) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Password Too Short',
+                text: 'Password must be at least 6 characters.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+            return;
+        }
 
-    if (password !== passwordConfirmation) {
-        alert("Passwords do not match.");
-        return;
-    }
+        if (password !== passwordConfirmation) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Passwords Mismatch',
+                text: 'Passwords do not match.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+            return;
+        }
 
     $.ajax({
         url: url,
@@ -40,11 +76,42 @@ $("#resetPasswordForm").on("submit", function (e) {
         dataType: "json",
         success: function (response) {
             if (response.success) {
-                window.location.href = response.data.redirect;
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Password Reset',
+                    text: 'Your password has been reset successfully.',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true
+                }).then(() => {
+                    window.location.href = response.data.redirect;
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Reset Failed',
+                    text: response.message || 'Unable to reset password. Please try again.',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 4000,
+                    timerProgressBar: true
+                });
             }
         },
         error: function () {
-            alert("An error occurred. Please try again.");
+            Swal.fire({
+                icon: 'error',
+                title: 'Server Error',
+                text: 'An error occurred. Please try again.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true
+            });
         },
     });
 });

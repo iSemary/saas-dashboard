@@ -19,4 +19,5 @@ interface BrandRepositoryInterface
     public function search(string $query): Collection;
     public function getDashboardStats(): array;
     public function datatables();
+    public function tenantDataTables(int $tenantId);
 }

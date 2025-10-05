@@ -1,0 +1,20 @@
+nohup: ignoring input
+Socket.io server running on port 4000
+2025-10-03T22:44:28.316Z - GET /health
+Client connected, socket ID: 8m6HyxD0QUszTqJiAAAB
+Received event: join [ 'private-user.notification.1' ]
+Client disconnected: 8m6HyxD0QUszTqJiAAAB
+Client connected, socket ID: cnNzSDjoT8e14AggAAAD
+Received event: join [ 'private-user.notification.1' ]
+Client disconnected: cnNzSDjoT8e14AggAAAD
+Client connected, socket ID: KttyUAsd0StSK7vSAAAF
+Received event: join [ 'private-user.notification.1' ]
+Client disconnected: KttyUAsd0StSK7vSAAAF
+Client connected, socket ID: ulkDKfY1hVHra1vxAAAH
+Received event: join [ 'private-user.notification.1' ]
+Client disconnected: ulkDKfY1hVHra1vxAAAH
+Client connected, socket ID: SJgTqBVakY8SKrL0AAAJ
+Received event: join [ 'private-user.notification.1' ]
+Client disconnected: SJgTqBVakY8SKrL0AAAJ
+Client connected, socket ID: 5W0nxFwLBjxSIfbIAAAL
+Received event: join [ 'private-user.notification.1' ]

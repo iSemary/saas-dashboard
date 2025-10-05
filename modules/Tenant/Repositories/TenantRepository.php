@@ -170,7 +170,9 @@ class TenantRepository implements TenantInterface
 
     private function generateDomain($customerUsername)
     {
-        return $customerUsername . '.' . config('settings.domain');
+        // Domain column should contain ONLY the subdomain (following tenant domain convention)
+        // Full URLs are constructed using TenantHelper::generateURL() method
+        return $customerUsername;
     }
 
     private function generateDatabaseName($customerUsername)

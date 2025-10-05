@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <!-- Page Header -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">System Health Monitoring</h1>
+        <h1 class="h3 mb-0 text-gray-800">@translate('system_health_monitoring')</h1>
         <div>
             <button class="btn btn-primary btn-sm" onclick="refreshAllData()">
                 <i class="fas fa-sync-alt mr-1"></i>Refresh All
@@ -24,9 +24,9 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">System Uptime</div>
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">@translate('system_uptime')</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800" id="system-uptime">99.9%</div>
-                            <div class="text-xs text-muted">Last 30 days</div>
+                            <div class="text-xs text-muted">@translate('last_30_days')</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-server fa-2x text-gray-300"></i>

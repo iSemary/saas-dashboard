@@ -1,6 +1,6 @@
 @extends('layouts.landlord.app')
 
-@section('title', 'Monitoring Dashboard')
+@section('title', @translate('monitoring_dashboard'))
 
 @section('content')
 <div class="container-fluid">
@@ -109,7 +109,7 @@
         <div class="col-xl-8 col-lg-7">
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">System Performance</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">@translate('system_performance')</h6>
                     <div class="dropdown no-arrow">
                         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -117,9 +117,9 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
                             aria-labelledby="dropdownMenuLink">
-                            <div class="dropdown-header">Options:</div>
-                            <a class="dropdown-item" href="#" onclick="refreshChart('performance')">Refresh</a>
-                            <a class="dropdown-item" href="{{ route('landlord.monitoring.system-health') }}">View Details</a>
+                            <div class="dropdown-header">@translate('options'):</div>
+                            <a class="dropdown-item" href="#" onclick="refreshChart('performance')">@translate('refresh')</a>
+                            <a class="dropdown-item" href="{{ route('landlord.monitoring.system-health') }}">@translate('view_details')</a>
                         </div>
                     </div>
                 </div>
@@ -133,7 +133,7 @@
         <div class="col-xl-4 col-lg-5">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Quick Stats</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">@translate('quick_stats')</h6>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">

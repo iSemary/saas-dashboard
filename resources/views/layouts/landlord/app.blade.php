@@ -155,8 +155,8 @@
         let language = {
             locale: "{{ $language->locale }}",
             direction: "{{ $language->direction }}",
-            languageFile: `{{ asset('assets/shared/lang/' . $language->locale . '.json') }}`,
-            dataTableLanguageFile: `{{ asset('assets/shared/plugins/DataTables/lang/' . $language->locale . '.json') }}`,
+            languageFile: `@tenantAsset('shared/lang/' . $language->locale . '.json')`,
+            dataTableLanguageFile: `@tenantAsset('shared/plugins/DataTables/lang/' . $language->locale . '.json')`,
 
         };
         CKEDITOR.config.language = "{{ $language->locale }}";

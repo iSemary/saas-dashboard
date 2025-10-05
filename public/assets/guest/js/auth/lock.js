@@ -50,15 +50,31 @@ $(document).on("submit", "#unlockForm", function (e) {
         success: function (response) {
             formIconContainer.html(submitIcon);
             if (response.data.redirect) {
-                window.location.href = response.data.redirect;
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Session Unlocked',
+                    text: 'Welcome back! Redirecting...',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    window.location.href = response.data.redirect;
+                });
             }
         },
         error: function (xhr) {
             formIconContainer.html(submitIcon);
-            formStatus.html(
-                `<span class="text-danger"><i class="fas fa-exclamation-circle"></i> ${xhr.responseJSON.message}</span>`
-            );
             btn.prop("disabled", false);
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'Authentication Failed',
+                text: xhr.responseJSON?.message || 'Invalid password. Please try again.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true
+            });
         },
     });
 });

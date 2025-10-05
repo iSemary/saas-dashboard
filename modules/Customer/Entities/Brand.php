@@ -118,4 +118,74 @@ class Brand extends Model implements Auditable
         }
         return null;
     }
+
+    /**
+     * Get the brand's module subscriptions.
+     */
+    public function moduleSubscriptions()
+    {
+        return $this->hasMany(BrandModuleSubscription::class);
+    }
+
+    /**
+     * Get active module subscriptions.
+     */
+    public function activeModuleSubscriptions()
+    {
+        return $this->hasMany(BrandModuleSubscription::class)->validSubscription();
+    }
+
+    /**
+     * Get modules accessible by this brand.
+     */
+    public function getAccessibleModules()
+    {
+        return $this->activeModuleSubscriptions()
+                   ->select('module_key', 'module_name')
+                   ->get()
+                   ->pluck('module_name', 'module_key');
+    }
+
+    /**
+     * Check if brand has access to a specific module.
+     */
+    public function hasModuleAccess($moduleKey)
+    {
+        return $this->moduleSubscriptions()
+                   ->validSubscription()
+                   ->where('module_key', $moduleKey)
+                   ->exists();
+    }
+
+    /**
+     * Get the brand's branches.
+     */
+    public function branches()
+    {
+        return $this->hasMany(Branch::class);
+    }
+
+    /**
+     * Get active branches.
+     */
+    public function activeBranches()
+    {
+        return $this->hasMany(Branch::class)->where('status', 'active');
+    }
+
+    /**
+     * Get branches count.
+     */
+    public function getBranchesCountAttribute()
+    {
+        return $this->branches()->count();
+    }
+
+    /**
+     * Get active branches count.
+     */
+    public function getActiveBranchesCountAttribute()
+    {
+        return $this->activeBranches()->count();
+    }
 }

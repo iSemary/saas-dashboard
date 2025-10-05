@@ -81,5 +81,5 @@
     </div>
 @endsection
 @section('js')
-    <script src="{{ asset('assets/guest/js/auth/login.js') }}"></script>
+    <script src="{{ asset('assets/guest/js/auth/login.js') }}?v=4"></script>
 @endsection

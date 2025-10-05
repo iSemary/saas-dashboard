@@ -6,7 +6,7 @@ Important Instructions before work:
 
 -   Make sure each new controller follows the same structure, Controller -> Service -> Interface -> Repository
 
--   Please use the same way i write translations, like @translate in blade or translate() or t() or @t() same also in js
+-   Please use the same way i write translations in the html elements or the error messages / success messages, like @translate in blade or translate() or t() or @t() same also in js
 
 -   First of all read the project well, then read my requirements, beside my instructions, then write your rich todo-list finally go ahead and work on each todo in a proper way considering the whole thing
 
@@ -16,3 +16,7 @@ Important Instructions before work:
 - Use mysql user: "user" and password: "password" if you want to access the database
 
 - I prefer the Allman brace style for methods, functions, etc...
+
+- When you're going to use alerts in the front end use the sweetalert alerts please not js default alert method
+
+- Make sure in working in the views to make sure that you're using the same app structure: app.blade.php, header.blade.php, footer.blade.php, aside.blade.php (optional), etc...
