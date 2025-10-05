@@ -12,6 +12,8 @@ use Modules\Utilities\Services\IndustryService;
 use Modules\Email\Services\EmailTemplateService;
 use Modules\Tenant\Services\TenantService;
 use Modules\Auth\Services\UserService;
+use Modules\Customer\Services\BrandService;
+use Modules\Customer\Services\BrandModuleSubscriptionService;
 
 class DashboardController extends ApiController
 {
@@ -22,6 +24,8 @@ class DashboardController extends ApiController
     protected $emailTemplateService;
     protected $tenantService;
     protected $userService;
+    protected $brandService;
+    protected $brandModuleService;
 
     public function __construct(
         LanguageService $languageService,
@@ -30,7 +34,9 @@ class DashboardController extends ApiController
         IndustryService $industryService,
         EmailTemplateService $emailTemplateService,
         TenantService $tenantService,
-        UserService $userService
+        UserService $userService,
+        BrandService $brandService,
+        BrandModuleSubscriptionService $brandModuleService
     ) {
         $this->languageService = $languageService;
         $this->categoryService = $categoryService;
@@ -39,6 +45,8 @@ class DashboardController extends ApiController
         $this->emailTemplateService = $emailTemplateService;
         $this->tenantService = $tenantService;
         $this->userService = $userService;
+        $this->brandService = $brandService;
+        $this->brandModuleService = $brandModuleService;
     }
 
     public function index()
@@ -55,6 +63,8 @@ class DashboardController extends ApiController
             $stats = [
                 'users' => $this->getUserStats(),
                 'tenants' => $this->getTenantStats(),
+                'brands' => $this->getBrandStats(),
+                'brand_modules' => $this->getBrandModuleStats(),
                 'categories' => $this->getCategoryStats(),
                 'types' => $this->getTypeStats(),
                 'industries' => $this->getIndustryStats(),
@@ -109,6 +119,76 @@ class DashboardController extends ApiController
             'new_this_month' => $newTenantsThisMonth,
             'growth_rate' => $this->calculateGrowthRate('tenants', 'created_at')
         ];
+    }
+
+    /**
+     * Get brand statistics
+     */
+    private function getBrandStats()
+    {
+        $totalBrands = DB::connection('landlord')->table('brands')->count();
+        $activeBrands = DB::connection('landlord')->table('brands')->where('status', 'active')->count();
+        $newBrandsThisMonth = DB::connection('landlord')->table('brands')
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+
+        return [
+            'total' => $totalBrands,
+            'active' => $activeBrands,
+            'inactive' => $totalBrands - $activeBrands,
+            'new_this_month' => $newBrandsThisMonth,
+            'growth_rate' => $this->calculateGrowthRate('brands', 'created_at'),
+            'accessible_modules_count' => $this->getBrandsWithModulesCount(),
+        ];
+    }
+
+    /**
+     * Get brand module subscription statistics
+     */
+    private function getBrandModuleStats()
+    {
+        try {
+            $moduleStats = $this->brandModuleService->getDashboardStats();
+            
+            return [
+                'total_subscriptions' => $moduleStats['total_subscriptions'],
+                'active_subscriptions' => $moduleStats['active_subscriptions'],
+                'inactive_subscriptions' => $moduleStats['inactive_subscriptions'],
+                'suspended_subscriptions' => $moduleStats['suspended_subscriptions'],
+                'expired_subscriptions' => $moduleStats['expired_subscriptions'],
+                'subscriptions_by_module' => $moduleStats['subscriptions_by_module'],
+                'brands_with_modules' => $moduleStats['subscriptions_by_brand']->count(),
+                'average_modules_per_brand' => $moduleStats['subscriptions_by_brand']->avg('count'),
+            ];
+        } catch (\Exception $e) {
+            return [
+                'total_subscriptions' => 0,
+                'active_subscriptions' => 0,
+              'inactive_subscriptions' => 0,
+              'suspended_subscriptions' => 0,
+                'expired_subscriptions' => 0,
+                'subscriptions_by_module' => [],
+                'brands_with_modules' => 0,
+                'average_modules_per_brand' => 0,
+            ];
+        }
+    }
+
+    /**
+     * Get count of brands that have at least one module subscription
+     */
+    private function getBrandsWithModulesCount()
+    {
+        return DB::connection('landlord')
+            ->table('brands')
+            ->whereExists(function ($query) {
+                $query->select(DB::raw(1))
+                      ->from('brand_module_subscriptions')
+                      ->whereColumn('brand_module_subscriptions.brand_id', 'brands.id')
+                      ->where('subscription_status', 'active');
+            })
+            ->count();
     }
 
     /**
