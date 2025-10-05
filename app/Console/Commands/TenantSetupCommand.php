@@ -59,6 +59,9 @@ class TenantSetupCommand extends Command
                 $this->runTenantSeeding($tenant);
             }
 
+            // Setup Passport for tenant
+            $this->setupPassportForTenant($tenant);
+
             $this->newLine();
             $this->info("✅ Tenant '{$tenant->name}' setup completed successfully!");
             $this->newLine();
@@ -173,5 +176,32 @@ class TenantSetupCommand extends Command
     private function getForceFlag()
     {
         return $this->option('force') ? ' --force' : '';
+    }
+
+    /**
+     * Setup Passport for tenant
+     */
+    private function setupPassportForTenant($tenant)
+    {
+        $this->info('🔑 Setting up Passport for tenant...');
+        
+        try {
+            $this->line("   Running Passport setup seeder...");
+            
+            $command = "tenants:artisan 'db:seed --class=Database\\Seeders\\Tenant\\PassportSetupSeeder --database=tenant{$this->getForceFlag()}' --tenant={$tenant->id}";
+            Artisan::call($command);
+            
+            $output = Artisan::output();
+            if (trim($output)) {
+                $this->line("   ✅ Passport setup completed for tenant: {$tenant->name}");
+            } else {
+                $this->line("   ⏭️  Passport setup skipped or already configured");
+            }
+        } catch (\Exception $e) {
+            $this->warn("   ⚠️  Warning: Passport setup failed - {$e->getMessage()}");
+            $this->line("   Manual Passport setup may be required for tenant: {$tenant->name}");
+        }
+
+        $this->newLine();
     }
 }

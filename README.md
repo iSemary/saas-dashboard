@@ -8,6 +8,8 @@
     -   [Start App Command](#start-app-command)
     -   [Backup App Command](#backup-app-command)
     -   [Sync Missing Language Translations](#sync-missing-language-translations)
+    -   [Generate New Tenant Command](#generate-new-tenant-command)
+    -   [Create Super Admin User Command](#create-super-admin-user-command)
 -   [Databases](#databases)
 -   [Troubleshooting](#troubleshooting)
 -   [Running Landlord-Specific Migrations](#running-landlord-specific-migrations)
@@ -65,7 +67,7 @@
    sudo -u www-data php artisan passport:client --personal --name="SaaS Dashboard Personal Access Client"
    ```
 
-   **Note**: If you encounter "Invalid key supplied" error after login, this step is required to generate the OAuth2 public and private keys for API authentication.
+   **Note**: If you encounter "Personal access client not found" error after login, this step is required to generate the OAuth2 public and private keys for API authentication. The tenant setup commands now automatically handle Passport setup for new tenants.
 
 3. **Configure Environment Variables**:
    ```bash
@@ -360,8 +362,146 @@ php artisan tenant:setup --fresh
 This command will:
 - Run all tenant migrations from various paths
 - Seed tenant database with initial data
+- Setup Laravel Passport (OAuth2 keys and personal access client)
 - Handle multiple tenants or specific tenant (excluding landlord)
 - Display progress and helpful information
+
+### Generate New Tenant Command
+
+Create a complete tenant setup with specified modules, fake brand data, and nginx configuration:
+
+```bash
+# Basic tenant generation with HR and CRM modules
+php artisan tenant:generate --name=mycompany --modules=hr,crm
+
+# Advanced tenant with multiple modules
+php artisan tenant:generate \
+  --name=techcorp \
+  --modules=hr,crm,ticket,accounting,inventory,sales \
+  --domain=techcorp.local \
+  --database=saas_techcorp \
+  --force
+
+# Interactive mode (will prompt for inputs)
+php artisan tenant:generate
+```
+
+#### Parameters
+
+| Parameter | Description | Required | Example |
+|-----------|-------------|----------|---------|
+| `--name` | Tenant name | Yes | `--name=mycompany` |
+| `--modules` | Comma-separated modules | Yes | `--modules=hr,crm,ticket` |
+| `--domain` | Custom domain | No | `--domain=mycompany.local` |
+| `--database` | Custom database name | No | `--database=saas_mycompany` |
+| `--force` | Overwrite existing tenant | No | `--force` |
+
+#### Available Modules
+
+| Module | Description | Module | Description |
+|--------|-------------|--------|-------------|
+| `hr` | Human Resources | `email` | Email Management |
+| `crm` | Customer Relationship Management | `notification` | Notification System |
+| `ticket` | Support Ticket System | `filemanager` | File Management |
+| `accounting` | Financial Accounting | `utilities` | System Utilities |
+| `inventory` | Inventory Management | `geography` | Geographic Data |
+| `sales` | Sales Management | `localization` | Multi-language Support |
+| `reporting` | Reports & Analytics | `payment` | Payment Processing |
+| `subscription` | Subscription Management | `development` | Development Tools |
+| `customer` | Customer Management | `tenant` | Tenant Management |
+| `auth` | Authentication | `api` | API Management |
+| `comment` | Comment System | `workflow` | Workflow Management |
+| `staticpages` | Static Pages | `monitoring` | System Monitoring |
+
+#### What the Command Creates
+
+1. **Tenant Record**: Complete tenant setup in landlord database
+2. **Fake Brand**: Realistic company data with random brand name from 20 predefined names
+3. **Customer Record**: Links brand to customer with proper relationships
+4. **Database Setup**: Runs all migrations and seeders for the tenant
+5. **Nginx Configuration**: Generates and enables nginx configuration
+6. **Service Management**: Attempts to restart nginx service
+
+#### Example Output
+
+```
+🚀 Starting Tenant Generation Process...
+
+📋 Generation Plan:
+   Tenant Name: mycompany
+   Brand Name: TechCorp Solutions
+   Domain: mycompany.saas.test
+   Database: saas_mycompany
+   Modules: HR, CRM
+
+🏗️  Creating tenant...
+   ✅ Tenant created: mycompany (ID: 12)
+
+👤 Creating customer...
+   ✅ Customer created: TechCorp Solutions (ID: 8)
+
+🏢 Creating brand...
+   ✅ Brand created: TechCorp Solutions (ID: 5)
+
+🗄️  Setting up tenant database...
+   Running migrations...
+   ✅ Database setup completed
+
+🌐 Generating nginx configuration...
+   ✅ Nginx config written to: /etc/nginx/sites-available/mycompany.saas.test
+   ✅ Symlink created: /etc/nginx/sites-enabled/mycompany.saas.test
+
+🔄 Restarting nginx...
+   ✅ Nginx restarted successfully
+
+🎉 Tenant generation completed successfully!
+
+📋 Summary:
+   Tenant: mycompany
+   Domain: http://mycompany.saas.test
+   Database: saas_mycompany
+   Brand: TechCorp Solutions
+   Modules: HR, CRM
+
+🔧 Next Steps:
+   1. Update your /etc/hosts file: 127.0.0.1 mycompany.saas.test
+   2. Access the tenant at: http://mycompany.saas.test
+   3. Create a super admin user: php artisan tenant:create-super-admin mycompany
+```
+
+#### Post-Generation Steps
+
+1. **Update Hosts File**:
+   ```bash
+   echo "127.0.0.1 mycompany.saas.test" | sudo tee -a /etc/hosts
+   ```
+
+2. **Create Super Admin User**:
+   ```bash
+   php artisan tenant:create-super-admin mycompany \
+     --name="Super Admin" \
+     --email="admin@mycompany.local" \
+     --username="admin" \
+     --password="password123"
+   ```
+
+3. **Access the Tenant**: Visit `http://mycompany.saas.test`
+
+### Create Super Admin User Command
+
+Create a super admin user for a specific tenant:
+
+```bash
+# Basic super admin creation
+php artisan tenant:create-super-admin mycompany
+
+# Advanced super admin with custom details
+php artisan tenant:create-super-admin mycompany \
+  --name="Super Admin" \
+  --email="admin@mycompany.local" \
+  --username="admin" \
+  --password="password123"
+```
 
 ### Manual Tenant Migration Commands
 
@@ -763,6 +903,92 @@ sudo chmod -R 775 storage/
 
 # Run seeder with proper database connection
 php artisan db:seed --class="Modules\Auth\Database\Seeders\LandlordUserSeeder" --database=landlord
+```
+
+### Tenant Generation Issues
+
+#### 1. Permission Denied for Nginx Configuration
+**Problem**: `Could not write nginx config: Permission denied`
+
+**Solution**:
+```bash
+# Fix nginx directory permissions
+sudo chown -R $USER:$USER /etc/nginx/sites-available/
+sudo chown -R $USER:$USER /etc/nginx/sites-enabled/
+
+# Or run the command with sudo
+sudo php artisan tenant:generate --name=mycompany --modules=hr,crm
+```
+
+#### 2. Database Already Exists Error
+**Problem**: `Database 'saas_mycompany' already exists`
+
+**Solution**:
+```bash
+# Use --force flag to overwrite existing tenant
+php artisan tenant:generate --name=mycompany --modules=hr,crm --force
+
+# Or use a different name
+php artisan tenant:generate --name=mycompany2 --modules=hr,crm
+```
+
+#### 3. Module Not Found Error
+**Problem**: `Module 'invalidmodule' not found`
+
+**Solution**:
+```bash
+# Check available modules and use correct module keys
+# Available modules: hr, crm, ticket, accounting, inventory, sales, reporting, email, notification, filemanager, utilities, geography, localization, payment, subscription, development, customer, tenant, auth, api, comment, workflow, staticpages, monitoring
+
+# Use correct module names
+php artisan tenant:generate --name=mycompany --modules=hr,crm,ticket
+```
+
+#### 4. Nginx Configuration Test Failed
+**Problem**: `nginx: configuration file test failed`
+
+**Solution**:
+```bash
+# Test nginx configuration
+sudo nginx -t
+
+# Fix any syntax errors in the generated config
+sudo nano /etc/nginx/sites-available/mycompany.saas.test
+
+# Restart nginx
+sudo systemctl restart nginx
+```
+
+#### 5. Domain Not Accessible After Generation
+**Problem**: Cannot access the generated tenant domain
+
+**Solution**:
+```bash
+# Add domain to hosts file
+echo "127.0.0.1 mycompany.saas.test" | sudo tee -a /etc/hosts
+
+# Check nginx configuration
+sudo nginx -t
+sudo systemctl status nginx
+
+# Restart nginx if needed
+sudo systemctl restart nginx
+```
+
+#### 6. Super Admin User Creation Failed
+**Problem**: Cannot create super admin user for tenant
+
+**Solution**:
+```bash
+# Create super admin user manually
+php artisan tenant:create-super-admin mycompany \
+  --name="Super Admin" \
+  --email="admin@mycompany.local" \
+  --username="admin" \
+  --password="password123"
+
+# Or use the seeder directly
+php artisan tenants:artisan "db:seed --class=Database\\Seeders\\Tenant\\SuperAdminSeeder --database=tenant" --tenant=1
 ```
 
 ### Multi-Tenancy Configuration
