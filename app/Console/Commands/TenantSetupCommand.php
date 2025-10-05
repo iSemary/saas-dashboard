@@ -106,19 +106,36 @@ class TenantSetupCommand extends Command
         
         $migrationPaths = [
             'database/migrations/shared',
-            'modules/Auth/Database/Migrations/tenant',
-            'modules/Auth/Database/Migrations/shared',
-            'modules/Localization/Database/migrations/shared',
-            'modules/Email/Database/migrations/shared',
-            'modules/FileManager/Database/migrations/shared',
-            'modules/Notification/Database/migrations/shared',
-            'modules/Utilities/Database/migrations/shared',
-            'modules/Geography/Database/migrations/shared',
-            'modules/Payment/Database/migrations/shared',
-            'modules/Subscription/Database/migrations/shared',
-            'modules/Development/Database/migrations/shared',
-            'modules/Customer/Database/migrations/shared',
+            'database/migrations/tenant',
         ];
+
+        // Dynamically find all module migration paths
+        $moduleBasePath = base_path('modules');
+        if (is_dir($moduleBasePath)) {
+            $modules = glob($moduleBasePath . '/*/Database/migrations/tenant', GLOB_ONLYDIR);
+            foreach ($modules as $modulePath) {
+                $relativePath = str_replace(base_path() . '/', '', $modulePath);
+                $migrationPaths[] = $relativePath;
+            }
+            
+            $modules = glob($moduleBasePath . '/*/Database/Migrations/tenant', GLOB_ONLYDIR);
+            foreach ($modules as $modulePath) {
+                $relativePath = str_replace(base_path() . '/', '', $modulePath);
+                $migrationPaths[] = $relativePath;
+            }
+            
+            $modules = glob($moduleBasePath . '/*/Database/migrations/shared', GLOB_ONLYDIR);
+            foreach ($modules as $modulePath) {
+                $relativePath = str_replace(base_path() . '/', '', $modulePath);
+                $migrationPaths[] = $relativePath;
+            }
+            
+            $modules = glob($moduleBasePath . '/*/Database/Migrations/shared', GLOB_ONLYDIR);
+            foreach ($modules as $modulePath) {
+                $relativePath = str_replace(base_path() . '/', '', $modulePath);
+                $migrationPaths[] = $relativePath;
+            }
+        }
 
         $migrateCommand = $this->option('fresh') ? 'migrate:fresh' : 'migrate';
         $forceFlag = $this->option('force') ? ' --force' : '';
