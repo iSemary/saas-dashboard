@@ -8,12 +8,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 use Modules\Localization\Traits\Translatable;
 use Modules\Auth\Entities\User;
+use Modules\Utilities\Entities\Module;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Support\Facades\Auth;
 
 class Brand extends Model implements Auditable
 {
     use HasFactory, SoftDeletes, Translatable, \OwenIt\Auditing\Auditable;
+
+    protected $connection = 'tenant';
 
     protected $fillable = [
         'logo',
@@ -44,20 +47,26 @@ class Brand extends Model implements Auditable
     {
         parent::boot();
 
-        static::creating(function ($brand) {
-            if (empty($brand->slug)) {
+        static::creating(function ($brand) 
+        {
+            if (empty($brand->slug)) 
+            {
                 $brand->slug = Str::slug($brand->name);
             }
-            if (Auth::check()) {
+            if (Auth::check()) 
+            {
                 $brand->created_by = Auth::id();
             }
         });
 
-        static::updating(function ($brand) {
-            if ($brand->isDirty('name') && empty($brand->slug)) {
+        static::updating(function ($brand) 
+        {
+            if ($brand->isDirty('name') && empty($brand->slug)) 
+            {
                 $brand->slug = Str::slug($brand->name);
             }
-            if (Auth::check()) {
+            if (Auth::check()) 
+            {
                 $brand->updated_by = Auth::id();
             }
         });
@@ -80,11 +89,63 @@ class Brand extends Model implements Auditable
     }
 
     /**
+     * Get the modules assigned to this brand.
+     */
+    public function modules()
+    {
+        // Since modules are in landlord DB and brands are in tenant DB,
+        // we need to handle this relationship manually
+        return collect();
+    }
+
+    /**
+     * Get modules count for this brand.
+     */
+    public function getModulesCountAttribute()
+    {
+        return \DB::table('brand_module')
+            ->where('brand_id', $this->id)
+            ->count();
+    }
+
+    /**
+     * Get modules assigned to this brand using direct landlord database access
+     */
+    public function getAssignedModules()
+    {
+        try {
+            // Get module IDs from pivot table
+            $moduleIds = \DB::table('brand_module')
+                ->where('brand_id', $this->id)
+                ->pluck('module_id')
+                ->toArray();
+            
+            if (empty($moduleIds)) {
+                return collect();
+            }
+            
+            // Get modules from landlord database directly
+            $modules = \DB::connection('landlord')
+                ->table('modules')
+                ->whereIn('id', $moduleIds)
+                ->select(['id', 'module_key', 'name', 'description', 'icon', 'status'])
+                ->get();
+            
+            return $modules;
+            
+        } catch (\Exception $e) {
+            \Log::error('Brand getAssignedModules Error: ' . $e->getMessage());
+            return collect();
+        }
+    }
+
+    /**
      * Scope for searching brands.
      */
     public function scopeSearch($query, $search)
     {
-        return $query->where(function ($q) use ($search) {
+        return $query->where(function ($q) use ($search) 
+        {
             $q->where('name', 'like', '%' . $search . '%')
               ->orWhere('slug', 'like', '%' . $search . '%')
               ->orWhere('description', 'like', '%' . $search . '%');
@@ -96,41 +157,28 @@ class Brand extends Model implements Auditable
      */
     public function getLogoUrlAttribute()
     {
-        if ($this->logo) {
+        if ($this->logo) 
+        {
             return asset('storage/' . $this->logo);
         }
-        return null;
+        return asset('assets/shared/images/placeholder-brand.png');
     }
 
     /**
-     * Get the brand's branches.
+     * Check if brand has access to a specific module.
      */
-    public function branches()
+    public function hasModuleAccess($moduleKey)
     {
-        return $this->hasMany(\Modules\Customer\Entities\Branch::class);
+        return $this->modules()
+                   ->where('module_key', $moduleKey)
+                   ->exists();
     }
 
     /**
-     * Get active branches.
+     * Get the brand's dashboard route.
      */
-    public function activeBranches()
+    public function getDashboardRoute()
     {
-        return $this->hasMany(\Modules\Customer\Entities\Branch::class)->where('status', 'active');
-    }
-
-    /**
-     * Get branches count.
-     */
-    public function getBranchesCountAttribute()
-    {
-        return $this->branches()->count();
-    }
-
-    /**
-     * Get active branches count.
-     */
-    public function getActiveBranchesCountAttribute()
-    {
-        return $this->activeBranches()->count();
+        return route('brand.dashboard', ['brand' => $this->slug]);
     }
 }

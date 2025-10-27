@@ -1,0 +1,289 @@
+// Modern Card Components
+// Enhanced card styling with modern design principles
+
+.modern-card {
+    background: $white;
+    border-radius: $card-border-radius;
+    box-shadow: $card-shadow;
+    border: $card-border;
+    padding: $card-padding;
+    transition: all $transition-duration-normal $transition-easing-ease;
+    position: relative;
+    overflow: hidden;
+
+    &:hover {
+        box-shadow: $card-hover-shadow;
+        transform: translateY(-2px);
+    }
+
+    // Card header
+    &__header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        padding-bottom: $spacing-md;
+        margin-bottom: $spacing-md;
+        border-bottom: 1px solid $gray-200;
+        gap: $spacing-md;
+
+        h2, h3 {
+            margin: 0;
+            font-size: $font-size-lg;
+            font-weight: $font-weight-semibold;
+            color: $gray-800;
+            flex: 1;
+            min-width: 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: $spacing-sm;
+            flex-shrink: 0;
+            align-items: flex-start;
+        }
+
+        // Responsive adjustments
+        @media (max-width: 768px) {
+            flex-direction: column;
+            align-items: stretch;
+            gap: $spacing-sm;
+
+            h2, h3 {
+                font-size: $font-size-base;
+                margin-bottom: $spacing-sm;
+            }
+
+            .card-actions {
+                align-self: flex-end;
+            }
+        }
+    }
+
+    // Card body
+    &__body {
+        padding: 0;
+    }
+
+    // Card footer
+    &__footer {
+        padding-top: $spacing-md;
+        margin-top: $spacing-md;
+        border-top: 1px solid $gray-200;
+        display: flex;
+        justify-content: flex-end;
+        gap: $spacing-sm;
+    }
+
+    // Card variants
+    &--elevated {
+        box-shadow: $shadow-lg;
+        
+        &:hover {
+            box-shadow: $shadow-xl;
+        }
+    }
+
+    &--flat {
+        box-shadow: none;
+        border: 1px solid $gray-200;
+        
+        &:hover {
+            box-shadow: $shadow-sm;
+        }
+    }
+
+    &--gradient {
+        background: linear-gradient(135deg, $primary-50 0%, $accent-50 100%);
+        border: none;
+    }
+
+    &--success {
+        border-left: 4px solid $success-500;
+    }
+
+    &--warning {
+        border-left: 4px solid $warning-500;
+    }
+
+    &--danger {
+        border-left: 4px solid $danger-500;
+    }
+
+    &--info {
+        border-left: 4px solid $primary-500;
+    }
+}
+
+// Stats Card
+.stats-card {
+    @extend .modern-card;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, $primary-500, $accent-500);
+    }
+
+    &__icon {
+        width: 60px;
+        height: 60px;
+        border-radius: $radius-full;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto $spacing-md;
+        font-size: $font-size-2xl;
+        color: $white;
+        background: linear-gradient(135deg, $primary-500, $primary-600);
+        box-shadow: $shadow-md;
+    }
+
+    &__number {
+        font-size: $font-size-3xl;
+        font-weight: $font-weight-bold;
+        color: $gray-800;
+        margin-bottom: $spacing-xs;
+        line-height: $line-height-none;
+    }
+
+    &__label {
+        font-size: $font-size-sm;
+        color: $gray-600;
+        margin-bottom: $spacing-sm;
+        font-weight: $font-weight-medium;
+    }
+
+    &__change {
+        font-size: $font-size-sm;
+        font-weight: $font-weight-medium;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: $spacing-xs;
+
+        &--positive {
+            color: $success-600;
+        }
+
+        &--negative {
+            color: $danger-600;
+        }
+
+        &--neutral {
+            color: $gray-500;
+        }
+    }
+
+    // Color variants
+    &--primary {
+        .stats-card__icon {
+            background: linear-gradient(135deg, $primary-500, $primary-600);
+        }
+    }
+
+    &--success {
+        .stats-card__icon {
+            background: linear-gradient(135deg, $success-500, $success-600);
+        }
+    }
+
+    &--warning {
+        .stats-card__icon {
+            background: linear-gradient(135deg, $warning-500, $warning-600);
+        }
+    }
+
+    &--danger {
+        .stats-card__icon {
+            background: linear-gradient(135deg, $danger-500, $danger-600);
+        }
+    }
+
+    &--accent {
+        .stats-card__icon {
+            background: linear-gradient(135deg, $accent-500, $accent-600);
+        }
+    }
+}
+
+// Chart Card
+.chart-card {
+    @extend .modern-card;
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: $spacing-lg;
+
+        h3 {
+            margin: 0;
+            font-size: $font-size-lg;
+            font-weight: $font-weight-semibold;
+            color: $gray-800;
+        }
+
+        .chart-controls {
+            display: flex;
+            gap: $spacing-sm;
+        }
+    }
+
+    &__content {
+        position: relative;
+        height: 300px;
+    }
+}
+
+// Info Card
+.info-card {
+    @extend .modern-card;
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+
+    &__icon {
+        width: 48px;
+        height: 48px;
+        border-radius: $radius-lg;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: $font-size-xl;
+        color: $white;
+        background: linear-gradient(135deg, $primary-500, $primary-600);
+        flex-shrink: 0;
+    }
+
+    &__content {
+        flex: 1;
+
+        h4 {
+            margin: 0 0 $spacing-xs;
+            font-size: $font-size-base;
+            font-weight: $font-weight-semibold;
+            color: $gray-800;
+        }
+
+        p {
+            margin: 0;
+            font-size: $font-size-sm;
+            color: $gray-600;
+            line-height: $line-height-snug;
+        }
+    }
+
+    &__action {
+        flex-shrink: 0;
+    }
+}

@@ -1,0 +1,53 @@
+/* HR Module Dashboard Styles */
+.hr-dashboard {
+    --primary-color: #28a745;
+    --secondary-color: #20c997;
+    --accent-color: #17a2b8;
+}
+
+.hr-dashboard .brand-card {
+    border-left: 4px solid var(--primary-color);
+}
+
+.hr-dashboard .brand-card:hover {
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.15);
+}
+
+.hr-dashboard .module-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+}
+
+.hr-dashboard .module-card__icon i {
+    color: var(--primary-color);
+}
+
+.hr-dashboard .btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.hr-dashboard .btn-primary:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.hr-dashboard .stat-widget--primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+
+.hr-dashboard .modern-card__header {
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.hr-dashboard .brand-switcher .dropdown-toggle:hover {
+    border-color: var(--primary-color);
+}
+
+.hr-dashboard .brand-switcher .dropdown-item:hover {
+    color: var(--primary-color);
+}
+
+.hr-dashboard .brand-switcher .dropdown-item.active {
+    background: var(--primary-color);
+}

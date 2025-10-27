@@ -1,0 +1,87 @@
+// Modern Tenant Dashboard Styles
+// Main SCSS file for tenant dashboard
+
+// Import theme variables
+@import "@theme/scss/variables";
+
+// Import component styles
+@import "@theme/scss/components/cards";
+@import "@theme/scss/components/buttons";
+@import "@theme/scss/components/forms";
+@import "@theme/scss/components/tables";
+@import "@theme/scss/components/navigation";
+@import "@theme/scss/components/stats-widgets";
+
+// Import AdminLTE overrides
+@import "@theme/scss/overrides/adminlte";
+
+// Import layout styles
+@import "@theme/scss/layout/tenant-layout";
+
+// Import utilities
+@import "@theme/scss/utilities/animations";
+@import "@theme/scss/utilities/spacing";
+@import "@theme/scss/utilities/typography";
+
+// Base styles
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: $font-family-sans;
+    font-size: $font-size-base;
+    line-height: $line-height-normal;
+    color: $gray-700;
+    background-color: $gray-50;
+}
+
+// Modern scrollbar styling
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: $gray-100;
+    border-radius: $radius-full;
+}
+
+::-webkit-scrollbar-thumb {
+    background: $gray-300;
+    border-radius: $radius-full;
+    
+    &:hover {
+        background: $gray-400;
+    }
+}
+
+// Focus styles
+:focus {
+    outline: 2px solid $primary-500;
+    outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+    outline: none;
+}
+
+// Selection styles
+::selection {
+    background-color: $primary-100;
+    color: $primary-900;
+}
+
+// Modern container
+.modern-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 $spacing-md;
+}
+
+// Responsive utilities
+@media (max-width: 768px) {
+    .modern-container {
+        padding: 0 $spacing-sm;
+    }
+}

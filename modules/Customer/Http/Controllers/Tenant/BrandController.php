@@ -2,163 +2,187 @@
 
 namespace Modules\Customer\Http\Controllers\Tenant;
 
-use App\Http\Controllers\Controller;
-use Modules\Customer\Entities\Tenant\Brand;
-use Modules\Customer\Repository\Tenant\BrandRepository;
+use App\Http\Controllers\ApiController;
+use Modules\Customer\Services\Tenant\BrandService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Routing\Controllers\HasMiddleware;
 
-class BrandController extends Controller implements HasMiddleware
+class BrandController extends ApiController implements HasMiddleware
 {
-    protected BrandRepository $brandRepository;
+    protected $service;
 
-    public function __construct(BrandRepository $brandRepository)
+    public function __construct(BrandService $service)
     {
-        $this->brandRepository = $brandRepository;
+        $this->service = $service;
     }
 
     public static function middleware(): array
     {
         return [
-            new Middleware('can:read.brands', only: ['index', 'show']),
+            new Middleware('permission:read.brands', only: ['index', 'show']),
+            new Middleware('permission:create.brands', only: ['create', 'store']),
+            new Middleware('permission:update.brands', only: ['edit', 'update']),
+            new Middleware('permission:delete.brands', only: ['destroy']),
+            new Middleware('permission:restore.brands', only: ['restore']),
         ];
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of brands
      */
-    public function index(Request $request)
+    public function index()
     {
-        try {
-            // Check if it's an AJAX/DataTables request
-            if ($request->ajax()) {
-                return $this->brandRepository->datatables();
-            }
+        if (request()->ajax()) 
+        {
+            return $this->service->getDataTables();
+        }
 
-            $filters = $request->only(['search', 'status', 'created_by', 'date_from', 'date_to']);
-            $perPage = $request->get('per_page', 15);
+        $title = translate('brands');
+        $breadcrumbs = [
+            ['text' => translate('home'), 'link' => route('home')],
+            ['text' => translate('brands')],
+        ];
 
-            // Check if it's an API request
-            if ($request->expectsJson()) {
-                $brands = $this->brandRepository->getAll($filters, $perPage);
+        $actionButtons = [
+            [
+                'text' => translate("create") . " " . translate('brand'),
+                'class' => 'open-create-modal btn-sm btn-success',
+                'attr' => [
+                    'data-modal-link' => route('tenant.brands.create'),
+                    'data-modal-title' => translate("create") . " " . translate('brand'),
+                ]
+            ],
+        ];
 
-                return response()->json([
-                    'success' => true,
-                    'data' => $brands,
-                    'statistics' => $this->brandRepository->getDashboardStats()
-                ]);
-            }
+        return view('tenant.customer.brands.index', compact('title', 'breadcrumbs', 'actionButtons'));
+    }
 
-            // Return view for web requests
-            $title = translate('brands');
-            $breadcrumbs = [
-                ['text' => translate('home'), 'link' => route('home')],
-                ['text' => translate('brands')],
-            ];
+    /**
+     * Show the form for creating a new brand
+     */
+    public function create()
+    {
+        return view('tenant.customer.brands.editor');
+    }
 
-            return view('tenant.customer.brands.index', compact('breadcrumbs', 'title'));
-        } catch (\Exception $e) {
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Failed to retrieve brands.',
-                    'error' => $e->getMessage()
-                ], 500);
-            }
+    /**
+     * Store a newly created brand
+     */
+    public function store(Request $request)
+    {
+        $data = $request->all();
+        $this->service->create($data);
+        return $this->return(200, translate("created_successfully"));
+    }
+
+    /**
+     * Display the specified brand
+     */
+    public function show($id)
+    {
+        $brand = $this->service->get($id);
+        $title = translate('brand_details');
+        $breadcrumbs = [
+            ['text' => translate('home'), 'link' => route('home')],
+            ['text' => translate('brands'), 'link' => route('tenant.brands.index')],
+            ['text' => $brand->name],
+        ];
+
+        return view('tenant.customer.brands.show', compact('brand', 'title', 'breadcrumbs'));
+    }
+
+    /**
+     * Show the form for editing the specified brand
+     */
+    public function edit($id)
+    {
+        $row = $this->service->get($id);
+        return view('tenant.customer.brands.editor', compact('row'));
+    }
+
+    /**
+     * Update the specified brand
+     */
+    public function update(Request $request, $id)
+    {
+        $data = $request->all();
+        $this->service->update($id, $data);
+        return $this->return(200, translate("updated_successfully"));
+    }
+
+    /**
+     * Remove the specified brand
+     */
+    public function destroy($id)
+    {
+        $this->service->delete($id);
+        return $this->return(200, translate("deleted_successfully"));
+    }
+
+    /**
+     * Restore the specified brand
+     */
+    public function restore($id)
+    {
+        $this->service->restore($id);
+        return $this->return(200, translate("restored_successfully"));
+    }
+
+
+    /**
+     * Get modules for a specific brand (AJAX endpoint)
+     */
+    public function getModules(int $id)
+    {
+        try 
+        {
+            $modules = $this->service->getBrandModules($id);
             
-            return redirect()->back()->with('error', translate('something_went_wrong'));
+            return $this->return(200, translate('modules_retrieved_successfully'), $modules);
+        } 
+        catch (\Exception $e) 
+        {
+            return $this->return(500, translate('something_went_wrong'), debug: $e->getMessage());
         }
     }
 
     /**
-     * Display the specified resource.
+     * Get brands for dashboard (AJAX endpoint)
      */
-    public function show(Request $request, int $id)
+    public function getBrandsForDashboard()
     {
-        try {
-            $brand = $this->brandRepository->getById($id);
+        try 
+        {
+            $brands = $this->service->getBrandsForDashboard();
             
-            if (!$brand) {
-                if ($request->expectsJson()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Brand not found.'
-                    ], 404);
-                }
-                
-                return redirect()->back()->with('error', translate('brand_not_found'));
-            }
-
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => true,
-                    'data' => $brand
-                ]);
-            }
-
-            $title = translate('brand_details');
-            $breadcrumbs = [
-                ['text' => translate('home'), 'link' => route('home')],
-                ['text' => translate('brands'), 'link' => route('tenant.brands.index')],
-                ['text' => $brand->name],
-            ];
-
-            return view('tenant.customer.brands.show', compact('brand', 'breadcrumbs', 'title'));
-        } catch (\Exception $e) {
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Failed to retrieve brand.',
-                    'error' => $e->getMessage()
-                ], 500);
-            }
-            
-            return redirect()->back()->with('error', translate('something_went_wrong'));
+            return $this->return(200, translate('brands_retrieved_successfully'), $brands->toArray());
+        } 
+        catch (\Exception $e) 
+        {
+            return $this->return(500, translate('something_went_wrong'), debug: $e->getMessage());
         }
     }
 
     /**
-     * Get brands statistics for dashboard.
+     * Assign modules to a brand
      */
-    public function stats(Request $request)
+    public function assignModules(Request $request, int $id)
     {
-        try {
-            $stats = $this->brandRepository->getDashboardStats();
-            
-            return response()->json([
-                'success' => true,
-                'data' => $stats
+        try 
+        {
+            $request->validate([
+                'module_ids' => 'required|array',
+                'module_ids.*' => 'exists:modules,id'
             ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve brand statistics.',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
 
-    /**
-     * Search brands.
-     */
-    public function search(Request $request)
-    {
-        try {
-            $query = $request->get('q', '');
-            $brands = $this->brandRepository->search($query);
-            
-            return response()->json([
-                'success' => true,
-                'data' => $brands
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to search brands.',
-                'error' => $e->getMessage()
-            ], 500);
+            $this->service->assignModules($id, $request->module_ids);
+
+            return $this->return(200, translate('modules_assigned_successfully'));
+        } 
+        catch (\Exception $e) 
+        {
+            return $this->return(500, translate('something_went_wrong'), debug: $e->getMessage());
         }
     }
 }

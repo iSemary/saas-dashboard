@@ -17,6 +17,8 @@ use Modules\Auth\Http\Controllers\Tenant\TenantPermissionController;
 use Modules\Auth\Http\Controllers\Tenant\TenantUserManagementController;
 use Modules\Auth\Http\Controllers\Tenant\TenantLoginAttemptController;
 use Modules\Auth\Http\Controllers\Tenant\TenantActivityLogController;
+use Modules\Customer\Http\Controllers\Tenant\BrandController;
+use Modules\Customer\Http\Controllers\Tenant\ModuleDashboardController;
 use App\Http\Controllers\TenantController;
 
 // Routes for guests (no auth middleware)
@@ -98,6 +100,22 @@ Route::middleware('auth')->group(function () {
             Route::get('activity-logs/{id?}', [TenantActivityLogController::class, 'index'])->name('activity-logs.index');
             Route::get('activity-logs/modal/{id?}', [TenantActivityLogController::class, 'modal'])->name('activity-logs.modal');
             Route::get('activity-logs/row/{id}', [TenantActivityLogController::class, 'row'])->name('activity-logs.row');
+
+            // Brand Management Routes
+            Route::resource('brands', BrandController::class)->names('brands');
+            Route::get('brands/{id}/modules', [BrandController::class, 'getModules'])->name('brands.modules');
+            Route::post('brands/{id}/assign-modules', [BrandController::class, 'assignModules'])->name('brands.assign-modules');
+            Route::get('brands/dashboard/data', [BrandController::class, 'getBrandsForDashboard'])->name('brands.dashboard-data');
+
+            // Module Dashboard Routes
+            Route::prefix('dashboard')->name('dashboard.')->group(function () {
+                Route::get('hr', [ModuleDashboardController::class, 'hr'])->name('hr');
+                Route::get('crm', [ModuleDashboardController::class, 'crm'])->name('crm');
+                Route::get('pos', [ModuleDashboardController::class, 'pos'])->name('pos');
+                Route::get('accounting', [ModuleDashboardController::class, 'accounting'])->name('accounting');
+                Route::get('sales', [ModuleDashboardController::class, 'sales'])->name('sales');
+                Route::get('inventory', [ModuleDashboardController::class, 'inventory'])->name('inventory');
+            });
         });
     });
 

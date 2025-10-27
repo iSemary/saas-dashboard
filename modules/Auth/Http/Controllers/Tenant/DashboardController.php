@@ -70,7 +70,7 @@ class DashboardController extends Controller
         return [
             'total_users' => DB::table('users')->count(),
             'active_users' => DB::table('users')->whereNotNull('email_verified_at')->count(),
-            'total_projects' => DB::table('projects')->count() ?? 0,
+            'total_projects' => $this->getProjectsCount(),
             'total_tasks' => 0, // Placeholder - tasks table doesn't exist yet
             'revenue_this_month' => $this->getMonthlyRevenue(),
             'growth_rate' => $this->calculateGrowthRate(),
@@ -82,13 +82,15 @@ class DashboardController extends Controller
      */
     private function getRecentActivity()
     {
+        $userName = Auth::user() ? Auth::user()->name : 'System';
+        
         // This would typically come from an activity log table
         return [
             [
                 'id' => 1,
                 'type' => 'user_login',
                 'message' => 'New user logged in',
-                'user' => Auth::user()->name,
+                'user' => $userName,
                 'time' => now()->subMinutes(5)->diffForHumans(),
                 'icon' => 'fas fa-sign-in-alt',
                 'color' => 'success'
@@ -97,7 +99,7 @@ class DashboardController extends Controller
                 'id' => 2,
                 'type' => 'project_created',
                 'message' => 'New project created',
-                'user' => Auth::user()->name,
+                'user' => $userName,
                 'time' => now()->subHours(2)->diffForHumans(),
                 'icon' => 'fas fa-folder-plus',
                 'color' => 'info'
@@ -106,7 +108,7 @@ class DashboardController extends Controller
                 'id' => 3,
                 'type' => 'task_completed',
                 'message' => 'Task marked as completed',
-                'user' => Auth::user()->name,
+                'user' => $userName,
                 'time' => now()->subDays(1)->diffForHumans(),
                 'icon' => 'fas fa-check-circle',
                 'color' => 'primary'
@@ -192,5 +194,18 @@ class DashboardController extends Controller
     {
         // This would typically calculate growth based on historical data
         return 12.5;
+    }
+
+    /**
+     * Get projects count safely
+     */
+    private function getProjectsCount()
+    {
+        try {
+            return DB::table('projects')->count();
+        } catch (\Exception $e) {
+            // If projects table doesn't exist, return 0
+            return 0;
+        }
     }
 }

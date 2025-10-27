@@ -35,7 +35,7 @@
     <link rel="stylesheet" href="{{ asset('assets/shared/plugins/bootstrap-toggle/css/bootstrap-toggle.min.css') }}"
         media="screen">
     {{-- Intl Tel Input --}}
-    <link rel="stylesheet" href="{{ asset('assets/shared/plugins/intl-tel-input/css/intlTicketInput.min.css') }}"
+    <link rel="stylesheet" href="{{ asset('assets/shared/plugins/intl-tel-input/css/intlTelInput.min.css') }}"
         media="screen" />
     {{-- Emoji-Area --}}
     <link rel="stylesheet" href="{{ asset('assets/shared/plugins/emoji-area/emojionearea.min.css') }}"
@@ -101,6 +101,30 @@
     <link rel="stylesheet"
         href="{{ asset('assets/shared/css/style.css') . '?v=' . filemtime(public_path('assets/shared/css/style.css')) }}"
         media="screen">
+
+    {{-- Modern Dashboard Styles --}}
+    @php
+        $useVite = app()->environment('local') && isRunningViteDevServer();
+        $viteManifestExists = file_exists(public_path('build/manifest.json'));
+        
+        $tenantScssAsset = null;
+        if ($viteManifestExists) {
+            $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true);
+            $tenantScssAsset = $manifest['resources/scss/tenant/app.scss']['file'] ?? null;
+        }
+    @endphp
+    
+    @if ($useVite && $tenantScssAsset)
+        @vite('resources/scss/tenant/app.scss')
+    @else
+        {{-- Fallback to production build --}}
+        @if ($tenantScssAsset)
+            <link rel="stylesheet" href="{{ asset('build/' . $tenantScssAsset) }}" media="screen">
+        @else
+            {{-- Ultimate fallback if manifest doesn't exist --}}
+            <link rel="stylesheet" href="{{ asset('build/assets/app-CmJu_aL-.css') }}" media="screen">
+        @endif
+    @endif
 
     @yield('styles')
 </head>
@@ -206,6 +230,30 @@
     <script
         src="{{ asset('assets/shared/js/components/notifications.js') . '?v=' . filemtime(public_path('assets/shared/js/components/notifications.js')) }}">
     </script>
+
+    {{-- Modern Dashboard JavaScript --}}
+    @php
+        $useVite = app()->environment('local') && isRunningViteDevServer();
+        $viteManifestExists = file_exists(public_path('build/manifest.json'));
+        
+        $modernDashboardAsset = null;
+        if ($viteManifestExists) {
+            $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true);
+            $modernDashboardAsset = $manifest['resources/js/modern-dashboard.js']['file'] ?? null;
+        }
+    @endphp
+    
+    @if ($useVite && $modernDashboardAsset)
+        @vite('resources/js/modern-dashboard.js')
+    @else
+        {{-- Fallback to production build --}}
+        @if ($modernDashboardAsset)
+            <script src="{{ asset('build/' . $modernDashboardAsset) }}"></script>
+        @else
+            {{-- Ultimate fallback if manifest doesn't exist --}}
+            <script src="{{ asset('build/assets/modern-dashboard-C-MTzAS7.js') }}"></script>
+        @endif
+    @endif
 
     @yield('scripts')
     @stack('scripts')

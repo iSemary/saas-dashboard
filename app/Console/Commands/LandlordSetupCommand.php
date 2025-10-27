@@ -47,7 +47,7 @@ class LandlordSetupCommand extends Command
 
         $this->newLine();
         $this->info('✅ Landlord database setup completed successfully!');
-        
+
         // Display next steps
         $this->displayNextSteps();
     }
@@ -58,7 +58,7 @@ class LandlordSetupCommand extends Command
     private function runMigrations()
     {
         $this->info('📦 Running Landlord Migrations...');
-        
+
         $migrationPaths = [
             'database/migrations/landlord',
             'database/migrations/shared',
@@ -67,25 +67,14 @@ class LandlordSetupCommand extends Command
         // Dynamically find all module migration paths
         $moduleBasePath = base_path('modules');
         if (is_dir($moduleBasePath)) {
+            // Standardized paths: Database/migrations (lowercase m)
             $modules = glob($moduleBasePath . '/*/Database/migrations/landlord', GLOB_ONLYDIR);
             foreach ($modules as $modulePath) {
                 $relativePath = str_replace(base_path() . '/', '', $modulePath);
                 $migrationPaths[] = $relativePath;
             }
-            
-            $modules = glob($moduleBasePath . '/*/Database/Migrations/landlord', GLOB_ONLYDIR);
-            foreach ($modules as $modulePath) {
-                $relativePath = str_replace(base_path() . '/', '', $modulePath);
-                $migrationPaths[] = $relativePath;
-            }
-            
+
             $modules = glob($moduleBasePath . '/*/Database/migrations/shared', GLOB_ONLYDIR);
-            foreach ($modules as $modulePath) {
-                $relativePath = str_replace(base_path() . '/', '', $modulePath);
-                $migrationPaths[] = $relativePath;
-            }
-            
-            $modules = glob($moduleBasePath . '/*/Database/Migrations/shared', GLOB_ONLYDIR);
             foreach ($modules as $modulePath) {
                 $relativePath = str_replace(base_path() . '/', '', $modulePath);
                 $migrationPaths[] = $relativePath;
@@ -100,7 +89,7 @@ class LandlordSetupCommand extends Command
                     '--database' => 'landlord',
                     '--force' => true
                 ]);
-                
+
                 $output = Artisan::output();
                 if (trim($output) && !str_contains($output, 'Nothing to migrate')) {
                     $this->line("   ✅ Migrations completed for: {$path}");
@@ -142,76 +131,33 @@ class LandlordSetupCommand extends Command
     {
         $this->line('   📋 Seeding Real Data...');
 
-        $realDataSeeders = [
-            // Core system data
-            'Database\\Seeders\\Landlord\\RolePermissionSeeder' => 'Roles and Permissions',
-            'Database\\Seeders\\Landlord\\LandlordTenantSeeder' => 'Landlord Tenant',
-            'Modules\\Auth\\Database\\Seeders\\LandlordUserSeeder' => 'Default Landlord User',
-            'Modules\\Utilities\\Database\\Seeders\\ModulesSeeder' => 'System Modules',
-            'Modules\\Development\\Database\\Seeders\\ConfigurationsSeeder' => 'System Configurations',
-            
-            // Localization
-            'Modules\\Localization\\Database\\Seeders\\LanguageSeeder' => 'Languages',
-            'Modules\\Localization\\Database\\Seeders\\TranslationSeeder' => 'Translations',
-            
-            // Email system
-            'Modules\\Email\\Database\\Seeders\\EmailTemplateSeeder' => 'Email Templates',
-            'Modules\\Email\\Database\\Seeders\\EmailCredentialSeeder' => 'Email Credentials',
-            'Modules\\Email\\Database\\Seeders\\EmailGroupSeeder' => 'Email Groups',
-            'Modules\\Email\\Database\\Seeders\\EmailRecipientSeeder' => 'Email Recipients',
-            'Modules\\Email\\Database\\Seeders\\EmailSubscriberSeeder' => 'Email Subscribers',
-            'Modules\\Email\\Database\\Seeders\\EmailTemplateLogSeeder' => 'Email Template Logs',
-            'Modules\\Email\\Database\\Seeders\\EmailRecipientGroupSeeder' => 'Email Recipient Groups',
-            'Modules\\Email\\Database\\Seeders\\EmailRecipientMetaSeeder' => 'Email Recipient Metas',
-            'Modules\\Email\\Database\\Seeders\\EmailCampaignSeeder' => 'Email Campaigns',
-            'Modules\\Email\\Database\\Seeders\\EmailLogSeeder' => 'Email Logs',
-            'Modules\\Email\\Database\\Seeders\\EmailAttachmentSeeder' => 'Email Attachments',
-            
-            // Geography
-            'Modules\\Geography\\Database\\Seeders\\CountrySeeder' => 'Countries',
-            'Modules\\Geography\\Database\\Seeders\\ProvinceSeeder' => 'Provinces',
-            'Modules\\Geography\\Database\\Seeders\\CitySeeder' => 'Cities',
-            'Modules\\Geography\\Database\\Seeders\\TownSeeder' => 'Towns',
-            'Modules\\Geography\\Database\\Seeders\\StreetSeeder' => 'Streets',
-            
-            // Utilities
-            'Modules\\Utilities\\Database\\Seeders\\CurrencySeeder' => 'Currencies',
-            'Modules\\Utilities\\Database\\Seeders\\StaticPageSeeder' => 'Static Pages',
-            'Modules\\Utilities\\Database\\Seeders\\StaticPageAttributeSeeder' => 'Static Page Attributes',
-            'Modules\\Utilities\\Database\\Seeders\\UnitSeeder' => 'Units',
-            'Modules\\Utilities\\Database\\Seeders\\ModuleEntitySeeder' => 'Module Entities',
-            'Modules\\Utilities\\Database\\Seeders\\ReleaseSeeder' => 'Releases',
-            'Modules\\Utilities\\Database\\Seeders\\AnnouncementSeeder' => 'Announcements',
-            'Modules\\Utilities\\Database\\Seeders\\TypeSeeder' => 'Types',
-            'Modules\\Utilities\\Database\\Seeders\\TagSeeder' => 'Tags',
-            'Modules\\Utilities\\Database\\Seeders\\IndustrySeeder' => 'Industries',
-            'Modules\\Utilities\\Database\\Seeders\\CategorySeeder' => 'Categories',
-            'Modules\\Utilities\\Database\\Seeders\\EntitySeeder' => 'Entities',
-            
-            // Customer
-            'Modules\\Customer\\Database\\Seeders\\CustomerSeeder' => 'Customers',
-            
-            // Payment
-            'Modules\\Payment\\Database\\Seeders\\PaymentMethodSeeder' => 'Payment Methods',
-            'Modules\\Payment\\Database\\Seeders\\PaymentSeeder' => 'Payments',
-            
-            // Subscription
-            'Modules\\Subscription\\Database\\Seeders\\PlanSeeder' => 'Subscription Plans',
-            'Modules\\Subscription\\Database\\Seeders\\FeatureSeeder' => 'Subscription Features',
-            'Modules\\Subscription\\Database\\Seeders\\SubscriptionSeeder' => 'Subscriptions',
+        $seederPaths = [
+            'database/seeders/Landlord',
         ];
 
-        foreach ($realDataSeeders as $seeder => $description) {
+        // Dynamically find all module seeder paths
+        $moduleBasePath = base_path('modules');
+        if (is_dir($moduleBasePath)) {
+            // Standardized paths: Database/Seeders (capital S)
+            $modules = glob($moduleBasePath . '/*/Database/Seeders/Landlord', GLOB_ONLYDIR);
+            foreach ($modules as $modulePath) {
+                $relativePath = str_replace(base_path() . '/', '', $modulePath);
+                $seederPaths[] = $relativePath;
+            }
+
+            $modules = glob($moduleBasePath . '/*/Database/Seeders/Shared', GLOB_ONLYDIR);
+            foreach ($modules as $modulePath) {
+                $relativePath = str_replace(base_path() . '/', '', $modulePath);
+                $seederPaths[] = $relativePath;
+            }
+        }
+
+        foreach ($seederPaths as $path) {
             try {
-                $this->line("      Seeding: {$description}");
-                Artisan::call('db:seed', [
-                    '--class' => $seeder,
-                    '--database' => 'landlord',
-                    '--force' => true
-                ]);
-                $this->line("      ✅ {$description} seeded successfully");
+                $this->line("      Seeding from: {$path}");
+                $this->runSeedersFromPath($path, 'landlord');
             } catch (\Exception $e) {
-                $this->warn("      ⚠️  Warning: {$description} - {$e->getMessage()}");
+                $this->warn("      ⚠️  Warning: {$path} - {$e->getMessage()}");
             }
         }
     }
@@ -223,54 +169,105 @@ class LandlordSetupCommand extends Command
     {
         $this->line('   🎭 Seeding Dummy Data...');
 
-        $dummyDataSeeders = [
-            // Auth module
-            'Modules\\Auth\\Database\\Seeders\\DummyUserSeeder' => 'Dummy Users',
-            
-            // Utilities module
-            'Modules\\Utilities\\Database\\Seeders\\DummyCategorySeeder' => 'Dummy Categories',
-            'Modules\\Utilities\\Database\\Seeders\\DummyTypeSeeder' => 'Dummy Types',
-            'Modules\\Utilities\\Database\\Seeders\\DummyIndustrySeeder' => 'Dummy Industries',
-            'Modules\\Utilities\\Database\\Seeders\\DummyTagSeeder' => 'Dummy Tags',
-            
-            // Email module
-            'Modules\\Email\\Database\\Seeders\\DummyEmailCampaignSeeder' => 'Dummy Email Campaigns',
-            
-            // Geography module
-            'Modules\\Geography\\Database\\Seeders\\DummyGeographySeeder' => 'Dummy Geography Data',
-            
-            // Tenant module
-            'Modules\\Tenant\\Database\\Seeders\\DummyTenantSeeder' => 'Dummy Tenants',
-            
-            // Customer module
-            'Modules\\Customer\\Database\\Seeders\\DummyCustomerSeeder' => 'Dummy Customers',
-            
-            // Payment module
-            'Modules\\Payment\\Database\\Seeders\\DummyPaymentSeeder' => 'Dummy Payments',
-            
-            // Subscription module
-            'Modules\\Subscription\\Database\\Seeders\\DummySubscriptionSeeder' => 'Dummy Subscriptions',
-            
-            // FileManager module
-            'Modules\\FileManager\\Database\\Seeders\\DummyFileSeeder' => 'Dummy Files',
-            
-            // Notification module
-            'Modules\\Notification\\Database\\Seeders\\DummyNotificationSeeder' => 'Dummy Notifications',
+        $seederPaths = [
+            'database/seeders/Landlord',
         ];
 
-        foreach ($dummyDataSeeders as $seeder => $description) {
-            try {
-                $this->line("      Seeding: {$description}");
-                Artisan::call('db:seed', [
-                    '--class' => $seeder,
-                    '--database' => 'landlord',
-                    '--force' => true
-                ]);
-                $this->line("      ✅ {$description} seeded successfully");
-            } catch (\Exception $e) {
-                $this->warn("      ⚠️  Warning: {$description} - {$e->getMessage()}");
+        // Dynamically find all module seeder paths
+        $moduleBasePath = base_path('modules');
+        if (is_dir($moduleBasePath)) {
+            // Standardized paths: Database/Seeders (capital S)
+            $modules = glob($moduleBasePath . '/*/Database/Seeders/Landlord', GLOB_ONLYDIR);
+            foreach ($modules as $modulePath) {
+                $relativePath = str_replace(base_path() . '/', '', $modulePath);
+                $seederPaths[] = $relativePath;
+            }
+
+            $modules = glob($moduleBasePath . '/*/Database/Seeders/Shared', GLOB_ONLYDIR);
+            foreach ($modules as $modulePath) {
+                $relativePath = str_replace(base_path() . '/', '', $modulePath);
+                $seederPaths[] = $relativePath;
             }
         }
+
+        foreach ($seederPaths as $path) {
+            try {
+                $this->line("      Seeding from: {$path}");
+                $this->runSeedersFromPath($path, 'landlord', true); // true for dummy data
+            } catch (\Exception $e) {
+                $this->warn("      ⚠️  Warning: {$path} - {$e->getMessage()}");
+            }
+        }
+    }
+
+    /**
+     * Run all seeders from a specific path
+     */
+    private function runSeedersFromPath($path, $database, $dummyData = false)
+    {
+        if (!is_dir(base_path($path))) {
+            return;
+        }
+
+        $seederFiles = glob(base_path($path) . '/*Seeder.php');
+
+        foreach ($seederFiles as $seederFile) {
+            $fileName = basename($seederFile, '.php');
+
+            // Skip dummy seeders when seeding real data
+            if (!$dummyData && str_contains(strtolower($fileName), 'dummy')) {
+                continue;
+            }
+
+            // Skip non-dummy seeders when seeding dummy data
+            if ($dummyData && !str_contains(strtolower($fileName), 'dummy')) {
+                continue;
+            }
+
+            // Convert file path to class name
+            $className = $this->getSeederClassName($seederFile, $path);
+
+            if ($className) {
+                try {
+                    $this->line("         Seeding: {$fileName}");
+                    Artisan::call('db:seed', [
+                        '--class' => $className,
+                        '--database' => $database,
+                        '--force' => true
+                    ]);
+                    $this->line("         ✅ {$fileName} seeded successfully");
+                } catch (\Exception $e) {
+                    $this->warn("         ⚠️  Warning: {$fileName} - {$e->getMessage()}");
+                }
+            }
+        }
+    }
+
+    /**
+     * Get seeder class name from file path
+     */
+    private function getSeederClassName($filePath, $basePath)
+    {
+        $relativePath = str_replace(base_path($basePath) . '/', '', $filePath);
+        $relativePath = str_replace('.php', '', $relativePath);
+
+        // Handle different path structures
+        if (str_starts_with($basePath, 'database/seeders/')) {
+            return 'Database\\Seeders\\' . str_replace('/', '\\', $relativePath);
+        }
+
+        if (str_contains($basePath, 'modules/')) {
+            // Extract module name from path
+            $pathParts = explode('/', $basePath);
+            $moduleIndex = array_search('modules', $pathParts);
+            if ($moduleIndex !== false && isset($pathParts[$moduleIndex + 1])) {
+                $moduleName = $pathParts[$moduleIndex + 1];
+                $seederPath = str_replace($moduleName . '/Database/', '', $relativePath);
+                return "Modules\\{$moduleName}\\Database\\Seeders\\" . str_replace('/', '\\', $seederPath);
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -281,29 +278,29 @@ class LandlordSetupCommand extends Command
         $this->newLine();
         $this->info('🎉 Setup Complete! Next Steps:');
         $this->newLine();
-        
+
         $this->line('1. 🌐 Access the application:');
         $this->line('   - Landlord Dashboard: http://landlord.saas.test');
         $this->line('   - Default Login: test_landlord / password123');
         $this->newLine();
-        
+
         $this->line('2. 🔧 Additional setup (if needed):');
         $this->line('   - Generate OAuth2 keys: php artisan passport:keys --force');
         $this->line('   - Create storage symlink: php artisan storage:link');
         $this->line('   - Compile assets: npm run dev');
         $this->newLine();
-        
+
         $this->line('3. 📚 Documentation:');
         $this->line('   - Environment Setup: documentation/environment-setup.md');
         $this->line('   - Multi-Tenant Architecture: documentation/multi-tenant-architecture.md');
         $this->line('   - Email System: documentation/email-system.md');
         $this->newLine();
-        
+
         $this->line('4. 🧪 Testing:');
         $this->line('   - Run tests: php artisan test');
         $this->line('   - Test coverage: php artisan test --coverage');
         $this->newLine();
-        
+
         $this->info('Happy coding! 🚀');
     }
 }

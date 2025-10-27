@@ -127,7 +127,8 @@ class DashboardController extends ApiController
     private function getBrandStats()
     {
         $totalBrands = DB::connection('landlord')->table('brands')->count();
-        $activeBrands = DB::connection('landlord')->table('brands')->where('status', 'active')->count();
+        // Brands table doesn't have status column, so consider all non-deleted brands as active
+        $activeBrands = DB::connection('landlord')->table('brands')->whereNull('deleted_at')->count();
         $newBrandsThisMonth = DB::connection('landlord')->table('brands')
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
@@ -180,15 +181,20 @@ class DashboardController extends ApiController
      */
     private function getBrandsWithModulesCount()
     {
-        return DB::connection('landlord')
-            ->table('brands')
-            ->whereExists(function ($query) {
-                $query->select(DB::raw(1))
-                      ->from('brand_module_subscriptions')
-                      ->whereColumn('brand_module_subscriptions.brand_id', 'brands.id')
-                      ->where('subscription_status', 'active');
-            })
-            ->count();
+        try {
+            return DB::connection('landlord')
+                ->table('brands')
+                ->whereExists(function ($query) {
+                    $query->select(DB::raw(1))
+                          ->from('brand_module_subscriptions')
+                          ->whereColumn('brand_module_subscriptions.brand_id', 'brands.id')
+                          ->where('subscription_status', 'active');
+                })
+                ->count();
+        } catch (\Exception $e) {
+            // If brand_module_subscriptions table doesn't exist, return 0
+            return 0;
+        }
     }
 
     /**

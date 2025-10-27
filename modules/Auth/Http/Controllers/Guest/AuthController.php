@@ -40,7 +40,7 @@ class AuthController extends ApiController
     {
         $subdomain = TenantHelper::getSubDomain();
         if ($subdomain) {
-            $tenant = Tenant::where("name", $subdomain)->exists();
+            $tenant = Tenant::where("domain", $subdomain)->exists();
             if ($tenant) {
                 return view('guest.auth.login', ['tenant' => $subdomain]);
             } else {

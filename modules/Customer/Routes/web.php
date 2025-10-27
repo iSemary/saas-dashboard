@@ -53,10 +53,12 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_
 // Tenant routes (for tenant users)
 Route::prefix('tenant')->name('tenant.')->middleware(['auth:web', 'tenant', '2fa'])->group(function () {
     
-    // Brand routes (read-only for tenants)
+    // Brand routes for tenants
     Route::middleware('can:read.brands')->group(function () {
-        Route::get('brands', [TenantBrandController::class, 'index'])->name('brands.index');
-        Route::get('brands/{id}', [TenantBrandController::class, 'show'])->name('brands.show');
+        Route::resource('brands', TenantBrandController::class)->names('brands');
+        Route::get('brands/{id}/modules', [TenantBrandController::class, 'getModules'])->name('brands.modules');
+        Route::post('brands/{id}/assign-modules', [TenantBrandController::class, 'assignModules'])->name('brands.assign-modules');
+        Route::get('brands/dashboard/data', [TenantBrandController::class, 'getBrandsForDashboard'])->name('brands.dashboard-data');
         Route::get('brands/search', [TenantBrandController::class, 'search'])->name('brands.search');
         Route::get('brands/stats', [TenantBrandController::class, 'stats'])->name('brands.stats');
     });

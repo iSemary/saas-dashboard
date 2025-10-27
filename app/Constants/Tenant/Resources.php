@@ -14,7 +14,7 @@ class Resources
                 'contacts' => ['read', 'create', 'update', 'delete', 'merge'],
                 'companies' => ['read', 'create', 'update', 'delete', 'merge'],
                 'activities' => ['read', 'create', 'update', 'delete'],
-                'pipeline' => ['read', 'create', 'update', 'delete'],
+                'pipeline' => ['read', 'creadminate', 'update', 'delete'],
             ],
             'sales' => [
                 'quotations' => ['read', 'create', 'update', 'delete', 'send', 'convert'],
