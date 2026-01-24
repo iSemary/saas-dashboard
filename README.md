@@ -1,240 +1,204 @@
-# SaaS - All in one
+# SaaS Dashboard - Multi-Tenant Administration Platform
 
-# Table of Contents
+A comprehensive multi-tenant administration dashboard built with Laravel 11, providing complete tenant management, subscription handling, payment processing, and customer relationship management capabilities.
 
--   [Installation](#installation)
--   [Modules Requirements](#modules-requirements)
--   [Commands](#commands)
-    -   [Start App Command](#start-app-command)
-    -   [Backup App Command](#backup-app-command)
-    -   [Sync Missing Language Translations](#sync-missing-language-translations)
-    -   [Generate New Tenant Command](#generate-new-tenant-command)
-    -   [Create Super Admin User Command](#create-super-admin-user-command)
--   [Databases](#databases)
--   [Troubleshooting](#troubleshooting)
--   [Running Landlord-Specific Migrations](#running-landlord-specific-migrations)
-    -   [Option 1: Direct Migration Commands](#option-1-direct-migration-commands)
-    -   [Option 2: Custom Artisan Command](#option-2-custom-artisan-command)
-    -   [Seed Role and Permissions (Landlord)](#seed-role-and-permissions-landlord)
-    -   [Landlord Tenant Seeder (Landlord)](#landlord-tenant-seeder-landlord)
-    -   [Seed Default Landlord User (Landlord)](#seed-default-landlord-user-landlord)
-    -   [Seed Modules (Landlord)](#seed-modules-landlord)
-    -   [Seed Configurations (Landlord)](#seed-configurations-landlord)
--   [Cron Jobs](#cron-jobs)
--   [Web Sockets](#web-sockets)
--   [Logo Files](#logo-files)
--   [Modules Stubs](#modules-stubs)
--   [Global Classes](#global-classes)
--   [Global IDs](#global-ids)
--   [Global Data Attributes](#global-data-attributes)
--   [Global Functions](#global-functions)
--   [Global Variables](#global-variables)
--   [Global Data Attributes](#global-data-attributes)
--   [Model and Data Structure](#model-and-data-structure)
-    -   [Geography](#geography)
-    -   [Utilities](#utilities)
-        -   [Tag](#tag)
-        -   [Type](#type)
-        -   [Category](#category)
-        -   [Industry](#industry)
--   [Name Convention](#name-convention)
--   [File Handler](#file-handler)
--   [Translatable](#translatable)
--   [React Installation](#react-installation)
--   [React App Routes](#react-app-routes)
--   [React Components](#react-components)
--   [Production Commands](#production-commands)
+## 🎯 Business Overview
 
----
+### Purpose & Value Proposition
 
-## Installation
+The SaaS Dashboard is the core administration system for managing a multi-tenant SaaS platform. It enables businesses to:
 
-1. **Create storage symlink**:
-   ```bash
-   php artisan storage:link
-   ```
+- **Manage Multiple Tenants**: Create, configure, and manage multiple customer organizations from a single interface
+- **Handle Subscriptions**: Automate subscription lifecycle management including activations, renewals, upgrades, and cancellations
+- **Process Payments**: Integrated payment processing with support for multiple payment gateways
+- **Manage Customers**: Comprehensive customer relationship management with detailed profiles and interaction history
+- **Control Access**: Role-based access control with granular permissions for different user types
+- **Localize Content**: Multi-language support with translation management
+- **Monitor Operations**: Real-time monitoring with Laravel Horizon, Telescope, and WebSocket support
 
-2. **Generate OAuth2 keys** (Required for API authentication):
-   ```bash
-   # Fix storage permissions first
-   sudo chown -R www-data:www-data storage/
-   sudo chmod -R 775 storage/
-   
-   # Generate OAuth2 keys
-   sudo -u www-data php artisan passport:keys --force
-   
-   # Create personal access client
-   sudo -u www-data php artisan passport:client --personal --name="SaaS Dashboard Personal Access Client"
-   ```
+### Target Users
 
-   **Note**: If you encounter "Personal access client not found" error after login, this step is required to generate the OAuth2 public and private keys for API authentication. The tenant setup commands now automatically handle Passport setup for new tenants.
+- **Landlord Administrators**: Platform owners managing the entire multi-tenant system
+- **Tenant Administrators**: Organization admins managing their tenant's configuration
+- **Support Staff**: Customer support teams handling tenant issues and requests
+- **Sales Teams**: Teams managing tenant onboarding and subscription sales
 
-3. **Configure Environment Variables**:
-   ```bash
-   # Copy environment file
-   cp .env.example .env
-   
-   # Set proper APP_URL (important for asset loading)
-   # Replace with your actual domain
-   sed -i 's|APP_URL=http://localhost|APP_URL=http://landlord.saas.test|' .env
-   
-   # Set landlord organization name (for login validation)
-   echo 'APP_LANDLORD_ORGANIZATION_NAME="Test SaaS Organization"' >> .env
-   
-   # Set default landlord user credentials
-   echo 'DEFAULT_LANDLORD_NAME="Test Landlord"' >> .env
-   echo 'DEFAULT_LANDLORD_EMAIL="landlord@test.com"' >> .env
-   echo 'DEFAULT_LANDLORD_USERNAME="test_landlord"' >> .env
-   echo 'DEFAULT_LANDLORD_PASSWORD="password123"' >> .env
-   ```
+### Key Business Features
 
-4. **Fix File Permissions** (Critical for development):
-   ```bash
-   # Set proper ownership for development
-   sudo chown -R abdelrahman:abdelrahman /var/www/saas-dashboard
-   
-   # Set directory permissions
-   sudo chmod -R 755 /var/www/saas-dashboard
-   
-   # Set writable permissions for Laravel directories
-   sudo chmod -R 775 storage/ bootstrap/cache/
-   
-   # Add user to www-data group for web server access
-   sudo usermod -a -G www-data abdelrahman
-   
-   # Set group ownership for web server directories
-   sudo chgrp -R www-data storage/ bootstrap/cache/
-   sudo chmod -R g+w storage/ bootstrap/cache/
-   ```
+- **Multi-Tenancy Architecture**: Complete tenant isolation with shared infrastructure
+- **Subscription Management**: Automated billing, invoicing, and subscription lifecycle
+- **Payment Integration**: Multiple payment gateway support (Stripe, PayPal, etc.)
+- **Customer Management**: Full CRM capabilities with customer profiles and history
+- **Role & Permission System**: Granular access control with Spatie Permissions
+- **Email Management**: Automated email processing and notifications
+- **File Management**: Secure file storage with encryption support
+- **Real-Time Updates**: WebSocket support for live dashboard updates
+- **Audit Logging**: Complete audit trail of all system changes
+- **Multi-Language Support**: Translation management with Google Translate integration
 
-5. **Configure Session Driver** (Prevents database connection issues):
-   ```bash
-   # Use file-based sessions to avoid multi-tenancy conflicts
-   echo 'SESSION_DRIVER=file' >> .env
-   ```
+## 🏗️ Technical Architecture
 
-6. **Clear Configuration Cache**:
-   ```bash
-   php artisan config:clear
-   php artisan cache:clear
-   ```
+### Tech Stack
 
----
+- **Backend Framework**: Laravel 11 (PHP 8.2+)
+- **Frontend**: React 18 with Vite
+- **Database**: MySQL (Multi-database architecture: Landlord + Tenant databases)
+- **Queue System**: Laravel Horizon with Redis
+- **Real-Time**: WebSocket server (Node.js)
+- **Authentication**: Laravel Passport (API), Session (Web)
+- **File Storage**: AWS S3, Local storage with encryption support
+- **Monitoring**: Laravel Telescope, Laravel Horizon
+- **Module System**: nwidart/laravel-modules
 
-## Modules Requirements
+### Architecture Pattern
 
--   **POS**: Laravel - jQuery - Node.js
--   **Learning**: Laravel - Next.js - Node.js
--   **Surveys**: Laravel - jQuery - Node.js
+The dashboard follows a **Landlord-Tenant** multi-tenancy pattern:
 
----
+- **Landlord Database**: Stores platform-wide data (tenants, modules, configurations)
+- **Tenant Databases**: Isolated databases for each tenant organization
+- **Shared Modules**: Reusable modules that work across all tenants
+- **Tenant Context**: Automatic database switching based on tenant domain
 
-## Commands
+### Module System
 
-### Start app command
+The platform uses a modular architecture with the following core modules:
 
-It will run the necessary commands to start the app
+- **Auth**: Authentication, authorization, 2FA, user management
+- **Tenant**: Tenant management and provisioning
+- **Customer**: Customer relationship management
+- **Subscription**: Subscription lifecycle management
+- **Payment**: Payment processing and invoicing
+- **Email**: Email processing and notifications
+- **Geography**: Geographic data management (Countries, Provinces, Cities, Towns, Streets)
+- **Localization**: Translation and language management
+- **Utilities**: Tags, Types, Categories, Industries
+- **FileManager**: File upload, storage, and management
+- **Notification**: In-app and push notifications
+- **Development**: Development tools and configurations
+
+## 📋 Table of Contents
+
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Database Setup](#database-setup)
+- [Module System](#module-system)
+- [Commands](#commands)
+- [Development Workflow](#development-workflow)
+- [Production Deployment](#production-deployment)
+- [Architecture Details](#architecture-details)
+- [Global Utilities](#global-utilities)
+
+## 🚀 Installation
+
+### Prerequisites
+
+- **PHP 8.2+** with extensions: `php-fpm`, `php-mysql`, `php-xml`, `php-mbstring`, `php-curl`, `php-zip`, `php-gd`
+- **Composer** (PHP package manager)
+- **Node.js 18+** and npm
+- **MySQL** database server
+- **Redis** (for queues and caching)
+
+### Step 1: Install Dependencies
 
 ```bash
-php artisan app:start
+# Install PHP dependencies
+composer install
+
+# Install Node.js dependencies
+npm install
 ```
 
-### Backup App Command
-
-Backup the application and save it in the cloud
+### Step 2: Environment Configuration
 
 ```bash
-php artisan app:backup
+cp .env.example .env
+php artisan key:generate
 ```
 
-### Sync Missing Language Translations
+Configure your `.env` file with:
+- Database connections (landlord and tenant)
+- Redis configuration
+- AWS S3 credentials (if using cloud storage)
+- Mail configuration
+- Payment gateway credentials
 
-It will sync the missed translations by translating it from google translate API
+### Step 3: Database Setup
 
 ```bash
-php artisan translations:translate-missing
+# Create storage symlink
+php artisan storage:link
+
+# Run landlord migrations
+php artisan landlord:migrate
+
+# Seed initial data
+php artisan db:seed --class=Database\\Seeders\\Landlord\\RolePermissionSeeder
+php artisan db:seed --class=Database\\Seeders\\Landlord\\LandlordTenantSeeder
+php artisan db:seed --class=Modules\\Auth\\Database\\Seeders\\LandlordUserSeeder
+php artisan db:seed --class=Modules\\Utilities\\Database\\Seeders\\ModulesSeeder
+php artisan db:seed --class=Modules\\Development\\Database\\Seeders\\ConfigurationsSeeder
 ```
 
-### Email Template Management
+## 🏃 Quick Start
 
-Manage dynamic email templates through the command line interface
+### Development Mode
+
+Start all development services with a single command:
 
 ```bash
-# List all email templates
-php artisan email:templates list
-
-# Create a new email template
-php artisan email:templates create --name="Welcome Email" --subject="Welcome!" --description="Welcome new users" --body="<h1>Welcome {{name}}!</h1>"
-
-# Update an existing template
-php artisan email:templates update --id=1 --subject="Updated Welcome Subject"
-
-# Delete a template
-php artisan email:templates delete --id=1
-
-# Seed default email templates
-php artisan email:templates seed
+composer run dev
 ```
 
-For detailed documentation on the email system, see [Email System Documentation](documentation/email-system.md).
+This starts:
+- Laravel development server
+- Queue worker (Laravel Horizon)
+- Log monitoring (Laravel Pail)
+- Vite development server (React)
 
-### Landlord Database Setup
+### Manual Start
 
-Complete landlord database setup with migrations and seeding in one command
+If you prefer to run services separately:
 
 ```bash
-# Complete setup (migrations + seeding)
-php artisan landlord:setup
+# Terminal 1: Laravel server
+php artisan serve
 
-# Force setup without confirmation
-php artisan landlord:setup --force
+# Terminal 2: Queue worker
+php artisan queue:listen
 
-# Run migrations only
-php artisan landlord:setup --migrate-only
+# Terminal 3: WebSocket server
+cd websocket && node server.js
 
-# Run seeding only
-php artisan landlord:setup --seed-only
-
-# Skip real data seeding
-php artisan landlord:setup --skip-real-data
-
-# Skip dummy data seeding
-php artisan landlord:setup --skip-dummy-data
+# Terminal 4: Vite dev server
+npm run dev
 ```
 
-This command will:
-- Run all landlord migrations from various paths
-- Seed essential real data (roles, permissions, users, languages, email templates, etc.)
-- Seed dummy data for development and testing
-- Display next steps and helpful information
+## 💾 Database Setup
 
-For detailed documentation on the landlord setup, see [Environment Setup Documentation](documentation/environment-setup.md).
+### Multi-Database Architecture
 
----
+The system uses two types of databases:
 
-## Databases
+1. **Landlord Database**: Platform-wide data
+   - Tenants table
+   - Modules configuration
+   - Global settings
+   - Landlord users
 
----
+2. **Tenant Databases**: Isolated per-tenant data
+   - Tenant-specific users
+   - Tenant data and records
+   - Tenant configurations
 
-## Running Landlord-Specific Migrations
+### Running Migrations
 
-### Option 1: Complete Setup Command (Recommended)
-
-Use the comprehensive landlord setup command that handles both migrations and seeding:
-
-```bash
-# Complete setup (migrations + seeding)
-php artisan landlord:setup
-
-# Force setup without confirmation
-php artisan landlord:setup --force
-```
-
-### Option 2: Direct Migration Commands
-
-Run individual migration commands for the landlord database:
+#### Landlord Migrations
 
 ```bash
+# Option 1: Use custom command
+php artisan landlord:migrate
+
+# Option 2: Manual migration
 php artisan migrate --path=database/migrations/landlord --database=landlord
 php artisan migrate --path=modules/*/Database/Migrations/landlord --database=landlord
 php artisan migrate --path=modules/*/Database/migrations/landlord --database=landlord
@@ -243,537 +207,320 @@ php artisan migrate --path=modules/*/Database/Migrations/shared --database=landl
 php artisan migrate --path=database/migrations/shared --database=landlord
 ```
 
-### Option 3: Custom Artisan Command
+#### Tenant Migrations
 
-You can simplify the migration process by using a custom Artisan command:
+Tenant migrations run automatically when a tenant is created, or manually:
 
 ```bash
-php artisan landlord:migrate
+php artisan tenants:migrate
 ```
 
-### Individual Seeding Commands
+### Database Seeding
 
-If you need to run individual seeders (the `landlord:setup` command handles all of these automatically):
-
-#### Seed Role and Permissions (Landlord)
+#### Landlord Seeders
 
 ```bash
+# Roles and permissions
 php artisan db:seed --class=Database\\Seeders\\Landlord\\RolePermissionSeeder
-```
 
-#### Seed Languages
-
-```bash
-# Run the language seeder
-php artisan db:seed --class="Modules\Localization\Database\Seeders\LanguageSeeder" --database=landlord
-
-# Or use the convenience script
-./seed-languages.sh
-```
-
-This will seed the following languages:
-- **English** (en) - Left-to-right
-- **Arabic** (ar) - Right-to-left  
-- **German** (de) - Left-to-right
-
-#### Landlord Tenant Seeder (Landlord)
-
-Creates a landlord row in the tenants table:
-
-```bash
+# Create landlord tenant record
 php artisan db:seed --class=Database\\Seeders\\Landlord\\LandlordTenantSeeder
-```
 
-#### Seed Default Landlord User (Landlord)
-
-Creates a user row in the landlord tenant table:
-
-```bash
+# Create default landlord user
 php artisan db:seed --class=Modules\\Auth\\Database\\Seeders\\LandlordUserSeeder
-```
 
-**Default Login Credentials** (after running the seeder):
-- **Organization**: `Test SaaS Organization`
-- **Username**: `test_landlord`
-- **Password**: `password123`
-- **Email**: `landlord@test.com`
-
-**Note**: These credentials are set in the `.env` file and can be customized before running the seeder.
-
-#### Seed Modules (Landlord)
-
-```bash
+# Seed modules
 php artisan db:seed --class=Modules\\Utilities\\Database\\Seeders\\ModulesSeeder
-```
 
-#### Seed Configurations (Landlord)
-
-```bash
+# Seed configurations
 php artisan db:seed --class=Modules\\Development\\Database\\Seeders\\ConfigurationsSeeder
 ```
 
-### Quick Setup Commands
+## 📦 Module System
 
-For development and testing, you can also use these convenience commands:
+### Available Modules
+
+The platform includes the following modules (see `modules_statuses.json`):
+
+- **Tenant**: Tenant management
+- **Auth**: Authentication and authorization
+- **Customer**: Customer management
+- **Geography**: Geographic data
+- **Localization**: Translation management
+- **Configuration**: System configuration
+- **Email**: Email processing
+- **Utilities**: Tags, types, categories
+- **Subscription**: Subscription management
+- **Payment**: Payment processing
+- **Development**: Development tools
+- **FileManager**: File management
+- **Notifications**: Notification system
+
+### Module Structure
+
+Each module follows a standard structure:
+
+```
+ModuleName/
+├── Config/
+├── Database/
+│   ├── Migrations/
+│   │   ├── landlord/
+│   │   ├── tenant/
+│   │   └── shared/
+│   └── Seeders/
+├── Entities/
+├── Http/
+│   ├── Controllers/
+│   ├── Middleware/
+│   └── Requests/
+├── Models/
+├── Providers/
+├── Resources/
+│   ├── assets/
+│   └── views/
+└── Routes/
+```
+
+## 🔧 Commands
+
+### Application Commands
+
+#### Start Application
+
+Runs all necessary services to start the application:
 
 ```bash
-# Seed real data (languages, email templates, configurations, etc.)
-php artisan seed:real-data
-
-# Seed dummy data for development and testing
-php artisan seed:dummy-data
-
-# Seed specific modules only
-php artisan seed:real-data --modules=Localization,Email
-php artisan seed:dummy-data --modules=Auth,Utilities
+php artisan app:start
 ```
 
----
+#### Backup Application
 
-## Tenant Database Setup
-
-### Complete Tenant Setup Command (Recommended)
-
-Use the comprehensive tenant setup command that handles both migrations and seeding for tenant databases (excluding landlord):
+Backs up the application and saves it to cloud storage:
 
 ```bash
-# Setup all tenants (migrations + seeding)
-php artisan tenant:setup
-
-# Setup specific tenant by ID
-php artisan tenant:setup 1
-
-# Setup specific tenant by name
-php artisan tenant:setup customer1
-
-# Force setup without confirmation
-php artisan tenant:setup --force
-
-# Run migrations only (skip seeding)
-php artisan tenant:setup --migrate-only
-
-# Run seeding only (skip migrations)
-php artisan tenant:setup --seed-only
-
-# Run fresh migrations (drop all tables and re-run)
-php artisan tenant:setup --fresh
+php artisan app:backup
 ```
 
-This command will:
-- Run all tenant migrations from various paths
-- Seed tenant database with initial data
-- Setup Laravel Passport (OAuth2 keys and personal access client)
-- Handle multiple tenants or specific tenant (excluding landlord)
-- Display progress and helpful information
+#### Sync Missing Translations
 
-### Generate New Tenant Command
-
-Create a complete tenant setup with specified modules, fake brand data, and nginx configuration:
+Automatically translates missing translation keys using Google Translate API:
 
 ```bash
-# Basic tenant generation with HR and CRM modules
-php artisan tenant:generate --name=mycompany --modules=hr,crm
-
-# Advanced tenant with multiple modules
-php artisan tenant:generate \
-  --name=techcorp \
-  --modules=hr,crm,ticket,accounting,inventory,sales \
-  --domain=techcorp.local \
-  --database=saas_techcorp \
-  --force
-
-# Interactive mode (will prompt for inputs)
-php artisan tenant:generate
+php artisan translations:translate-missing
 ```
 
-#### Parameters
-
-| Parameter | Description | Required | Example |
-|-----------|-------------|----------|---------|
-| `--name` | Tenant name | Yes | `--name=mycompany` |
-| `--modules` | Comma-separated modules | Yes | `--modules=hr,crm,ticket` |
-| `--domain` | Custom domain | No | `--domain=mycompany.local` |
-| `--database` | Custom database name | No | `--database=saas_mycompany` |
-| `--force` | Overwrite existing tenant | No | `--force` |
-
-#### Available Modules
-
-| Module | Description | Module | Description |
-|--------|-------------|--------|-------------|
-| `hr` | Human Resources | `email` | Email Management |
-| `crm` | Customer Relationship Management | `notification` | Notification System |
-| `ticket` | Support Ticket System | `filemanager` | File Management |
-| `accounting` | Financial Accounting | `utilities` | System Utilities |
-| `inventory` | Inventory Management | `geography` | Geographic Data |
-| `sales` | Sales Management | `localization` | Multi-language Support |
-| `reporting` | Reports & Analytics | `payment` | Payment Processing |
-| `subscription` | Subscription Management | `development` | Development Tools |
-| `customer` | Customer Management | `tenant` | Tenant Management |
-| `auth` | Authentication | `api` | API Management |
-| `comment` | Comment System | `workflow` | Workflow Management |
-| `staticpages` | Static Pages | `monitoring` | System Monitoring |
-
-#### What the Command Creates
-
-1. **Tenant Record**: Complete tenant setup in landlord database
-2. **Fake Brand**: Realistic company data with random brand name from 20 predefined names
-3. **Customer Record**: Links brand to customer with proper relationships
-4. **Database Setup**: Runs all migrations and seeders for the tenant
-5. **Nginx Configuration**: Generates and enables nginx configuration
-6. **Service Management**: Attempts to restart nginx service
-
-#### Example Output
-
-```
-🚀 Starting Tenant Generation Process...
-
-📋 Generation Plan:
-   Tenant Name: mycompany
-   Brand Name: TechCorp Solutions
-   Domain: mycompany.saas.test
-   Database: saas_mycompany
-   Modules: HR, CRM
-
-🏗️  Creating tenant...
-   ✅ Tenant created: mycompany (ID: 12)
-
-👤 Creating customer...
-   ✅ Customer created: TechCorp Solutions (ID: 8)
-
-🏢 Creating brand...
-   ✅ Brand created: TechCorp Solutions (ID: 5)
-
-🗄️  Setting up tenant database...
-   Running migrations...
-   ✅ Database setup completed
-
-🌐 Generating nginx configuration...
-   ✅ Nginx config written to: /etc/nginx/sites-available/mycompany.saas.test
-   ✅ Symlink created: /etc/nginx/sites-enabled/mycompany.saas.test
-
-🔄 Restarting nginx...
-   ✅ Nginx restarted successfully
-
-🎉 Tenant generation completed successfully!
-
-📋 Summary:
-   Tenant: mycompany
-   Domain: http://mycompany.saas.test
-   Database: saas_mycompany
-   Brand: TechCorp Solutions
-   Modules: HR, CRM
-
-🔧 Next Steps:
-   1. Update your /etc/hosts file: 127.0.0.1 mycompany.saas.test
-   2. Access the tenant at: http://mycompany.saas.test
-   3. Create a super admin user: php artisan tenant:create-super-admin mycompany
-```
-
-#### Post-Generation Steps
-
-1. **Update Hosts File**:
-   ```bash
-   echo "127.0.0.1 mycompany.saas.test" | sudo tee -a /etc/hosts
-   ```
-
-2. **Create Super Admin User**:
-   ```bash
-   php artisan tenant:create-super-admin mycompany \
-     --name="Super Admin" \
-     --email="admin@mycompany.local" \
-     --username="admin" \
-     --password="password123"
-   ```
-
-3. **Access the Tenant**: Visit `http://mycompany.saas.test`
-
-### Create Super Admin User Command
-
-Create a super admin user for a specific tenant:
+### Tenant Management
 
 ```bash
-# Basic super admin creation
-php artisan tenant:create-super-admin mycompany
+# List all tenants
+php artisan tenants:list
 
-# Advanced super admin with custom details
-php artisan tenant:create-super-admin mycompany \
-  --name="Super Admin" \
-  --email="admin@mycompany.local" \
-  --username="admin" \
-  --password="password123"
+# Create a new tenant
+php artisan tenants:create
+
+# Run migrations for all tenants
+php artisan tenants:migrate
+
+# Run seeders for all tenants
+php artisan tenants:seed
 ```
 
-### Manual Tenant Migration Commands
+### Email Processing
 
-If you need to run individual migration commands for tenant databases:
-
-```bash
-# Migrate tenant-specific migrations
-php artisan tenants:artisan "migrate --path=database/migrations/tenant --database=tenant" --tenant=1
-
-# Migrate module tenant migrations
-php artisan tenants:artisan "migrate --path=modules/*/Database/Migrations/tenant --database=tenant" --tenant=1
-php artisan tenants:artisan "migrate --path=modules/*/Database/migrations/tenant --database=tenant" --tenant=1
-
-# Migrate shared migrations to tenant
-php artisan tenants:artisan "migrate --path=modules/*/Database/migrations/shared --database=tenant" --tenant=1
-php artisan tenants:artisan "migrate --path=modules/*/Database/Migrations/shared --database=tenant" --tenant=1
-
-# Seed tenant database
-php artisan tenants:artisan "migrate --database=tenant --seed" --tenant=1
-```
-
-### Tenant Seeding
-
-The tenant setup command automatically seeds the following data:
-
-- **User Management**: Default tenant users and roles
-- **System Configuration**: Tenant-specific settings
-- **Module Data**: Initial data for all enabled modules
-- **Sample Data**: Development and testing data (if available)
-
-### Current Tenant Information
-
-- **Tenant ID**: 1 (customer1)
-- **Database**: saas_customer1
-- **Domain**: customer1.saas.test
-
----
-
-## Cron Jobs
-
-Email Processing:
-
-1.Running for a Specific Tenant
-To process emails for a single tenant, use the --tenant option followed by the tenant’s domain.
+Process emails for tenants:
 
 ```bash
+# Process for specific tenant
 php artisan process:emails --tenant=customer1
-```
 
-2. Running for All Tenants
-   To process emails for all tenants in the system, run:
-
-```bash
+# Process for all tenants
 php artisan process:emails
 ```
 
----
+## 🔄 Development Workflow
 
-## Web Sockets
+### Code Structure
+
+- **App Core**: `app/` - Core application logic
+- **Modules**: `modules/` - Feature modules
+- **Routes**: `routes/` - Route definitions
+- **Resources**: `resources/` - Views, assets, React components
+- **Config**: `config/` - Configuration files
+
+### React Integration
+
+The dashboard includes React components for enhanced UI:
+
+```bash
+# Install React dependencies
+npm install
+
+# Start Vite dev server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+### Development Best Practices
+
+1. **Module Development**: Create new features as modules
+2. **Database Migrations**: Use separate migrations for landlord/tenant/shared
+3. **Translation**: Use translation helpers for all user-facing text
+4. **Permissions**: Define permissions in plural form
+5. **Roles**: Define roles in singular form
+6. **Routes**: Use plural form for resource routes
+
+## 🚀 Production Deployment
+
+### Pre-Deployment Checklist
+
+1. **Environment Configuration**:
+   ```bash
+   APP_ENV=production
+   APP_DEBUG=false
+   ```
+
+2. **Optimize Application**:
+   ```bash
+   php artisan config:cache
+   php artisan route:cache
+   php artisan view:cache
+   php artisan event:cache
+   ```
+
+3. **Build Assets**:
+   ```bash
+   npm run build
+   ```
+
+4. **Run Migrations**:
+   ```bash
+   php artisan landlord:migrate
+   php artisan tenants:migrate
+   ```
+
+### Cron Jobs
+
+Set up the Laravel scheduler:
+
+```bash
+* * * * * cd /var/www/PROJECT_NAME && php artisan schedule:run >> /dev/null 2>&1
+```
+
+### Queue Workers
+
+Run queue workers in production:
+
+```bash
+php artisan horizon
+```
+
+Or use supervisor for process management.
+
+### WebSocket Server
+
+Run the WebSocket server:
+
+```bash
+cd websocket
+node server.js
+```
+
+Or use PM2 for process management:
+
+```bash
+pm2 start websocket/server.js --name websocket
+```
+
+## 🔌 Web Sockets
 
 ### Running the Queue Listener
 
-Laravel uses a queue system to broadcast events. To start the queue worker, run:
+Laravel uses a queue system to broadcast events:
 
 ```bash
 php artisan queue:listen
 ```
 
-This will process any queued jobs related to WebSockets and broadcasting.
-
 ### Starting the WebSocket Server
 
-Navigate to the WebSocket server directory:
+Navigate to the WebSocket directory and start the server:
 
 ```bash
 cd websocket
-```
-
-Start the WebSocket server using Node.js:
-
-```bash
 node server.js
 ```
 
----
+The WebSocket server handles real-time updates for the dashboard.
 
-## Logo Files
+## 🎨 Global Utilities
 
-Please refer to the README file for the file structure:
-`public/assets/shared/images/icons/logo/README.md`
+### Global CSS Classes
 
----
+- `.slug-input` - Automatic slug generation
+- `.snake-input` - Snake case conversion
+- `.decimal-input` - Decimal number formatting
+- `.emoji-input` - Emoji picker integration
+- `.open-create-modal` - Open create modal
+- `.open-edit-modal` - Open edit modal
+- `.open-details-btn` - Open details view
+- `.select-row` - Datatable row selection
+- `.upload-image` - Image upload handler
+- `.view-image` - Image viewer
+- `.file-uploader` - File upload component
+- `.generate-password-input` - Password generator
 
-## Modules Stubs
+### Global IDs
 
-# TODO Write this
+- `#table` - Datatables container
+- `#ckInput` - CKEditor input fields
 
----
+### Global Data Attributes
 
-## Global Classes
+- `data-toggle="tooltip"` - Bootstrap tooltip
+- `data-selectable="true"` - Enable row selection
+- `data-button-listen="select-row"` - Button row selection listener
 
--   `.slug-input`
--   `.snake-input`
--   `.decimal-input`
--   `.emoji-input`
--   `.open-create-modal`
--   `.open-edit-modal`
--   `.open-details-btn`
--   `.select-row` // used for datatable multiple rows select
--   `.upload-image`
--   `.view-image`
--   `.file-uploader` ex:
+### Global Functions
 
-    ```html
-    <div
-        class="file-uploader"
-        data-multiple="true"
-        data-required="true"
-        data-max-file-size="1024"
-        data-allowed-files="png,jpg,pdf,xlsx"
-        data-label="Drag & Drop Files Here"
-        data-button-label="Browse Files"
-    ></div>
-    ```
+#### PHP Functions
 
--   `.generate-password-input`
+- `translate('key', ['attribute' => 'value'], 'en')` - Translate dashboard content
+- `@translate()` - Blade directive for translation
+- `__()` - Short translation function
+- `configuration()` - Get configuration value from database
+- `@configuration` - Blade directive for configuration
+- `render_number()` - Format numbers (e.g., 1,000,000 → "1m")
 
----
+#### JavaScript Functions
 
-## Global IDs
+- `translate('home')` - Translate key
+- `t('home')` - Short translation function
+- `t('unknown_key', { var1: 'test1' })` - Translate with variables
 
--   `#table` for datatables inputs
--   `#ckInput` for ck-editor inputs
+### File Handler
 
----
-
-## Global Data Attributes
-
--   `data-toggle="tooltip"`
--   `data-selectable="true"` // for datatable multiple select rows
-
----
-
-## Global Functions
-
-### PHP
-
--   `translate('key', ['attribute' => 'value'], 'en')` OR `@translate()` OR `__()` For translating dashboard items.
--   // TODO `translateModel()` OR `@translateModel()`: For translating model items (e.g., name, description).
-
--   `configuration()` OR `@configuration`: For fetching configuration values from configurations table.
-
--   `render_number()`: // Output: <span title="1,000,000">1m</span>
-
--   `$pagination->render('layouts.pagination.default')`
-
-### JS
-
--   `translate('home')` OR `t('home')` OR t('unknown_key', { var1: 'test1' })
-
----
-
-## Global Variables
-
--   in ViewServiceProvider
-
----
-
-## Global Data Attributes
-
--   data-button-listen="select-row"
-
----
-
-## Model and Data Structure
-
-### Geography
-
--   **Countries**
-    -   Provinces
-        -   Cities
-            -   Towns
-                -   Streets
-
-### Utilities
-
-#### Tag
-
--   **Size**
-    -   Small
-    -   Medium
-    -   Large
--   **Color**
-    -   Red
-    -   Blue
-    -   Green
--   **Material**
-    -   Cotton
-    -   Polyester
-    -   Metal
-
-#### Type
-
--   **Music**
-    -   Jazz
-    -   Rock
-    -   Classical
--   **Strategy**
-    -   Real-time
-    -   Turn-based
--   **Format**
-    -   Digital
-    -   Physical
-
-#### Category
-
--   Books
--   Movies
--   Games
-
-#### Industry
-
--   Technology
--   Healthcare
--   Education
-
----
-
-## Name Convention
-
--   **Permission Name**: Plural
--   **Role Name**: Single
--   **Route**: Plural
-
-## File Handler
-
-In the main class, use `FileHandler`.
+Use the `FileHandler` trait in models:
 
 ```php
 use FileHandler;
-```
 
-Define the file columns and their info for example:
-
-```php
 protected $fileColumns = [
-    'icon' => [ // use custom configurations
+    'icon' => [
         'is_encrypted' => false,
         'access_level' => 'public',
         'metadata' => ['width', 'height', 'aspect_ratio'],
     ],
-    'thumbnail', // or use without any configurations
+    'thumbnail', // Simple configuration
 ];
-```
 
-```php
-/**
- * Get the icon URL dynamically.
- *
- * @return string
- */
 public function getIconAttribute($value)
 {
     return $this->getFileUrl($value);
 }
 
-/**
- * Set the icon attribute.
- *
- * @param  mixed  $value
- * @return void
- */
 public function setIconAttribute($value)
 {
     if ($value instanceof \Illuminate\Http\UploadedFile) {
@@ -783,32 +530,19 @@ public function setIconAttribute($value)
         $this->attributes['icon'] = $value;
     }
 }
-
 ```
 
----
+### Translatable Models
 
-## Translatable
-
-This section demonstrates how to use the Translatable trait in a PHP project.
-It includes an example of defining translatable columns and managing translations in a datatable.
-
-The `use Translatable;` statement imports the Translatable trait.
-
-The `$translatableColumns` property is an array that specifies which columns are translatable.
-
-The `->editColumn('description', function($row) { ... })` method in the datatable allows you to manage the translation
-of the 'description' column using the `TranslateHelper::returnTranslatableEditor` method.
+Use the `Translatable` trait for multi-language support:
 
 ```php
 use Translatable;
-```
 
-```php
 protected $translatableColumns = ['name', 'description'];
 ```
 
-in datatable table you can manage the translation by this
+In datatables:
 
 ```php
 ->editColumn('description', function($row) {
@@ -816,246 +550,84 @@ in datatable table you can manage the translation by this
 })
 ```
 
-## Prevent git from chmod changes
+## 📊 Data Models
 
-```bash
-git config core.fileMode false
-```
+### Geography Hierarchy
 
-## Troubleshooting
+- **Countries**
+  - Provinces
+    - Cities
+      - Towns
+        - Streets
 
-### Common Installation Issues
+### Utilities
 
-#### 1. CSS/JS Assets Not Loading (404 errors)
-**Problem**: CSS and JavaScript files return 404 Not Found errors.
+#### Tag System
+- Size: Small, Medium, Large
+- Color: Red, Blue, Green
+- Material: Cotton, Polyester, Metal
 
-**Solution**:
-```bash
-# Check and fix APP_URL in .env
-grep APP_URL .env
-# Should be: APP_URL=http://landlord.saas.test (or your actual domain)
+#### Type System
+- Music: Jazz, Rock, Classical
+- Strategy: Real-time, Turn-based
+- Format: Digital, Physical
 
-# If incorrect, fix it:
-sed -i 's|APP_URL=.*|APP_URL=http://landlord.saas.test|' .env
+#### Categories
+- Books
+- Movies
+- Games
 
-# Clear cache
-php artisan config:clear
-php artisan cache:clear
-```
+#### Industries
+- Technology
+- Healthcare
+- Education
 
-#### 2. "Invalid key supplied" Error After Login
-**Problem**: OAuth2 authentication fails with "Invalid key supplied" error.
+## 📝 Naming Conventions
 
-**Solution**:
-```bash
-# Generate OAuth2 keys (see Installation step 2)
-sudo -u www-data php artisan passport:keys --force
-sudo -u www-data php artisan passport:client --personal --name="SaaS Dashboard Personal Access Client"
-```
+- **Permission Names**: Plural (e.g., `users.create`, `users.edit`)
+- **Role Names**: Singular (e.g., `admin`, `manager`)
+- **Route Names**: Plural (e.g., `/users`, `/customers`)
 
-#### 3. Database Connection Errors
-**Problem**: `SQLSTATE[3D000]: Invalid catalog name: 1046 No database selected`
+## 🔧 Troubleshooting
 
-**Solution**:
-```bash
-# Use file-based sessions to avoid multi-tenancy conflicts
-echo 'SESSION_DRIVER=file' >> .env
+### Common Issues
 
-# Clear cache
-php artisan config:clear
-php artisan cache:clear
-```
+1. **Storage Link**:
+   ```bash
+   php artisan storage:link
+   ```
 
-#### 4. Permission Denied Errors
-**Problem**: Cannot save files, run commands, or access storage.
+2. **Permission Issues**:
+   ```bash
+   chmod -R 775 storage bootstrap/cache
+   ```
 
-**Solution**:
-```bash
-# Fix ownership and permissions (see Installation step 4)
-sudo chown -R abdelrahman:abdelrahman /var/www/saas-dashboard
-sudo chmod -R 755 /var/www/saas-dashboard
-sudo chmod -R 775 storage/ bootstrap/cache/
-sudo chgrp -R www-data storage/ bootstrap/cache/
-sudo chmod -R g+w storage/ bootstrap/cache/
-```
+3. **Git File Mode**:
+   ```bash
+   git config core.fileMode false
+   ```
 
-#### 5. Git Tracking File Permission Changes
-**Problem**: Git shows hundreds of "changed" files due to permission changes.
+4. **Cache Issues**:
+   ```bash
+   php artisan cache:clear
+   php artisan config:clear
+   php artisan route:clear
+   php artisan view:clear
+   ```
 
-**Solution**:
-```bash
-# Disable file mode tracking
-git config core.fileMode false
+## 📚 Additional Resources
 
-# If .git/config is owned by root, fix ownership first
-sudo chown abdelrahman:abdelrahman .git/config
-git config core.fileMode false
-```
+- [Laravel Documentation](https://laravel.com/docs)
+- [Laravel Modules Documentation](https://nwidart.com/laravel-modules)
+- [Spatie Multitenancy](https://spatie.be/docs/laravel-multitenancy)
+- [Laravel Horizon](https://laravel.com/docs/horizon)
 
-#### 6. Seeder Permission Issues
-**Problem**: `php artisan db:seed` fails with permission errors.
+## 🔗 Related Projects
 
-**Solution**:
-```bash
-# Fix storage permissions
-sudo chown -R www-data:www-data storage/
-sudo chmod -R 775 storage/
-
-# Run seeder with proper database connection
-php artisan db:seed --class="Modules\Auth\Database\Seeders\LandlordUserSeeder" --database=landlord
-```
-
-### Tenant Generation Issues
-
-#### 1. Permission Denied for Nginx Configuration
-**Problem**: `Could not write nginx config: Permission denied`
-
-**Solution**:
-```bash
-# Fix nginx directory permissions
-sudo chown -R $USER:$USER /etc/nginx/sites-available/
-sudo chown -R $USER:$USER /etc/nginx/sites-enabled/
-
-# Or run the command with sudo
-sudo php artisan tenant:generate --name=mycompany --modules=hr,crm
-```
-
-#### 2. Database Already Exists Error
-**Problem**: `Database 'saas_mycompany' already exists`
-
-**Solution**:
-```bash
-# Use --force flag to overwrite existing tenant
-php artisan tenant:generate --name=mycompany --modules=hr,crm --force
-
-# Or use a different name
-php artisan tenant:generate --name=mycompany2 --modules=hr,crm
-```
-
-#### 3. Module Not Found Error
-**Problem**: `Module 'invalidmodule' not found`
-
-**Solution**:
-```bash
-# Check available modules and use correct module keys
-# Available modules: hr, crm, ticket, accounting, inventory, sales, reporting, email, notification, filemanager, utilities, geography, localization, payment, subscription, development, customer, tenant, auth, api, comment, workflow, staticpages, monitoring
-
-# Use correct module names
-php artisan tenant:generate --name=mycompany --modules=hr,crm,ticket
-```
-
-#### 4. Nginx Configuration Test Failed
-**Problem**: `nginx: configuration file test failed`
-
-**Solution**:
-```bash
-# Test nginx configuration
-sudo nginx -t
-
-# Fix any syntax errors in the generated config
-sudo nano /etc/nginx/sites-available/mycompany.saas.test
-
-# Restart nginx
-sudo systemctl restart nginx
-```
-
-#### 5. Domain Not Accessible After Generation
-**Problem**: Cannot access the generated tenant domain
-
-**Solution**:
-```bash
-# Add domain to hosts file
-echo "127.0.0.1 mycompany.saas.test" | sudo tee -a /etc/hosts
-
-# Check nginx configuration
-sudo nginx -t
-sudo systemctl status nginx
-
-# Restart nginx if needed
-sudo systemctl restart nginx
-```
-
-#### 6. Super Admin User Creation Failed
-**Problem**: Cannot create super admin user for tenant
-
-**Solution**:
-```bash
-# Create super admin user manually
-php artisan tenant:create-super-admin mycompany \
-  --name="Super Admin" \
-  --email="admin@mycompany.local" \
-  --username="admin" \
-  --password="password123"
-
-# Or use the seeder directly
-php artisan tenants:artisan "db:seed --class=Database\\Seeders\\Tenant\\SuperAdminSeeder --database=tenant" --tenant=1
-```
-
-### Multi-Tenancy Configuration
-
-The application uses a multi-tenant architecture with the following key components:
-
-- **Landlord Database**: Main application database
-- **Tenant Databases**: Individual tenant databases
-- **Subdomain Routing**: `landlord.saas.test` for landlord, `tenant.saas.test` for tenants
-- **Database Connection Middleware**: Automatically switches connections based on subdomain
-
-**Important**: Always use the `landlord` database connection for seeders and migrations unless specifically working with tenant data.
+- **[SaaS Website](../saas-website/)** - Public website and customer portal
+- **[SaaS Desktop App](../saas-desktop-app/)** - Desktop application
+- **[SaaS Mobile App](../saas-mobile-app/)** - Mobile application
 
 ---
 
-## React Installation
-
-To install and set up React for your project, follow these steps:
-
-1. **Install Dependencies**:
-
-    ```bash
-    npm install
-    ```
-
-2. **Run Development Server**:
-    ```bash
-    npm run dev
-    ```
-
-If you encounter any issues, try the following commands to clean the cache and reinstall dependencies:
-
-1. **Clean npm Cache**:
-
-    ```bash
-    npm cache clean --force
-    ```
-
-2. **Remove `node_modules` and `package-lock.json`**:
-
-    ```bash
-    rm -rf node_modules package-lock.json
-    ```
-
-3. **Reinstall Dependencies**:
-
-    ```bash
-    npm install
-    ```
-
-4. **Run Development Server Again**:
-    ```bash
-    npm run dev
-    ```
-
----
-
-## React App Routes
-
----
-
-## React Components
-
----
-
-## Production Commands
-
-```bash
-* * * * * cd /var/www/PROJECT_NAME && php artisan schedule:run >> /dev/null 2>&1
-```
+**Built with ❤️ using Laravel 11 and React**
