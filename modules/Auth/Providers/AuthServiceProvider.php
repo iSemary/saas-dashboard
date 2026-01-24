@@ -7,6 +7,8 @@ use Modules\Auth\Repositories\ActivityLogInterface;
 use Modules\Auth\Repositories\ActivityLogRepository;
 use Modules\Auth\Repositories\PermissionInterface;
 use Modules\Auth\Repositories\PermissionRepository;
+use Modules\Auth\Repositories\PermissionGroupInterface;
+use Modules\Auth\Repositories\PermissionGroupRepository;
 use Modules\Auth\Repositories\RoleRepository;
 use Modules\Auth\Repositories\RoleInterface;
 use Modules\Auth\Repository\UserManagementRepositoryInterface;
@@ -39,6 +41,7 @@ class AuthServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(PermissionInterface::class, PermissionRepository::class);
+        $this->app->bind(PermissionGroupInterface::class, PermissionGroupRepository::class);
         $this->app->bind(RoleInterface::class, RoleRepository::class);
         $this->app->bind(ActivityLogInterface::class, ActivityLogRepository::class);
         $this->app->bind(UserManagementRepositoryInterface::class, UserManagementRepository::class);

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Auth\Http\Controllers\Guest\AuthController;
 use Modules\Auth\Http\Controllers\PermissionController;
+use Modules\Auth\Http\Controllers\PermissionGroupController;
 use Modules\Auth\Http\Controllers\RoleController;
 use Modules\Auth\Http\Controllers\Landlord\UserController;
 use Modules\Auth\Http\Controllers\Guest\OrganizationController;
@@ -153,6 +154,7 @@ Route::middleware('auth')->group(function () {
 // Landlord Routes
 Route::prefix('landlord')->name('landlord.')->middleware(['auth:web', 'landlord_roles', '2fa'])->group(function () {
     Route::resource('permissions', PermissionController::class)->names('permissions');
+    Route::resource('permission-groups', PermissionGroupController::class)->names('permission-groups');
     Route::resource('roles', RoleController::class)->names('roles');
 
     // Login attempts per user

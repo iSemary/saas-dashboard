@@ -6,6 +6,7 @@ use App\Http\Controllers\ApiController;
 use Modules\Auth\Services\RoleService;
 use Illuminate\Http\Request;
 use Modules\Auth\Services\PermissionService;
+use Modules\Auth\Services\PermissionGroupService;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Routing\Controllers\HasMiddleware;
 
@@ -13,11 +14,13 @@ class RoleController extends ApiController implements HasMiddleware
 {
     protected $service;
     protected $permissionService;
+    protected $permissionGroupService;
 
-    public function __construct(RoleService $roleService, PermissionService $permissionService)
+    public function __construct(RoleService $roleService, PermissionService $permissionService, PermissionGroupService $permissionGroupService)
     {
         $this->service = $roleService;
         $this->permissionService = $permissionService;
+        $this->permissionGroupService = $permissionGroupService;
     }
 
     public function index()
@@ -48,7 +51,8 @@ class RoleController extends ApiController implements HasMiddleware
     public function create()
     {
         $permissions = $this->permissionService->getAll();
-        return view('landlord.auth.roles.editor', compact('permissions'));
+        $permissionGroups = $this->permissionGroupService->getAll();
+        return view('landlord.auth.roles.editor', compact('permissions', 'permissionGroups'));
     }
 
     public function store(Request $request)
@@ -63,8 +67,12 @@ class RoleController extends ApiController implements HasMiddleware
     public function edit($id)
     {
         $permissions = $this->permissionService->getAll();
+        $permissionGroups = $this->permissionGroupService->getAll();
         $row = $this->service->get($id);
-        return view('landlord.auth.roles.editor', compact('row', 'permissions'));
+        if ($row) {
+            $row->load('permissionGroups');
+        }
+        return view('landlord.auth.roles.editor', compact('row', 'permissions', 'permissionGroups'));
     }
 
     public function update(Request $request, $id)

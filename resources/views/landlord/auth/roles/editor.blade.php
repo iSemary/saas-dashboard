@@ -17,7 +17,32 @@
     </div>
 
     <div class="form-group">
-        <label for="permissions" class="form-label">@translate('permissions')</label>
+        <label for="permission_groups" class="form-label">@translate('permission_groups')</label>
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row">
+                    @foreach ($permissionGroups as $permissionGroup)
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input type="checkbox" name="permission_groups[]" id="permission_group_{{ $permissionGroup->id }}"
+                                    class="form-check-input" value="{{ $permissionGroup->id }}"
+                                    {{ isset($row) && $row->permissionGroups->contains($permissionGroup) ? 'checked' : '' }}>
+                                <label for="permission_group_{{ $permissionGroup->id }}" class="form-check-label">
+                                    {{ translate($permissionGroup->name) }}
+                                    @if($permissionGroup->description)
+                                        <small class="text-muted">({{ $permissionGroup->description }})</small>
+                                    @endif
+                                </label>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="permissions" class="form-label">@translate('individual_permissions')</label>
         <div class="card">
             <div class="card-body">
                 <div class="row">
