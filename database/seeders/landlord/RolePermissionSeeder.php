@@ -5,6 +5,7 @@ namespace Database\Seeders\landlord;
 use App\Constants\Landlord\Resources;
 use Illuminate\Database\Seeder;
 use Modules\Auth\Entities\Permission;
+use Modules\Auth\Entities\PermissionGroup;
 use Modules\Auth\Entities\Role;
 
 class RolePermissionSeeder extends Seeder
@@ -22,6 +23,7 @@ class RolePermissionSeeder extends Seeder
     {
         $this->seedRoles();
         $this->seedPermissions();
+        $this->seedPermissionGroups();
         $this->seedPermissionsToRoles();
     }
 
@@ -45,6 +47,30 @@ class RolePermissionSeeder extends Seeder
                     ['name' => "$action.{$resource['name']}", 'guard_name' => 'web'],
                     ['name' => "$action.{$resource['name']}", 'guard_name' => 'web']
                 );
+            }
+        }
+    }
+
+    private function seedPermissionGroups()
+    {
+        $permissionGroups = Resources::getPermissionGroups();
+
+        foreach ($permissionGroups as $groupData) {
+            $group = PermissionGroup::updateOrCreate(
+                ['name' => $groupData['name'], 'guard_name' => $groupData['guard_name'] ?? 'api'],
+                [
+                    'name' => $groupData['name'],
+                    'guard_name' => $groupData['guard_name'] ?? 'api',
+                    'description' => $groupData['description'] ?? null,
+                ]
+            );
+
+            // Sync permissions to the group
+            if (isset($groupData['permissions']) && !empty($groupData['permissions'])) {
+                $permissionIds = Permission::whereIn('name', $groupData['permissions'])
+                    ->pluck('id')
+                    ->toArray();
+                $group->permissions()->sync($permissionIds);
             }
         }
     }
