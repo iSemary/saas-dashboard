@@ -13,15 +13,30 @@ class TenantController extends Controller
         $subdomain = TenantHelper::getSubDomain();
 
         if ($subdomain === 'landlord') {
-            // Ensure landlord connection is set
-            config(['database.default' => 'landlord']);
             return app()->call('Modules\Auth\Http\Controllers\Landlord\DashboardController@index');
         }
 
         $tenant = Tenant::where("domain", $subdomain)->first();
         if ($subdomain !== 'www' && $subdomain !== '' && $tenant) {
             TenantHelper::makeCurrent($tenant->name);
-            return app()->call('Modules\Auth\Http\Controllers\Tenant\DashboardController@index');
+            
+            // If user is authenticated, redirect to Next.js dashboard
+            // If nginx is configured to proxy, redirect to /dashboard
+            // Otherwise, redirect to Next.js on port 3000
+            if (auth()->check()) {
+                if (env('NGINX_PROXY_ENABLED', false)) {
+                    // Nginx is proxying, so use same domain
+                    return redirect('/dashboard');
+                } else {
+                    // Direct connection to Next.js dev server
+                    $protocol = $request->getScheme();
+                    $host = $request->getHost();
+                    $frontendPort = env('FRONTEND_PORT', '3000');
+                    return redirect("{$protocol}://{$host}:{$frontendPort}/dashboard");
+                }
+            }
+            
+            return view('welcome');
         }
 
         return redirect()->route('login');

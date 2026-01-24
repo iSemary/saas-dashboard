@@ -17,6 +17,12 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // SetDatabaseConnection must run early for API routes, before CORS
+        $middleware->api(prepend: [
+            \App\Http\Middleware\SetDatabaseConnection::class,
+            \Illuminate\Http\Middleware\HandleCors::class,
+        ]);
+        
         $middleware->alias([
             '2fa' => \App\Http\Middleware\Validate2FA::class,
             'set-db-connection' => \App\Http\Middleware\SetDatabaseConnection::class,

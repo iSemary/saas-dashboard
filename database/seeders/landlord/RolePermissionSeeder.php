@@ -78,10 +78,10 @@ class RolePermissionSeeder extends Seeder
     private function seedPermissionsToRoles()
     {
         $roles = ['landlord'];
-        $permissions = Permission::all();
+        $permissions = Permission::where('guard_name', 'api')->get();
 
         foreach ($roles as $roleName) {
-            $role = Role::where('name', $roleName)->first();
+            $role = Role::where('name', $roleName)->where('guard_name', 'api')->first();
             if ($role) {
                 $role->syncPermissions($permissions);
             }

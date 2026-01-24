@@ -149,4 +149,18 @@ class Resources
             'customize' => 'Customize dashboards',
         ];
     }
+
+    public static function getPermissionGroups()
+    {
+        return [
+            [
+                'name' => 'template_management',
+                'guard_name' => 'api',
+                'description' => 'Template management permissions',
+                'permissions' => [
+                    'view.templates', 'create.templates', 'update.templates', 'delete.templates',
+                ],
+            ],
+        ];
+    }
 }

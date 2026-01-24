@@ -7,7 +7,8 @@ if (!function_exists('translate')) {
     function translate($key, $attributes = [], $locale = null)
     {
         $language = TranslateHelper::getLanguage();
-        return app(TranslateHelper::class)->getTranslationWithJsonFirst($key, $attributes, $language->locale);
+        $locale = $language ? $language->locale : app()->getLocale();
+        return app(TranslateHelper::class)->translate($key, $attributes, $locale);
     }
 }
 

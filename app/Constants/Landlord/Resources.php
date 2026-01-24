@@ -255,4 +255,88 @@ class Resources
             ]
         ];
     }
+
+    public static function getPermissionGroups()
+    {
+        return [
+            [
+                'name' => 'user_management',
+                'guard_name' => 'api',
+                'description' => 'User and system user management permissions',
+                'permissions' => [
+                    'read.users', 'create.users', 'update.users', 'delete.users', 'restore.users',
+                    'read.system_users', 'create.system_users', 'update.system_users', 'delete.system_users', 'restore.system_users',
+                ],
+            ],
+            [
+                'name' => 'role_permission_management',
+                'guard_name' => 'api',
+                'description' => 'Role and permission management',
+                'permissions' => [
+                    'read.roles', 'create.roles', 'update.roles', 'delete.roles', 'restore.roles',
+                    'read.permissions', 'create.permissions', 'update.permissions', 'delete.permissions', 'restore.permissions',
+                ],
+            ],
+            [
+                'name' => 'tenant_management',
+                'guard_name' => 'api',
+                'description' => 'Tenant and client management',
+                'permissions' => [
+                    'read.tenants', 'create.tenants', 'update.tenants', 'delete.tenants', 'restore.tenants',
+                    'read.clients', 'create.clients', 'update.clients', 'delete.clients', 'restore.clients',
+                ],
+            ],
+            [
+                'name' => 'content_management',
+                'guard_name' => 'api',
+                'description' => 'Content and localization management',
+                'permissions' => [
+                    'read.categories', 'create.categories', 'update.categories', 'delete.categories', 'restore.categories',
+                    'read.tags', 'create.tags', 'update.tags', 'delete.tags', 'restore.tags',
+                    'read.languages', 'create.languages', 'update.languages', 'delete.languages', 'restore.languages',
+                    'read.translations', 'create.translations', 'update.translations', 'delete.translations', 'restore.translations',
+                ],
+            ],
+            [
+                'name' => 'email_management',
+                'guard_name' => 'api',
+                'description' => 'Email templates, campaigns, and groups',
+                'permissions' => [
+                    'read.email_templates', 'create.email_templates', 'update.email_templates', 'delete.email_templates', 'restore.email_templates',
+                    'read.email_groups', 'create.email_groups', 'update.email_groups', 'delete.email_groups', 'restore.email_groups',
+                    'read.email_campaigns', 'create.email_campaigns', 'update.email_campaigns', 'delete.email_campaigns', 'restore.email_campaigns',
+                    'read.emails', 'send.emails', 'resend.emails',
+                ],
+            ],
+            [
+                'name' => 'subscription_management',
+                'guard_name' => 'api',
+                'description' => 'Plans, subscriptions, and payments',
+                'permissions' => [
+                    'read.plans', 'create.plans', 'update.plans', 'delete.plans', 'restore.plans',
+                    'read.subscriptions', 'create.subscriptions', 'update.subscriptions', 'delete.subscriptions', 'restore.subscriptions',
+                    'read.payment_methods', 'create.payment_methods', 'update.payment_methods', 'delete.payment_methods', 'restore.payment_methods',
+                    'read.payment_logs', 'create.payment_logs', 'update.payment_logs', 'delete.payment_logs', 'restore.payment_logs',
+                ],
+            ],
+            [
+                'name' => 'system_monitoring',
+                'guard_name' => 'api',
+                'description' => 'System logs, activity, and monitoring',
+                'permissions' => [
+                    'read.activity_logs', 'create.activity_logs', 'update.activity_logs', 'delete.activity_logs', 'restore.activity_logs',
+                    'read.login_attempts', 'create.login_attempts', 'update.login_attempts', 'delete.login_attempts', 'restore.login_attempts',
+                    'read.telescope', 'read.log_viewer', 'read.horizon',
+                ],
+            ],
+            [
+                'name' => 'file_management',
+                'guard_name' => 'api',
+                'description' => 'File and media management',
+                'permissions' => [
+                    'read.files', 'create.files', 'update.files', 'delete.files', 'manage.files',
+                ],
+            ],
+        ];
+    }
 }
