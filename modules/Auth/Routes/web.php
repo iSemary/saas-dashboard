@@ -48,6 +48,8 @@ Route::middleware('auth')->group(function () {
         // Tenant Dashboard API Routes
         Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::get('stats', [\Modules\Auth\Http\Controllers\Tenant\DashboardController::class, 'getStats'])->name('stats');
+            Route::get('analytics', [\Modules\Auth\Http\Controllers\Tenant\DashboardController::class, 'getAnalytics'])->name('analytics');
+            Route::get('kpis', [\Modules\Auth\Http\Controllers\Tenant\DashboardController::class, 'getKPIs'])->name('kpis');
         });
 
         // Tenant Profile Routes

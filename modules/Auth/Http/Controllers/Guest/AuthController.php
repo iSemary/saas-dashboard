@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Modules\Tenant\Helper\TenantHelper;
 use Modules\Tenant\Entities\Tenant;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Exception;
 use Session;
@@ -84,19 +85,39 @@ class AuthController extends ApiController
 
     private function handleSuccessfulLogin(LoginUserRequest $request): JsonResponse
     {
-        $user = auth()->user();
-        $response = $this->collectUserDetails($user);
+        try {
+            $user = auth()->user();
+            $response = $this->collectUserDetails($user);
 
-        $redirect = $this->handleRedirection($request);
+            $redirect = $this->handleRedirection($request);
 
-        $language = auth()->user()->language;
-        Session::put('language', $language);
-        Carbon::setLocale($language->locale);
+            // Handle language setting with null check
+            $language = $user->language;
+            if ($language) {
+                Session::put('language', $language);
+                Carbon::setLocale($language->locale);
+            } else {
+                // Fallback to default locale if language is not set
+                $defaultLocale = config('app.locale', 'en');
+                Carbon::setLocale($defaultLocale);
+            }
 
-        return $this->return(200, 'User Logged in Successfully', [
-            'user' => $response,
-            'redirect' => $redirect
-        ]);
+            return $this->return(200, 'User Logged in Successfully', [
+                'user' => $response,
+                'redirect' => $redirect
+            ]);
+        } catch (Exception $e) {
+            // Log the error and return JSON response instead of letting it bubble up
+            \Log::error('Login error: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return $this->return(500, 'An error occurred during login', [], [
+                'error' => env('APP_DEBUG') ? $e->getMessage() : 'Internal server error'
+            ]);
+        }
     }
 
     private function handleRedirection(Request $request)
@@ -105,10 +126,23 @@ class AuthController extends ApiController
         if ($subDomain) {
             $tenant = Tenant::where('domain', $subDomain)->first();
             if ($tenant) {
-                return TenantHelper::generateURL($tenant->name) . ($request->redirect ? "?redirect=" . $request->redirect : "");
+                // Redirect to Next.js dashboard
+                // Check if nginx is proxying or use direct port
+                $nginxProxyEnabled = env('NGINX_PROXY_ENABLED', true);
+                
+                if ($nginxProxyEnabled) {
+                    // Nginx is proxying, so use same domain
+                    return '/dashboard' . ($request->redirect ? "?redirect=" . $request->redirect : "");
+                } else {
+                    // Direct connection to Next.js dev server
+                    $protocol = $request->getScheme();
+                    $host = $request->getHost();
+                    $frontendPort = env('FRONTEND_PORT', '3000');
+                    return "{$protocol}://{$host}:{$frontendPort}/dashboard" . ($request->redirect ? "?redirect=" . $request->redirect : "");
+                }
             }
         }
-        return '/';
+        return '/dashboard';
     }
 
     private function handleFailedLogin(LoginUserRequest $request, $tenant): JsonResponse

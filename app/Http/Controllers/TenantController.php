@@ -21,10 +21,19 @@ class TenantController extends Controller
             TenantHelper::makeCurrent($tenant->name);
             
             // If user is authenticated, redirect to Next.js dashboard
-            // If nginx is configured to proxy, redirect to /dashboard
-            // Otherwise, redirect to Next.js on port 3000
+            // Check if request is coming from Next.js (has X-Requested-With header or is API)
+            // Otherwise, check nginx proxy or direct port access
             if (auth()->check()) {
-                if (env('NGINX_PROXY_ENABLED', false)) {
+                // Check if this is an API request or already in Next.js
+                if ($request->expectsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+                    return response()->json(['redirect' => '/dashboard']);
+                }
+                
+                // Check if nginx is proxying Next.js (check if /dashboard route exists in Laravel)
+                // If not, assume Next.js is proxied
+                $nginxProxyEnabled = env('NGINX_PROXY_ENABLED', true);
+                
+                if ($nginxProxyEnabled) {
                     // Nginx is proxying, so use same domain
                     return redirect('/dashboard');
                 } else {

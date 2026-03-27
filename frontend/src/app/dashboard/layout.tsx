@@ -26,7 +26,10 @@ import {
   CreditCard,
   FileText,
   Activity,
+  Search,
 } from "lucide-react"
+import { NotificationBell } from "@/components/notifications/NotificationBell"
+import { GlobalSearch } from "@/components/search/GlobalSearch"
 
 function NavIconLink({
   href,
@@ -165,6 +168,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const [searchOpen, setSearchOpen] = useState(false)
 
   useEffect(() => {
     if (!loading && !isAuthenticated) router.replace("/login")
@@ -248,14 +252,23 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               )}
             </nav>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="hidden text-sm text-muted-foreground md:inline">
-              {user?.name}
-            </span>
-            <Button variant="outline" size="sm" onClick={logout}>
-              Logout
-            </Button>
-          </div>
+                 <div className="flex items-center gap-3">
+                   <Button
+                     variant="ghost"
+                     size="icon"
+                     onClick={() => setSearchOpen(true)}
+                     className="relative"
+                   >
+                     <Search className="h-5 w-5" />
+                   </Button>
+                   <NotificationBell />
+                   <span className="hidden text-sm text-muted-foreground md:inline">
+                     {user?.name}
+                   </span>
+                   <Button variant="outline" size="sm" onClick={logout}>
+                     Logout
+                   </Button>
+                 </div>
         </div>
       </header>
 
@@ -311,8 +324,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </aside>
           <section>{children}</section>
         </div>
-      </main>
-    </div>
+        </main>
+      </div>
+      <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
     </TooltipProvider>
   )
 }

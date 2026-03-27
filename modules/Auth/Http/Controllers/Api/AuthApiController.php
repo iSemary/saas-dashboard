@@ -6,6 +6,8 @@ use App\Http\Controllers\ApiController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Modules\Auth\Entities\User;
 use Modules\Auth\Http\Controllers\Guest\AuthController as WebAuthController;
@@ -385,5 +387,305 @@ class AuthApiController extends ApiController
         return response()->json([
             'message' => 'Registration not implemented via API',
         ], 501);
+    }
+
+    /**
+     * Get user profile
+     */
+    public function getProfile(Request $request): JsonResponse
+    {
+        $user = $request->user('api');
+        $userData = $this->formatUserData($user);
+        return response()->json(['data' => $userData]);
+    }
+
+    /**
+     * Update user profile
+     */
+    public function updateProfile(Request $request): JsonResponse
+    {
+        $user = $request->user('api');
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|max:255|unique:users,email,' . $user->id,
+            'username' => 'sometimes|string|max:255|unique:users,username,' . $user->id,
+            'phone' => 'nullable|string|max:255',
+            'address' => 'nullable|string',
+            'timezone' => 'nullable|string|max:255',
+        ]);
+
+        $user->update($validated);
+        
+        if ($request->has('phone') || $request->has('address') || $request->has('timezone')) {
+            $user->setMeta([
+                'phone' => $validated['phone'] ?? null,
+                'address' => $validated['address'] ?? null,
+                'timezone' => $validated['timezone'] ?? null,
+            ]);
+        }
+
+        return response()->json([
+            'data' => $this->formatUserData($user->fresh()),
+            'message' => 'Profile updated successfully'
+        ]);
+    }
+
+    /**
+     * Upload avatar
+     */
+    public function uploadAvatar(Request $request): JsonResponse
+    {
+        $request->validate([
+            'avatar' => 'required|image|max:2048',
+        ]);
+
+        $user = $request->user('api');
+        $avatar = $request->file('avatar');
+        $path = $avatar->store('avatars', 'public');
+        
+        $user->setMeta(['avatar' => $path]);
+
+        return response()->json([
+            'data' => [
+                'avatar' => Storage::url($path),
+            ],
+            'message' => 'Avatar uploaded successfully'
+        ]);
+    }
+
+    /**
+     * Remove avatar
+     */
+    public function removeAvatar(Request $request): JsonResponse
+    {
+        $user = $request->user('api');
+        $avatar = $user->meta('avatar');
+        
+        if ($avatar && Storage::disk('public')->exists($avatar)) {
+            Storage::disk('public')->delete($avatar);
+        }
+        
+        $user->setMeta(['avatar' => null]);
+
+        return response()->json([
+            'message' => 'Avatar removed successfully'
+        ]);
+    }
+
+    /**
+     * Change password
+     */
+    public function changePassword(Request $request): JsonResponse
+    {
+        $request->validate([
+            'current_password' => 'required|string',
+            'new_password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = $request->user('api');
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'message' => 'Current password is incorrect'
+            ], 422);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->new_password)
+        ]);
+
+        return response()->json([
+            'message' => 'Password changed successfully'
+        ]);
+    }
+
+    /**
+     * Get active sessions
+     */
+    public function getSessions(Request $request): JsonResponse
+    {
+        $user = $request->user('api');
+        // Get Passport tokens for the user
+        $tokens = $user->tokens()->get();
+        
+        $sessions = $tokens->map(function ($token) {
+            return [
+                'id' => $token->id,
+                'name' => $token->name,
+                'last_used_at' => $token->last_used_at?->toIso8601String(),
+                'created_at' => $token->created_at->toIso8601String(),
+            ];
+        });
+
+        return response()->json(['data' => $sessions]);
+    }
+
+    /**
+     * Revoke session
+     */
+    public function revokeSession(Request $request, $id): JsonResponse
+    {
+        $user = $request->user('api');
+        $token = $user->tokens()->find($id);
+        
+        if (!$token) {
+            return response()->json([
+                'message' => 'Session not found'
+            ], 404);
+        }
+
+        $token->revoke();
+
+        return response()->json([
+            'message' => 'Session revoked successfully'
+        ]);
+    }
+
+    /**
+     * Get API keys
+     */
+    public function getApiKeys(Request $request): JsonResponse
+    {
+        $user = $request->user('api');
+        $tokens = $user->tokens()->get();
+        
+        $apiKeys = $tokens->map(function ($token) {
+            return [
+                'id' => $token->id,
+                'name' => $token->name,
+                'last_used_at' => $token->last_used_at?->toIso8601String(),
+                'created_at' => $token->created_at->toIso8601String(),
+                'scopes' => $token->scopes ?? [],
+            ];
+        });
+
+        return response()->json(['data' => $apiKeys]);
+    }
+
+    /**
+     * Create API key
+     */
+    public function createApiKey(Request $request): JsonResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'scopes' => 'nullable|array',
+        ]);
+
+        $user = $request->user('api');
+        $token = $user->createToken($request->name, $request->scopes ?? ['*']);
+
+        return response()->json([
+            'data' => [
+                'id' => $token->token->id,
+                'name' => $token->token->name,
+                'token' => $token->accessToken, // Only shown once
+                'created_at' => $token->token->created_at->toIso8601String(),
+            ],
+            'message' => 'API key created successfully. Please save the token as it will not be shown again.'
+        ], 201);
+    }
+
+    /**
+     * Revoke API key
+     */
+    public function revokeApiKey(Request $request, $id): JsonResponse
+    {
+        $user = $request->user('api');
+        $token = $user->tokens()->find($id);
+        
+        if (!$token) {
+            return response()->json([
+                'message' => 'API key not found'
+            ], 404);
+        }
+
+        $token->revoke();
+
+        return response()->json([
+            'message' => 'API key revoked successfully'
+        ]);
+    }
+
+    /**
+     * Global search
+     */
+    public function globalSearch(Request $request): JsonResponse
+    {
+        $request->validate([
+            'q' => 'required|string|min:2',
+            'types' => 'nullable|array',
+        ]);
+
+        $query = $request->get('q');
+        $types = $request->get('types', []);
+        $results = [];
+
+        // Search customers/companies
+        if (empty($types) || in_array('customers', $types)) {
+            try {
+                $companies = \Modules\CRM\Models\Company::where('name', 'like', "%{$query}%")
+                    ->orWhere('email', 'like', "%{$query}%")
+                    ->limit(5)
+                    ->get();
+                
+                $results['customers'] = $companies->map(function ($company) {
+                    return [
+                        'id' => $company->id,
+                        'type' => 'customer',
+                        'title' => $company->name,
+                        'description' => $company->email,
+                        'url' => `/dashboard/customers/${company->id}`,
+                    ];
+                });
+            } catch (\Exception $e) {
+                $results['customers'] = [];
+            }
+        }
+
+        // Search tickets
+        if (empty($types) || in_array('tickets', $types)) {
+            try {
+                $tickets = \Modules\Ticket\Entities\Ticket::where('title', 'like', "%{$query}%")
+                    ->orWhere('ticket_number', 'like', "%{$query}%")
+                    ->limit(5)
+                    ->get();
+                
+                $results['tickets'] = $tickets->map(function ($ticket) {
+                    return [
+                        'id' => $ticket->id,
+                        'type' => 'ticket',
+                        'title' => $ticket->title,
+                        'description' => $ticket->ticket_number,
+                        'url' => `/dashboard/tickets/${ticket->id}`,
+                    ];
+                });
+            } catch (\Exception $e) {
+                $results['tickets'] = [];
+            }
+        }
+
+        // Search documents
+        if (empty($types) || in_array('documents', $types)) {
+            try {
+                $files = \Modules\FileManager\Entities\File::where('original_name', 'like', "%{$query}%")
+                    ->limit(5)
+                    ->get();
+                
+                $results['documents'] = $files->map(function ($file) {
+                    return [
+                        'id' => $file->id,
+                        'type' => 'document',
+                        'title' => $file->original_name,
+                        'description' => $file->mime_type,
+                        'url' => `/dashboard/documents`,
+                    ];
+                });
+            } catch (\Exception $e) {
+                $results['documents'] = [];
+            }
+        }
+
+        return response()->json(['data' => $results]);
     }
 }

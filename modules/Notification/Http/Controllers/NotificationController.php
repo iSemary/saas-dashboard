@@ -4,6 +4,7 @@ namespace Modules\Notification\Http\Controllers;
 
 use App\Http\Controllers\ApiController;
 use Modules\Notification\Services\NotificationService;
+use Illuminate\Http\Request;
 
 class NotificationController extends ApiController
 {
@@ -36,6 +37,57 @@ class NotificationController extends ApiController
     public function stats()
     {
         return $this->return(200, "Notification statistics", $this->service->getStats());
+    }
+
+    public function unreadCount()
+    {
+        $count = $this->service->getUnreadCount();
+        return $this->return(200, "Unread count retrieved", ['count' => $count]);
+    }
+
+    public function getPreferences()
+    {
+        $user = auth()->user();
+        $settingsService = app(\Modules\Auth\Services\SettingsService::class);
+        $result = $settingsService->getNotificationSettings($user->id);
+        
+        if ($result['success']) {
+            $settings = $result['data'];
+            return $this->return(200, "Notification preferences retrieved", [
+                'email' => $settings['notifications_email'] ?? true,
+                'push' => $settings['notifications_push'] ?? true,
+                'in_app' => true, // Always enabled
+            ]);
+        }
+        
+        return $this->return(200, "Notification preferences retrieved", [
+            'email' => true,
+            'push' => true,
+            'in_app' => true,
+        ]);
+    }
+
+    public function updatePreferences(Request $request)
+    {
+        $user = auth()->user();
+        $settingsService = app(\Modules\Auth\Services\SettingsService::class);
+        
+        $data = [
+            'notifications_email' => $request->input('email', true),
+            'notifications_push' => $request->input('push', true),
+        ];
+        
+        $result = $settingsService->updateNotificationSettings($user->id, $data);
+        
+        if ($result['success']) {
+            return $this->return(200, "Notification preferences updated", [
+                'email' => $data['notifications_email'],
+                'push' => $data['notifications_push'],
+                'in_app' => true,
+            ]);
+        }
+        
+        return $this->return(400, $result['message'] ?? "Failed to update preferences");
     }
 
     public function markAllAsRead()

@@ -26,12 +26,24 @@ class Handler extends ExceptionHandler {
      * @param $request
      * @param Throwable $exception
      * 
-     * @return JsonResponse
+     * @return JsonResponse|\Illuminate\Http\Response
      */
-    public function render($request, Throwable $exception): JsonResponse {
-        return (new ApiController)->return(400, env("APP_DEBUG") ? $exception->getMessage() : "Something went wrong!", [], env("APP_DEBUG") ?
-            ['line' => $exception->getLine(), 'file' => $exception->getFile(), 'trace' => $exception->getTrace(),]
-            : []);
+    public function render($request, Throwable $exception) {
+        // Always return JSON for AJAX requests or API routes
+        if ($request->expectsJson() || $request->ajax() || $request->wantsJson() || str_starts_with($request->path(), 'api/')) {
+            $statusCode = 500;
+            if ($exception instanceof \Symfony\Component\HttpKernel\Exception\HttpException) {
+                $statusCode = $exception->getStatusCode();
+            } elseif ($exception instanceof \Illuminate\Http\Exceptions\HttpResponseException) {
+                $statusCode = $exception->getResponse()->getStatusCode();
+            }
+            return (new ApiController)->return($statusCode, env("APP_DEBUG") ? $exception->getMessage() : "Something went wrong!", [], env("APP_DEBUG") ?
+                ['line' => $exception->getLine(), 'file' => $exception->getFile(), 'trace' => $exception->getTrace(),]
+                : []);
+        }
+        
+        // For non-AJAX requests, use parent handler (which returns HTML)
+        return parent::render($request, $exception);
     }
 
 

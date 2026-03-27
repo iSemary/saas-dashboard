@@ -29,4 +29,20 @@ class Folder extends Model implements Auditable
     {
         return $this->hasMany(File::class);
     }
+
+    /**
+     * Get the parent folder.
+     */
+    public function parent()
+    {
+        return $this->belongsTo(Folder::class, 'parent_id');
+    }
+
+    /**
+     * Get the child folders.
+     */
+    public function children()
+    {
+        return $this->hasMany(Folder::class, 'parent_id');
+    }
 }
