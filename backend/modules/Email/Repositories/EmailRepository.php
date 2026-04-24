@@ -324,4 +324,19 @@ class EmailRepository implements EmailInterface
     {
         return $this->emailRecipientService->count() + $this->emailSubscriberService->count();
     }
+
+    public function paginate(array $filters = [], int $perPage = 50)
+    {
+        $query = EmailLog::query();
+        if (isset($filters['search'])) {
+            $query->where('subject', 'like', "%{$filters['search']}%")
+                  ->orWhere('recipient', 'like', "%{$filters['search']}%");
+        }
+        return $query->orderBy('created_at', 'desc')->paginate($perPage);
+    }
+
+    public function delete($id)
+    {
+        return EmailLog::findOrFail($id)->delete();
+    }
 }

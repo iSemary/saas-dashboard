@@ -21,6 +21,16 @@ class ModuleService
         return $this->repository->all();
     }
 
+    public function list(array $filters = [], int $perPage = 50)
+    {
+        return $this->repository->paginate($filters, $perPage);
+    }
+
+    public function findOrFail(int $id)
+    {
+        return $this->repository->findOrFail($id);
+    }
+
     public function getDataTables()
     {
         return $this->repository->datatables();

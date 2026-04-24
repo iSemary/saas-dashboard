@@ -2,6 +2,8 @@
 
 namespace Modules\Development\Services;
 
+use Modules\Development\DTOs\CreateIpBlacklistData;
+use Modules\Development\DTOs\UpdateIpBlacklistData;
 use Modules\Development\Entities\IpBlacklist;
 use Modules\Development\Repositories\IpBlacklistInterface;
 
@@ -21,6 +23,11 @@ class IpBlacklistService
         return $this->repository->all();
     }
 
+    public function list(array $filters = [], int $perPage = 50)
+    {
+        return $this->repository->paginate($filters, $perPage);
+    }
+
     public function getDataTables()
     {
         return $this->repository->datatables();
@@ -31,14 +38,16 @@ class IpBlacklistService
         return $this->repository->find($id);
     }
 
-    public function create(array $data)
+    public function create(CreateIpBlacklistData $data)
     {
-        return $this->repository->create($data);
+        return $this->repository->create([
+            'ip_address' => $data->ip_address,
+        ]);
     }
 
-    public function update($id, array $data)
+    public function update($id, UpdateIpBlacklistData $data)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($id, $data->toArray());
     }
 
     public function delete($id)

@@ -1,0 +1,37 @@
+"use client";
+
+import { SimpleCRUDPage, type SimpleCRUDConfig } from "@/components/simple-crud-page";
+import { listProvinces, createProvince, deleteProvince, type ProvinceRow } from "@/lib/resources";
+
+const config: SimpleCRUDConfig<ProvinceRow> = {
+  titleKey: "dashboard.provinces.title",
+  titleFallback: "Provinces",
+  subtitleKey: "dashboard.provinces.subtitle",
+  subtitleFallback: "Manage provinces/states within countries.",
+  createLabelKey: "dashboard.provinces.create",
+  createLabelFallback: "Add Province",
+  fields: [
+    { name: "name", label: "Name", required: true },
+    { name: "code", label: "Code" },
+    { name: "country_id", label: "Country ID", type: "number", required: true },
+  ],
+  listFn: listProvinces,
+  createFn: createProvince,
+  deleteFn: deleteProvince,
+  columns: (t) => [
+    { accessorKey: "id", header: t("dashboard.users.col_id", "ID") },
+    { accessorKey: "name", header: t("dashboard.users.col_name", "Name") },
+    { accessorKey: "code", header: t("dashboard.provinces.code", "Code") },
+    {
+      id: "country",
+      header: t("dashboard.provinces.country", "Country"),
+      cell: ({ row }: { row: { original: ProvinceRow } }) => row.original.country?.name ?? "—",
+    },
+  ],
+  toForm: (row) => ({ name: row.name, code: row.code ?? "", country_id: String(row.country_id) }),
+  fromForm: (form) => ({ ...form, country_id: Number(form.country_id) }),
+};
+
+export default function ProvincesPage() {
+  return <SimpleCRUDPage config={config} />;
+}

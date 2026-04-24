@@ -3,22 +3,17 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Webhook;
-use App\Models\WebhookLog;
+use App\Services\WebhookService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 
 class WebhookApiController extends Controller
 {
+    public function __construct(protected WebhookService $webhookService) {}
+
     public function index(Request $request)
     {
         try {
-            $webhooks = Webhook::with('creator')
-                ->where('created_by', $request->user('api')->id)
-                ->orderBy('created_at', 'desc')
-                ->get();
-
+            $webhooks = $this->webhookService->listByUser($request->user('api')->id);
             return response()->json(['data' => $webhooks]);
         } catch (\Exception $e) {
             return response()->json([
@@ -43,12 +38,8 @@ class WebhookApiController extends Controller
             ]);
 
             $validated['created_by'] = $request->user('api')->id;
-            $validated['status'] = $validated['status'] ?? 'active';
-            $validated['timeout'] = $validated['timeout'] ?? 30;
-            $validated['retry_count'] = $validated['retry_count'] ?? 3;
-            $validated['secret'] = $validated['secret'] ?? Str::random(32);
 
-            $webhook = Webhook::create($validated);
+            $webhook = $this->webhookService->create($validated);
 
             return response()->json([
                 'data' => $webhook->load('creator'),
@@ -70,9 +61,7 @@ class WebhookApiController extends Controller
     public function show($id)
     {
         try {
-            $webhook = Webhook::with(['creator', 'logs' => function ($query) {
-                $query->orderBy('created_at', 'desc')->limit(50);
-            }])->findOrFail($id);
+            $webhook = $this->webhookService->show($id);
             return response()->json(['data' => $webhook]);
         } catch (\Exception $e) {
             return response()->json([
@@ -85,10 +74,7 @@ class WebhookApiController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $webhook = Webhook::findOrFail($id);
-
-            // Check ownership
-            if ($webhook->created_by !== $request->user('api')->id) {
+            if (!$this->webhookService->isOwner($id, $request->user('api')->id)) {
                 return response()->json(['message' => 'Unauthorized'], 403);
             }
 
@@ -103,7 +89,7 @@ class WebhookApiController extends Controller
                 'headers' => 'nullable|array',
             ]);
 
-            $webhook->update($validated);
+            $webhook = $this->webhookService->update($id, $validated);
 
             return response()->json([
                 'data' => $webhook->load('creator'),
@@ -120,14 +106,11 @@ class WebhookApiController extends Controller
     public function destroy($id)
     {
         try {
-            $webhook = Webhook::findOrFail($id);
-
-            // Check ownership
-            if ($webhook->created_by !== request()->user('api')->id) {
+            if (!$this->webhookService->isOwner($id, request()->user('api')->id)) {
                 return response()->json(['message' => 'Unauthorized'], 403);
             }
 
-            $webhook->delete();
+            $this->webhookService->delete($id);
 
             return response()->json([
                 'message' => 'Webhook deleted successfully'
@@ -147,17 +130,11 @@ class WebhookApiController extends Controller
                 'payload' => 'nullable|array',
             ]);
 
-            $webhook = Webhook::findOrFail($id);
-
-            // Check ownership
-            if ($webhook->created_by !== $request->user('api')->id) {
-                return response()->json(['message' => 'Unauthorized'], 403);
-            }
-
-            $payload = $request->get('payload', ['test' => true, 'timestamp' => now()->toIso8601String()]);
-            
-            // Send test webhook
-            $response = $this->sendWebhook($webhook, 'test', $payload);
+            $response = $this->webhookService->test(
+                $id,
+                $request->user('api')->id,
+                $request->get('payload', [])
+            );
 
             return response()->json([
                 'data' => $response,
@@ -174,17 +151,12 @@ class WebhookApiController extends Controller
     public function logs(Request $request, $id)
     {
         try {
-            $webhook = Webhook::findOrFail($id);
-
-            // Check ownership
-            if ($webhook->created_by !== $request->user('api')->id) {
+            if (!$this->webhookService->isOwner($id, $request->user('api')->id)) {
                 return response()->json(['message' => 'Unauthorized'], 403);
             }
 
             $perPage = $request->get('per_page', 20);
-            $logs = WebhookLog::where('webhook_id', $id)
-                ->orderBy('created_at', 'desc')
-                ->paginate($perPage);
+            $logs = $this->webhookService->getLogs($id, $request->user('api')->id, $perPage);
 
             return response()->json([
                 'data' => [
@@ -200,51 +172,6 @@ class WebhookApiController extends Controller
                 'message' => 'Failed to retrieve webhook logs',
                 'error' => $e->getMessage()
             ], 500);
-        }
-    }
-
-    protected function sendWebhook(Webhook $webhook, string $event, array $payload)
-    {
-        $headers = $webhook->headers ?? [];
-        $headers['Content-Type'] = 'application/json';
-        $headers['User-Agent'] = 'SaaS-Dashboard-Webhook/1.0';
-
-        // Add signature if secret is set
-        if ($webhook->secret) {
-            $signature = hash_hmac('sha256', json_encode($payload), $webhook->secret);
-            $headers['X-Webhook-Signature'] = $signature;
-        }
-
-        try {
-            $response = Http::timeout($webhook->timeout)
-                ->withHeaders($headers)
-                ->post($webhook->url, $payload);
-
-            // Log the webhook
-            WebhookLog::create([
-                'webhook_id' => $webhook->id,
-                'event' => $event,
-                'payload' => $payload,
-                'status_code' => $response->status(),
-                'response' => $response->body(),
-                'delivered_at' => now(),
-            ]);
-
-            return [
-                'success' => $response->successful(),
-                'status_code' => $response->status(),
-                'response' => $response->body(),
-            ];
-        } catch (\Exception $e) {
-            // Log failed webhook
-            WebhookLog::create([
-                'webhook_id' => $webhook->id,
-                'event' => $event,
-                'payload' => $payload,
-                'error' => $e->getMessage(),
-            ]);
-
-            throw $e;
         }
     }
 }

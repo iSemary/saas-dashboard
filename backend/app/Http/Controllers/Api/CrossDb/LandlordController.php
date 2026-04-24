@@ -3,24 +3,16 @@
 namespace App\Http\Controllers\Api\CrossDb;
 
 use App\Http\Controllers\Controller;
-use App\Services\CrossDatabaseService;
+use App\Services\CrossDb\LandlordService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Modules\Utilities\Entities\Module;
-use Modules\Customer\Entities\Brand;
-use Modules\Customer\Entities\Tenant\Brand as TenantBrand;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class LandlordController extends Controller
 {
-    protected $crossDbService;
-
-    public function __construct(CrossDatabaseService $crossDbService)
+    public function __construct(protected LandlordService $landlordService)
     {
-        $this->crossDbService = $crossDbService;
         $this->middleware('auth:api');
-        $this->middleware('throttle:60,1'); // Rate limiting
+        $this->middleware('throttle:60,1');
     }
 
     /**
@@ -29,32 +21,12 @@ class LandlordController extends Controller
     public function getModules(Request $request): JsonResponse
     {
         try {
-            // Verify cross-database request
             if (!$request->hasHeader('X-Cross-DB-Request')) {
                 return response()->json(['error' => 'Unauthorized cross-database request'], 403);
             }
 
-            $query = Module::query();
-
-            // Apply filters
-            if ($request->has('search')) {
-                $query->where(function ($q) use ($request) {
-                    $q->where('name', 'like', '%' . $request->search . '%')
-                      ->orWhere('description', 'like', '%' . $request->search . '%');
-                });
-            }
-
-            if ($request->has('status')) {
-                $query->where('status', $request->status);
-            }
-
-            if ($request->has('module_key')) {
-                $query->where('module_key', $request->module_key);
-            }
-
-            $modules = $query->select(['id', 'module_key', 'name', 'description', 'icon', 'status'])
-                           ->orderBy('name')
-                           ->get();
+            $filters = $request->only(['search', 'status', 'module_key']);
+            $modules = $this->landlordService->getModules($filters);
 
             return response()->json([
                 'success' => true,
@@ -82,8 +54,7 @@ class LandlordController extends Controller
                 return response()->json(['error' => 'Unauthorized cross-database request'], 403);
             }
 
-            $module = Module::select(['id', 'module_key', 'name', 'description', 'icon', 'status'])
-                          ->findOrFail($id);
+            $module = $this->landlordService->getModule($id);
 
             return response()->json([
                 'success' => true,
@@ -111,18 +82,7 @@ class LandlordController extends Controller
             }
 
             $ids = $request->input('ids', []);
-            
-            if (empty($ids)) {
-                return response()->json([
-                    'success' => true,
-                    'data' => [],
-                    'count' => 0
-                ]);
-            }
-
-            $modules = Module::whereIn('id', $ids)
-                           ->select(['id', 'module_key', 'name', 'description', 'icon', 'status'])
-                           ->get();
+            $modules = $this->landlordService->getModulesByIds($ids);
 
             return response()->json([
                 'success' => true,
@@ -150,11 +110,7 @@ class LandlordController extends Controller
                 return response()->json(['error' => 'Unauthorized cross-database request'], 403);
             }
 
-            $stats = [
-                'total_modules' => Module::count(),
-                'active_modules' => Module::where('status', 'active')->count(),
-                'inactive_modules' => Module::where('status', 'inactive')->count(),
-            ];
+            $stats = $this->landlordService->getModuleStats();
 
             return response()->json([
                 'success' => true,

@@ -2,6 +2,8 @@
 
 namespace Modules\Customer\Services;
 
+use Modules\Customer\DTOs\CreateBranchData;
+use Modules\Customer\DTOs\UpdateBranchData;
 use Modules\Customer\Entities\Branch;
 use Modules\Customer\Repository\BranchRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -35,34 +37,48 @@ class BranchService
         return $this->branchRepository->getById($id);
     }
 
+    public function findOrFail(int $id): Branch
+    {
+        return Branch::findOrFail($id);
+    }
+
     public function getByCode(string $code): ?Branch
     {
         return $this->branchRepository->getByCode($code);
     }
 
-    public function create(array $data): Branch
+    public function create(CreateBranchData $data): Branch
     {
+        $arrayData = [
+            'name' => $data->name,
+            'slug' => $data->slug,
+            'brand_id' => $data->brand_id,
+            'is_active' => $data->is_active ?? true,
+        ];
+
         // Generate unique code if not provided
-        if (empty($data['code'])) {
-            $data['code'] = $this->generateUniqueCode($data['name'], $data['brand_id']);
+        if (empty($arrayData['code'])) {
+            $arrayData['code'] = $this->generateUniqueCode($arrayData['name'], $arrayData['brand_id']);
         }
 
-        return $this->branchRepository->create($data);
+        return $this->branchRepository->create($arrayData);
     }
 
-    public function update(int $id, array $data): bool
+    public function update(int $id, UpdateBranchData $data): bool
     {
         $branch = $this->getById($id);
         if (!$branch) {
             return false;
         }
 
+        $arrayData = $data->toArray();
+
         // Generate unique code if not provided and name changed
-        if (empty($data['code']) && isset($data['name']) && $data['name'] !== $branch->name) {
-            $data['code'] = $this->generateUniqueCode($data['name'], $branch->brand_id, $id);
+        if (empty($arrayData['code']) && isset($arrayData['name']) && $arrayData['name'] !== $branch->name) {
+            $arrayData['code'] = $this->generateUniqueCode($arrayData['name'], $branch->brand_id, $id);
         }
 
-        return $this->branchRepository->update($id, $data);
+        return $this->branchRepository->update($id, $arrayData);
     }
 
     public function delete(int $id): bool
@@ -208,7 +224,7 @@ class BranchService
     public function downloadTemplate(): string
     {
         $templatePath = storage_path('app/templates/branches_template.xlsx');
-        
+
         // Create template if it doesn't exist
         if (!file_exists($templatePath)) {
             $this->createTemplate($templatePath);
@@ -230,7 +246,7 @@ class BranchService
 
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        
+
         foreach ($templateData as $rowIndex => $row) {
             foreach ($row as $colIndex => $value) {
                 $sheet->setCellValueByColumnAndRow($colIndex + 1, $rowIndex + 1, $value);
@@ -238,13 +254,13 @@ class BranchService
         }
 
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-        
+
         // Ensure directory exists
         $dir = dirname($path);
         if (!is_dir($dir)) {
             mkdir($dir, 0755, true);
         }
-        
+
         $writer->save($path);
     }
 
@@ -285,7 +301,7 @@ class BranchService
     public function getBranchesStatistics(): array
     {
         $stats = $this->getDashboardStats();
-        
+
         return [
             'total_branches' => $stats['total'],
             'active_branches' => $stats['active'],

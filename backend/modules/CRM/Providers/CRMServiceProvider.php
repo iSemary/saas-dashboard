@@ -36,6 +36,11 @@ class CRMServiceProvider extends ServiceProvider
     {
         $this->app->register(EventServiceProvider::class);
         // $this->app->register(RouteServiceProvider::class);
+
+        // CRM Repository Bindings
+        $this->app->bind(\Modules\CRM\Repositories\CompanyRepositoryInterface::class, \Modules\CRM\Repositories\CompanyRepository::class);
+        $this->app->bind(\Modules\CRM\Repositories\ContactRepositoryInterface::class, \Modules\CRM\Repositories\ContactRepository::class);
+        $this->app->bind(\Modules\CRM\Repositories\CrmDashboardRepositoryInterface::class, \Modules\CRM\Repositories\CrmDashboardRepository::class);
     }
 
     /**

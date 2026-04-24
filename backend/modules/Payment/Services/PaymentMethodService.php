@@ -2,6 +2,7 @@
 
 namespace Modules\Payment\Services;
 
+use Modules\Payment\DTOs\CreatePaymentMethodData;
 use Modules\Payment\Entities\PaymentMethod;
 use Modules\Payment\Repositories\PaymentMethodInterface;
 
@@ -31,9 +32,13 @@ class PaymentMethodService
         return $this->repository->find($id);
     }
 
-    public function create(array $data)
+    public function create(CreatePaymentMethodData $data)
     {
-        return $this->repository->create($data);
+        return $this->repository->create([
+            'name' => $data->name,
+            'slug' => $data->slug,
+            'is_active' => $data->is_active ?? true,
+        ]);
     }
 
     public function update($id, array $data)

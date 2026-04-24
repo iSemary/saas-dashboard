@@ -2,6 +2,8 @@
 
 namespace Modules\Customer\Services;
 
+use Modules\Customer\DTOs\CreateBrandData;
+use Modules\Customer\DTOs\UpdateBrandData;
 use Modules\Customer\Entities\Brand;
 use Modules\Customer\Repository\BrandRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -38,38 +40,38 @@ class BrandService
         return $this->brandRepository->getById($id);
     }
 
+    public function findOrFail(int $id): Brand
+    {
+        return Brand::findOrFail($id);
+    }
+
     public function getBySlug(string $slug): ?Brand
     {
         return $this->brandRepository->getBySlug($slug);
     }
 
-    public function create(array $data): Brand
+    public function create(CreateBrandData $data): Brand
     {
-        // Handle logo upload if present
-        if (isset($data['logo']) && $data['logo'] instanceof UploadedFile) {
-            $data['logo'] = $this->uploadLogo($data['logo']);
-        }
+        $arrayData = [
+            'name' => $data->name,
+            'slug' => $data->slug,
+            'domain' => $data->domain,
+            'is_active' => $data->is_active ?? true,
+        ];
 
-        return $this->brandRepository->create($data);
+        return $this->brandRepository->create($arrayData);
     }
 
-    public function update(int $id, array $data): bool
+    public function update(int $id, UpdateBrandData $data): bool
     {
         $brand = $this->getById($id);
         if (!$brand) {
             return false;
         }
 
-        // Handle logo upload if present
-        if (isset($data['logo']) && $data['logo'] instanceof UploadedFile) {
-            // Delete old logo if exists
-            if ($brand->logo) {
-                $this->deleteLogo($brand->logo);
-            }
-            $data['logo'] = $this->uploadLogo($data['logo']);
-        }
+        $arrayData = $data->toArray();
 
-        return $this->brandRepository->update($id, $data);
+        return $this->brandRepository->update($id, $arrayData);
     }
 
     public function delete(int $id): bool

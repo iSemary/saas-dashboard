@@ -10,10 +10,13 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
         using: function () {
+            // API routes
+            Route::prefix('api')->middleware(['api', 'set-db-connection', 'ip.blacklist'])->group(base_path('routes/api/modules.php'));
+
+            // Laravel web routes (with auth)
             Route::middleware(['web', 'set-db-connection', 'ip.blacklist'])->group(base_path('routes/web.php'));
             Route::middleware(['web', 'set-db-connection', 'ip.blacklist'])->group(base_path('routes/landlord/web.php'));
             Route::middleware(['web', 'set-db-connection', 'ip.blacklist'])->group(base_path('routes/modules.php'));
-            Route::prefix('api')->middleware(['api', 'set-db-connection', 'ip.blacklist'])->group(base_path('routes/api/modules.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware) {
@@ -22,7 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\SetDatabaseConnection::class,
             \Illuminate\Http\Middleware\HandleCors::class,
         ]);
-        
+
         $middleware->alias([
             '2fa' => \App\Http\Middleware\Validate2FA::class,
             'set-db-connection' => \App\Http\Middleware\SetDatabaseConnection::class,

@@ -2,6 +2,8 @@
 
 namespace Modules\Utilities\Services;
 
+use Modules\Utilities\DTOs\CreateCurrencyData;
+use Modules\Utilities\DTOs\UpdateCurrencyData;
 use Modules\Utilities\Entities\Currency;
 use Modules\Utilities\Repositories\CurrencyInterface;
 
@@ -21,6 +23,16 @@ class CurrencyService
         return $this->repository->all();
     }
 
+    public function list(array $filters = [], int $perPage = 50)
+    {
+        return $this->repository->paginate($filters, $perPage);
+    }
+
+    public function findOrFail(int $id)
+    {
+        return $this->repository->findOrFail($id);
+    }
+
     public function getDataTables()
     {
         return $this->repository->datatables();
@@ -31,14 +43,19 @@ class CurrencyService
         return $this->repository->find($id);
     }
 
-    public function create(array $data)
+    public function create(CreateCurrencyData $data)
     {
-        return $this->repository->create($data);
+        return $this->repository->create([
+            'name' => $data->name,
+            'code' => $data->code,
+            'symbol' => $data->symbol,
+            'is_active' => $data->is_active,
+        ]);
     }
 
-    public function update($id, array $data)
+    public function update($id, UpdateCurrencyData $data)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($id, $data->toArray());
     }
 
     public function delete($id)

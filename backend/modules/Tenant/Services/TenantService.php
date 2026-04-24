@@ -2,6 +2,8 @@
 
 namespace Modules\Tenant\Services;
 
+use Modules\Tenant\DTOs\CreateTenantData;
+use Modules\Tenant\DTOs\UpdateTenantData;
 use Modules\Tenant\Entities\Tenant;
 use Modules\Tenant\Repositories\TenantInterface;
 
@@ -21,6 +23,26 @@ class TenantService
         return $this->repository->all();
     }
 
+    public function list(array $filters = [], int $perPage = 50)
+    {
+        return $this->repository->paginate($filters, $perPage);
+    }
+
+    public function findOrFail(int $id): Tenant
+    {
+        return Tenant::findOrFail($id);
+    }
+
+    public function create(CreateTenantData $data): Tenant
+    {
+        return $this->repository->create([
+            'name' => $data->name,
+            'domain' => $data->domain,
+            'database_name' => $data->database_name,
+            'is_active' => $data->is_active ?? true,
+        ]);
+    }
+
     public function getDataTables()
     {
         return $this->repository->datatables();
@@ -31,9 +53,9 @@ class TenantService
         return $this->repository->find($id);
     }
 
-    public function update($id, array $data)
+    public function update($id, UpdateTenantData $data)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($id, $data->toArray());
     }
 
     public function delete($id)

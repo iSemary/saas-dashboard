@@ -4,33 +4,19 @@ namespace Modules\FileManager\Http\Controllers\Api;
 
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
-use Modules\FileManager\Entities\File;
-use Modules\FileManager\Entities\Folder;
+use Modules\FileManager\Services\DocumentService;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class DocumentApiController extends ApiController
 {
+    public function __construct(protected DocumentService $service) {}
+
     public function index(Request $request)
     {
         try {
-            $folderId = $request->get('folder_id');
-            $search = $request->get('search');
+            $filters = $request->only(['folder_id', 'search']);
             $perPage = $request->get('per_page', 20);
-
-            $query = File::with('folder');
-
-            if ($folderId) {
-                $query->where('folder_id', $folderId);
-            } else {
-                $query->whereNull('folder_id');
-            }
-
-            if ($search) {
-                $query->where('original_name', 'like', "%{$search}%");
-            }
-
-            $files = $query->orderBy('created_at', 'desc')->paginate($perPage);
+            $files = $this->service->list($filters, $perPage);
 
             return response()->json([
                 'data' => [
@@ -55,43 +41,13 @@ class DocumentApiController extends ApiController
     {
         try {
             $request->validate([
-                'file' => 'required|file|max:10240', // 10MB max
+                'file' => 'required|file|max:10240',
                 'folder_id' => 'nullable|exists:folders,id',
                 'access_level' => 'nullable|in:private,public',
             ]);
 
-            $file = $request->file('file');
-            $folderId = $request->get('folder_id');
-            $accessLevel = $request->get('access_level', 'public');
-
-            // Generate hash name
-            $hashName = $file->hashName();
-            $originalName = $file->getClientOriginalName();
-            $mimeType = $file->getMimeType();
-            $size = $file->getSize();
-            $checksum = hash_file('sha256', $file->getRealPath());
-
-            // Determine storage path
-            $folderPath = $folderId ? Folder::find($folderId)->name : 'documents';
-            $storagePath = $file->storeAs($folderPath, $hashName, 'public');
-
-            // Create file record
-            $document = File::create([
-                'folder_id' => $folderId,
-                'hash_name' => $hashName,
-                'checksum' => $checksum,
-                'original_name' => $originalName,
-                'mime_type' => $mimeType,
-                'host' => 'local',
-                'status' => 'active',
-                'access_level' => $accessLevel,
-                'size' => $size,
-                'metadata' => [
-                    'uploaded_by' => auth()->id(),
-                    'uploaded_at' => now()->toIso8601String(),
-                ],
-                'is_encrypted' => false,
-            ]);
+            $data = $request->only(['folder_id', 'access_level']);
+            $document = $this->service->upload($data, $request->file('file'));
 
             return response()->json([
                 'data' => $document->load('folder'),
@@ -113,7 +69,7 @@ class DocumentApiController extends ApiController
     public function show($id)
     {
         try {
-            $file = File::with('folder')->findOrFail($id);
+            $file = $this->service->findOrFail($id);
             return response()->json(['data' => $file]);
         } catch (\Exception $e) {
             return response()->json([
@@ -126,8 +82,6 @@ class DocumentApiController extends ApiController
     public function update(Request $request, $id)
     {
         try {
-            $file = File::findOrFail($id);
-
             $validated = $request->validate([
                 'original_name' => 'sometimes|string|max:255',
                 'access_level' => 'sometimes|in:private,public',
@@ -135,10 +89,10 @@ class DocumentApiController extends ApiController
                 'folder_id' => 'nullable|exists:folders,id',
             ]);
 
-            $file->update($validated);
+            $file = $this->service->update($id, $validated);
 
             return response()->json([
-                'data' => $file->load('folder'),
+                'data' => $file,
                 'message' => 'File updated successfully'
             ]);
         } catch (\Exception $e) {
@@ -152,17 +106,8 @@ class DocumentApiController extends ApiController
     public function destroy($id)
     {
         try {
-            $file = File::findOrFail($id);
-            
-            // Delete physical file
-            $folderPath = $file->folder ? $file->folder->name : 'documents';
-            Storage::disk('public')->delete("{$folderPath}/{$file->hash_name}");
-            
-            $file->delete();
-
-            return response()->json([
-                'message' => 'File deleted successfully'
-            ]);
+            $this->service->delete($id);
+            return response()->json(['message' => 'File deleted successfully']);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to delete file',
@@ -174,47 +119,27 @@ class DocumentApiController extends ApiController
     public function download($id)
     {
         try {
-            $file = File::findOrFail($id);
-            
-            // Check access permissions
-            $user = auth()->user();
-            if ($file->access_level === 'private' && $file->metadata && isset($file->metadata['uploaded_by'])) {
-                // Only allow download if user uploaded it or has permission
-                if ($file->metadata['uploaded_by'] != $user->id) {
-                    // Check if user has permission to access private files
-                    // This could be extended with role-based permissions
-                    return response()->json([
-                        'message' => 'You do not have permission to download this file'
-                    ], 403);
-                }
-            }
-            
-            $folderPath = $file->folder ? $file->folder->name : 'documents';
-            $filePath = "{$folderPath}/{$file->hash_name}";
-
-            if (!Storage::disk('public')->exists($filePath)) {
-                return response()->json([
-                    'message' => 'File not found in storage'
-                ], 404);
-            }
-
-            return Storage::disk('public')->download($filePath, $file->original_name);
+            $file = $this->service->findOrFail($id);
+            $filePath = $this->service->download($id);
+            return Storage::disk('public')->download(
+                str_replace(Storage::disk('public')->path('') , '', $filePath),
+                $file->original_name
+            );
         } catch (\Exception $e) {
+            $status = str_contains($e->getMessage(), 'permission') ? 403 :
+                      (str_contains($e->getMessage(), 'not found') ? 404 : 500);
             return response()->json([
                 'message' => 'Failed to download file',
                 'error' => $e->getMessage()
-            ], 500);
+            ], $status);
         }
     }
 
     public function versions($id)
     {
         try {
-            $file = File::findOrFail($id);
-            // For now, return empty array. Version control can be implemented later
-            return response()->json([
-                'data' => []
-            ]);
+            $this->service->findOrFail($id);
+            return response()->json(['data' => []]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to retrieve versions',
@@ -231,15 +156,7 @@ class DocumentApiController extends ApiController
                 'ids.*' => 'exists:files,id'
             ]);
 
-            $files = File::whereIn('id', $request->ids)->get();
-            $deleted = 0;
-
-            foreach ($files as $file) {
-                $folderPath = $file->folder ? $file->folder->name : 'documents';
-                Storage::disk('public')->delete("{$folderPath}/{$file->hash_name}");
-                $file->delete();
-                $deleted++;
-            }
+            $deleted = $this->service->bulkDelete($request->ids);
 
             return response()->json([
                 'message' => "{$deleted} files deleted successfully"

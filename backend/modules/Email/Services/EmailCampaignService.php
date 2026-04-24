@@ -2,6 +2,7 @@
 
 namespace Modules\Email\Services;
 
+use Modules\Email\DTOs\CreateEmailCampaignData;
 use Modules\Email\Entities\EmailCampaign;
 use Modules\Email\Repositories\EmailCampaignInterface;
 
@@ -21,6 +22,16 @@ class EmailCampaignService
         return $this->repository->all();
     }
 
+    public function list(array $filters = [], int $perPage = 50)
+    {
+        return $this->repository->paginate($filters, $perPage);
+    }
+
+    public function findOrFail(int $id)
+    {
+        return $this->repository->findOrFail($id);
+    }
+
     public function getDataTables()
     {
         return $this->repository->datatables();
@@ -31,9 +42,15 @@ class EmailCampaignService
         return $this->repository->find($id);
     }
 
-    public function create(array $data)
+    public function create(CreateEmailCampaignData $data)
     {
-        return $this->repository->create($data);
+        return $this->repository->create([
+            'subject' => $data->subject,
+            'body' => $data->body,
+            'template_id' => $data->template_id,
+            'status' => $data->status ?? 'draft',
+            'scheduled_at' => $data->scheduled_at,
+        ]);
     }
 
     public function update($id, array $data)

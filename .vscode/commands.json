@@ -1,8 +1,0 @@
-{
-    "commands": [
-        {
-            "name": "Run Workshop Setup",
-            "command": "bash workshop.sh"
-        }
-    ]
-}

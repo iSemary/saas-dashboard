@@ -51,6 +51,15 @@ class IpBlacklistRepository implements IpBlacklistInterface
         return $this->model->find($id);
     }
 
+    public function paginate(array $filters = [], int $perPage = 50): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        $query = $this->model->query();
+        if (isset($filters['search'])) {
+            $query->where('key', 'like', "%{$filters['search']}%");
+        }
+        return $query->orderBy('created_at', 'desc')->paginate($perPage);
+    }
+
     public function create(array $data)
     {
         return $this->model->create($data);

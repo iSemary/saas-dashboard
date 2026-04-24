@@ -1,11 +1,29 @@
-/.phpunit.cache
-/node_modules
-/public/build
-/public/hot
-/public/storage
-/storage/*.key
-/storage/pail
-/vendor
+# Backend (Laravel)
+/backend/.phpunit.cache
+/backend/node_modules
+/backend/public/build
+/backend/public/hot
+/backend/public/storage
+/backend/storage/*.key
+/backend/storage/pail
+/backend/vendor
+/backend/.env
+/backend/.env.backup
+/backend/.env.production
+/backend/.phpactor.json
+/backend/.phpunit.result.cache
+/backend/storage/backup-sentry/*
+/backend/public/assets/shared/lang/*.json
+
+# Frontend (Next.js)
+/frontend/.next
+/frontend/node_modules
+/landlord-frontend/.next
+/landlord-frontend/node_modules
+/tenant-frontend/.next
+/tenant-frontend/node_modules
+
+# General
 .env
 .env.backup
 .env.production
@@ -16,12 +34,8 @@ Homestead.yaml
 auth.json
 npm-debug.log
 yarn-error.log
-/.fleet
-/.idea
-/.nova
-/.zed
-/storage/backup-sentry/*
+.fleet
+.idea
+.nova
+.zed
 cookies.txt
-
-# Translation JSON files (generated dynamically)
-/public/assets/shared/lang/*.json

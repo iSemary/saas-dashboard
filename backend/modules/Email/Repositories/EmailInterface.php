@@ -9,4 +9,6 @@ interface EmailInterface
     public function resend(array $ids);
     public function send(array $data);
     public function countAllEmails();
+    public function paginate(array $filters = [], int $perPage = 50);
+    public function delete($id);
 }

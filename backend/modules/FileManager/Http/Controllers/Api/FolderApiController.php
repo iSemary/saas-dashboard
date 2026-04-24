@@ -4,33 +4,22 @@ namespace Modules\FileManager\Http\Controllers\Api;
 
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
-use Modules\FileManager\Entities\Folder;
+use Modules\FileManager\DTOs\CreateFolderData;
+use Modules\FileManager\DTOs\UpdateFolderData;
+use Modules\FileManager\Http\Requests\StoreFolderRequest;
+use Modules\FileManager\Http\Requests\UpdateFolderRequest;
+use Modules\FileManager\Services\FolderService;
 
 class FolderApiController extends ApiController
 {
+    public function __construct(protected FolderService $service) {}
+
     public function index(Request $request)
     {
         try {
-            $parentId = $request->get('parent_id');
-            $search = $request->get('search');
-
-            $query = Folder::with(['files', 'parent']);
-
-            if ($parentId !== null) {
-                $query->where('parent_id', $parentId);
-            } else {
-                $query->whereNull('parent_id');
-            }
-
-            if ($search) {
-                $query->where('name', 'like', "%{$search}%");
-            }
-
-            $folders = $query->orderBy('name')->get();
-
-            return response()->json([
-                'data' => $folders
-            ]);
+            $filters = $request->only(['parent_id', 'search']);
+            $folders = $this->service->list($filters);
+            return response()->json(['data' => $folders]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to retrieve folders',
@@ -39,29 +28,16 @@ class FolderApiController extends ApiController
         }
     }
 
-    public function store(Request $request)
+    public function store(StoreFolderRequest $request)
     {
         try {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'description' => 'nullable|string',
-                'parent_id' => 'nullable|exists:folders,id',
-                'status' => 'nullable|in:active,inactive',
-            ]);
-
-            $validated['status'] = $validated['status'] ?? 'active';
-
-            $folder = Folder::create($validated);
+            $data = CreateFolderData::fromRequest($request);
+            $folder = $this->service->create($data);
 
             return response()->json([
                 'data' => $folder->load(['files', 'parent']),
                 'message' => 'Folder created successfully'
             ], 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $e->errors()
-            ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to create folder',
@@ -73,7 +49,7 @@ class FolderApiController extends ApiController
     public function show($id)
     {
         try {
-            $folder = Folder::with(['files', 'parent'])->findOrFail($id);
+            $folder = $this->service->findOrFail($id);
             return response()->json(['data' => $folder]);
         } catch (\Exception $e) {
             return response()->json([
@@ -83,22 +59,14 @@ class FolderApiController extends ApiController
         }
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateFolderRequest $request, $id)
     {
         try {
-            $folder = Folder::findOrFail($id);
-
-            $validated = $request->validate([
-                'name' => 'sometimes|required|string|max:255',
-                'description' => 'nullable|string',
-                'parent_id' => 'nullable|exists:folders,id',
-                'status' => 'nullable|in:active,inactive',
-            ]);
-
-            $folder->update($validated);
+            $data = UpdateFolderData::fromRequest($request);
+            $folder = $this->service->update($id, $data);
 
             return response()->json([
-                'data' => $folder->load(['files', 'parent']),
+                'data' => $folder,
                 'message' => 'Folder updated successfully'
             ]);
         } catch (\Exception $e) {
@@ -112,31 +80,14 @@ class FolderApiController extends ApiController
     public function destroy($id)
     {
         try {
-            $folder = Folder::findOrFail($id);
-            
-            // Check if folder has files or subfolders
-            if ($folder->files()->count() > 0) {
-                return response()->json([
-                    'message' => 'Cannot delete folder with files'
-                ], 400);
-            }
-
-            if (Folder::where('parent_id', $id)->count() > 0) {
-                return response()->json([
-                    'message' => 'Cannot delete folder with subfolders'
-                ], 400);
-            }
-
-            $folder->delete();
-
-            return response()->json([
-                'message' => 'Folder deleted successfully'
-            ]);
+            $this->service->delete($id);
+            return response()->json(['message' => 'Folder deleted successfully']);
         } catch (\Exception $e) {
+            $status = str_contains($e->getMessage(), 'Cannot delete') ? 400 : 500;
             return response()->json([
-                'message' => 'Failed to delete folder',
+                'message' => $e->getMessage() ?: 'Failed to delete folder',
                 'error' => $e->getMessage()
-            ], 500);
+            ], $status);
         }
     }
 }

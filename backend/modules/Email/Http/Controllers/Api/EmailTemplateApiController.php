@@ -4,16 +4,22 @@ namespace Modules\Email\Http\Controllers\Api;
 
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
-use Modules\Email\Entities\EmailTemplate;
+use Modules\Email\DTOs\CreateEmailTemplateData;
+use Modules\Email\DTOs\UpdateEmailTemplateData;
+use Modules\Email\Http\Requests\StoreEmailTemplateRequest;
+use Modules\Email\Http\Requests\UpdateEmailTemplateRequest;
+use Modules\Email\Services\EmailTemplateService;
 use Modules\Email\Services\EmailService;
 
 class EmailTemplateApiController extends ApiController
 {
-    protected $emailService;
+    protected EmailService $emailService;
+    protected EmailTemplateService $templateService;
 
-    public function __construct(EmailService $emailService)
+    public function __construct(EmailService $emailService, EmailTemplateService $templateService)
     {
         $this->emailService = $emailService;
+        $this->templateService = $templateService;
     }
 
     public function index(Request $request)
@@ -21,17 +27,9 @@ class EmailTemplateApiController extends ApiController
         try {
             $perPage = $request->get('per_page', 15);
             $search = $request->get('search');
+            $filters = $search ? ['search' => $search] : [];
 
-            $query = EmailTemplate::query();
-
-            if ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                      ->orWhere('subject', 'like', "%{$search}%");
-                });
-            }
-
-            $templates = $query->orderBy('created_at', 'desc')->paginate($perPage);
+            $templates = $this->templateService->list($filters, $perPage);
 
             return response()->json([
                 'data' => [
@@ -50,30 +48,16 @@ class EmailTemplateApiController extends ApiController
         }
     }
 
-    public function store(Request $request)
+    public function store(StoreEmailTemplateRequest $request)
     {
         try {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'subject' => 'required|string|max:255',
-                'body' => 'required|string',
-                'variables' => 'nullable|array',
-                'status' => 'nullable|in:active,inactive',
-            ]);
-
-            $validated['status'] = $validated['status'] ?? 'active';
-
-            $template = EmailTemplate::create($validated);
+            $data = CreateEmailTemplateData::fromRequest($request);
+            $template = $this->templateService->create($data->toArray());
 
             return response()->json([
                 'data' => $template,
                 'message' => 'Email template created successfully'
             ], 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $e->errors()
-            ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to create email template',
@@ -85,7 +69,7 @@ class EmailTemplateApiController extends ApiController
     public function show($id)
     {
         try {
-            $template = EmailTemplate::findOrFail($id);
+            $template = $this->templateService->findOrFail($id);
             return response()->json(['data' => $template]);
         } catch (\Exception $e) {
             return response()->json([
@@ -95,20 +79,11 @@ class EmailTemplateApiController extends ApiController
         }
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateEmailTemplateRequest $request, $id)
     {
         try {
-            $template = EmailTemplate::findOrFail($id);
-
-            $validated = $request->validate([
-                'name' => 'sometimes|required|string|max:255',
-                'subject' => 'sometimes|required|string|max:255',
-                'body' => 'sometimes|required|string',
-                'variables' => 'nullable|array',
-                'status' => 'nullable|in:active,inactive',
-            ]);
-
-            $template->update($validated);
+            $data = UpdateEmailTemplateData::fromRequest($request);
+            $template = $this->templateService->update($id, $data->toArray());
 
             return response()->json([
                 'data' => $template,
@@ -125,12 +100,8 @@ class EmailTemplateApiController extends ApiController
     public function destroy($id)
     {
         try {
-            $template = EmailTemplate::findOrFail($id);
-            $template->delete();
-
-            return response()->json([
-                'message' => 'Email template deleted successfully'
-            ]);
+            $this->templateService->delete($id);
+            return response()->json(['message' => 'Email template deleted successfully']);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to delete email template',
@@ -142,18 +113,9 @@ class EmailTemplateApiController extends ApiController
     public function sendTest(Request $request, $id)
     {
         try {
-            $request->validate([
-                'email' => 'required|email',
-            ]);
-
-            $template = EmailTemplate::findOrFail($id);
-            
-            // Send test email using the email service
-            $this->emailService->sendTemplate($template->id, $request->email, []);
-
-            return response()->json([
-                'message' => 'Test email sent successfully'
-            ]);
+            $request->validate(['email' => 'required|email']);
+            $this->emailService->sendTemplate($id, $request->email, []);
+            return response()->json(['message' => 'Test email sent successfully']);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to send test email',

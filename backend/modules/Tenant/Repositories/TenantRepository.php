@@ -37,11 +37,11 @@ class TenantRepository implements TenantInterface
                 try {
                     $dbName = $row->database;
                     $tableCount = $this->getTenantTableCount($dbName);
-                    
+
                     // Determine expected count based on database type
                     $isLandlordDb = $dbName === 'saas_landlord' || str_contains($dbName, 'landlord');
                     $expectedCount = $isLandlordDb ? $this->getExpectedLandlordTableCount() : $this->getExpectedTableCount();
-                    
+
                     $badgeClass = $tableCount >= $expectedCount ? 'bg-success' : 'bg-warning';
                     return '<span class="badge ' . $badgeClass . '">' . $tableCount . '/' . $expectedCount . '</span>';
                 } catch (\Exception $e) {
@@ -98,6 +98,25 @@ class TenantRepository implements TenantInterface
     public function find($id)
     {
         return $this->model->find($id);
+    }
+
+    public function findOrFail(int $id)
+    {
+        return $this->model->findOrFail($id);
+    }
+
+    public function paginate(array $filters = [], int $perPage = 50): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        $query = $this->model->query();
+        if (isset($filters['search'])) {
+            $query->where('name', 'like', "%{$filters['search']}%");
+        }
+        return $query->orderBy('created_at', 'desc')->paginate($perPage);
+    }
+
+    public function create(array $data)
+    {
+        return $this->model->create($data);
     }
 
     public function update($id, array $data)
@@ -366,12 +385,12 @@ class TenantRepository implements TenantInterface
 
         try {
             $dbName = $tenant->database;
-            
+
             // Get database size
             $sizeQuery = DB::select("
-                SELECT 
+                SELECT
                     ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS size_mb
-                FROM information_schema.tables 
+                FROM information_schema.tables
                 WHERE table_schema = ?
             ", [$dbName]);
 

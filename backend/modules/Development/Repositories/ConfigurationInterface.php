@@ -2,12 +2,15 @@
 
 namespace Modules\Development\Repositories;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+
 interface ConfigurationInterface
 {
     public function all();
     public function getByKey($key);
     public function datatables();
     public function find($id);
+    public function paginate(array $filters = [], int $perPage = 50): LengthAwarePaginator;
     public function create(array $data);
     public function update($id, array $data);
     public function delete($id);

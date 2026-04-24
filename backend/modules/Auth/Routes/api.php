@@ -7,7 +7,8 @@ use Modules\Auth\Http\Controllers\Tenant\DashboardController;
 Route::prefix('auth')->group(function () {
     // Public routes
     Route::post('login', [AuthApiController::class, 'login'])->name('api.auth.login');
-    Route::post('register', [AuthApiController::class, 'register'])->name('api.auth.register');
+    Route::post('forgot-password', [AuthApiController::class, 'forgotPassword'])->name('api.auth.forgot-password');
+    Route::post('reset-password', [AuthApiController::class, 'resetPassword'])->name('api.auth.reset-password');
     Route::post('2fa/verify', [AuthApiController::class, 'verify2FA'])->name('api.auth.2fa.verify');
     Route::post('2fa/setup', [AuthApiController::class, 'setup2FA'])->name('api.auth.2fa.setup');
     Route::post('2fa/confirm', [AuthApiController::class, 'confirm2FA'])->name('api.auth.2fa.confirm');

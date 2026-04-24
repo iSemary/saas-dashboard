@@ -2,6 +2,8 @@
 
 namespace Modules\Email\Services;
 
+use Modules\Email\DTOs\CreateEmailGroupData;
+use Modules\Email\DTOs\UpdateEmailGroupData;
 use Modules\Email\Entities\EmailGroup;
 use Modules\Email\Repositories\EmailGroupInterface;
 
@@ -26,9 +28,19 @@ class EmailGroupService
         return $this->repository->datatables();
     }
 
+    public function list(array $filters = [], int $perPage = 50)
+    {
+        return $this->repository->paginate($filters, $perPage);
+    }
+
     public function getPaginated()
     {
         return $this->repository->getPaginated();
+    }
+
+    public function findOrFail(int $id)
+    {
+        return $this->repository->findOrFail($id);
     }
 
     public function get($id)
@@ -41,14 +53,17 @@ class EmailGroupService
         return $this->repository->getRecipientsByIds($ids);
     }
 
-    public function create(array $data)
+    public function create(CreateEmailGroupData $data)
     {
-        return $this->repository->create($data);
+        return $this->repository->create([
+            'name' => $data->name,
+            'description' => $data->description,
+        ]);
     }
 
-    public function update($id, array $data)
+    public function update($id, UpdateEmailGroupData $data)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($id, $data->toArray());
     }
 
     public function delete($id)

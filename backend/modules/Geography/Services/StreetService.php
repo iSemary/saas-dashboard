@@ -2,6 +2,7 @@
 
 namespace Modules\Geography\Services;
 
+use Modules\Geography\DTOs\CreateStreetData;
 use Modules\Geography\Entities\Street;
 use Modules\Geography\Repositories\StreetInterface;
 
@@ -21,6 +22,16 @@ class StreetService
         return $this->repository->all();
     }
 
+    public function list(array $filters = [], int $perPage = 50)
+    {
+        return $this->repository->paginate($filters, $perPage);
+    }
+
+    public function findOrFail(int $id)
+    {
+        return $this->repository->findOrFail($id);
+    }
+
     public function getDataTables()
     {
         return $this->repository->datatables();
@@ -31,9 +42,12 @@ class StreetService
         return $this->repository->find($id);
     }
 
-    public function create(array $data)
+    public function create(CreateStreetData $data)
     {
-        return $this->repository->create($data);
+        return $this->repository->create([
+            'name' => $data->name,
+            'town_id' => $data->town_id,
+        ]);
     }
 
     public function update($id, array $data)

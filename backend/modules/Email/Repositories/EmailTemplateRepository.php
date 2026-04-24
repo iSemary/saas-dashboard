@@ -61,6 +61,18 @@ class EmailTemplateRepository implements EmailTemplateInterface
         return $this->model->find($id);
     }
 
+    public function paginate(array $filters = [], int $perPage = 50): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        $query = $this->model->query();
+        if (isset($filters['search'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('name', 'like', "%{$filters['search']}%")
+                  ->orWhere('subject', 'like', "%{$filters['search']}%");
+            });
+        }
+        return $query->orderBy('created_at', 'desc')->paginate($perPage);
+    }
+
     public function create(array $data)
     {
         return $this->model->create($data);

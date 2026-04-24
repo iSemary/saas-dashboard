@@ -37,4 +37,14 @@ class EmailService
     {
         return $this->repository->countAllEmails();
     }
+
+    public function list(array $filters = [], int $perPage = 50)
+    {
+        return $this->repository->paginate($filters, $perPage);
+    }
+
+    public function delete($id)
+    {
+        return $this->repository->delete($id);
+    }
 }

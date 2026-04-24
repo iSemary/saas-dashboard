@@ -2,6 +2,8 @@
 
 namespace Modules\Subscription\Services;
 
+use Modules\Subscription\DTOs\CreatePlanData;
+use Modules\Subscription\DTOs\UpdatePlanData;
 use Modules\Subscription\Entities\Plan;
 use Modules\Subscription\Repositories\PlanInterface;
 
@@ -21,6 +23,16 @@ class PlanService
         return $this->repository->all();
     }
 
+    public function list(array $filters = [], int $perPage = 50)
+    {
+        return $this->repository->paginate($filters, $perPage);
+    }
+
+    public function findOrFail(int $id)
+    {
+        return $this->repository->findOrFail($id);
+    }
+
     public function getDataTables()
     {
         return $this->repository->datatables();
@@ -31,14 +43,22 @@ class PlanService
         return $this->repository->find($id);
     }
 
-    public function create(array $data)
+    public function create(CreatePlanData $data)
     {
-        return $this->repository->create($data);
+        return $this->repository->create([
+            'name' => $data->name,
+            'slug' => $data->slug,
+            'description' => $data->description,
+            'price' => $data->price,
+            'currency' => $data->currency,
+            'billing_period' => $data->billing_period,
+            'is_active' => $data->is_active ?? true,
+        ]);
     }
 
-    public function update($id, array $data)
+    public function update($id, UpdatePlanData $data)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($id, $data->toArray());
     }
 
     public function delete($id)

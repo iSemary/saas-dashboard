@@ -35,11 +35,28 @@ use Modules\Auth\Services\Tenant\TenantUserManagementServiceInterface;
 use Modules\Auth\Services\Tenant\TenantUserManagementService;
 use Modules\Auth\Repositories\Tenant\TenantUserManagementRepositoryInterface;
 use Modules\Auth\Repositories\Tenant\TenantUserManagementRepository;
+use Modules\Auth\Repositories\AuthRepositoryInterface;
+use Modules\Auth\Repositories\AuthRepository;
+use Modules\Auth\Repositories\Tenant\TenantSettingsRepositoryInterface;
+use Modules\Auth\Repositories\Tenant\TenantSettingsRepository;
+use Modules\Auth\Repositories\Tenant\TenantRoleApiRepositoryInterface;
+use Modules\Auth\Repositories\Tenant\TenantRoleApiRepository;
+use Modules\Auth\Repositories\Tenant\TenantPermissionApiRepositoryInterface;
+use Modules\Auth\Repositories\Tenant\TenantPermissionApiRepository;
+use Modules\Auth\Repositories\Tenant\TenantUserApiRepositoryInterface;
+use Modules\Auth\Repositories\Tenant\TenantUserApiRepository;
+use Modules\Auth\Repositories\Tenant\TenantActivityLogApiRepositoryInterface;
+use Modules\Auth\Repositories\Tenant\TenantActivityLogApiRepository;
+use Modules\Auth\Repositories\Tenant\TenantLoginAttemptApiRepositoryInterface;
+use Modules\Auth\Repositories\Tenant\TenantLoginAttemptApiRepository;
+use Modules\Auth\Repositories\Tenant\TenantTwoFactorApiRepositoryInterface;
+use Modules\Auth\Repositories\Tenant\TenantTwoFactorApiRepository;
 
 class AuthServiceProvider extends ServiceProvider
 {
     public function register()
     {
+        // Existing bindings
         $this->app->bind(PermissionInterface::class, PermissionRepository::class);
         $this->app->bind(PermissionGroupInterface::class, PermissionGroupRepository::class);
         $this->app->bind(RoleInterface::class, RoleRepository::class);
@@ -62,6 +79,18 @@ class AuthServiceProvider extends ServiceProvider
         // Tenant User Management Bindings
         $this->app->bind(TenantUserManagementRepositoryInterface::class, TenantUserManagementRepository::class);
         $this->app->bind(TenantUserManagementServiceInterface::class, TenantUserManagementService::class);
+
+        // Auth API Repository Bindings
+        $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
+
+        // Tenant API Repository Bindings
+        $this->app->bind(TenantSettingsRepositoryInterface::class, TenantSettingsRepository::class);
+        $this->app->bind(TenantRoleApiRepositoryInterface::class, TenantRoleApiRepository::class);
+        $this->app->bind(TenantPermissionApiRepositoryInterface::class, TenantPermissionApiRepository::class);
+        $this->app->bind(TenantUserApiRepositoryInterface::class, TenantUserApiRepository::class);
+        $this->app->bind(TenantActivityLogApiRepositoryInterface::class, TenantActivityLogApiRepository::class);
+        $this->app->bind(TenantLoginAttemptApiRepositoryInterface::class, TenantLoginAttemptApiRepository::class);
+        $this->app->bind(TenantTwoFactorApiRepositoryInterface::class, TenantTwoFactorApiRepository::class);
     }
 
     public function boot() {}

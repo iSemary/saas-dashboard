@@ -2,6 +2,8 @@
 
 namespace Modules\Email\Services;
 
+use Modules\Email\DTOs\CreateEmailRecipientData;
+use Modules\Email\DTOs\UpdateEmailRecipientData;
 use Modules\Email\Entities\EmailRecipient;
 use Modules\Email\Repositories\EmailRecipientInterface;
 
@@ -19,6 +21,16 @@ class EmailRecipientService
     public function getAll()
     {
         return $this->repository->all();
+    }
+
+    public function list(array $filters = [], int $perPage = 50)
+    {
+        return $this->repository->paginate($filters, $perPage);
+    }
+
+    public function findOrFail(int $id)
+    {
+        return $this->repository->findOrFail($id);
     }
 
     public function count()
@@ -46,14 +58,18 @@ class EmailRecipientService
         return $this->repository->getByEmail($email);
     }
 
-    public function create(array $data)
+    public function create(CreateEmailRecipientData $data)
     {
-        return $this->repository->create($data);
+        return $this->repository->create([
+            'name' => $data->name,
+            'email' => $data->email,
+            'group_id' => $data->group_id,
+        ]);
     }
 
-    public function update($id, array $data)
+    public function update($id, UpdateEmailRecipientData $data)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($id, $data->toArray());
     }
 
     public function delete($id)

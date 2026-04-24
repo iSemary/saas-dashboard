@@ -2,6 +2,8 @@
 
 namespace Modules\Localization\Services;
 
+use Modules\Localization\DTOs\CreateLanguageData;
+use Modules\Localization\DTOs\UpdateLanguageData;
 use Modules\Localization\Entities\Language;
 use Modules\Localization\Repositories\LanguageInterface;
 
@@ -21,6 +23,16 @@ class LanguageService
         return $this->repository->all();
     }
 
+    public function list(array $filters = [], int $perPage = 50)
+    {
+        return $this->repository->paginate($filters, $perPage);
+    }
+
+    public function findOrFail(int $id)
+    {
+        return $this->repository->findOrFail($id);
+    }
+
     public function getDataTables()
     {
         return $this->repository->datatables();
@@ -31,14 +43,14 @@ class LanguageService
         return $this->repository->find($id);
     }
 
-    public function create(array $data)
+    public function create(CreateLanguageData $data)
     {
-        return $this->repository->create($data);
+        return $this->repository->create($data->toArray());
     }
 
-    public function update($id, array $data)
+    public function update($id, UpdateLanguageData $data)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($id, $data->toArray());
     }
 
     public function delete($id)

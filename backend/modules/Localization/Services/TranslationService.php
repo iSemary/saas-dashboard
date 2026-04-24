@@ -2,6 +2,8 @@
 
 namespace Modules\Localization\Services;
 
+use Modules\Localization\DTOs\CreateTranslationData;
+use Modules\Localization\DTOs\UpdateTranslationData;
 use Modules\Localization\Entities\Translation;
 use Modules\Localization\Repositories\TranslationInterface;
 
@@ -19,6 +21,16 @@ class TranslationService
     public function getAll()
     {
         return $this->repository->all();
+    }
+
+    public function list(array $filters = [], int $perPage = 50)
+    {
+        return $this->repository->paginate($filters, $perPage);
+    }
+
+    public function findOrFail(int $id)
+    {
+        return $this->repository->findOrFail($id);
     }
 
     public function exists($key)
@@ -41,14 +53,14 @@ class TranslationService
         return $this->repository->find($id);
     }
 
-    public function create(array $data)
+    public function create(CreateTranslationData $data)
     {
-        return $this->repository->create($data);
+        return $this->repository->create($data->toArray());
     }
 
-    public function update($id, array $data)
+    public function update($id, UpdateTranslationData $data)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($id, $data->toArray());
     }
 
     public function delete($id)
@@ -90,7 +102,7 @@ class TranslationService
     {
         return $this->repository->getUsedTranslationInJs();
     }
-    
+
     public function getUsedTranslationInPhp()
     {
         return $this->repository->getUsedTranslationInPhp();

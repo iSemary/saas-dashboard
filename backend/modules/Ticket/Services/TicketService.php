@@ -2,6 +2,8 @@
 
 namespace Modules\Ticket\Services;
 
+use Modules\Ticket\DTOs\CreateTicketData;
+use Modules\Ticket\DTOs\UpdateTicketData;
 use Modules\Ticket\Entities\Ticket;
 use Modules\Ticket\Repositories\TicketInterface;
 use Modules\Comment\Services\CommentService;
@@ -24,6 +26,38 @@ class TicketService
         return $this->repository->all();
     }
 
+    public function list(array $filters = [], int $perPage = 50)
+    {
+        return $this->repository->paginate($filters, $perPage);
+    }
+
+    public function findOrFail(int $id)
+    {
+        return $this->repository->findOrFail($id);
+    }
+
+    public function kanbanData()
+    {
+        return Ticket::select('id', 'subject', 'status', 'priority', 'assigned_to')->get()->groupBy('status');
+    }
+
+    public function stats(): array
+    {
+        return [
+            'total' => Ticket::count(),
+            'open' => Ticket::where('status', 'open')->count(),
+            'in_progress' => Ticket::where('status', 'in_progress')->count(),
+            'closed' => Ticket::where('status', 'closed')->count(),
+        ];
+    }
+
+    public function assign(int $id, int $assignedTo): Ticket
+    {
+        $ticket = Ticket::findOrFail($id);
+        $ticket->update(['assigned_to' => $assignedTo]);
+        return $ticket;
+    }
+
     public function getDataTables()
     {
         return $this->repository->datatables();
@@ -34,19 +68,24 @@ class TicketService
         return $this->repository->find($id);
     }
 
-    public function create(array $data)
+    public function create(CreateTicketData $data)
     {
-        // Set created_by if not provided
-        if (!isset($data['created_by'])) {
-            $data['created_by'] = auth()->id();
-        }
+        $arrayData = [
+            'subject' => $data->subject,
+            'body' => $data->body,
+            'priority' => $data->priority,
+            'status' => $data->status ?? 'open',
+            'category_id' => $data->category_id,
+            'assigned_to' => $data->assigned_to,
+            'created_by' => auth()->id(),
+        ];
 
-        return $this->repository->create($data);
+        return $this->repository->create($arrayData);
     }
 
-    public function update($id, array $data)
+    public function update($id, UpdateTicketData $data)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($id, $data->toArray());
     }
 
     public function delete($id)
@@ -135,7 +174,7 @@ class TicketService
 
         // Get comments using the comment service
         $comments = $this->commentService->getCommentsForObject($id, Ticket::class);
-        
+
         return [
             'ticket' => $ticket,
             'comments' => $comments,
@@ -172,7 +211,7 @@ class TicketService
         if ($comment || $oldAssignee !== $userId) {
             $assigneeName = \Modules\Auth\Entities\User::find($userId)->name ?? 'Unknown';
             $assignmentComment = $comment ?: "Ticket assigned to {$assigneeName}";
-            
+
             $this->addComment($ticketId, [
                 'comment' => $assignmentComment,
                 'user_id' => auth()->id()
@@ -188,7 +227,7 @@ class TicketService
     public function closeTicket($ticketId, $comment = null)
     {
         $ticket = $this->repository->updateStatus($ticketId, 'closed', auth()->id(), $comment);
-        
+
         if ($comment) {
             $this->addComment($ticketId, [
                 'comment' => $comment,
@@ -205,7 +244,7 @@ class TicketService
     public function reopenTicket($ticketId, $comment = null)
     {
         $ticket = $this->repository->updateStatus($ticketId, 'open', auth()->id(), $comment);
-        
+
         if ($comment) {
             $this->addComment($ticketId, [
                 'comment' => $comment,
@@ -262,7 +301,7 @@ class TicketService
     public function bulkUpdateTickets(array $ticketIds, array $data)
     {
         $results = [];
-        
+
         foreach ($ticketIds as $ticketId) {
             $result = $this->repository->update($ticketId, $data);
             if ($result) {
@@ -279,7 +318,7 @@ class TicketService
     public function bulkAssignTickets(array $ticketIds, $userId, $comment = null)
     {
         $results = [];
-        
+
         foreach ($ticketIds as $ticketId) {
             $result = $this->assignTicket($ticketId, $userId, $comment);
             if ($result) {

@@ -2,6 +2,7 @@
 
 namespace Modules\Utilities\Services;
 
+use Modules\Utilities\DTOs\CreateIndustryData;
 use Modules\Utilities\Entities\Industry;
 use Modules\Utilities\Repositories\IndustryInterface;
 
@@ -21,6 +22,16 @@ class IndustryService
         return $this->repository->all();
     }
 
+    public function list(array $filters = [], int $perPage = 50)
+    {
+        return $this->repository->paginate($filters, $perPage);
+    }
+
+    public function findOrFail(int $id)
+    {
+        return $this->repository->findOrFail($id);
+    }
+
     public function getDataTables()
     {
         return $this->repository->datatables();
@@ -31,9 +42,12 @@ class IndustryService
         return $this->repository->find($id);
     }
 
-    public function create(array $data)
+    public function create(CreateIndustryData $data)
     {
-        return $this->repository->create($data);
+        return $this->repository->create([
+            'name' => $data->name,
+            'slug' => $data->slug,
+        ]);
     }
 
     public function update($id, array $data)

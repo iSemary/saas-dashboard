@@ -2,6 +2,7 @@
 
 namespace Modules\Geography\Services;
 
+use Modules\Geography\DTOs\CreateProvinceData;
 use Modules\Geography\Entities\Province;
 use Modules\Geography\Repositories\ProvinceInterface;
 
@@ -21,6 +22,16 @@ class ProvinceService
         return $this->repository->all();
     }
 
+    public function list(array $filters = [], int $perPage = 50)
+    {
+        return $this->repository->paginate($filters, $perPage);
+    }
+
+    public function findOrFail(int $id)
+    {
+        return $this->repository->findOrFail($id);
+    }
+
     public function getDataTables()
     {
         return $this->repository->datatables();
@@ -31,9 +42,13 @@ class ProvinceService
         return $this->repository->find($id);
     }
 
-    public function create(array $data)
+    public function create(CreateProvinceData $data)
     {
-        return $this->repository->create($data);
+        return $this->repository->create([
+            'name' => $data->name,
+            'code' => $data->code,
+            'country_id' => $data->country_id,
+        ]);
     }
 
     public function update($id, array $data)

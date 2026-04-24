@@ -2,12 +2,16 @@
 
 namespace Modules\Localization\Repositories;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+
 interface TranslationInterface
 {
     public function all();
     public function getByKey($key, $attributes = [], $locale = null);
     public function datatables();
     public function find($id);
+    public function findOrFail(int $id);
+    public function paginate(array $filters = [], int $perPage = 50): LengthAwarePaginator;
     public function exists($key);
     public function create(array $data);
     public function update($id, array $data);

@@ -2,6 +2,8 @@
 
 namespace Modules\Development\Services;
 
+use Modules\Development\DTOs\CreateConfigurationData;
+use Modules\Development\DTOs\UpdateConfigurationData;
 use Modules\Development\Entities\Configuration;
 use Modules\Development\Repositories\ConfigurationInterface;
 
@@ -21,6 +23,11 @@ class ConfigurationService
         return $this->repository->all();
     }
 
+    public function list(array $filters = [], int $perPage = 50)
+    {
+        return $this->repository->paginate($filters, $perPage);
+    }
+
     public function getByKey($key)
     {
         return $this->repository->getByKey($key);
@@ -36,14 +43,20 @@ class ConfigurationService
         return $this->repository->find($id);
     }
 
-    public function create(array $data)
+    public function create(CreateConfigurationData $data)
     {
-        return $this->repository->create($data);
+        return $this->repository->create([
+            'key' => $data->key,
+            'value' => $data->value,
+            'type' => $data->type,
+            'group' => $data->group,
+            'description' => $data->description,
+        ]);
     }
 
-    public function update($id, array $data)
+    public function update($id, UpdateConfigurationData $data)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($id, $data->toArray());
     }
 
     public function delete($id)

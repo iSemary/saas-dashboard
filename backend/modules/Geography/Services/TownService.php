@@ -2,6 +2,7 @@
 
 namespace Modules\Geography\Services;
 
+use Modules\Geography\DTOs\CreateTownData;
 use Modules\Geography\Entities\Town;
 use Modules\Geography\Repositories\TownInterface;
 
@@ -21,6 +22,16 @@ class TownService
         return $this->repository->all();
     }
 
+    public function list(array $filters = [], int $perPage = 50)
+    {
+        return $this->repository->paginate($filters, $perPage);
+    }
+
+    public function findOrFail(int $id)
+    {
+        return $this->repository->findOrFail($id);
+    }
+
     public function getDataTables()
     {
         return $this->repository->datatables();
@@ -31,9 +42,12 @@ class TownService
         return $this->repository->find($id);
     }
 
-    public function create(array $data)
+    public function create(CreateTownData $data)
     {
-        return $this->repository->create($data);
+        return $this->repository->create([
+            'name' => $data->name,
+            'city_id' => $data->city_id,
+        ]);
     }
 
     public function update($id, array $data)

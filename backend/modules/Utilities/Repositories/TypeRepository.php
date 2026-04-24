@@ -56,6 +56,20 @@ class TypeRepository implements TypeInterface
         return $this->model->find($id);
     }
 
+    public function findOrFail(int $id)
+    {
+        return $this->model->findOrFail($id);
+    }
+
+    public function paginate(array $filters = [], int $perPage = 50): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        $query = $this->model->query();
+        if (isset($filters['search'])) {
+            $query->where('name', 'like', "%{$filters['search']}%");
+        }
+        return $query->orderBy('created_at', 'desc')->paginate($perPage);
+    }
+
     public function create(array $data)
     {
         return $this->model->create($data);

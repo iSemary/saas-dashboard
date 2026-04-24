@@ -21,6 +21,16 @@ class EmailTemplateService
         return $this->repository->all($attributes);
     }
 
+    public function list(array $filters = [], int $perPage = 50)
+    {
+        return $this->repository->paginate($filters, $perPage);
+    }
+
+    public function findOrFail(int $id): EmailTemplate
+    {
+        return EmailTemplate::findOrFail($id);
+    }
+
     public function getDataTables()
     {
         return $this->repository->datatables();

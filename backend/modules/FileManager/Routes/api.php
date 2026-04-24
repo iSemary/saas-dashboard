@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\FileManager\Http\Controllers\Api\DocumentApiController;
 use Modules\FileManager\Http\Controllers\Api\FolderApiController;
+use Modules\FileManager\Http\Controllers\Api\MediaApiController;
 
 /*
  *--------------------------------------------------------------------------
@@ -12,6 +13,13 @@ use Modules\FileManager\Http\Controllers\Api\FolderApiController;
  * Here is where you can register API routes for the File Manager module.
  *
  */
+
+Route::middleware('auth:api')->prefix('media')->group(function () {
+    Route::post('/upload', [MediaApiController::class, 'upload'])->name('api.media.upload');
+    Route::post('/upload/bulk', [MediaApiController::class, 'uploadBulk'])->name('api.media.upload-bulk');
+    Route::get('/{id}', [MediaApiController::class, 'show'])->name('api.media.show');
+    Route::delete('/{id}', [MediaApiController::class, 'destroy'])->name('api.media.destroy');
+});
 
 Route::middleware('auth:api')->prefix('documents')->group(function () {
     // File routes

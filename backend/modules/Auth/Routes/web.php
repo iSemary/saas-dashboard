@@ -43,8 +43,9 @@ Route::middleware('guest')->group(function () {
 // Routes for authenticated users (auth middleware)
 Route::middleware('auth')->group(function () {
     Route::middleware('2fa')->group(function () {
+        // Root route handled by Next.js frontend via ServeNextjsController
         Route::get('/', [TenantController::class, "index"])->name('home');
-        
+
         // Tenant Dashboard API Routes
         Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::get('stats', [\Modules\Auth\Http\Controllers\Tenant\DashboardController::class, 'getStats'])->name('stats');
@@ -56,7 +57,7 @@ Route::middleware('auth')->group(function () {
         Route::prefix('tenant')->name('tenant.')->group(function () {
             Route::get('profile', [ProfileController::class, 'index'])->name('profile.index');
             Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
-            
+
             // Tenant Settings Routes
             Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
             Route::put('settings', [SettingsController::class, 'update'])->name('settings.update');
