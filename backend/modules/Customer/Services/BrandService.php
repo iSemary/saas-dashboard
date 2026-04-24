@@ -6,6 +6,7 @@ use Modules\Customer\DTOs\CreateBrandData;
 use Modules\Customer\DTOs\UpdateBrandData;
 use Modules\Customer\Entities\Brand;
 use Modules\Customer\Repository\BrandRepositoryInterface;
+use Modules\Tenant\Entities\Tenant;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
@@ -14,10 +15,14 @@ use Illuminate\Support\Facades\Storage;
 class BrandService
 {
     protected BrandRepositoryInterface $brandRepository;
+    protected BrandModuleSubscriptionService $moduleService;
 
-    public function __construct(BrandRepositoryInterface $brandRepository)
-    {
+    public function __construct(
+        BrandRepositoryInterface $brandRepository,
+        BrandModuleSubscriptionService $moduleService,
+    ) {
         $this->brandRepository = $brandRepository;
+        $this->moduleService = $moduleService;
     }
 
     public function getAll(array $filters = [], int $perPage = 15): LengthAwarePaginator
@@ -42,7 +47,13 @@ class BrandService
 
     public function findOrFail(int $id): Brand
     {
-        return Brand::findOrFail($id);
+        $brand = $this->brandRepository->getById($id);
+        if (!$brand) {
+            throw new \Illuminate\Database\Eloquent\ModelNotFoundException(
+                'No query results for model [' . Brand::class . '] ' . $id
+            );
+        }
+        return $brand;
     }
 
     public function getBySlug(string $slug): ?Brand
@@ -64,11 +75,7 @@ class BrandService
 
     public function update(int $id, UpdateBrandData $data): bool
     {
-        $brand = $this->getById($id);
-        if (!$brand) {
-            return false;
-        }
-
+        $brand = $this->findOrFail($id);
         $arrayData = $data->toArray();
 
         return $this->brandRepository->update($id, $arrayData);
@@ -76,10 +83,7 @@ class BrandService
 
     public function delete(int $id): bool
     {
-        $brand = $this->getById($id);
-        if (!$brand) {
-            return false;
-        }
+        $brand = $this->findOrFail($id);
 
         // Delete logo file if exists
         if ($brand->logo) {
@@ -168,5 +172,29 @@ class BrandService
         }
 
         return $slug;
+    }
+
+    /**
+     * Sync brand modules - subscribe to new ones, unsubscribe from removed ones.
+     */
+    public function syncBrandModules(int $brandId, array $moduleKeys): void
+    {
+        // Get current active subscriptions
+        $currentSubscriptions = $this->moduleService->getActiveSubscriptions($brandId);
+        $currentKeys = $currentSubscriptions->pluck('module_key')->toArray();
+
+        // Determine which modules to add and which to remove
+        $toAdd = array_diff($moduleKeys, $currentKeys);
+        $toRemove = array_diff($currentKeys, $moduleKeys);
+
+        // Subscribe to new modules
+        if (!empty($toAdd)) {
+            $this->moduleService->subscribeToModules($brandId, $toAdd);
+        }
+
+        // Unsubscribe from removed modules
+        if (!empty($toRemove)) {
+            $this->moduleService->unsubscribeFromModules($brandId, $toRemove);
+        }
     }
 }

@@ -3,8 +3,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Bell, CheckCheck, Loader2 } from "lucide-react";
+import { motion } from "motion/react";
 import { toast } from "sonner";
 import { useI18n } from "@/context/i18n-context";
+import { useAnimation } from "@/context/animation-context";
 import { buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -39,6 +41,7 @@ function formatTime(iso: string | undefined, locale: string) {
 
 export function NotificationHeaderMenu() {
   const { t, locale, dir } = useI18n();
+  const { enabled: animationsEnabled } = useAnimation();
   const router = useRouter();
   const [items, setItems] = useState<AppNotificationRow[]>([]);
   const [unreadTotal, setUnreadTotal] = useState(0);
@@ -114,7 +117,23 @@ export function NotificationHeaderMenu() {
         )}
         aria-label={t("dashboard.notifications.title", "Notifications")}
       >
-        <Bell className="size-5" />
+        {animationsEnabled ? (
+          <motion.div
+            animate={unreadTotal > 0 ? {
+              rotate: [0, -15, 15, -10, 10, -5, 5, 0],
+            } : {}}
+            transition={{
+              duration: 0.6,
+              ease: "easeInOut",
+              repeat: unreadTotal > 0 ? Infinity : 0,
+              repeatDelay: 3,
+            }}
+          >
+            <Bell className="size-5" />
+          </motion.div>
+        ) : (
+          <Bell className="size-5" />
+        )}
         {unreadTotal > 0 ? (
           <span className="absolute inset-e-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold leading-none text-primary-foreground">
             {unreadTotal > 99 ? "99+" : unreadTotal}
@@ -152,7 +171,7 @@ export function NotificationHeaderMenu() {
             </div>
           ) : items.length === 0 ? (
             <p className="px-3 py-8 text-center text-sm text-muted-foreground">
-              {t("dashboard.notifications.empty", "No notifications yet.")}
+              {t("dashboard.notifications.empty", "No notifications yet... relax! 🎉")}
             </p>
           ) : (
             items.map((n) => (

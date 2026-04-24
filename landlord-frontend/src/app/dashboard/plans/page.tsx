@@ -12,7 +12,7 @@ const config: SimpleCRUDConfig<PlanRow> = {
   createLabelFallback: "Add Plan",
   fields: [
     { name: "name", label: "Name", required: true },
-    { name: "slug", label: "Slug" },
+    { name: "slug", label: "Slug", type: "slug", sourceField: "name" },
     { name: "description", label: "Description", type: "textarea" },
     { name: "price", label: "Price", type: "number", required: true },
     { name: "currency", label: "Currency", placeholder: "USD", required: true },

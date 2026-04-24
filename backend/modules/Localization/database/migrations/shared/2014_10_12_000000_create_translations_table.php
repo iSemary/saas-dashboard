@@ -12,7 +12,8 @@ return new class extends Migration {
     {
         Schema::create('translations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('language_id')->constrained()->onDelete('cascade');
+            $table->foreignId('language_id')->index();
+            // Note: No FK constraint because 'languages' table is in the landlord DB, not tenant
             $table->string('translation_key');
             $table->text('translation_value');
             $table->text('translation_context')->nullable();

@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('brand_module')) {
+            return;
+        }
+
         Schema::create('brand_module', function (Blueprint $table) {
             $table->id();
             $table->foreignId('brand_id')->constrained('brands')->onDelete('cascade');
@@ -19,7 +23,7 @@ return new class extends Migration
 
             // Ensure unique brand-module combinations
             $table->unique(['brand_id', 'module_id']);
-            
+
             // Indexes for performance
             $table->index('brand_id');
             $table->index('module_id');

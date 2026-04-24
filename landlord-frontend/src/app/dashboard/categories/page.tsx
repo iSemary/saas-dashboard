@@ -13,7 +13,7 @@ const config: SimpleCRUDConfig<CategoryRow> = {
   fields: [
     { name: "name", label: "Name", required: true },
     { name: "slug", label: "Slug" },
-    { name: "parent_id", label: "Parent ID", type: "number", placeholder: "0 for root" },
+    { name: "parent_id", label: "Parent Category", type: "entity", listFn: listCategories, optionLabelKey: "name", optionValueKey: "id" },
     { name: "is_active", label: "Active", type: "select", options: [{ value: "1", label: "Yes" }, { value: "0", label: "No" }] },
   ],
   listFn: listCategories,

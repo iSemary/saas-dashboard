@@ -18,7 +18,8 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { listBranches, createBranch, updateBranch, deleteBranch, fetchBranch, type BranchRow } from "@/lib/resources";
+import { listBranches, createBranch, updateBranch, deleteBranch, fetchBranch, listBrands, type BranchRow } from "@/lib/resources";
+import { EntitySelector } from "@/components/entity-selector";
 import { useI18n } from "@/context/i18n-context";
 
 export default function BranchesPage() {
@@ -31,7 +32,7 @@ export default function BranchesPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [form, setForm] = useState({
-    name: "", slug: "", description: "", email: "", phone: "", address: "", status: "active",
+    name: "", slug: "", description: "", email: "", phone: "", address: "", status: "active", brand_id: "",
   });
 
   const load = useCallback(async () => {
@@ -52,7 +53,7 @@ export default function BranchesPage() {
 
   const openCreate = () => {
     setEditingId(null);
-    setForm({ name: "", slug: "", description: "", email: "", phone: "", address: "", status: "active" });
+    setForm({ name: "", slug: "", description: "", email: "", phone: "", address: "", status: "active", brand_id: "" });
     setSheetOpen(true);
   };
 
@@ -69,6 +70,7 @@ export default function BranchesPage() {
         phone: branch.phone ?? "",
         address: branch.address ?? "",
         status: branch.status,
+        brand_id: branch.brand_id ? String(branch.brand_id) : "",
       });
     } catch {
       toast.error(t("dashboard.branches.toast_load_error", "Could not load branch."));
@@ -83,11 +85,15 @@ export default function BranchesPage() {
     }
     setSaving(true);
     try {
+      const payload = {
+        ...form,
+        brand_id: form.brand_id ? Number(form.brand_id) : null,
+      };
       if (editingId == null) {
-        await createBranch(form);
+        await createBranch(payload);
         toast.success(t("dashboard.branches.toast_created", "Branch created."));
       } else {
-        await updateBranch(editingId, form);
+        await updateBranch(editingId, payload);
         toast.success(t("dashboard.branches.toast_updated", "Branch updated."));
       }
       setSheetOpen(false);
@@ -234,6 +240,18 @@ export default function BranchesPage() {
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
               </select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="branch-brand">{t("dashboard.branches.brand", "Brand")}</Label>
+              <EntitySelector
+                value={form.brand_id}
+                onChange={(v) => setForm((f) => ({ ...f, brand_id: v }))}
+                listFn={listBrands}
+                optionLabelKey="name"
+                optionValueKey="id"
+                placeholder={t("dashboard.branches.select_brand", "Select a brand")}
+                required
+              />
             </div>
           </div>
           <SheetFooter className="border-t border-border/80 px-4 py-3">

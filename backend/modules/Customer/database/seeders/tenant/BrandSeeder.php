@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\namespace Modules\Customer\Database\Seeders\tenant;\Database\Seeders\tenant;
+namespace Modules\Customer\Database\Seeders\Tenant;
 
 use Illuminate\Database\Seeder;
 use Modules\Customer\Entities\Tenant\Brand;
@@ -70,7 +70,7 @@ class BrandSeeder extends Seeder
 
         foreach ($brands as $brandData) {
             $brand = Brand::create($brandData);
-            
+
             // Assign random modules to each brand
             $this->assignModulesToBrand($brand);
         }
@@ -83,13 +83,13 @@ class BrandSeeder extends Seeder
     {
         // Get available modules from landlord database
         $modules = Module::where('status', 'active')->get();
-        
+
         if ($modules->count() > 0) {
             // Assign 2-4 random modules to each brand
             $randomModules = $modules->random(rand(2, min(4, $modules->count())));
-            
+
             $moduleIds = $randomModules->pluck('id')->toArray();
-            
+
             // Sync modules to brand
             $brand->modules()->sync($moduleIds);
         }

@@ -1,7 +1,7 @@
 "use client";
 
 import { SimpleCRUDPage, type SimpleCRUDConfig } from "@/components/simple-crud-page";
-import { listProvinces, createProvince, deleteProvince, type ProvinceRow } from "@/lib/resources";
+import { listProvinces, createProvince, deleteProvince, listCountries, type ProvinceRow } from "@/lib/resources";
 
 const config: SimpleCRUDConfig<ProvinceRow> = {
   titleKey: "dashboard.provinces.title",
@@ -13,7 +13,7 @@ const config: SimpleCRUDConfig<ProvinceRow> = {
   fields: [
     { name: "name", label: "Name", required: true },
     { name: "code", label: "Code" },
-    { name: "country_id", label: "Country ID", type: "number", required: true },
+    { name: "country_id", label: "Country", type: "entity", listFn: listCountries, optionLabelKey: "name", optionValueKey: "id", required: true },
   ],
   listFn: listProvinces,
   createFn: createProvince,

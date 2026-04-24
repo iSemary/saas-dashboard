@@ -1,7 +1,7 @@
 "use client";
 
 import { SimpleCRUDPage, type SimpleCRUDConfig } from "@/components/simple-crud-page";
-import { listTowns, createTown, deleteTown, type TownRow } from "@/lib/resources";
+import { listTowns, createTown, deleteTown, listCities, type TownRow } from "@/lib/resources";
 
 const config: SimpleCRUDConfig<TownRow> = {
   titleKey: "dashboard.towns.title",
@@ -12,7 +12,7 @@ const config: SimpleCRUDConfig<TownRow> = {
   createLabelFallback: "Add Town",
   fields: [
     { name: "name", label: "Name", required: true },
-    { name: "city_id", label: "City ID", type: "number", required: true },
+    { name: "city_id", label: "City", type: "entity", listFn: listCities, optionLabelKey: "name", optionValueKey: "id", parentKey: "province", required: true },
   ],
   listFn: listTowns,
   createFn: createTown,

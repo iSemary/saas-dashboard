@@ -12,7 +12,7 @@ const config: SimpleCRUDConfig<StaticPageRow> = {
   createLabelFallback: "Add Page",
   fields: [
     { name: "title", label: "Title", required: true },
-    { name: "slug", label: "Slug" },
+    { name: "slug", label: "Slug", type: "slug", sourceField: "title" },
     { name: "body", label: "Body", type: "richtext" },
     { name: "is_active", label: "Active", type: "select", options: [{ value: "1", label: "Yes" }, { value: "0", label: "No" }] },
   ],

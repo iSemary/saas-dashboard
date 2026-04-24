@@ -166,6 +166,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:api', 'landlord_roles'
     Route::apiResource('backups', \Modules\Development\Http\Controllers\Api\BackupApiController::class)->except(['show', 'update']);
     Route::get('backups/{id}/download', [\Modules\Development\Http\Controllers\Api\BackupApiController::class, 'download'])->name('backups.download');
     Route::apiResource('feature-flags', \Modules\Development\Http\Controllers\Api\FeatureFlagApiController::class);
+    Route::match(['get', 'post'], 'feature-flags/evaluate', [\Modules\Development\Http\Controllers\Api\FeatureFlagApiController::class, 'evaluate'])->name('feature-flags.evaluate');
     Route::apiResource('ip-blacklists', \Modules\Development\Http\Controllers\Api\IpBlacklistApiController::class);
     Route::post('code-builder', [\Modules\Development\Http\Controllers\Api\CodeBuilderApiController::class, 'build'])->name('code-builder.build');
     Route::get('env-diff', [\Modules\Development\Http\Controllers\Api\EnvDiffApiController::class, 'index'])->name('env-diff.index');
@@ -197,4 +198,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:api', 'landlord_roles'
         Route::post('select-modules', [\Modules\Subscription\Http\Controllers\Api\OnboardingApiController::class, 'selectModules'])->name('select-modules');
         Route::post('create-brand', [\Modules\Customer\Http\Controllers\Api\OnboardingApiController::class, 'createBrand'])->name('create-brand');
     });
+});
+
+// Public API routes (accessible without admin prefix for tenant/customer use)
+Route::middleware(['auth:api', 'throttle:60,1'])->group(function () {
+    Route::match(['get', 'post'], 'feature-flags/evaluate', [\Modules\Development\Http\Controllers\Api\FeatureFlagApiController::class, 'evaluate']);
+    Route::get('translations', [\Modules\Localization\Http\Controllers\Api\TranslationApiController::class, 'index']);
+    Route::get('settings', [\Modules\Auth\Http\Controllers\Api\TenantSettingsApiController::class, 'index']);
+    Route::put('settings', [\Modules\Auth\Http\Controllers\Api\TenantSettingsApiController::class, 'update']);
 });

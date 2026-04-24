@@ -69,7 +69,8 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
     return (
       <div ref={ref} className={className} dir={dir}>
         <CKEditor
-          editor={ClassicEditor}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          editor={ClassicEditor as any}
           data={value}
           config={editorConfig}
           disabled={disabled}

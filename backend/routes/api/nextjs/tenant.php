@@ -65,4 +65,7 @@ Route::prefix('tenant')->name('tenant.')->middleware(['auth:api', 'tenant_roles'
     Route::get('modules/crm', [\Modules\CRM\Http\Controllers\Api\CrmApiController::class, 'index'])->name('modules.crm');
     Route::get('modules/hr', [\Modules\HR\Http\Controllers\Api\HrApiController::class, 'index'])->name('modules.hr');
     Route::get('modules/pos', [\Modules\Sales\Http\Controllers\Api\PosApiController::class, 'index'])->name('modules.pos');
+
+    // ─── Available Modules from Landlord ────────────────────────────
+    Route::get('available-modules', [\Modules\Customer\Http\Controllers\Api\Tenant\BrandApiController::class, 'getAvailableModules'])->name('available-modules');
 });

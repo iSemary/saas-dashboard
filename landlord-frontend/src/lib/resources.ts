@@ -4,16 +4,63 @@ export interface Paginated<T> {
   data: T[];
 }
 
-export async function listUsers() {
-  const res = await api.get("/users");
+/**
+ * Table listing parameters for backend search, sort, and pagination
+ */
+export interface TableParams {
+  page?: number;
+  per_page?: number | 'all';
+  search?: string;
+  sort_by?: string;
+  sort_direction?: 'asc' | 'desc';
+  filters?: Record<string, unknown>;
+}
+
+/**
+ * Paginated response from backend
+ */
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: {
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+  };
+}
+
+/**
+ * Build query string from table params
+ */
+function buildTableQuery(params?: TableParams): string {
+  if (!params) return '';
+  const query = new URLSearchParams();
+  if (params.page) query.append('page', String(params.page));
+  if (params.per_page) query.append('per_page', String(params.per_page));
+  if (params.search) query.append('search', params.search);
+  if (params.sort_by) query.append('sort_by', params.sort_by);
+  if (params.sort_direction) query.append('sort_direction', params.sort_direction);
+  if (params.filters) {
+    Object.entries(params.filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        query.append(`filters[${key}]`, String(value));
+      }
+    });
+  }
+  const queryString = query.toString();
+  return queryString ? `?${queryString}` : '';
+}
+
+export async function listUsers(params?: TableParams) {
+  const res = await api.get(`/users${buildTableQuery(params)}`);
   return Array.isArray(res.data) ? res.data : [];
 }
-export async function listRoles() {
-  const res = await api.get("/roles");
+export async function listRoles(params?: TableParams) {
+  const res = await api.get(`/roles${buildTableQuery(params)}`);
   return Array.isArray(res.data) ? res.data : [];
 }
-export async function listPermissions() {
-  const res = await api.get("/permissions");
+export async function listPermissions(params?: TableParams) {
+  const res = await api.get(`/permissions${buildTableQuery(params)}`);
   return Array.isArray(res.data) ? res.data : [];
 }
 export async function dashboardStats() {
@@ -87,12 +134,12 @@ export async function markNotificationRead(id: number) {
 export async function markAllNotificationsRead() {
   await api.post("/notifications/mark-all-read");
 }
-export async function listActivityLogs() {
-  const res = await api.get("/activity-logs");
+export async function listActivityLogs(params?: TableParams) {
+  const res = await api.get(`/activity-logs${buildTableQuery(params)}`);
   return Array.isArray(res.data) ? res.data : [];
 }
-export async function listFeatureFlags() {
-  const res = await api.get("/feature-flags");
+export async function listFeatureFlags(params?: TableParams) {
+  const res = await api.get(`/feature-flags${buildTableQuery(params)}`);
   return Array.isArray(res.data) ? res.data : [];
 }
 

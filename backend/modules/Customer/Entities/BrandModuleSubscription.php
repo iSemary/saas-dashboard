@@ -13,50 +13,50 @@ class BrandModuleSubscription extends Model implements Auditable
 {
     use HasFactory, SoftDeletes, Translatable, \OwenIt\Auditing\Auditable;
 
+    protected $table = 'brand_modules';
+
     protected $fillable = [
         'brand_id',
+        'module_id',
         'module_key',
-        'module_name',
-        'subscription_status',
-        'subscription_start',
-        'subscription_end',
+        'status',
+        'color_palette',
         'module_config',
+        'subscribed_at',
         'created_by',
         'updated_by',
     ];
 
     protected $casts = [
-        'subscription_start' => 'datetime',
-        'subscription_end' => 'datetime',
+        'subscribed_at' => 'datetime',
         'module_config' => 'array',
+        'color_palette' => 'array',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
 
-    protected $translatable = [
-        'module_name',
-    ];
+    protected $translatable = [];
 
     protected static function boot()
     {
         parent::boot();
 
-        static::creating(function ($subscription) 
+        static::creating(function ($subscription)
         {
-            if (auth()->check()) 
+            if (auth()->check())
             {
                 $subscription->created_by = auth()->id();
             }
-            if (empty($subscription->subscription_start)) 
+            if (empty($subscription->subscribed_at))
             {
-                $subscription->subscription_start = now();
+                $subscription->subscribed_at = now();
             }
         });
 
-        static::updating(function ($subscription) 
+        static::updating(function ($subscription)
         {
-            if (auth()->check()) 
+            if (auth()->check())
             {
                 $subscription->updated_by = auth()->id();
             }
@@ -92,19 +92,15 @@ class BrandModuleSubscription extends Model implements Auditable
      */
     public function scopeActive($query)
     {
-        return $query->where('subscription_status', 'active');
+        return $query->where('status', 'active');
     }
 
     /**
-     * Scope for checking if subscription is active and not expired.
+     * Scope for checking if subscription is active.
      */
     public function scopeValidSubscription($query)
     {
-        return $query->where('subscription_status', 'active')
-                    ->where(function ($q) {
-                        $q->whereNull('subscription_end')
-                          ->orWhere('subscription_end', '>', now());
-                    });
+        return $query->where('status', 'active');
     }
 
     /**
@@ -112,8 +108,7 @@ class BrandModuleSubscription extends Model implements Auditable
      */
     public function isValidSubscription()
     {
-        return $this->subscription_status === 'active' && 
-               ($this->subscription_end === null || $this->subscription_end > now());
+        return $this->status === 'active';
     }
 
     /**
@@ -121,7 +116,7 @@ class BrandModuleSubscription extends Model implements Auditable
      */
     public function getStatusBadgeClass()
     {
-        return match($this->subscription_status) 
+        return match($this->status)
         {
             'active' => 'badge-success',
             'inactive' => 'badge-warning',

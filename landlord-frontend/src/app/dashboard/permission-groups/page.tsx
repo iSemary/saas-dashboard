@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SlugInput } from "@/components/ui/slug-input";
 import {
   Sheet,
   SheetContent,
@@ -226,10 +227,11 @@ export default function PermissionGroupsPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="pg-slug">{t("dashboard.permission_groups.slug", "Slug (optional)")}</Label>
-              <Input
+              <SlugInput
                 id="pg-slug"
                 value={slug}
-                onChange={(e) => setSlug(e.target.value)}
+                onChange={setSlug}
+                sourceValue={name}
                 placeholder={t("dashboard.permission_groups.placeholder_slug", "auto from name if empty")}
               />
             </div>

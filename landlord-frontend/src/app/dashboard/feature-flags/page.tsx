@@ -8,6 +8,7 @@ import { DataTable } from "@/components/data-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SlugInput } from "@/components/ui/slug-input";
 import {
   Sheet,
   SheetContent,
@@ -171,7 +172,7 @@ export default function FeatureFlagsPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="ff-slug">{t("dashboard.feature_flags.slug", "Slug")}</Label>
-              <Input id="ff-slug" value={form.slug} onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))} />
+              <SlugInput id="ff-slug" value={form.slug} onChange={(v) => setForm((f) => ({ ...f, slug: v }))} sourceValue={form.name} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="ff-desc">{t("dashboard.feature_flags.description", "Description")}</Label>

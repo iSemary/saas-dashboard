@@ -5,7 +5,7 @@ namespace Modules\Auth\Repositories\Tenant;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Spatie\Permission\Models\Role;
 
-interface TenantRoleRepositoryInterface
+interface TenantRoleApiRepositoryInterface
 {
     public function paginate(array $filters = [], int $perPage = 50): LengthAwarePaginator;
 

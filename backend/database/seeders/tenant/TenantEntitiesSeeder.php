@@ -20,31 +20,31 @@ class TenantEntitiesSeeder extends Seeder
 
         // 1. Create Roles with Permissions
         $this->createRolesAndPermissions();
-        
+
         // 2. Create Sample Users
         $this->createSampleUsers();
-        
+
         // 3. Create Projects
         $this->createProjects();
-        
+
         // 4. Create Tasks for Projects
         $this->createTasks();
-        
+
         // 5. Create Organizations/Companies
         $this->createOrganizations();
-        
+
         // 6. Create Departments
         $this->createDepartments();
-        
+
         // 7. Create Teams
         $this->createTeams();
-        
+
         // 8. Create Meetings/Events
         $this->createMeetings();
-        
+
         // 9. Create Documents/Files
         $this->createDocuments();
-        
+
         // 10. Create Notifications
         $this->createNotifications();
 
@@ -135,9 +135,9 @@ class TenantEntitiesSeeder extends Seeder
                 ['name' => $roleName, 'guard_name' => 'web'],
                 ['name' => $roleName, 'guard_name' => 'web']
             );
-            
+
             $role->syncPermissions($roleData['permissions']);
-            
+
             $this->command->info("   ✅ Created role: {$roleName}");
         }
     }
@@ -148,9 +148,9 @@ class TenantEntitiesSeeder extends Seeder
 
         $users = [
             [
-                'name' => 'Super Admin',
-                'email' => 'superadmin@tenant.test',
-                'username' => 'superadmin',
+                'name' => 'Tenant Admin',
+                'email' => 'tenantadmin@tenant.test',
+                'username' => 'tenantadmin',
                 'password' => Hash::make('password123'),
                 'customer_id' => 1, // Add required customer_id field
                 'role' => 'super_admin',
@@ -232,15 +232,15 @@ class TenantEntitiesSeeder extends Seeder
         foreach ($users as $userData) {
             $role = $userData['role'];
             unset($userData['role'], $userData['department'], $userData['position']);
-            
+
             $user = User::updateOrCreate(
                 ['email' => $userData['email']],
                 $userData
             );
-            
+
             // Assign role
             $user->assignRole($role);
-            
+
             $this->command->info("   ✅ Created user: {$user->name} ({$role})");
         }
     }
@@ -307,7 +307,7 @@ class TenantEntitiesSeeder extends Seeder
                 ['name' => $projectData['name']],
                 $projectData
             );
-            
+
             $this->command->info("   ✅ Created project: {$projectData['name']}");
         }
     }
@@ -353,7 +353,7 @@ class TenantEntitiesSeeder extends Seeder
                 'status' => 'in_progress',
                 'priority' => 'critical',
                 'project_id' => $projects['Security Audit & Implementation'] ?? 1,
-                'assigned_to' => $users->where('username', 'superadmin')->first()?->id ?? 1,
+                'assigned_to' => $users->where('username', 'tenantadmin')->first()?->id ?? 1,
                 'due_date' => now()->addDays(3)
             ]
         ];
@@ -366,7 +366,7 @@ class TenantEntitiesSeeder extends Seeder
                     'updated_at' => now()
                 ])
             );
-            
+
             $this->command->info("   ✅ Created task: {$taskData['title']}");
         }
     }
@@ -419,7 +419,7 @@ class TenantEntitiesSeeder extends Seeder
                     'updated_at' => now()
                 ])
             );
-            
+
             $this->command->info("   ✅ Created organization: {$orgData['name']}");
         }
     }
@@ -474,7 +474,7 @@ class TenantEntitiesSeeder extends Seeder
                     'updated_at' => now()
                 ])
             );
-            
+
             $this->command->info("      ✅ Created department: {$deptData['name']}");
         }
     }
@@ -522,7 +522,7 @@ class TenantEntitiesSeeder extends Seeder
                     'updated_at' => now()
                 ])
             );
-            
+
             $this->command->info("   ✅ Created team: {$teamData['name']}");
         }
     }
@@ -570,7 +570,7 @@ class TenantEntitiesSeeder extends Seeder
                     'updated_at' => now()
                 ])
             );
-            
+
             $this->command->info("   ✅ Created meeting: {$meetingData['title']}");
         }
     }
@@ -623,7 +623,7 @@ class TenantEntitiesSeeder extends Seeder
                     'updated_at' => now()
                 ])
             );
-            
+
             $this->command->info("   ✅ Created document: {$docData['title']}");
         }
     }
@@ -662,7 +662,7 @@ class TenantEntitiesSeeder extends Seeder
                 'message' => 'Scheduled system maintenance will occur this weekend from 2 AM to 4 AM.',
                 'type' => 'system',
                 'priority' => 'medium',
-                'user_id' => User::where('username', 'superadmin')->first()?->id ?? 1,
+                'user_id' => User::where('username', 'tenantadmin')->first()?->id ?? 1,
                 'is_read' => false
             ]
         ];
@@ -675,7 +675,7 @@ class TenantEntitiesSeeder extends Seeder
                     'updated_at' => now()
                 ])
             );
-            
+
             $this->command->info("   ✅ Created notification: {$noteData['title']}");
         }
     }

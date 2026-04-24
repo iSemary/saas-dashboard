@@ -12,7 +12,7 @@ const config: SimpleCRUDConfig<PaymentMethodRow> = {
   createLabelFallback: "Add Method",
   fields: [
     { name: "name", label: "Name", required: true },
-    { name: "slug", label: "Slug" },
+    { name: "slug", label: "Slug", type: "slug", sourceField: "name" },
     { name: "is_active", label: "Active", type: "select", options: [{ value: "1", label: "Yes" }, { value: "0", label: "No" }] },
   ],
   listFn: listPaymentMethods,

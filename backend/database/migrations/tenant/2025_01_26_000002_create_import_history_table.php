@@ -8,6 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (Schema::hasTable('import_history')) {
+            return;
+        }
+
         Schema::create('import_history', function (Blueprint $table) {
             $table->id();
             $table->string('type'); // customers, tickets, etc.

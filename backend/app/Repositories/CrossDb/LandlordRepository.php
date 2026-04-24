@@ -6,7 +6,7 @@ use Modules\Utilities\Entities\Module;
 
 class LandlordRepository implements LandlordRepositoryInterface
 {
-    public function getModules(array $filters = []): \Illuminate\Database\Eloquent\Collection
+    public function getModules(array $filters = []): \Illuminate\Support\Collection
     {
         $query = Module::query();
 
@@ -25,9 +25,18 @@ class LandlordRepository implements LandlordRepositoryInterface
             $query->where('module_key', $filters['module_key']);
         }
 
-        return $query->select(['id', 'module_key', 'name', 'description', 'icon', 'status'])
+        return $query->select(['id', 'module_key', 'name', 'description', 'status'])
                      ->orderBy('name')
-                     ->get();
+                     ->get()
+                     ->map(function ($module) {
+                         return (object)[
+                             'id' => $module->id,
+                             'module_key' => $module->module_key,
+                             'name' => $module->name,
+                             'description' => $module->description,
+                             'status' => $module->status,
+                         ];
+                     });
     }
 
     public function findModule(int $id): ?Module

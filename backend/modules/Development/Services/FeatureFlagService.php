@@ -38,4 +38,27 @@ class FeatureFlagService
     {
         return DB::table('feature_flags')->where('id', $id)->delete();
     }
+
+    public function evaluate(array $slugs): array
+    {
+        $results = [];
+        $flags = DB::table('feature_flags')
+            ->whereIn('slug', $slugs)
+            ->get(['slug', 'is_enabled']);
+
+        foreach ($slugs as $slug) {
+            $flag = $flags->firstWhere('slug', $slug);
+            $results[$slug] = $flag ? (bool) $flag->is_enabled : false;
+        }
+
+        return $results;
+    }
+
+    public function evaluateAll(): array
+    {
+        return DB::table('feature_flags')
+            ->pluck('is_enabled', 'slug')
+            ->map(fn($val) => (bool) $val)
+            ->toArray();
+    }
 }

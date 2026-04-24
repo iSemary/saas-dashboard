@@ -1,7 +1,7 @@
 "use client";
 
 import { SimpleCRUDPage, type SimpleCRUDConfig } from "@/components/simple-crud-page";
-import { listStreets, createStreet, deleteStreet, type StreetRow } from "@/lib/resources";
+import { listStreets, createStreet, deleteStreet, listTowns, type StreetRow } from "@/lib/resources";
 
 const config: SimpleCRUDConfig<StreetRow> = {
   titleKey: "dashboard.streets.title",
@@ -12,7 +12,7 @@ const config: SimpleCRUDConfig<StreetRow> = {
   createLabelFallback: "Add Street",
   fields: [
     { name: "name", label: "Name", required: true },
-    { name: "town_id", label: "Town ID", type: "number", required: true },
+    { name: "town_id", label: "Town", type: "entity", listFn: listTowns, optionLabelKey: "name", optionValueKey: "id", parentKey: "city", required: true },
   ],
   listFn: listStreets,
   createFn: createStreet,

@@ -3,8 +3,12 @@
 import { useEffect, useState } from "react";
 import { Loader2, Users, Shield, Ticket, Building2 } from "lucide-react";
 import { useI18n } from "@/context/i18n-context";
+import { useAnimation } from "@/context/animation-context";
 import { getDashboardStats } from "@/lib/tenant-resources";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CountingNumber } from "@/components/animate-ui/primitives/texts/counting-number";
+import { Fades } from "@/components/animate-ui/primitives/effects/fade";
+import { Tilt, TiltContent } from "@/components/animate-ui/primitives/effects/tilt";
 
 type Stats = {
   users_count?: number;
@@ -17,6 +21,7 @@ type Stats = {
 
 export default function DashboardPage() {
   const { t } = useI18n();
+  const { enabled: animationsEnabled } = useAnimation();
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -45,15 +50,39 @@ export default function DashboardPage() {
         <p className="mt-1 text-sm text-muted-foreground">{t("dashboard.subtitle", "Overview of your tenant.")}</p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {cards.map((c) => (
-          <Card key={c.label}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">{c.label}</CardTitle>
-              <c.icon className="size-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent><div className="text-2xl font-bold">{c.value}</div></CardContent>
-          </Card>
-        ))}
+        {animationsEnabled ? (
+          <Fades holdDelay={100}>
+            {cards.map((c) => (
+              <Tilt key={c.label} className="rounded-xl">
+                <TiltContent>
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between pb-2">
+                      <CardTitle className="text-sm font-medium">{c.label}</CardTitle>
+                      <c.icon className="size-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">
+                        <CountingNumber number={c.value} inView inViewOnce />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TiltContent>
+              </Tilt>
+            ))}
+          </Fades>
+        ) : (
+          cards.map((c) => (
+            <Card key={c.label}>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium">{c.label}</CardTitle>
+                <c.icon className="size-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{c.value}</div>
+              </CardContent>
+            </Card>
+          ))
+        )}
       </div>
     </div>
   );

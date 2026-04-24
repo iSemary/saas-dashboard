@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Auth\Http\Controllers\Api\AuthApiController;
+use Modules\Auth\Http\Controllers\Api\UserMetaApiController;
 use Modules\Auth\Http\Controllers\Tenant\DashboardController;
 
 Route::prefix('auth')->group(function () {
@@ -45,4 +46,12 @@ Route::prefix('profile')->middleware('auth:api')->group(function () {
     Route::post('/password', [AuthApiController::class, 'changePassword'])->name('api.profile.password');
     Route::get('/sessions', [AuthApiController::class, 'getSessions'])->name('api.profile.sessions');
     Route::post('/sessions/{id}/revoke', [AuthApiController::class, 'revokeSession'])->name('api.profile.sessions.revoke');
+});
+
+// User Meta API routes (for user-specific settings like animations)
+Route::prefix('user-meta')->middleware('auth:api')->group(function () {
+    Route::get('/', [UserMetaApiController::class, 'index'])->name('api.user-meta.index');
+    Route::get('/{key}', [UserMetaApiController::class, 'show'])->name('api.user-meta.show');
+    Route::post('/', [UserMetaApiController::class, 'store'])->name('api.user-meta.store');
+    Route::delete('/{key}', [UserMetaApiController::class, 'destroy'])->name('api.user-meta.destroy');
 });

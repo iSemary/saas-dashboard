@@ -6,10 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import {
   Activity,
-  Bell,
   Building2,
-  CreditCard,
-  FileText,
   Key,
   LayoutDashboard,
   Lock,
@@ -21,7 +18,6 @@ import {
   Ticket,
   User,
   UserCog,
-  Users,
   UsersRound,
   Briefcase,
   ShoppingCart,
@@ -34,18 +30,12 @@ import { ChartPaletteProvider } from "@/context/chart-palette-context";
 import { DashboardBrandingProvider } from "@/context/dashboard-branding-context";
 import { useFeatureFlags } from "@/context/feature-flag-context";
 import { AppFooter } from "@/components/app-footer";
-import {
-  DashboardCommandPalette,
-  useCommandPaletteShortcut,
-  type CommandPaletteItem,
-} from "@/components/dashboard-command-palette";
+import { DashboardCommandPalette, useCommandPaletteShortcut, type CommandPaletteItem } from "@/components/dashboard-command-palette";
 import { DashboardAuthShell } from "@/components/dashboard-auth-shell";
-import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggleIcon } from "@/components/theme-toggle-icon";
 import { UserNavMenu } from "@/components/user-nav-menu";
 import { NotificationHeaderMenu } from "@/components/notification-header-menu";
 import { DashboardLogo } from "@/components/dashboard-logo";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import {
   Sidebar,
@@ -64,6 +54,8 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { useAnimation } from "@/context/animation-context";
+import { Fades } from "@/components/animate-ui/primitives/effects/fade";
 
 type NavLinkDef = {
   href: string;
@@ -118,16 +110,15 @@ const navSections: NavSectionDef[] = [
     items: [
       { href: "/dashboard/profile", labelKey: "dashboard.nav.my_profile", fallback: "My Profile", icon: User },
       { href: "/dashboard/settings", labelKey: "dashboard.nav.settings", fallback: "General Settings", icon: Settings2 },
-      { href: "/dashboard/two-factor-auth", labelKey: "dashboard.nav.two_factor_auth", fallback: "Two-Factor Auth", icon: Shield },
     ],
   },
   {
     titleKey: "dashboard.nav.section_modules",
     titleFallback: "Modules",
     items: [
-      { href: "/dashboard/modules/crm", labelKey: "dashboard.nav.crm", fallback: "CRM", icon: UsersRound, permission: "view.modules" },
-      { href: "/dashboard/modules/hr", labelKey: "dashboard.nav.hr", fallback: "HR", icon: Briefcase, permission: "view.modules" },
-      { href: "/dashboard/modules/pos", labelKey: "dashboard.nav.pos", fallback: "POS", icon: ShoppingCart, permission: "view.modules" },
+      { href: "/dashboard/modules/crm", labelKey: "dashboard.nav.crm", fallback: "CRM", icon: UsersRound },
+      { href: "/dashboard/modules/hr", labelKey: "dashboard.nav.hr", fallback: "HR", icon: Briefcase },
+      { href: "/dashboard/modules/pos", labelKey: "dashboard.nav.pos", fallback: "POS", icon: ShoppingCart },
     ],
   },
   {
@@ -149,6 +140,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const { loading, isAuthenticated, logout, user } = useAuth();
   const { t, dir } = useI18n();
   const { isEnabled } = useFeatureFlags();
+  const { enabled: animationsEnabled } = useAnimation();
   const router = useRouter();
   const pathname = usePathname();
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -252,35 +244,69 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </SidebarMenu>
           </SidebarHeader>
           <SidebarContent>
-            {visibleSections.map((section, si) => (
-              <SidebarGroup key={si}>
-                {section.titleKey ? (
-                  <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    {t(section.titleKey, section.titleFallback ?? "")}
-                  </SidebarGroupLabel>
-                ) : null}
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    {section.items.map((item) => {
-                      const Icon = item.icon;
-                      const label = t(item.labelKey, item.fallback);
-                      return (
-                        <SidebarMenuItem key={item.href}>
-                          <SidebarMenuButton
-                            isActive={pathname === item.href}
-                            tooltip={label}
-                            render={<Link href={item.href} />}
-                          >
-                            <Icon />
-                            <span>{label}</span>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      );
-                    })}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </SidebarGroup>
-            ))}
+            {animationsEnabled ? (
+              <Fades holdDelay={75}>
+                {visibleSections.map((section, si) => (
+                  <SidebarGroup key={si}>
+                    {section.titleKey ? (
+                      <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        {t(section.titleKey, section.titleFallback ?? "")}
+                      </SidebarGroupLabel>
+                    ) : null}
+                    <SidebarGroupContent>
+                      <SidebarMenu>
+                        {section.items.map((item) => {
+                          const Icon = item.icon;
+                          const label = t(item.labelKey, item.fallback);
+                          return (
+                            <SidebarMenuItem key={item.href}>
+                              <SidebarMenuButton
+                                isActive={pathname === item.href}
+                                tooltip={label}
+                                render={<Link href={item.href} />}
+                              >
+                                <Icon />
+                                <span>{label}</span>
+                              </SidebarMenuButton>
+                            </SidebarMenuItem>
+                          );
+                        })}
+                      </SidebarMenu>
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+                ))}
+              </Fades>
+            ) : (
+              visibleSections.map((section, si) => (
+                <SidebarGroup key={si}>
+                  {section.titleKey ? (
+                    <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      {t(section.titleKey, section.titleFallback ?? "")}
+                    </SidebarGroupLabel>
+                  ) : null}
+                  <SidebarGroupContent>
+                    <SidebarMenu>
+                      {section.items.map((item) => {
+                        const Icon = item.icon;
+                        const label = t(item.labelKey, item.fallback);
+                        return (
+                          <SidebarMenuItem key={item.href}>
+                            <SidebarMenuButton
+                              isActive={pathname === item.href}
+                              tooltip={label}
+                              render={<Link href={item.href} />}
+                            >
+                              <Icon />
+                              <span>{label}</span>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        );
+                      })}
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </SidebarGroup>
+              ))
+            )}
           </SidebarContent>
           <SidebarFooter className="border-t border-sidebar-border p-2 group-data-[collapsible=icon]:gap-1.5">
             <UserNavMenu displayName={user?.name} onLogout={() => void handleLogout()} variant="sidebar" />
@@ -321,15 +347,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border bg-background/95 px-4 backdrop-blur supports-backdrop-filter:bg-background/80">
             <div className="flex min-w-0 items-center gap-3">
               <SidebarTrigger className="-ms-1 shrink-0" />
-              <Link href="/dashboard" className="flex shrink-0 items-center gap-2">
-                <DashboardLogo className="shadow-sm" />
-                <span className="hidden font-semibold tracking-tight sm:inline">{t("dashboard.app_name", APP_NAME)}</span>
-              </Link>
-              <Separator orientation="vertical" className="hidden h-6 sm:block" />
             </div>
             <div className="flex min-w-0 shrink-0 items-center gap-2">
               {isEnabled("dashboard.notifications", true) ? <NotificationHeaderMenu /> : null}
-              <LanguageSwitcher />
               <ThemeToggleIcon />
               <UserNavMenu displayName={user?.name} onLogout={() => void handleLogout()} variant="header" />
             </div>

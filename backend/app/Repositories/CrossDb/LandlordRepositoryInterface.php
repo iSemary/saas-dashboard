@@ -4,7 +4,7 @@ namespace App\Repositories\CrossDb;
 
 interface LandlordRepositoryInterface
 {
-    public function getModules(array $filters = []): \Illuminate\Database\Eloquent\Collection;
+    public function getModules(array $filters = []): \Illuminate\Support\Collection;
 
     public function findModule(int $id): ?\Modules\Utilities\Entities\Module;
 

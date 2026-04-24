@@ -72,25 +72,25 @@ class BrandRepository implements BrandRepositoryInterface
             })
             ->addColumn('actions', function ($row) {
                 $actions = '';
-                
-                $actions .= '<button class="btn btn-sm btn-primary open-edit-modal me-1" 
+
+                $actions .= '<button class="btn btn-sm btn-primary open-edit-modal me-1"
                                data-modal-link="' . route('landlord.brands.edit', $row->id) . '"
                                data-modal-title="' . translate('edit') . ' ' . translate('brand') . '">
                                <i class="fa fa-edit"></i>
                             </button>';
-                
+
                 if ($row->deleted_at) {
-                    $actions .= '<button class="btn btn-sm btn-warning restore-btn me-1" 
+                    $actions .= '<button class="btn btn-sm btn-warning restore-btn me-1"
                                    data-route="' . route('landlord.brands.restore', $row->id) . '">
                                    <i class="fa fa-undo"></i>
                                 </button>';
                 } else {
-                    $actions .= '<button class="btn btn-sm btn-danger delete-btn" 
+                    $actions .= '<button class="btn btn-sm btn-danger delete-btn"
                                    data-route="' . route('landlord.brands.destroy', $row->id) . '">
                                    <i class="fa fa-trash"></i>
                                 </button>';
                 }
-                
+
                 return $actions;
             })
             ->rawColumns(['logo', 'status', 'actions'])
@@ -130,12 +130,12 @@ class BrandRepository implements BrandRepositoryInterface
             })
             ->addColumn('actions', function ($row) {
                 $actions = '';
-                
+
                 // Only show view action for tenants (read-only)
                 $actions .= '<a href="' . route('tenant.brands.show', $row->id) . '" class="btn btn-sm btn-primary me-1">
                                <i class="fa fa-eye"></i>
                             </a>';
-                
+
                 return $actions;
             })
             ->rawColumns(['logo', 'branches_count', 'status', 'actions'])
@@ -144,17 +144,17 @@ class BrandRepository implements BrandRepositoryInterface
 
     public function getById(int $id): ?Brand
     {
-        return Brand::on('landlord')->with(['tenant', 'creator', 'updater'])->find($id);
+        return Brand::with(['tenant', 'creator', 'updater'])->find($id);
     }
 
     public function getBySlug(string $slug): ?Brand
     {
-        return Brand::on('landlord')->with(['tenant', 'creator', 'updater'])->where('slug', $slug)->first();
+        return Brand::with(['tenant', 'creator', 'updater'])->where('slug', $slug)->first();
     }
 
     public function create(array $data): Brand
     {
-        return Brand::on('landlord')->create($data);
+        return Brand::create($data);
     }
 
     public function update(int $id, array $data): bool

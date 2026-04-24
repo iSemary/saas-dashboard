@@ -37,6 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'landlord_roles' => \App\Http\Middleware\LandlordRoles::class,
+            'tenant_roles' => \App\Http\Middleware\TenantRoles::class,
         ]);
 
         $middleware->group('tenant', [

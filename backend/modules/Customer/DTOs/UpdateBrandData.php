@@ -11,6 +11,7 @@ readonly class UpdateBrandData
         public ?string $slug = null,
         public ?string $domain = null,
         public ?bool $is_active = null,
+        public ?array $modules = null,
     ) {}
 
     public static function fromRequest(UpdateBrandRequest $request): self
@@ -25,6 +26,7 @@ readonly class UpdateBrandData
             'slug' => $this->slug,
             'domain' => $this->domain,
             'is_active' => $this->is_active,
+            'modules' => $this->modules,
         ], fn ($value) => $value !== null);
     }
 }

@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('projects')) {
+            return;
+        }
+
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -23,7 +27,7 @@ return new class extends Migration
             $table->foreignId('manager_id')->constrained('users')->onDelete('cascade');
             $table->json('metadata')->nullable(); // For additional project data
             $table->timestamps();
-            
+
             // Indexes for performance
             $table->index('status');
             $table->index('manager_id');

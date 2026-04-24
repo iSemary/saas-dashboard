@@ -12,7 +12,7 @@ const config: SimpleCRUDConfig<IndustryRow> = {
   createLabelFallback: "Add Industry",
   fields: [
     { name: "name", label: "Name", required: true },
-    { name: "slug", label: "Slug" },
+    { name: "slug", label: "Slug", type: "slug", sourceField: "name" },
   ],
   listFn: listIndustries,
   createFn: createIndustry,

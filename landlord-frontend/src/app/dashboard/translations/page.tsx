@@ -1,7 +1,7 @@
 "use client";
 
 import { SimpleCRUDPage, type SimpleCRUDConfig } from "@/components/simple-crud-page";
-import { listTranslations, createTranslation, updateTranslation, deleteTranslation, type TranslationRow } from "@/lib/resources";
+import { listTranslations, createTranslation, updateTranslation, deleteTranslation, listLanguages, type TranslationRow } from "@/lib/resources";
 
 const config: SimpleCRUDConfig<TranslationRow> = {
   titleKey: "dashboard.translations.title",
@@ -14,7 +14,7 @@ const config: SimpleCRUDConfig<TranslationRow> = {
     { name: "key", label: "Key", required: true },
     { name: "value", label: "Value", type: "textarea" },
     { name: "group", label: "Group", placeholder: "dashboard" },
-    { name: "language_id", label: "Language ID", type: "number", required: true },
+    { name: "language_id", label: "Language", type: "entity", listFn: listLanguages, optionLabelKey: "name", optionValueKey: "id", required: true },
   ],
   listFn: listTranslations,
   createFn: createTranslation,

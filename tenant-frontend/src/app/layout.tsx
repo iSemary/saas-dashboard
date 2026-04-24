@@ -8,6 +8,7 @@ import { FeatureFlagProvider } from "@/context/feature-flag-context";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppToaster } from "@/components/app-toaster";
 import { AccentProvider } from "@/context/accent-context";
+import { AnimationProvider } from "@/context/animation-context";
 import { APP_DESCRIPTION, APP_TITLE } from "@/lib/app-config";
 
 const geistSans = Geist({
@@ -46,7 +47,9 @@ export default function RootLayout({
             <I18nProvider>
               <AuthProvider>
                 <AccentProvider>
-                  <FeatureFlagProvider>{children}</FeatureFlagProvider>
+                  <AnimationProvider>
+                    <FeatureFlagProvider>{children}</FeatureFlagProvider>
+                  </AnimationProvider>
                 </AccentProvider>
               </AuthProvider>
               <AppToaster />

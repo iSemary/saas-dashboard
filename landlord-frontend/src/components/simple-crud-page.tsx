@@ -8,6 +8,7 @@ import { DataTable } from "@/components/data-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SlugInput } from "@/components/ui/slug-input";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import {
   Sheet,
@@ -19,14 +20,27 @@ import {
 } from "@/components/ui/sheet";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useI18n } from "@/context/i18n-context";
+import type { TableParams, PaginatedResponse } from "@/lib/resources";
+import { EntitySelector } from "@/components/entity-selector";
 
 export type FieldDef = {
   name: string;
   label: string;
-  type?: "text" | "email" | "password" | "number" | "url" | "textarea" | "select" | "richtext";
+  type?: "text" | "email" | "password" | "number" | "url" | "textarea" | "select" | "richtext" | "slug" | "entity";
   placeholder?: string;
   required?: boolean;
   options?: Array<{ value: string; label: string }>;
+  sourceField?: string;
+  /** For entity type: function to fetch options */
+  listFn?: () => Promise<unknown[]>;
+  /** For entity type: property key for option label (default: "name") */
+  optionLabelKey?: string;
+  /** For entity type: property key for option value (default: "id") */
+  optionValueKey?: string;
+  /** For entity type: property key for parent entity (for hierarchical display) */
+  parentKey?: string;
+  /** For entity type: property key for parent label (default: "name") */
+  parentLabelKey?: string;
 };
 
 export type SimpleCRUDConfig<T extends { id: number }> = {
@@ -37,14 +51,22 @@ export type SimpleCRUDConfig<T extends { id: number }> = {
   createLabelKey: string;
   createLabelFallback: string;
   fields: FieldDef[];
-  listFn: () => Promise<T[]>;
+  /** List function - supports both client-side and server-side */
+  listFn: (params?: TableParams) => Promise<T[]> | Promise<PaginatedResponse<T>>;
   createFn: (payload: Record<string, unknown>) => Promise<unknown>;
   updateFn?: ((id: number, payload: Record<string, unknown>) => Promise<unknown>) | null;
   deleteFn?: ((id: number) => Promise<void>) | null;
   columns: (t: (key: string, fallback: string) => string) => Array<ColumnDef<T>>;
   toForm: (row: T) => Record<string, string>;
   fromForm: (form: Record<string, string>) => Record<string, unknown>;
+  /** Enable server-side table operations (search, sort, pagination) */
+  serverSide?: boolean;
+  /** Searchable columns for backend search (required when serverSide=true) */
+  searchableColumns?: string[];
+  /** Sortable columns for backend sort (required when serverSide=true) */
+  sortableColumns?: string[];
 };
+
 
 export function SimpleCRUDPage<T extends { id: number }>({
   config,
@@ -54,6 +76,8 @@ export function SimpleCRUDPage<T extends { id: number }>({
   const { t } = useI18n();
   const [rows, setRows] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
+  const [tableMeta, setTableMeta] = useState<{ current_page: number; last_page: number; per_page: number; total: number } | undefined>(undefined);
+  const serverSide = config.serverSide ?? false;
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
@@ -65,20 +89,35 @@ export function SimpleCRUDPage<T extends { id: number }>({
     return init;
   });
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (params?: TableParams) => {
     setLoading(true);
     try {
-      setRows(await config.listFn());
+      const result = await config.listFn(params);
+      // Handle both array and paginated response
+      if (Array.isArray(result)) {
+        setRows(result);
+        setTableMeta(undefined);
+      } else {
+        setRows(result.data ?? []);
+        setTableMeta(result.meta);
+      }
     } catch {
       setRows([]);
+      setTableMeta(undefined);
     } finally {
       setLoading(false);
     }
   }, [config]);
 
   useEffect(() => {
-    void load();
-  }, [load]);
+    // Initial load - only for client-side mode
+    if (!serverSide) {
+      void load();
+    } else {
+      // Server-side: load with default params
+      void load({ page: 1, per_page: 10 });
+    }
+  }, [load, serverSide]);
 
   const openCreate = () => {
     setEditingId(null);
@@ -125,13 +164,27 @@ export function SimpleCRUDPage<T extends { id: number }>({
     try {
       await config.deleteFn(deletingId);
       toast.success(t("dashboard.crud.deleted", "Deleted."));
-      await load();
+      await load(serverSide ? { page: 1, per_page: tableMeta?.per_page ?? 10 } : undefined);
     } catch {
       toast.error(t("dashboard.crud.delete_error", "Could not delete."));
     } finally {
       setDeletingId(null);
     }
   };
+
+  const handleTableChange = useCallback((params: { page: number; perPage: number; search: string; sortBy: string | null; sortDirection: 'asc' | 'desc' }) => {
+    if (!serverSide) return;
+    
+    const tableParams: TableParams = {
+      page: params.page,
+      per_page: params.perPage,
+      search: params.search || undefined,
+      sort_by: params.sortBy || undefined,
+      sort_direction: params.sortDirection,
+    };
+    
+    void load(tableParams);
+  }, [load, serverSide]);
 
   const columns = useMemo(() => {
     const base = config.columns(t);
@@ -169,19 +222,30 @@ export function SimpleCRUDPage<T extends { id: number }>({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border bg-muted/40 p-4">
-        <h1 className="text-xl font-semibold">{t(config.titleKey, config.titleFallback)}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{t(config.subtitleKey, config.subtitleFallback)}</p>
+      <div className="rounded-xl border bg-muted/40 p-4 flex items-center justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-semibold">{t(config.titleKey, config.titleFallback)}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{t(config.subtitleKey, config.subtitleFallback)}</p>
+        </div>
+        <Button
+          type="button"
+          size="sm"
+          className="h-9 gap-1 shrink-0"
+          onClick={openCreate}
+        >
+          <Plus className="size-4" />
+          {t(config.createLabelKey, config.createLabelFallback)}
+        </Button>
       </div>
       <DataTable
         columns={columns}
         data={rows}
-        toolbarActions={
-          <Button type="button" size="sm" className="h-9 gap-1" onClick={openCreate}>
-            <Plus className="size-4" />
-            {t(config.createLabelKey, config.createLabelFallback)}
-          </Button>
-        }
+        enableExport={true}
+        searchable={true}
+        serverSide={serverSide}
+        meta={tableMeta}
+        loading={loading}
+        onTableChange={serverSide ? handleTableChange : undefined}
       />
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent className="flex w-full max-w-lg flex-col gap-0 sm:max-w-md">
@@ -226,6 +290,28 @@ export function SimpleCRUDPage<T extends { id: number }>({
                       </option>
                     ))}
                   </select>
+                ) : field.type === "slug" ? (
+                  <SlugInput
+                    id={`field-${field.name}`}
+                    value={form[field.name] ?? ""}
+                    onChange={(v) => setForm((f) => ({ ...f, [field.name]: v }))}
+                    sourceValue={field.sourceField ? form[field.sourceField] : undefined}
+                    placeholder={field.placeholder}
+                    required={field.required}
+                  />
+                ) : field.type === "entity" && field.listFn ? (
+                  <EntitySelector
+                    value={form[field.name] ?? ""}
+                    onChange={(v) => setForm((f) => ({ ...f, [field.name]: v }))}
+                    listFn={field.listFn}
+                    optionLabelKey={field.optionLabelKey}
+                    optionValueKey={field.optionValueKey}
+                    parentKey={field.parentKey}
+                    parentLabelKey={field.parentLabelKey}
+                    placeholder={field.placeholder}
+                    required={field.required}
+                    disabled={saving}
+                  />
                 ) : (
                   <Input
                     id={`field-${field.name}`}

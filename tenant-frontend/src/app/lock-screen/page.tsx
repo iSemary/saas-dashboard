@@ -11,6 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Blur } from "@/components/animate-ui/primitives/effects/blur";
+import { Fade } from "@/components/animate-ui/primitives/effects/fade";
+import { TypingText, TypingTextCursor } from "@/components/animate-ui/primitives/texts/typing";
 
 export default function LockScreenPage() {
   const { t } = useI18n();
@@ -43,12 +46,23 @@ export default function LockScreenPage() {
         <div className="flex size-20 items-center justify-center rounded-full bg-muted">
           <Lock className="size-10 text-muted-foreground" />
         </div>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("dashboard.auth.locked", "Screen locked")}</h1>
-        <p className="text-sm text-muted-foreground">
-          {t("dashboard.auth.lock_subtitle", `Enter your password to unlock, ${user?.name ?? "User"}.`)}
-        </p>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          <TypingText
+            text={t("dashboard.auth.locked", "Screen locked")}
+            inView
+            inViewOnce
+            duration={60}
+          />
+          <TypingTextCursor />
+        </h1>
+        <Fade delay={400}>
+          <p className="text-sm text-muted-foreground">
+            {t("dashboard.auth.lock_subtitle", `Enter your password to unlock, ${user?.name ?? "User"}.`)}
+          </p>
+        </Fade>
       </div>
-      <Card className="w-full max-w-md border-border/80 shadow-lg">
+      <Blur inView inViewOnce delay={200}>
+        <Card className="w-full max-w-lg border-border/80 shadow-lg">
         <CardHeader>
           <CardTitle>{t("dashboard.auth.unlock", "Unlock")}</CardTitle>
           <CardDescription>{t("dashboard.auth.unlock_desc", "Enter your password to continue.")}</CardDescription>
@@ -100,7 +114,8 @@ export default function LockScreenPage() {
             </Button>
           </form>
         </CardContent>
-      </Card>
+        </Card>
+      </Blur>
     </div>
   );
 }

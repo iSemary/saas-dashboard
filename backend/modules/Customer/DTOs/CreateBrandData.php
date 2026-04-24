@@ -12,6 +12,7 @@ readonly class CreateBrandData
         public ?string $domain,
         public ?string $logo,
         public ?bool $is_active,
+        public ?array $modules = null,
     ) {}
 
     public static function fromRequest(StoreBrandRequest $request): self

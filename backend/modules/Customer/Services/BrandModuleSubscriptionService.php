@@ -4,6 +4,7 @@ namespace Modules\Customer\Services;
 
 use Modules\Customer\Entities\BrandModuleSubscription;
 use Modules\Customer\Repository\BrandModuleSubscriptionRepositoryInterface;
+use App\Services\CrossDb\LandlordService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -11,10 +12,14 @@ use Illuminate\Support\Facades\DB;
 class BrandModuleSubscriptionService
 {
     protected BrandModuleSubscriptionRepositoryInterface $subscriptionRepository;
+    protected LandlordService $landlordService;
 
-    public function __construct(BrandModuleSubscriptionRepositoryInterface $subscriptionRepository)
-    {
+    public function __construct(
+        BrandModuleSubscriptionRepositoryInterface $subscriptionRepository,
+        LandlordService $landlordService,
+    ) {
         $this->subscriptionRepository = $subscriptionRepository;
+        $this->landlordService = $landlordService;
     }
 
     public function getAll(array $filters = [], int $perPage = 15): LengthAwarePaginator
@@ -88,33 +93,42 @@ class BrandModuleSubscriptionService
     public function subscribeToModules(int $brandId, array $moduleKeys, array $moduleConfigs = []): array
     {
         $results = [];
-        
+
         DB::beginTransaction();
-        
-        try 
+
+        try
         {
-            foreach ($moduleKeys as $moduleKey) 
+            // Fetch all available modules from landlord to get their IDs
+            $landlordModules = $this->landlordService->getModules();
+            $moduleIdMap = [];
+            foreach ($landlordModules as $module) {
+                $moduleIdMap[$module->module_key] = $module->id;
+            }
+
+            foreach ($moduleKeys as $moduleKey)
             {
-                // Default module info (should be from module configuration)
-                $moduleInfo = $this->getModuleInfo($moduleKey);
-                
+                // Skip if module not found in landlord
+                if (!isset($moduleIdMap[$moduleKey])) {
+                    continue;
+                }
+
                 $subscriptionData = [
                     'brand_id' => $brandId,
+                    'module_id' => $moduleIdMap[$moduleKey],
                     'module_key' => $moduleKey,
-                    'module_name' => $moduleInfo['name'],
-                    'subscription_status' => 'active',
-                    'subscription_start' => now(),
+                    'status' => 'active',
+                    'subscribed_at' => now(),
                     'module_config' => $moduleConfigs[$moduleKey] ?? null,
                 ];
-                
+
                 $subscription = $this->create($subscriptionData);
                 $results[] = $subscription;
             }
-            
+
             DB::commit();
             return $results;
-        } 
-        catch (\Exception $e) 
+        }
+        catch (\Exception $e)
         {
             DB::rollBack();
             throw $e;
@@ -127,28 +141,27 @@ class BrandModuleSubscriptionService
     public function unsubscribeFromModules(int $brandId, array $moduleKeys): array
     {
         $results = [];
-        
+
         DB::beginTransaction();
-        
-        try 
+
+        try
         {
-            foreach ($moduleKeys as $moduleKey) 
+            foreach ($moduleKeys as $moduleKey)
             {
                 $subscription = $this->getByBrandAndModule($brandId, $moduleKey);
-                if ($subscription) 
+                if ($subscription)
                 {
                     $this->update($subscription->id, [
-                        'subscription_status' => 'inactive',
-                        'subscription_end' => now()
+                        'status' => 'inactive',
                     ]);
                     $results[] = $subscription;
                 }
             }
-            
+
             DB::commit();
             return $results;
-        } 
-        catch (\Exception $e) 
+        }
+        catch (\Exception $e)
         {
             DB::rollBack();
             throw $e;

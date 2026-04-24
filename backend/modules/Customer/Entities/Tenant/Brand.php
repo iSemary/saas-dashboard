@@ -2,7 +2,7 @@
 
 namespace Modules\Customer\Entities\Tenant;
 
-use Illuminate\Database\Eloquent\Model;
+use Modules\Customer\Entities\Brand as BaseBrand;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
@@ -12,7 +12,7 @@ use Modules\Utilities\Entities\Module;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Support\Facades\Auth;
 
-class Brand extends Model implements Auditable
+class Brand extends BaseBrand implements Auditable
 {
     use HasFactory, SoftDeletes, Translatable, \OwenIt\Auditing\Auditable;
 
@@ -47,25 +47,25 @@ class Brand extends Model implements Auditable
     {
         parent::boot();
 
-        static::creating(function ($brand) 
+        static::creating(function ($brand)
         {
-            if (empty($brand->slug)) 
+            if (empty($brand->slug))
             {
                 $brand->slug = Str::slug($brand->name);
             }
-            if (Auth::check()) 
+            if (Auth::check())
             {
                 $brand->created_by = Auth::id();
             }
         });
 
-        static::updating(function ($brand) 
+        static::updating(function ($brand)
         {
-            if ($brand->isDirty('name') && empty($brand->slug)) 
+            if ($brand->isDirty('name') && empty($brand->slug))
             {
                 $brand->slug = Str::slug($brand->name);
             }
-            if (Auth::check()) 
+            if (Auth::check())
             {
                 $brand->updated_by = Auth::id();
             }
@@ -119,20 +119,20 @@ class Brand extends Model implements Auditable
                 ->where('brand_id', $this->id)
                 ->pluck('module_id')
                 ->toArray();
-            
+
             if (empty($moduleIds)) {
                 return collect();
             }
-            
+
             // Get modules from landlord database directly
             $modules = \DB::connection('landlord')
                 ->table('modules')
                 ->whereIn('id', $moduleIds)
                 ->select(['id', 'module_key', 'name', 'description', 'icon', 'status'])
                 ->get();
-            
+
             return $modules;
-            
+
         } catch (\Exception $e) {
             \Log::error('Brand getAssignedModules Error: ' . $e->getMessage());
             return collect();
@@ -144,7 +144,7 @@ class Brand extends Model implements Auditable
      */
     public function scopeSearch($query, $search)
     {
-        return $query->where(function ($q) use ($search) 
+        return $query->where(function ($q) use ($search)
         {
             $q->where('name', 'like', '%' . $search . '%')
               ->orWhere('slug', 'like', '%' . $search . '%')
@@ -157,7 +157,7 @@ class Brand extends Model implements Auditable
      */
     public function getLogoUrlAttribute()
     {
-        if ($this->logo) 
+        if ($this->logo)
         {
             return asset('storage/' . $this->logo);
         }

@@ -100,13 +100,7 @@ if [ "$SKIP_FRONTEND" = false ]; then
   echo "  🎨 Frontend Build"
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-  NEED_BUILD=false
-
-  if [ "$FORCE" = true ]; then
-    NEED_BUILD=true
-  elif [ ! -d "$LANDLORD_DIR/out" ] || [ ! -d "$TENANT_DIR/out" ]; then
-    NEED_BUILD=true
-  fi
+  NEED_BUILD=true
 
   if [ "$SKIP_BUILD" = false ] && [ "$NEED_BUILD" = true ]; then
     # Install npm deps if needed

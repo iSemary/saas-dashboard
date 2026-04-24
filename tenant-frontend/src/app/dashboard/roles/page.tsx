@@ -24,7 +24,6 @@ const config: SimpleCRUDConfig<Role> = {
   columns: (t): Array<ColumnDef<Role>> => [
     { accessorKey: "id", header: t("dashboard.table.id", "ID") },
     { accessorKey: "name", header: t("dashboard.table.name", "Name") },
-    { accessorKey: "guard_name", header: t("dashboard.table.guard", "Guard") },
   ],
   toForm: (r) => ({ name: r.name, guard_name: r.guard_name ?? "" }),
   fromForm: (f) => ({ name: f.name, guard_name: f.guard_name || undefined }),

@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Modules\Tenant\Entities\Tenant;
 
 class TenantSetupCommand extends Command
@@ -13,7 +14,7 @@ class TenantSetupCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'tenant:setup 
+    protected $signature = 'tenant:setup
                             {tenant? : Tenant ID or name to setup (defaults to all tenants)}
                             {--force : Force the operation without confirmation}
                             {--migrate-only : Run migrations only, skip seeding}
@@ -48,6 +49,9 @@ class TenantSetupCommand extends Command
             $this->line("   Database: {$tenant->database}");
             $this->line("   Domain: {$tenant->domain}");
             $this->newLine();
+
+            // Ensure the tenant database exists before running migrations
+            $this->ensureDatabaseExists($tenant);
 
             // Check if we should run migrations
             if (!$this->option('seed-only')) {
@@ -84,7 +88,7 @@ class TenantSetupCommand extends Command
                           ->orWhere('name', $tenantInput);
                 })
                 ->first();
-            
+
             if ($tenant) {
                 return collect([$tenant]);
             } else {
@@ -103,7 +107,7 @@ class TenantSetupCommand extends Command
     private function runTenantMigrations($tenant)
     {
         $this->info('📦 Running Tenant Migrations...');
-        
+
         $migrationPaths = [
             'database/migrations/shared',
             'database/migrations/tenant',
@@ -118,7 +122,7 @@ class TenantSetupCommand extends Command
                 $relativePath = str_replace(base_path() . '/', '', $modulePath);
                 $migrationPaths[] = $relativePath;
             }
-            
+
             $modules = glob($moduleBasePath . '/*/database/migrations/shared', GLOB_ONLYDIR);
             foreach ($modules as $modulePath) {
                 $relativePath = str_replace(base_path() . '/', '', $modulePath);
@@ -126,25 +130,29 @@ class TenantSetupCommand extends Command
             }
         }
 
-        $migrateCommand = $this->option('fresh') ? 'migrate:fresh' : 'migrate';
-        $forceFlag = $this->option('force') ? ' --force' : '';
+        $isFresh = $this->option('fresh');
 
-        foreach ($migrationPaths as $path) {
-            try {
-                $this->line("   Running migrations from: {$path}");
-                
-                $command = "tenants:artisan '{$migrateCommand} --path={$path} --database=tenant{$forceFlag}' --tenant={$tenant->id}";
-                Artisan::call($command);
-                
-                $output = Artisan::output();
-                if (trim($output) && !str_contains($output, 'Nothing to migrate')) {
-                    $this->line("   ✅ Migrations completed for: {$path}");
-                } else {
-                    $this->line("   ⏭️  No migrations found in: {$path}");
-                }
-            } catch (\Exception $e) {
-                $this->warn("   ⚠️  Warning: {$path} - {$e->getMessage()}");
+        // Run migrations using tenant context with all paths combined
+        $tenant->execute(function () use ($isFresh, $migrationPaths) {
+            $params = [
+                '--database' => 'tenant',
+                '--force' => true,
+                '--path' => $migrationPaths,
+            ];
+
+            if ($isFresh) {
+                // migrate:fresh drops all tables then runs only the specified paths
+                Artisan::call('migrate:fresh', $params);
+            } else {
+                Artisan::call('migrate', $params);
             }
+        });
+
+        $output = Artisan::output();
+        if (trim($output) && !str_contains($output, 'Nothing to migrate')) {
+            $this->line("   ✅ All tenant migrations completed successfully");
+        } else {
+            $this->line("   ⏭️  No migrations found");
         }
 
         $this->newLine();
@@ -156,7 +164,7 @@ class TenantSetupCommand extends Command
     private function runTenantSeeding($tenant)
     {
         $this->info('🌱 Running Tenant Seeding...');
-        
+
         $seederPaths = [
             'database/seeders/tenant',
         ];
@@ -170,7 +178,7 @@ class TenantSetupCommand extends Command
                 $relativePath = str_replace(base_path() . '/', '', $modulePath);
                 $seederPaths[] = $relativePath;
             }
-            
+
             $modules = glob($moduleBasePath . '/*/database/seeders/shared', GLOB_ONLYDIR);
             foreach ($modules as $modulePath) {
                 $relativePath = str_replace(base_path() . '/', '', $modulePath);
@@ -208,22 +216,25 @@ class TenantSetupCommand extends Command
         }
 
         $seederFiles = glob(base_path($path) . '/*Seeder.php');
-        
+
         foreach ($seederFiles as $seederFile) {
             $fileName = basename($seederFile, '.php');
-            
+
             // Convert file path to class name
             $className = $this->getTenantSeederClassName($seederFile, $path);
-            
+
             if ($className) {
                 try {
                     $this->line("      Seeding: {$fileName}");
-                    
-                    // Escape backslashes for command string
-                    $escapedClassName = str_replace('\\', '\\\\', $className);
-                    $command = "tenants:artisan 'db:seed --class={$escapedClassName} --database=tenant{$this->getForceFlag()}' --tenant={$tenant->id}";
-                    Artisan::call($command);
-                    
+
+                    $tenant->execute(function () use ($className) {
+                        Artisan::call('db:seed', [
+                            '--class' => $className,
+                            '--database' => 'tenant',
+                            '--force' => true,
+                        ]);
+                    });
+
                     $this->line("      ✅ {$fileName} seeded successfully");
                 } catch (\Exception $e) {
                     $this->warn("      ⚠️  Warning: {$fileName} - {$e->getMessage()}");
@@ -237,36 +248,47 @@ class TenantSetupCommand extends Command
      */
     private function getTenantSeederClassName($filePath, $basePath)
     {
-        $relativePath = str_replace(base_path($basePath) . '/', '', $filePath);
-        $relativePath = str_replace('.php', '', $relativePath);
-        
-        // Handle different path structures
-        if (str_starts_with($basePath, 'database/seeders/')) {
-            // For database/seeders/tenant/PassportSetupSeeder.php
-            // Should become Database\Seeders\Tenant\PassportSetupSeeder
-            $pathParts = explode('/', $basePath);
-            $seederNamespace = 'Database\\Seeders';
-            
-            // Add tenant subdirectory if it exists (note: namespace uses capital T)
-            if (str_contains($basePath, 'tenant')) {
-                $seederNamespace .= '\\Tenant';
-            }
-            
-            return $seederNamespace . '\\' . str_replace('/', '\\', $relativePath);
+        if (!file_exists($filePath)) {
+            return null;
         }
-        
-        if (str_contains($basePath, 'modules/')) {
-            // Extract module name from path
-            $pathParts = explode('/', $basePath);
-            $moduleIndex = array_search('modules', $pathParts);
-            if ($moduleIndex !== false && isset($pathParts[$moduleIndex + 1])) {
-                $moduleName = $pathParts[$moduleIndex + 1];
-                $seederPath = str_replace($moduleName . '/database/', '', $relativePath);
-                return "Modules\\{$moduleName}\\Database\\Seeders\\Tenant\\" . str_replace('/', '\\', $seederPath);
-            }
+
+        // Read the namespace directly from the file to avoid casing mismatches
+        $contents = file_get_contents($filePath);
+
+        if (preg_match('/^namespace\s+([a-zA-Z0-9_\\\\]+);/m', $contents, $matches)) {
+            $namespace = $matches[1];
+            $className = basename($filePath, '.php');
+            return $namespace . '\\' . $className;
         }
-        
+
         return null;
+    }
+
+    /**
+     * Ensure the tenant database exists before running migrations
+     */
+    private function ensureDatabaseExists($tenant)
+    {
+        $dbName = $tenant->database;
+
+        if (!$dbName) {
+            $this->warn('   ⚠️  No database name configured for tenant. Skipping database creation.');
+            return;
+        }
+
+        try {
+            $exists = DB::connection('landlord')
+                ->select("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?", [$dbName]);
+
+            if (empty($exists)) {
+                DB::connection('landlord')->statement("CREATE DATABASE IF NOT EXISTS `{$dbName}`");
+                $this->line("   ✅ Created database: {$dbName}");
+            } else {
+                $this->line("   ✓ Database already exists: {$dbName}");
+            }
+        } catch (\Exception $e) {
+            $this->warn("   ⚠️  Warning: Could not verify/create database '{$dbName}' - {$e->getMessage()}");
+        }
     }
 
     /**
@@ -275,20 +297,23 @@ class TenantSetupCommand extends Command
     private function setupPassportForTenant($tenant)
     {
         $this->info('🔑 Setting up Passport for tenant...');
-        
+
         try {
             $this->line("   Running Passport setup seeder...");
-            
+
             // Use dynamic class name resolution
             $passportSeederPath = base_path('database/seeders/tenant/PassportSetupSeeder.php');
             $className = $this->getTenantSeederClassName($passportSeederPath, 'database/seeders/tenant');
-            
+
             if ($className) {
-                // Escape backslashes for command string
-                $escapedClassName = str_replace('\\', '\\\\', $className);
-                $command = "tenants:artisan 'db:seed --class={$escapedClassName} --database=tenant{$this->getForceFlag()}' --tenant={$tenant->id}";
-                Artisan::call($command);
-                
+                $tenant->execute(function () use ($className) {
+                    Artisan::call('db:seed', [
+                        '--class' => $className,
+                        '--database' => 'tenant',
+                        '--force' => true,
+                    ]);
+                });
+
                 $output = Artisan::output();
                 if (trim($output)) {
                     $this->line("   ✅ Passport setup completed for tenant: {$tenant->name}");

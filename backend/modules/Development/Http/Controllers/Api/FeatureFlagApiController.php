@@ -39,4 +39,15 @@ class FeatureFlagApiController extends Controller
         $this->service->delete($id);
         return $this->apiSuccess(null, 'Feature flag deleted successfully');
     }
+
+    public function evaluate(Request $request)
+    {
+        $slugs = $request->input('slugs', []);
+
+        if (empty($slugs)) {
+            return $this->apiSuccess($this->service->evaluateAll());
+        }
+
+        return $this->apiSuccess($this->service->evaluate($slugs));
+    }
 }

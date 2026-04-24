@@ -12,7 +12,7 @@ const config: SimpleCRUDConfig<TagRow> = {
   createLabelFallback: "Add Tag",
   fields: [
     { name: "name", label: "Name", required: true },
-    { name: "slug", label: "Slug" },
+    { name: "slug", label: "Slug", type: "slug", sourceField: "name" },
   ],
   listFn: listTags,
   createFn: createTag,

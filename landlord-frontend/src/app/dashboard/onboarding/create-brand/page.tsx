@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SlugInput } from "@/components/ui/slug-input";
 
 export default function OnboardingCreateBrandPage() {
   const { t } = useI18n();
@@ -49,7 +50,7 @@ export default function OnboardingCreateBrandPage() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="brand-slug">{t("dashboard.brands.slug", "Slug")}</Label>
-            <Input id="brand-slug" value={form.slug} onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))} />
+            <SlugInput id="brand-slug" value={form.slug} onChange={(v) => setForm((f) => ({ ...f, slug: v }))} sourceValue={form.name} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="brand-domain">{t("dashboard.tenants.domain", "Domain")}</Label>

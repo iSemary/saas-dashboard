@@ -419,15 +419,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border bg-background/95 px-4 backdrop-blur supports-backdrop-filter:bg-background/80">
             <div className="flex min-w-0 items-center gap-3">
               <SidebarTrigger className="-ms-1 shrink-0" />
-              <Link href="/dashboard" className="flex shrink-0 items-center gap-2">
-                <DashboardLogo className="shadow-sm" />
-                <span className="hidden font-semibold tracking-tight sm:inline">{t("dashboard.app_name", APP_NAME)}</span>
-              </Link>
-              <Separator orientation="vertical" className="hidden h-6 sm:block" />
             </div>
             <div className="flex min-w-0 shrink-0 items-center gap-2">
               {isEnabled("dashboard.notifications", true) ? <NotificationHeaderMenu /> : null}
-              <LanguageSwitcher />
               <ThemeToggleIcon />
               <UserNavMenu displayName={user?.name} onLogout={() => void handleLogout()} variant="header" />
             </div>

@@ -12,6 +12,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { TypingText, TypingTextCursor } from "@/components/animate-ui/primitives/texts/typing";
+import { Fade } from "@/components/animate-ui/primitives/effects/fade";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -46,13 +48,24 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-4 py-10">
-      <div className="mb-6 w-full max-w-md text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">{t("dashboard.auth.welcome_back", "Welcome back")}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t("dashboard.auth.login_subtitle", "Sign in to manage your workspace.")}
-        </p>
+      <div className="mb-6 w-full max-w-lg text-center">
+        <h1 className="text-2xl font-semibold tracking-tight">
+          <TypingText
+            text={t("dashboard.auth.welcome_back", "Welcome back")}
+            inView
+            inViewOnce
+            duration={50}
+          />
+          <TypingTextCursor />
+        </h1>
+        <Fade delay={300}>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t("dashboard.auth.login_subtitle", "Sign in to manage your workspace.")}
+          </p>
+        </Fade>
       </div>
-      <Card className="w-full max-w-md border-border/80 shadow-lg">
+      <Fade delay={400}>
+        <Card className="w-full max-w-lg border-border/80 shadow-lg">
         <CardHeader>
           <CardTitle>{t("dashboard.auth.login_card_title", "Login")}</CardTitle>
           <CardDescription>{t("dashboard.auth.login_card_desc", "Use your account email and password.")}</CardDescription>
@@ -123,7 +136,8 @@ export default function LoginPage() {
             </Button>
           </div>
         </CardContent>
-      </Card>
+        </Card>
+      </Fade>
     </div>
   );
 }
