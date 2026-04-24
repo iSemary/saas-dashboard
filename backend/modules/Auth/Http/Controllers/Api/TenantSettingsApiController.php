@@ -3,8 +3,8 @@
 namespace Modules\Auth\Http\Controllers\Api;
 
 use App\Http\Controllers\ApiResponseEnvelope;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Modules\Auth\Http\Requests\UpdateTenantSettingsRequest;
 use Modules\Auth\Services\Tenant\TenantSettingsService;
 
 class TenantSettingsApiController extends Controller
@@ -19,13 +19,9 @@ class TenantSettingsApiController extends Controller
         return $this->apiSuccess($settings);
     }
 
-    public function update(Request $request)
+    public function update(UpdateTenantSettingsRequest $request)
     {
-        $validated = $request->validate([
-            'settings' => 'required|array',
-        ]);
-
-        $this->settingsService->update($validated['settings']);
+        $this->settingsService->update($request->settings);
         return $this->apiSuccess(null, 'Settings updated successfully');
     }
 }
