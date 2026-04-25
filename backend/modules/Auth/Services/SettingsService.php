@@ -23,7 +23,7 @@ class SettingsService implements SettingsServiceInterface
     {
         try {
             $settings = $this->settingsRepository->getUserSettings($userId);
-            
+
             return [
                 'success' => true,
                 'data' => $settings,
@@ -49,9 +49,9 @@ class SettingsService implements SettingsServiceInterface
         try {
             // Validate settings data
             $validatedData = $this->validateSettingsData($settingsData);
-            
+
             $result = $this->settingsRepository->updateUserSettings($userId, $validatedData);
-            
+
             if ($result) {
                 return [
                     'success' => true,
@@ -82,14 +82,14 @@ class SettingsService implements SettingsServiceInterface
     {
         try {
             $settings = $this->settingsRepository->getUserSettings($userId);
-            
+
             $notificationSettings = [
                 'notifications_email' => $settings['notifications_email'] ?? true,
                 'notifications_push' => $settings['notifications_push'] ?? true,
                 'notifications_sms' => $settings['notifications_sms'] ?? false,
                 'email_frequency' => $settings['email_frequency'] ?? 'daily'
             ];
-            
+
             return [
                 'success' => true,
                 'data' => $notificationSettings,
@@ -119,9 +119,9 @@ class SettingsService implements SettingsServiceInterface
                 'notifications_sms' => filter_var($notificationData['notifications_sms'] ?? false, FILTER_VALIDATE_BOOLEAN),
                 'email_frequency' => $notificationData['email_frequency'] ?? 'daily'
             ];
-            
+
             $result = $this->settingsRepository->updateUserSettings($userId, $validatedData);
-            
+
             if ($result) {
                 return [
                     'success' => true,
@@ -152,7 +152,7 @@ class SettingsService implements SettingsServiceInterface
     {
         try {
             $settings = $this->settingsRepository->getUserSettings($userId);
-            
+
             $appearanceSettings = [
                 'theme_mode' => $settings['theme_mode'] ?? 'light',
                 'language_preference' => $settings['language_preference'] ?? 'en',
@@ -161,7 +161,7 @@ class SettingsService implements SettingsServiceInterface
                 'date_format' => $settings['date_format'] ?? 'Y-m-d',
                 'time_format' => $settings['time_format'] ?? '24'
             ];
-            
+
             return [
                 'success' => true,
                 'data' => $appearanceSettings,
@@ -186,19 +186,19 @@ class SettingsService implements SettingsServiceInterface
     {
         try {
             $validatedData = [
-                'theme_mode' => in_array($appearanceData['theme_mode'] ?? 'light', ['light', 'dark']) 
+                'theme_mode' => in_array($appearanceData['theme_mode'] ?? 'light', ['light', 'dark'])
                     ? $appearanceData['theme_mode'] : 'light',
                 'language_preference' => $appearanceData['language_preference'] ?? 'en',
                 'currency_preference' => $appearanceData['currency_preference'] ?? 'USD',
                 'timezone' => $appearanceData['timezone'] ?? 'UTC',
-                'date_format' => in_array($appearanceData['date_format'] ?? 'Y-m-d', ['Y-m-d', 'd-m-Y', 'm/d/Y']) 
+                'date_format' => in_array($appearanceData['date_format'] ?? 'Y-m-d', ['Y-m-d', 'd-m-Y', 'm/d/Y'])
                     ? $appearanceData['date_format'] : 'Y-m-d',
-                'time_format' => in_array($appearanceData['time_format'] ?? '24', ['12', '24']) 
+                'time_format' => in_array($appearanceData['time_format'] ?? '24', ['12', '24'])
                     ? $appearanceData['time_format'] : '24'
             ];
-            
+
             $result = $this->settingsRepository->updateUserSettings($userId, $validatedData);
-            
+
             if ($result) {
                 return [
                     'success' => true,
@@ -229,13 +229,13 @@ class SettingsService implements SettingsServiceInterface
     {
         try {
             $settings = $this->settingsRepository->getUserSettings($userId);
-            
+
             $privacySettings = [
                 'data_privacy_level' => $settings['data_privacy_level'] ?? 'standard',
                 'profile_visibility' => $settings['profile_visibility'] ?? 'private',
                 'allow_data_analytics' => filter_var($settings['allow_data_analytics'] ?? false, FILTER_VALIDATE_BOOLEAN)
             ];
-            
+
             return [
                 'success' => true,
                 'data' => $privacySettings,
@@ -260,15 +260,15 @@ class SettingsService implements SettingsServiceInterface
     {
         try {
             $validatedData = [
-                'data_privacy_level' => in_array($privacyData['data_privacy_level'] ?? 'standard', ['strict', 'standard', 'relaxed']) 
+                'data_privacy_level' => in_array($privacyData['data_privacy_level'] ?? 'standard', ['strict', 'standard', 'relaxed'])
                     ? $privacyData['data_privacy_level'] : 'standard',
-                'profile_visibility' => in_array($privacyData['profile_visibility'] ?? 'private', ['public', 'private', 'limited']) 
+                'profile_visibility' => in_array($privacyData['profile_visibility'] ?? 'private', ['public', 'private', 'limited'])
                     ? $privacyData['profile_visibility'] : 'private',
                 'allow_data_analytics' => filter_var($privacyData['allow_data_analytics'] ?? false, FILTER_VALIDATE_BOOLEAN)
             ];
-            
+
             $result = $this->settingsRepository->updateUserSettings($userId, $validatedData);
-            
+
             if ($result) {
                 return [
                     'success' => true,
@@ -285,6 +285,31 @@ class SettingsService implements SettingsServiceInterface
             return [
                 'success' => false,
                 'message' => @translate('error_updating_privacy_settings') . ': ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Get all system settings
+     *
+     * @return array
+     */
+    public function getAllSettings(): array
+    {
+        try {
+            // Return system-wide settings configuration
+            return [
+                'app_name' => config('app.name'),
+                'app_url' => config('app.url'),
+                'timezone' => config('app.timezone'),
+                'locale' => config('app.locale'),
+                'maintenance_mode' => app()->isDownForMaintenance(),
+                'debug_mode' => config('app.debug'),
+                'environment' => config('app.env'),
+            ];
+        } catch (\Exception $e) {
+            return [
+                'error' => 'Failed to retrieve settings: ' . $e->getMessage()
             ];
         }
     }

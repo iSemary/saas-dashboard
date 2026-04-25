@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payment_method_fees', function (Blueprint $table) {
+        if (!Schema::hasTable('payment_method_fees')) {
+            Schema::create('payment_method_fees', function (Blueprint $table) {
             $table->id();
             $table->foreignId('payment_method_id')->constrained('payment_methods')->onDelete('cascade');
             $table->foreignId('currency_id')->constrained('currencies')->onDelete('cascade');
@@ -28,10 +29,11 @@ return new class extends Migration
             $table->date('effective_from')->nullable()->comment('When this fee structure becomes effective');
             $table->date('effective_until')->nullable()->comment('When this fee structure expires');
             $table->timestamps();
-            
-            $table->index(['payment_method_id', 'currency_id', 'applies_to']);
-            $table->index(['status', 'effective_from', 'effective_until']);
-        });
+
+            $table->index(['payment_method_id', 'currency_id', 'applies_to'], 'pm_fee_idx');
+            $table->index(['status', 'effective_from', 'effective_until'], 'pm_fee_status_idx');
+            });
+        }
     }
 
     /**

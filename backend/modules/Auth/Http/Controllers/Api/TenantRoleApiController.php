@@ -3,7 +3,7 @@
 namespace Modules\Auth\Http\Controllers\Api;
 
 use App\Http\Controllers\ApiResponseEnvelope;
-use Illuminate\Http\Request;
+use App\Http\Requests\TableListRequest;
 use Illuminate\Routing\Controller;
 use Modules\Auth\Http\Requests\StoreRoleRequest;
 use Modules\Auth\Http\Requests\UpdateRoleRequest;
@@ -15,10 +15,10 @@ class TenantRoleApiController extends Controller
 
     public function __construct(protected TenantRoleApiService $roleService) {}
 
-    public function index(Request $request)
+    public function index(TableListRequest $request)
     {
-        $filters = $request->only(['search']);
-        return $this->apiPaginated($this->roleService->list($filters, $request->get('per_page', 50)));
+        $params = $request->getTableParams();
+        return $this->apiPaginated($this->roleService->list($params));
     }
 
     public function show($id) { return $this->apiSuccess($this->roleService->findOrFail($id)); }

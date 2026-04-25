@@ -10,7 +10,11 @@ class TenantModuleApiController extends Controller
 {
     use ApiResponseEnvelope;
 
-    public function __construct(protected TenantModuleService $moduleService) {}
+    public function __construct(protected TenantModuleService $moduleService)
+    {
+        $this->middleware('auth:api');
+        $this->middleware('throttle:60,1');
+    }
 
     /**
      * Get the current tenant's subscribed modules with summary data.
@@ -18,6 +22,20 @@ class TenantModuleApiController extends Controller
     public function index()
     {
         $data = $this->moduleService->getSubscribedModules();
+        return $this->apiSuccess($data);
+    }
+
+    /**
+     * Get a single subscribed module by key.
+     */
+    public function show(string $moduleKey)
+    {
+        $data = $this->moduleService->getSubscribedModule($moduleKey);
+
+        if (!$data) {
+            return $this->apiError('Module not found or not subscribed', 404);
+        }
+
         return $this->apiSuccess($data);
     }
 }

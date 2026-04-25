@@ -13,8 +13,17 @@ const config: SimpleCRUDConfig<CountryRow> = {
   fields: [
     { name: "name", label: "Name", required: true },
     { name: "code", label: "Code", placeholder: "US", required: true },
+    { name: "region", label: "Region", placeholder: "Americas" },
+    { name: "flag", label: "Flag", type: "file", accept: "image/*" },
     { name: "phone_code", label: "Phone Code", placeholder: "+1" },
-    { name: "is_active", label: "Active", type: "select", options: [{ value: "1", label: "Yes" }, { value: "0", label: "No" }] },
+    { name: "timezone", label: "Timezone", placeholder: "UTC" },
+    { name: "latitude", label: "Latitude", type: "number", placeholder: "0" },
+    { name: "longitude", label: "Longitude", type: "number", placeholder: "0" },
+    { name: "currency_code", label: "Currency Code", placeholder: "USD" },
+    { name: "currency_symbol", label: "Currency Symbol", placeholder: "$" },
+    { name: "language_code", label: "Language Code", placeholder: "en" },
+    { name: "area_km2", label: "Area (km²)", type: "number", placeholder: "0" },
+    { name: "population", label: "Population", type: "number", placeholder: "0" },
   ],
   listFn: listCountries,
   createFn: createCountry,
@@ -26,8 +35,8 @@ const config: SimpleCRUDConfig<CountryRow> = {
     { accessorKey: "code", header: t("dashboard.countries.code", "Code") },
     { accessorKey: "phone_code", header: t("dashboard.countries.phone_code", "Phone Code") },
   ],
-  toForm: (row) => ({ name: row.name, code: row.code, phone_code: row.phone_code ?? "", is_active: row.is_active ? "1" : "0" }),
-  fromForm: (form) => ({ ...form, is_active: form.is_active === "1" }),
+  toForm: (row) => ({ name: row.name, code: row.code, region: row.region ?? "", flag: row.flag ?? "", phone_code: row.phone_code ?? "", timezone: row.timezone ?? "", latitude: row.latitude ? String(row.latitude) : "", longitude: row.longitude ? String(row.longitude) : "", currency_code: row.currency_code ?? "", currency_symbol: row.currency_symbol ?? "", language_code: row.language_code ?? "", area_km2: row.area_km2 ? String(row.area_km2) : "", population: row.population ? String(row.population) : "" }),
+  fromForm: (form) => ({ ...form, latitude: form.latitude ? Number(form.latitude) : null, longitude: form.longitude ? Number(form.longitude) : null, area_km2: form.area_km2 ? Number(form.area_km2) : null, population: form.population ? Number(form.population) : null }),
 };
 
 export default function CountriesPage() {

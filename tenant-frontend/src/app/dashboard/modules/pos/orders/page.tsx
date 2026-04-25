@@ -1,25 +1,64 @@
 "use client";
 
-import { Receipt } from "lucide-react";
-import { useI18n } from "@/context/i18n-context";
-import { Card, CardContent } from "@/components/ui/card";
+import { ColumnDef } from "@tanstack/react-table";
+import { SimpleCRUDPage, SimpleCRUDConfig } from "@/components/simple-crud-page";
+import { listSalesOrders, deleteSalesOrder } from "@/lib/tenant-resources";
+
+type PosOrder = {
+  id: number;
+  barcode?: string;
+  total_price: number;
+  amount_paid: number;
+  pay_method: string;
+  order_type: string;
+  status: string;
+  tax?: number;
+  created_at?: string;
+};
+
+const config: SimpleCRUDConfig<PosOrder> = {
+  titleKey: "dashboard.pos.orders",
+  titleFallback: "POS Orders",
+  subtitleKey: "dashboard.pos.orders_subtitle",
+  subtitleFallback: "View point-of-sale transactions",
+  createLabelKey: "dashboard.pos.create_order",
+  createLabelFallback: "New Order",
+  fields: [],
+  listFn: listSalesOrders as () => Promise<PosOrder[]>,
+  createFn: async () => { throw new Error("Use the Sales module to create orders."); },
+  deleteFn: deleteSalesOrder as unknown as (id: number) => Promise<void>,
+  moduleKey: "pos",
+  dashboardHref: "/dashboard/modules/pos",
+  columns: (t): Array<ColumnDef<PosOrder>> => [
+    { accessorKey: "id", header: t("dashboard.table.id", "ID") },
+    { accessorKey: "barcode", header: t("dashboard.pos.barcode", "Barcode") },
+    {
+      accessorKey: "total_price",
+      header: t("dashboard.sales.total", "Total"),
+      cell: ({ row }) => `$${Number(row.original.total_price).toFixed(2)}`,
+    },
+    {
+      accessorKey: "amount_paid",
+      header: t("dashboard.sales.paid", "Paid"),
+      cell: ({ row }) => `$${Number(row.original.amount_paid).toFixed(2)}`,
+    },
+    { accessorKey: "pay_method", header: t("dashboard.sales.method", "Method") },
+    { accessorKey: "order_type", header: t("dashboard.sales.type", "Type") },
+    {
+      accessorKey: "status",
+      header: t("dashboard.table.status", "Status"),
+      cell: ({ row }) => {
+        const s = row.original.status;
+        const color = s === "completed" ? "text-green-600" : s === "cancelled" ? "text-red-500" : "text-yellow-600";
+        return <span className={`font-medium capitalize ${color}`}>{s}</span>;
+      },
+    },
+    { accessorKey: "created_at", header: t("dashboard.table.date", "Date") },
+  ],
+  toForm: (r) => ({ status: r.status }),
+  fromForm: (f) => ({ status: f.status }),
+};
 
 export default function PosOrdersPage() {
-  const { t } = useI18n();
-  return (
-    <div className="space-y-4">
-      <div className="rounded-xl border bg-muted/40 p-4">
-        <div className="flex items-center gap-2">
-          <Receipt className="size-5 text-muted-foreground" />
-          <h1 className="text-xl font-semibold">{t("dashboard.pos.orders", "Orders")}</h1>
-        </div>
-        <p className="mt-1 text-sm text-muted-foreground">{t("dashboard.pos.orders_subtitle", "Manage your orders")}</p>
-      </div>
-      <Card>
-        <CardContent className="flex min-h-[200px] items-center justify-center text-muted-foreground">
-          {t("dashboard.coming_soon", "Coming soon — this page is under development.")}
-        </CardContent>
-      </Card>
-    </div>
-  );
+  return <SimpleCRUDPage config={config} />;
 }

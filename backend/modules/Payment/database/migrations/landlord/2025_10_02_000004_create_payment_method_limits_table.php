@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payment_method_limits', function (Blueprint $table) {
+        if (!Schema::hasTable('payment_method_limits')) {
+            Schema::create('payment_method_limits', function (Blueprint $table) {
             $table->id();
             $table->foreignId('payment_method_id')->constrained('payment_methods')->onDelete('cascade');
             $table->foreignId('currency_id')->constrained('currencies')->onDelete('cascade');
@@ -25,10 +26,11 @@ return new class extends Migration
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->json('conditions')->nullable()->comment('Additional conditions for limit application');
             $table->timestamps();
-            
-            $table->index(['payment_method_id', 'currency_id', 'limit_type']);
-            $table->index(['customer_segment', 'status']);
-        });
+
+            $table->index(['payment_method_id', 'currency_id', 'limit_type'], 'pm_limit_idx');
+            $table->index(['customer_segment', 'status'], 'pm_limit_seg_idx');
+            });
+        }
     }
 
     /**

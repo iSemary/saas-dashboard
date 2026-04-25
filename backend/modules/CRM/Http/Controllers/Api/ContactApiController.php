@@ -4,14 +4,26 @@ namespace Modules\CRM\Http\Controllers\Api;
 
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Modules\CRM\DTOs\CreateContactData;
 use Modules\CRM\DTOs\UpdateContactData;
 use Modules\CRM\Http\Requests\StoreContactRequest;
 use Modules\CRM\Http\Requests\UpdateContactRequest;
 use Modules\CRM\Services\ContactService;
 
-class ContactApiController extends ApiController
+class ContactApiController extends ApiController implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.crm.contacts', only: ['index', 'show', 'activity']),
+            new Middleware('permission:create.crm.contacts', only: ['store']),
+            new Middleware('permission:update.crm.contacts', only: ['update']),
+            new Middleware('permission:delete.crm.contacts', only: ['destroy', 'bulkDelete']),
+        ];
+    }
+
     public function __construct(protected ContactService $service) {}
 
     public function index(Request $request)

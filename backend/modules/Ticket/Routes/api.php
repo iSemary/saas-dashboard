@@ -1,37 +1,19 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Modules\Ticket\Http\Controllers\TicketController;
+use Modules\Ticket\Http\Controllers\Api\TicketApiController;
+use Modules\Ticket\Http\Controllers\Api\TenantTicketApiController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
+// ─── Landlord Tickets ────────────────────────────────────────────────
+Route::prefix('landlord')->name('landlord.')->middleware(['auth:api', 'landlord_roles', 'throttle:60,1'])->group(function () {
+    Route::apiResource('tickets', TicketApiController::class);
+});
 
-Route::middleware('auth:api')->prefix('v1')->group(function () {
-    Route::apiResource('tickets', TicketController::class);
-    
-    // Ticket-specific API routes
-    Route::prefix('tickets')->group(function () {
-        Route::get('kanban-data', [TicketController::class, 'getKanbanData']);
-        Route::patch('{id}/status', [TicketController::class, 'updateStatus']);
-        Route::patch('{id}/assign', [TicketController::class, 'assign']);
-        Route::patch('{id}/close', [TicketController::class, 'close']);
-        Route::patch('{id}/reopen', [TicketController::class, 'reopen']);
-        Route::get('my-tickets', [TicketController::class, 'myTickets']);
-        Route::get('overdue', [TicketController::class, 'overdueTickets']);
-        Route::get('search', [TicketController::class, 'search']);
-        Route::get('stats', [TicketController::class, 'getStats']);
-        Route::get('dashboard-data', [TicketController::class, 'getDashboardData']);
-        Route::get('{id}/timeline', [TicketController::class, 'getTimeline']);
-        Route::patch('bulk-update', [TicketController::class, 'bulkUpdate']);
-        Route::get('metrics', [TicketController::class, 'getMetrics']);
-    });
+// ─── Tenant Tickets ──────────────────────────────────────────────
+Route::prefix('tenant')->name('tenant.')->middleware(['auth:api', 'tenant_roles', 'throttle:60,1'])->group(function () {
+    Route::apiResource('tickets', TenantTicketApiController::class);
+    Route::get('tickets/kanban-data', [TenantTicketApiController::class, 'kanbanData'])->name('tickets.kanban');
+    Route::get('tickets/stats', [TenantTicketApiController::class, 'stats'])->name('tickets.stats');
+    Route::patch('tickets/{id}/status', [TenantTicketApiController::class, 'updateStatus'])->name('tickets.update-status');
+    Route::patch('tickets/{id}/assign', [TenantTicketApiController::class, 'assign'])->name('tickets.assign');
 });

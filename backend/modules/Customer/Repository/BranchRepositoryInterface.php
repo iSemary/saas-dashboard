@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface BranchRepositoryInterface
 {
-    public function getAll(array $filters = [], int $perPage = 15): LengthAwarePaginator;
+    public function getAll(array $params = []): LengthAwarePaginator|Collection;
+    public function getAllLegacy(array $filters = [], int $perPage = 15): LengthAwarePaginator;
     public function getById(int $id): ?Branch;
     public function getByCode(string $code): ?Branch;
     public function create(array $data): Branch;

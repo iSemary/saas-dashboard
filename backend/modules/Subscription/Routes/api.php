@@ -1,19 +1,18 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Subscription\Http\Controllers\SubscriptionController;
+use Modules\Subscription\Http\Controllers\Api\PlanApiController;
+use Modules\Subscription\Http\Controllers\Api\SubscriptionApiController;
+use Modules\Subscription\Http\Controllers\Api\OnboardingApiController;
 
-/*
- *--------------------------------------------------------------------------
- * API Routes
- *--------------------------------------------------------------------------
- *
- * Here is where you can register API routes for your application. These
- * routes are loaded by the RouteServiceProvider within a group which
- * is assigned the "api" middleware group. Enjoy building your API!
- *
-*/
+// ─── Landlord Subscriptions & Plans ─────────────────────────────────
+Route::prefix('landlord')->name('landlord.')->middleware(['auth:api', 'landlord_roles', 'throttle:60,1'])->group(function () {
+    Route::apiResource('plans', PlanApiController::class);
+    Route::apiResource('subscriptions', SubscriptionApiController::class)->only(['index', 'destroy']);
 
-Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    Route::apiResource('subscription', SubscriptionController::class)->names('subscription');
+    // Onboarding
+    Route::prefix('onboarding')->name('onboarding.')->group(function () {
+        Route::post('select-plan', [OnboardingApiController::class, 'selectPlan'])->name('select-plan');
+        Route::post('select-modules', [OnboardingApiController::class, 'selectModules'])->name('select-modules');
+    });
 });

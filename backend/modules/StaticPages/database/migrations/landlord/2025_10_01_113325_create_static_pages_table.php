@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
+            $table->longText('body')->nullable();
             $table->enum('status', ['active', 'inactive', 'draft'])->default('draft');
             $table->string('type')->default('page'); // policy, about_us, landing_page, blog, etc.
             $table->string('image')->nullable(); // banner or thumbnail image
@@ -23,7 +24,7 @@ return new class extends Migration
             $table->text('meta_description')->nullable();
             $table->string('meta_keywords')->nullable();
             $table->boolean('is_public')->default(true);
-            $table->unsignedBigInteger('author_id');
+            $table->unsignedBigInteger('author_id')->nullable();
             $table->integer('revision')->default(1);
             $table->integer('order')->default(0);
             $table->unsignedBigInteger('parent_id')->nullable();

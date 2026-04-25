@@ -3,8 +3,7 @@
 namespace Modules\Utilities\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Modules\Utilities\Entities\StaticPage;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class StaticPageSeeder extends Seeder
 {
@@ -290,11 +289,23 @@ class StaticPageSeeder extends Seeder
             ],
         ];
 
+        // Use raw DB insert to bypass Eloquent events, Auditable trait, and Telescope query
+        // serialization (which becomes very slow with the large HTML bodies).
+        $now = now();
         foreach ($staticPages as $pageData) {
-            StaticPage::firstOrCreate(
-                ['slug' => $pageData['slug']], 
-                $pageData
-            );
+            $exists = DB::connection('landlord')
+                ->table('static_pages')
+                ->where('slug', $pageData['slug'])
+                ->exists();
+
+            if ($exists) {
+                continue;
+            }
+
+            DB::connection('landlord')->table('static_pages')->insert(array_merge(
+                $pageData,
+                ['created_at' => $now, 'updated_at' => $now]
+            ));
         }
 
         $this->command->info('Static pages seeded successfully!');

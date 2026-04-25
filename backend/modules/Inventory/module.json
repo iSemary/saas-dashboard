@@ -5,7 +5,8 @@
     "keywords": ["inventory", "stock", "warehouse", "valuation", "reorder"],
     "priority": 5,
     "providers": [
-        "Modules\\Inventory\\Providers\\InventoryServiceProvider"
+        "Modules\\Inventory\\Providers\\InventoryServiceProvider",
+        "Modules\\Inventory\\Infrastructure\\Providers\\InventoryDDDServiceProvider"
     ],
     "files": []
 }

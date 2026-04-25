@@ -13,8 +13,11 @@ const config: SimpleCRUDConfig<CategoryRow> = {
   fields: [
     { name: "name", label: "Name", required: true },
     { name: "slug", label: "Slug" },
+    { name: "description", label: "Description", type: "textarea" },
     { name: "parent_id", label: "Parent Category", type: "entity", listFn: listCategories, optionLabelKey: "name", optionValueKey: "id" },
-    { name: "is_active", label: "Active", type: "select", options: [{ value: "1", label: "Yes" }, { value: "0", label: "No" }] },
+    { name: "icon", label: "Icon", type: "file", accept: "image/*" },
+    { name: "priority", label: "Priority", type: "number", placeholder: "0" },
+    { name: "status", label: "Status", type: "select", options: [{ value: "active", label: "Active" }, { value: "inactive", label: "Inactive" }] },
   ],
   listFn: listCategories,
   createFn: createCategory,
@@ -25,8 +28,8 @@ const config: SimpleCRUDConfig<CategoryRow> = {
     { accessorKey: "name", header: t("dashboard.users.col_name", "Name") },
     { accessorKey: "slug", header: t("dashboard.categories.slug", "Slug") },
   ],
-  toForm: (row) => ({ name: row.name, slug: row.slug, parent_id: row.parent_id ? String(row.parent_id) : "", is_active: row.is_active ? "1" : "0" }),
-  fromForm: (form) => ({ ...form, parent_id: form.parent_id ? Number(form.parent_id) : null, is_active: form.is_active === "1" }),
+  toForm: (row) => ({ name: row.name, slug: row.slug, description: row.description ?? "", parent_id: row.parent_id ? String(row.parent_id) : "", icon: row.icon ?? "", priority: row.priority ? String(row.priority) : "0", status: row.status ?? "active" }),
+  fromForm: (form) => ({ ...form, parent_id: form.parent_id ? Number(form.parent_id) : null, priority: Number(form.priority) }),
 };
 
 export default function CategoriesPage() {

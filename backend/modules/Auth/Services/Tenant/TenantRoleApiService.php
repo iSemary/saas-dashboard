@@ -9,9 +9,9 @@ class TenantRoleApiService
 {
     public function __construct(protected TenantRoleApiRepositoryInterface $repository) {}
 
-    public function list(array $filters = [], int $perPage = 50)
+    public function list(array $params = [])
     {
-        return $this->repository->paginate($filters, $perPage);
+        return $this->repository->list($params);
     }
 
     public function create(array $data): Role

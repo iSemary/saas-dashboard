@@ -22,6 +22,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useI18n } from "@/context/i18n-context";
 import { Blur } from "@/components/animate-ui/primitives/effects/blur";
 import { listBrands, createBrand, updateBrand, deleteBrand, getAvailableModules, getBrandWithModules } from "@/lib/tenant-resources";
+import type { TableParams } from "@/lib/tenant-resources";
 import { cn } from "@/lib/utils";
 
 type Brand = { id: number; name: string; slug?: string; domain?: string; is_active?: boolean };
@@ -62,26 +63,46 @@ export default function BrandsPage() {
     is_active: "1",
     selectedModules: [] as string[],
   });
+  const [tableMeta, setTableMeta] = useState<{ current_page: number; last_page: number; per_page: number; total: number } | undefined>(undefined);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (params?: TableParams) => {
     setLoading(true);
     try {
       const [brands, availableMods] = await Promise.all([
-        listBrands() as Promise<Brand[]>,
+        listBrands(params),
         getAvailableModules() as Promise<Module[]>,
       ]);
-      setRows(brands);
+      // Handle both array and paginated response
+      if (Array.isArray(brands)) {
+        setRows(brands);
+        setTableMeta(undefined);
+      } else {
+        setRows(brands.data ?? []);
+        setTableMeta(brands.meta);
+      }
       setModules(availableMods);
     } catch {
       setRows([]);
-      toast.error(t("dashboard.crud.load_error", "Failed to load data"));
+      setTableMeta(undefined);
+      toast.error("Failed to load data");
     } finally {
       setLoading(false);
     }
-  }, [t]);
+  }, []);
 
   useEffect(() => {
-    void load();
+    void load({ page: 1, per_page: 10 });
+  }, [load]);
+
+  const handleTableChange = useCallback((params: { page: number; perPage: number; search: string; sortBy: string | null; sortDirection: 'asc' | 'desc' }) => {
+    const tableParams: TableParams = {
+      page: params.page,
+      per_page: params.perPage,
+      search: params.search || undefined,
+      sort_by: params.sortBy || undefined,
+      sort_direction: params.sortDirection,
+    };
+    void load(tableParams);
   }, [load]);
 
   const openCreate = () => {
@@ -139,7 +160,7 @@ export default function BrandsPage() {
         toast.success(t("dashboard.crud.updated", "Updated successfully."));
       }
       setSheetOpen(false);
-      await load();
+      await load({ page: 1, per_page: tableMeta?.per_page ?? 10 });
     } catch {
       toast.error(t("dashboard.crud.save_error", "Save failed."));
     } finally {
@@ -157,7 +178,7 @@ export default function BrandsPage() {
     try {
       await deleteBrand(deletingId);
       toast.success(t("dashboard.crud.deleted", "Deleted."));
-      await load();
+      await load({ page: 1, per_page: tableMeta?.per_page ?? 10 });
     } catch {
       toast.error(t("dashboard.crud.delete_error", "Could not delete."));
     } finally {
@@ -222,6 +243,10 @@ export default function BrandsPage() {
         data={rows}
         enableExport={true}
         searchable={true}
+        serverSide={true}
+        meta={tableMeta}
+        loading={loading}
+        onTableChange={handleTableChange}
       />
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent className="flex w-full max-w-3xl flex-col gap-0 sm:max-w-[50vw]">

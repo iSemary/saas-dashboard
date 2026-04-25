@@ -11,7 +11,7 @@ class TenantUsersSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     * 
+     *
      * This seeder creates:
      * 1. Tenant records for customer1 and customer2
      * 2. Default admin users for each tenant
@@ -22,7 +22,7 @@ class TenantUsersSeeder extends Seeder
 
         // Create customer1 tenant
         $this->createTenantWithUser('customer1', $tenantRepository);
-        
+
         // Create customer2 tenant
         $this->createTenantWithUser('customer2', $tenantRepository);
     }
@@ -34,7 +34,7 @@ class TenantUsersSeeder extends Seeder
     {
         // Check if tenant already exists
         $tenant = Tenant::where('name', $tenantName)->first();
-        
+
         if (!$tenant) {
             // Initialize the tenant (creates database, runs migrations, seeds)
             $tenantData = $tenantRepository->init($tenantName);
@@ -61,10 +61,11 @@ class TenantUsersSeeder extends Seeder
 
         // Create or update the admin user
         $user = $userClass::updateOrCreate(
-            ['email' => $credentials['email']],
+            ['username' => $credentials['username']],
             [
                 'name' => $credentials['name'],
-                'username' => $credentials['username'],
+                'email' => $credentials['email'],
+                'customer_id' => 1,
                 'country_id' => 1,
                 'language_id' => 1,
                 'factor_authenticate' => 0,
@@ -73,8 +74,8 @@ class TenantUsersSeeder extends Seeder
             ]
         );
 
-        // Assign super_admin role
-        $superAdminRole = $roleClass::where('name', 'super_admin')->first();
+        // Assign super_admin role (web guard matches User model)
+        $superAdminRole = $roleClass::where('name', 'super_admin')->where('guard_name', 'web')->first();
         if ($superAdminRole) {
             $user->assignRole($superAdminRole);
         }

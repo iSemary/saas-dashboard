@@ -3,6 +3,7 @@
 namespace Modules\Customer\Http\Controllers\Api\Tenant;
 
 use App\Http\Controllers\ApiResponseEnvelope;
+use App\Http\Requests\TableListRequest;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Customer\Services\BranchService;
@@ -13,10 +14,10 @@ class BranchApiController extends Controller
 
     public function __construct(protected BranchService $branchService) {}
 
-    public function index(Request $request)
+    public function index(TableListRequest $request)
     {
-        $filters = $request->only(['search']);
-        return $this->apiPaginated($this->branchService->getAll($filters, $request->get('per_page', 50)));
+        $params = $request->getTableParams();
+        return $this->apiPaginated($this->branchService->getAll($params));
     }
 
     public function store(Request $request)

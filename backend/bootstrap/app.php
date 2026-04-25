@@ -50,5 +50,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withProviders([])
     ->withCommands([
         __DIR__ . '/../app/Console/Commands',
+        __DIR__ . '/../app/Console/Commands/ProjectSetup',
     ])
     ->create();

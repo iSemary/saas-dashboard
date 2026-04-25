@@ -1,19 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Sales\Http\Controllers\SalesController;
+use Modules\Sales\Http\Controllers\Api\PosApiController;
 
-/*
- *--------------------------------------------------------------------------
- * API Routes
- *--------------------------------------------------------------------------
- *
- * Here is where you can register API routes for your application. These
- * routes are loaded by the RouteServiceProvider within a group which
- * is assigned the "api" middleware group. Enjoy building your API!
- *
-*/
-
-Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    Route::apiResource('sales', SalesController::class)->names('sales');
+// ─── Tenant POS Module ───────────────────────────────────────────
+Route::prefix('tenant')->name('tenant.')->middleware(['auth:api', 'tenant_roles', 'throttle:60,1'])->group(function () {
+    Route::get('modules/pos', [PosApiController::class, 'index'])->name('modules.pos');
 });
+
+// ─── Sales DDD Routes ────────────────────────────────────────────
+require __DIR__ . '/../Presentation/Routes/api.php';

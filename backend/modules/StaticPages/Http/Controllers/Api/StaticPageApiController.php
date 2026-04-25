@@ -26,8 +26,8 @@ class StaticPageApiController extends Controller
             $type = $request->get('type');
             $limit = $request->get('limit', 10);
 
-            // Validate language code
-            if (!Language::where('code', $languageCode)->where('is_active', true)->exists()) {
+            // Validate language code (using locale column)
+            if (!Language::where('locale', $languageCode)->exists()) {
                 $languageCode = 'en'; // Fallback to English
             }
 
@@ -75,8 +75,8 @@ class StaticPageApiController extends Controller
         try {
             $languageCode = $request->get('lang', 'en');
 
-            // Validate language code
-            if (!Language::where('code', $languageCode)->where('is_active', true)->exists()) {
+            // Validate language code (using locale column)
+            if (!Language::where('locale', $languageCode)->exists()) {
                 $languageCode = 'en'; // Fallback to English
             }
 
@@ -108,8 +108,8 @@ class StaticPageApiController extends Controller
         try {
             $languageCode = $request->get('lang', 'en');
 
-            // Validate language code
-            if (!Language::where('code', $languageCode)->where('is_active', true)->exists()) {
+            // Validate language code (using locale column)
+            if (!Language::where('locale', $languageCode)->exists()) {
                 $languageCode = 'en'; // Fallback to English
             }
 
@@ -155,8 +155,8 @@ class StaticPageApiController extends Controller
                 ], 400);
             }
 
-            // Validate language code
-            if (!Language::where('code', $languageCode)->where('is_active', true)->exists()) {
+            // Validate language code (using locale column)
+            if (!Language::where('locale', $languageCode)->exists()) {
                 $languageCode = 'en'; // Fallback to English
             }
 
@@ -191,17 +191,15 @@ class StaticPageApiController extends Controller
     public function languages()
     {
         try {
-            $languages = Language::where('is_active', true)
-                ->ordered()
-                ->get()
+            $languages = Language::get()
                 ->map(function ($language) {
                     return [
-                        'code' => $language->code,
+                        'code' => $language->locale,
                         'name' => $language->name,
-                        'native_name' => $language->native_name,
-                        'flag' => $language->flag,
+                        'native_name' => $language->name,
+                        'flag' => null,
                         'direction' => $language->direction,
-                        'is_default' => $language->is_default,
+                        'is_default' => false,
                     ];
                 });
 

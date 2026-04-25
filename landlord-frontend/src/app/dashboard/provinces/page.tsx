@@ -28,8 +28,8 @@ const config: SimpleCRUDConfig<ProvinceRow> = {
       cell: ({ row }: { row: { original: ProvinceRow } }) => row.original.country?.name ?? "—",
     },
   ],
-  toForm: (row) => ({ name: row.name, code: row.code ?? "", country_id: String(row.country_id) }),
-  fromForm: (form) => ({ ...form, country_id: Number(form.country_id) }),
+  toForm: (row) => ({ name: row.name, code: row.code ?? "", country_id: String(row.country_id), flag: row.flag ?? "", latitude: row.latitude ? String(row.latitude) : "", longitude: row.longitude ? String(row.longitude) : "", area_km2: row.area_km2 ? String(row.area_km2) : "", population: row.population ? String(row.population) : "" }),
+  fromForm: (form) => ({ ...form, country_id: Number(form.country_id), latitude: form.latitude ? Number(form.latitude) : null, longitude: form.longitude ? Number(form.longitude) : null, area_km2: form.area_km2 ? Number(form.area_km2) : null, population: form.population ? Number(form.population) : null }),
 };
 
 export default function ProvincesPage() {

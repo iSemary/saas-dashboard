@@ -4,6 +4,7 @@ namespace Modules\Customer\Repository;
 
 use Modules\Customer\Entities\Branch;
 use Modules\Customer\Repository\BranchRepositoryInterface;
+use App\Repositories\Traits\TableListTrait;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use App\Helpers\TableHelper;
@@ -12,7 +13,19 @@ use Illuminate\Support\Facades\DB;
 
 class BranchRepository implements BranchRepositoryInterface
 {
-    public function getAll(array $filters = [], int $perPage = 15): LengthAwarePaginator
+    use TableListTrait;
+
+    public function getAll(array $params = []): LengthAwarePaginator|Collection
+    {
+        return $this->tableList(
+            Branch::class,
+            $params,
+            ['name' => 'name', 'slug' => 'slug'],  // searchable columns
+            ['id' => 'id', 'name' => 'name', 'slug' => 'slug', 'brand_id' => 'brand_id']  // sortable columns
+        );
+    }
+
+    public function getAllLegacy(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
         $query = Branch::with(['creator', 'updater']);
 
@@ -94,43 +107,43 @@ class BranchRepository implements BranchRepositoryInterface
                 if (!$row->working_hours) {
                     return '<span class="text-muted">Not specified</span>';
                 }
-                
+
                 $hours = $row->working_hours;
                 $formatted = [];
-                
+
                 foreach ($hours as $day => $time) {
                     if ($time && isset($time['open']) && isset($time['close'])) {
                         $formatted[] = '<small>' . ucfirst($day) . ': ' . $time['open'] . ' - ' . $time['close'] . '</small>';
                     }
                 }
-                
+
                 return empty($formatted) ? '<span class="text-muted">Not specified</span>' : implode('<br>', $formatted);
             })
             ->addColumn('actions', function ($row) {
                 $actions = '';
-                
+
                 if (auth()->user()->can('update.branches')) {
-                    $actions .= '<button class="btn btn-sm btn-primary open-edit-modal me-1" 
+                    $actions .= '<button class="btn btn-sm btn-primary open-edit-modal me-1"
                                    data-modal-link="' . route('tenant.branches.edit', $row->id) . '"
                                    data-modal-title="' . translate('edit') . ' ' . translate('branch') . '">
                                    <i class="fa fa-edit"></i>
                                 </button>';
                 }
-                
+
                 if (auth()->user()->can('delete.branches')) {
                     if ($row->deleted_at) {
-                        $actions .= '<button class="btn btn-sm btn-warning restore-btn me-1" 
+                        $actions .= '<button class="btn btn-sm btn-warning restore-btn me-1"
                                        data-route="' . route('tenant.branches.restore', $row->id) . '">
                                        <i class="fa fa-undo"></i>
                                     </button>';
                     } else {
-                        $actions .= '<button class="btn btn-sm btn-danger delete-btn" 
+                        $actions .= '<button class="btn btn-sm btn-danger delete-btn"
                                        data-route="' . route('tenant.branches.destroy', $row->id) . '">
                                        <i class="fa fa-trash"></i>
                                     </button>';
                     }
                 }
-                
+
                 return $actions;
             })
             ->rawColumns(['status', 'working_hours', 'actions'])

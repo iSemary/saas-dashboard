@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payment_method_configurations', function (Blueprint $table) {
+        if (!Schema::hasTable('payment_method_configurations')) {
+            Schema::create('payment_method_configurations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('payment_method_id')->constrained('payment_methods')->onDelete('cascade');
             $table->enum('environment', ['sandbox', 'production'])->default('sandbox');
@@ -24,10 +25,11 @@ return new class extends Migration
             $table->string('validation_rules')->nullable()->comment('Validation rules for this config');
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
-            
-            $table->unique(['payment_method_id', 'environment', 'config_key']);
-            $table->index(['environment', 'status']);
-        });
+
+            $table->unique(['payment_method_id', 'environment', 'config_key'], 'pm_config_unique');
+            $table->index(['environment', 'status'], 'pm_config_env_idx');
+            });
+        }
     }
 
     /**

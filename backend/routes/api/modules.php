@@ -5,12 +5,6 @@ use Illuminate\Support\Facades\Route;
 // Include Cross-Database API Routes
 require __DIR__.'/../api-cross-db.php';
 
-// Include NextJS Admin API Routes
-require __DIR__.'/nextjs/admin.php';
-
-// Include NextJS Tenant API Routes
-require __DIR__.'/nextjs/tenant.php';
-
 // Define the modules directory path
 $modulesPath = base_path('modules');
 

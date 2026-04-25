@@ -14,10 +14,12 @@ const config: SimpleCRUDConfig<PlanRow> = {
     { name: "name", label: "Name", required: true },
     { name: "slug", label: "Slug", type: "slug", sourceField: "name" },
     { name: "description", label: "Description", type: "textarea" },
-    { name: "price", label: "Price", type: "number", required: true },
-    { name: "currency", label: "Currency", placeholder: "USD", required: true },
-    { name: "billing_period", label: "Billing Period", type: "select", options: [{ value: "monthly", label: "Monthly" }, { value: "yearly", label: "Yearly" }, { value: "lifetime", label: "Lifetime" }] },
-    { name: "is_active", label: "Active", type: "select", options: [{ value: "1", label: "Yes" }, { value: "0", label: "No" }] },
+    { name: "features_summary", label: "Features Summary", type: "textarea" },
+    { name: "sort_order", label: "Sort Order", type: "number", placeholder: "0" },
+    { name: "is_popular", label: "Popular", type: "select", options: [{ value: "1", label: "Yes" }, { value: "0", label: "No" }] },
+    { name: "is_custom", label: "Custom", type: "select", options: [{ value: "1", label: "Yes" }, { value: "0", label: "No" }] },
+    { name: "metadata", label: "Metadata", type: "textarea", placeholder: "{}" },
+    { name: "status", label: "Status", type: "select", options: [{ value: "active", label: "Active" }, { value: "inactive", label: "Inactive" }] },
   ],
   listFn: listPlans,
   createFn: createPlan,
@@ -26,12 +28,11 @@ const config: SimpleCRUDConfig<PlanRow> = {
   columns: (t) => [
     { accessorKey: "id", header: t("dashboard.users.col_id", "ID") },
     { accessorKey: "name", header: t("dashboard.users.col_name", "Name") },
-    { accessorKey: "price", header: t("dashboard.plans.price", "Price") },
-    { accessorKey: "currency", header: t("dashboard.plans.currency", "Currency") },
-    { accessorKey: "billing_period", header: t("dashboard.plans.billing_period", "Billing") },
+    { accessorKey: "slug", header: t("dashboard.plans.slug", "Slug") },
+    { accessorKey: "status", header: t("dashboard.plans.status", "Status") },
   ],
-  toForm: (row) => ({ name: row.name, slug: row.slug, description: row.description ?? "", price: String(row.price), currency: row.currency, billing_period: row.billing_period, is_active: row.is_active ? "1" : "0" }),
-  fromForm: (form) => ({ ...form, price: Number(form.price), is_active: form.is_active === "1" }),
+  toForm: (row) => ({ name: row.name, slug: row.slug, description: row.description ?? "", features_summary: row.features_summary ?? "", sort_order: row.sort_order ? String(row.sort_order) : "0", is_popular: row.is_popular ? "1" : "0", is_custom: row.is_custom ? "1" : "0", metadata: row.metadata ?? "", status: row.status ?? "active" }),
+  fromForm: (form) => ({ ...form, sort_order: Number(form.sort_order), is_popular: form.is_popular === "1", is_custom: form.is_custom === "1" }),
 };
 
 export default function PlansPage() {

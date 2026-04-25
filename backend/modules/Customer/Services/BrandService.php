@@ -25,9 +25,9 @@ class BrandService
         $this->moduleService = $moduleService;
     }
 
-    public function getAll(array $filters = [], int $perPage = 15): LengthAwarePaginator
+    public function getAll(array $params = []): LengthAwarePaginator|Collection
     {
-        return $this->brandRepository->getAll($filters, $perPage);
+        return $this->brandRepository->getAll($params);
     }
 
     public function getDataTables()

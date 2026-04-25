@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { FileUpload } from "@/components/ui/file-upload";
 import {
   Sheet,
   SheetContent,
@@ -31,7 +32,7 @@ export default function BrandsPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [form, setForm] = useState({
-    name: "", slug: "", description: "", website: "", email: "", phone: "", address: "", status: "active",
+    name: "", slug: "", description: "", logo: "", website: "", email: "", phone: "", address: "", status: "active",
   });
 
   const load = useCallback(async () => {
@@ -52,7 +53,7 @@ export default function BrandsPage() {
 
   const openCreate = () => {
     setEditingId(null);
-    setForm({ name: "", slug: "", description: "", website: "", email: "", phone: "", address: "", status: "active" });
+    setForm({ name: "", slug: "", description: "", logo: "", website: "", email: "", phone: "", address: "", status: "active" });
     setSheetOpen(true);
   };
 
@@ -65,6 +66,7 @@ export default function BrandsPage() {
         name: brand.name,
         slug: brand.slug,
         description: brand.description ?? "",
+        logo: brand.logo ?? "",
         website: brand.website ?? "",
         email: brand.email ?? "",
         phone: brand.phone ?? "",
@@ -211,6 +213,24 @@ export default function BrandsPage() {
             <div className="space-y-2">
               <Label htmlFor="brand-desc">{t("dashboard.brands.description", "Description")}</Label>
               <Input id="brand-desc" value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="brand-logo">{t("dashboard.brands.logo", "Logo")}</Label>
+              <FileUpload
+                onUploadComplete={(files) => {
+                  if (files.length > 0) {
+                    setForm((f) => ({ ...f, logo: files[0].url }));
+                  }
+                }}
+                accept="image/*"
+                maxFiles={1}
+                uploadType="media"
+              />
+              {form.logo && (
+                <div className="mt-2">
+                  <img src={form.logo} alt="Logo" className="h-16 w-16 object-contain rounded border" />
+                </div>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="brand-website">{t("dashboard.brands.website", "Website")}</Label>

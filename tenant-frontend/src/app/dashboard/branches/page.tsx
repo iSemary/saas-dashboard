@@ -19,7 +19,7 @@ const config: SimpleCRUDConfig<Branch> = {
     { name: "brand_id", label: "Brand", type: "entity", listFn: listBrands, optionLabelKey: "name", optionValueKey: "id" },
     { name: "is_active", label: "Active", type: "select", options: [{ value: "1", label: "Yes" }, { value: "0", label: "No" }] },
   ],
-  listFn: listBranches as () => Promise<Branch[]>,
+  listFn: listBranches,
   createFn: createBranch,
   updateFn: updateBranch,
   deleteFn: deleteBranch as unknown as (id: number) => Promise<void>,
@@ -31,6 +31,9 @@ const config: SimpleCRUDConfig<Branch> = {
   ],
   toForm: (r) => ({ name: r.name, slug: r.slug ?? "", brand_id: r.brand_id?.toString() ?? "", is_active: r.is_active ? "1" : "0" }),
   fromForm: (f) => ({ name: f.name, slug: f.slug || undefined, brand_id: f.brand_id ? Number(f.brand_id) : undefined, is_active: f.is_active === "1" }),
+  serverSide: true,
+  searchableColumns: ['name', 'slug'],
+  sortableColumns: ['id', 'name', 'slug', 'brand_id'],
 };
 
 export default function BranchesPage() {

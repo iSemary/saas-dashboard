@@ -5,7 +5,8 @@
     "keywords": ["sales", "products", "quotations", "orders", "invoices"],
     "priority": 2,
     "providers": [
-        "Modules\\Sales\\Providers\\SalesServiceProvider"
+        "Modules\\Sales\\Providers\\SalesServiceProvider",
+        "Modules\\Sales\\Infrastructure\\Providers\\SalesServiceProvider"
     ],
     "files": []
 }

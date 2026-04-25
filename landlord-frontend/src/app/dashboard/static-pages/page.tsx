@@ -25,8 +25,8 @@ const config: SimpleCRUDConfig<StaticPageRow> = {
     { accessorKey: "title", header: t("dashboard.static_pages.title_col", "Title") },
     { accessorKey: "slug", header: t("dashboard.static_pages.slug", "Slug") },
   ],
-  toForm: (row) => ({ title: row.title, slug: row.slug, body: row.body ?? "", is_active: row.is_active ? "1" : "0" }),
-  fromForm: (form) => ({ ...form, is_active: form.is_active === "1" }),
+  toForm: (row) => ({ title: row.title, slug: row.slug, description: row.description ?? "", body: row.body ?? "", image: row.image ?? "", status: row.status ?? "active" }),
+  fromForm: (form) => form,
 };
 
 export default function StaticPagesPage() {

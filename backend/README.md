@@ -168,6 +168,17 @@ Configure your `.env` file with:
 # Create storage symlink
 php artisan storage:link
 
+### Start Application
+
+Runs all necessary services to start the application:
+
+```bash
+php artisan app:start
+```
+
+# Landlord Setup
+php artisan landlord:setup
+
 # Run landlord migrations
 php artisan landlord:migrate
 
@@ -325,14 +336,6 @@ ModuleName/
 ## 🔧 Commands
 
 ### Application Commands
-
-#### Start Application
-
-Runs all necessary services to start the application:
-
-```bash
-php artisan app:start
-```
 
 #### Backup Application
 

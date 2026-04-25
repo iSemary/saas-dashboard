@@ -132,6 +132,8 @@ export function FileUpload({
         disabled={disabled || uploading}
         label={t("dashboard.file_upload.dropzone_label", "Drag & drop files here or click to browse")}
         uploadIcon
+        style={{ minHeight: "120px", padding: "16px" }}
+        className="rounded-lg"
       />
       
       {files.length > 0 && (

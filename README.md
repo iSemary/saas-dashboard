@@ -4,11 +4,13 @@ A comprehensive multi-tenant SaaS platform providing a complete business solutio
 
 ## Default Users
 
-## Landlord
+## Landlord (Superadmin)
 
 URL: http://landlord.saas.test
 Email: admin@landlord.saas.test
+Username: landlord
 Password: password123
+
 
 ## Tenant #1 (Customer 1)
 

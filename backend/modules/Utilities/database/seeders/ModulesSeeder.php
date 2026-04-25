@@ -16,11 +16,17 @@ class ModulesSeeder extends Seeder
         $modules = [
             [
                 'module_key' => 'crm',
-                'name' => 'crm',
-                'description' => 'CRM is a good module',
-                'route' => '/crm/',
+                'name' => 'CRM',
+                'description' => 'Customer Relationship Management',
+                'route' => '/dashboard/modules/crm',
                 'icon' => 'crm.png',
                 'slogan' => 'One call, one deal',
+                'navigation' => [
+                    ['key' => 'dashboard', 'label' => 'Dashboard', 'route' => '/dashboard/modules/crm', 'icon' => 'LayoutDashboard'],
+                    ['key' => 'companies', 'label' => 'Companies', 'route' => '/dashboard/modules/crm/companies', 'icon' => 'Building2'],
+                    ['key' => 'contacts', 'label' => 'Contacts', 'route' => '/dashboard/modules/crm/contacts', 'icon' => 'Users'],
+                    ['key' => 'deals', 'label' => 'Deals', 'route' => '/dashboard/modules/crm/deals', 'icon' => 'Handshake'],
+                ],
                 'status' => 'active',
             ],
             [
@@ -34,20 +40,31 @@ class ModulesSeeder extends Seeder
             ],
             [
                 'module_key' => 'pos',
-                'name' => 'pos',
-                'description' => 'POS is a good module',
-                'route' => '/pos/',
+                'name' => 'POS',
+                'description' => 'Point of Sale',
+                'route' => '/dashboard/modules/pos',
                 'icon' => 'pos.png',
                 'slogan' => 'Sales made easy',
+                'navigation' => [
+                    ['key' => 'dashboard', 'label' => 'Dashboard', 'route' => '/dashboard/modules/pos', 'icon' => 'LayoutDashboard'],
+                    ['key' => 'products', 'label' => 'Products', 'route' => '/dashboard/modules/pos/products', 'icon' => 'Package'],
+                    ['key' => 'orders', 'label' => 'Orders', 'route' => '/dashboard/modules/pos/orders', 'icon' => 'Receipt'],
+                ],
                 'status' => 'active',
             ],
             [
                 'module_key' => 'hr',
-                'name' => 'hr',
-                'description' => 'HR is a good module',
-                'route' => '/hr/',
+                'name' => 'HR',
+                'description' => 'Human Resources',
+                'route' => '/dashboard/modules/hr',
                 'icon' => 'hr.png',
                 'slogan' => 'Managing human resources',
+                'navigation' => [
+                    ['key' => 'dashboard', 'label' => 'Dashboard', 'route' => '/dashboard/modules/hr', 'icon' => 'LayoutDashboard'],
+                    ['key' => 'departments', 'label' => 'Departments', 'route' => '/dashboard/modules/hr/departments', 'icon' => 'Building2'],
+                    ['key' => 'employees', 'label' => 'Employees', 'route' => '/dashboard/modules/hr/employees', 'icon' => 'Users'],
+                    ['key' => 'leave_requests', 'label' => 'Leave Requests', 'route' => '/dashboard/modules/hr/leave-requests', 'icon' => 'FileText'],
+                ],
                 'status' => 'active',
             ],
             [

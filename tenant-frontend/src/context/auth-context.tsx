@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setToken(storedToken);
     setUser(JSON.parse(storedUser) as AuthUser);
     api
-      .get<{ user: AuthUser }>("/auth/me")
+      .get<{ user: AuthUser }>("/tenant/auth/me")
       .then((res) => {
         setUser(res.data.user);
         window.localStorage.setItem("auth_user", JSON.stringify(res.data.user));
@@ -57,7 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = useCallback(async (payload: LoginPayload) => {
-    const res = await api.post("/auth/login", { ...payload, subdomain: payload.subdomain || TENANT_SUBDOMAIN || undefined });
+    const res = await api.post("/tenant/auth/login", { ...payload, subdomain: payload.subdomain || TENANT_SUBDOMAIN || undefined });
     if (res.data.requires_2fa) {
       return { requires2fa: true, tempToken: res.data.temp_token as string };
     }
@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const verifyTwoFactor = useCallback(async (tempToken: string, code: string) => {
-    const res = await api.post("/auth/2fa/verify", { temp_token: tempToken, code, subdomain: TENANT_SUBDOMAIN || undefined });
+    const res = await api.post("/tenant/auth/2fa/verify", { temp_token: tempToken, code, subdomain: TENANT_SUBDOMAIN || undefined });
     window.localStorage.setItem("auth_token", res.data.token as string);
     window.localStorage.setItem("auth_user", JSON.stringify(res.data.user as AuthUser));
     setToken(res.data.token as string);
@@ -78,7 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = useCallback(async () => {
     try {
-      await api.post("/auth/logout");
+      await api.post("/tenant/auth/logout");
     } finally {
       setToken(null);
       setUser(null);
@@ -89,7 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [router]);
 
   const refreshUser = useCallback(async () => {
-    const res = await api.get<{ user: AuthUser }>("/auth/me");
+    const res = await api.get<{ user: AuthUser }>("/tenant/auth/me");
     setUser(res.data.user);
     window.localStorage.setItem("auth_user", JSON.stringify(res.data.user));
   }, []);

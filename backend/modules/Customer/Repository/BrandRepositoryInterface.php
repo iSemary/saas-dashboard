@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface BrandRepositoryInterface
 {
-    public function getAll(array $filters = [], int $perPage = 15): LengthAwarePaginator;
+    public function getAll(array $params = []): LengthAwarePaginator|Collection;
+    public function getAllLegacy(array $filters = [], int $perPage = 15): LengthAwarePaginator;
     public function getById(int $id): ?Brand;
     public function getBySlug(string $slug): ?Brand;
     public function create(array $data): Brand;

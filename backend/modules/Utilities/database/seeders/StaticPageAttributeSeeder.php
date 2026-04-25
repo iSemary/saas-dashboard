@@ -3,8 +3,7 @@
 namespace Modules\Utilities\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Modules\Utilities\Entities\StaticPageAttribute;
-use Modules\Utilities\Entities\StaticPage;
+use Illuminate\Support\Facades\DB;
 
 class StaticPageAttributeSeeder extends Seeder
 {
@@ -13,13 +12,18 @@ class StaticPageAttributeSeeder extends Seeder
      */
     public function run(): void
     {
-        // Get static page IDs
-        $termsPage = StaticPage::where('slug', 'terms-of-service')->first();
-        $privacyPage = StaticPage::where('slug', 'privacy-policy')->first();
-        $aboutPage = StaticPage::where('slug', 'about-us')->first();
-        $contactPage = StaticPage::where('slug', 'contact-us')->first();
-        $helpPage = StaticPage::where('slug', 'help-center')->first();
-        $faqPage = StaticPage::where('slug', 'faq')->first();
+        // Get static page IDs (use raw queries to avoid Eloquent overhead/Auditable trait)
+        $pages = DB::connection('landlord')
+            ->table('static_pages')
+            ->whereIn('slug', ['terms-of-service', 'privacy-policy', 'about-us', 'contact-us', 'help-center', 'faq'])
+            ->pluck('id', 'slug');
+
+        $termsPage = (object) ['id' => $pages['terms-of-service'] ?? null];
+        $privacyPage = (object) ['id' => $pages['privacy-policy'] ?? null];
+        $aboutPage = (object) ['id' => $pages['about-us'] ?? null];
+        $contactPage = (object) ['id' => $pages['contact-us'] ?? null];
+        $helpPage = (object) ['id' => $pages['help-center'] ?? null];
+        $faqPage = (object) ['id' => $pages['faq'] ?? null];
 
         $staticPageAttributes = [
             // Terms of Service attributes
@@ -179,14 +183,32 @@ class StaticPageAttributeSeeder extends Seeder
             ],
         ];
 
+        // Use raw DB insert to bypass Eloquent events, Auditable trait, and Telescope query
+        // serialization. Map seeder keys (attribute_key/attribute_value) to actual table columns (key/value).
+        $now = now();
         foreach ($staticPageAttributes as $attributeData) {
-            StaticPageAttribute::firstOrCreate(
-                [
-                    'static_page_id' => $attributeData['static_page_id'],
-                    'attribute_key' => $attributeData['attribute_key']
-                ], 
-                $attributeData
-            );
+            if (empty($attributeData['static_page_id'])) {
+                continue;
+            }
+
+            $exists = DB::connection('landlord')
+                ->table('static_page_attributes')
+                ->where('static_page_id', $attributeData['static_page_id'])
+                ->where('key', $attributeData['attribute_key'])
+                ->exists();
+
+            if ($exists) {
+                continue;
+            }
+
+            DB::connection('landlord')->table('static_page_attributes')->insert([
+                'static_page_id' => $attributeData['static_page_id'],
+                'key'            => $attributeData['attribute_key'],
+                'value'          => $attributeData['attribute_value'],
+                'status'         => $attributeData['status'] ?? 'active',
+                'created_at'     => $now,
+                'updated_at'     => $now,
+            ]);
         }
 
         $this->command->info('Static page attributes seeded successfully!');

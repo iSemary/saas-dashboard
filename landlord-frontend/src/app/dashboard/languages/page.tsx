@@ -12,10 +12,9 @@ const config: SimpleCRUDConfig<LanguageRow> = {
   createLabelFallback: "Add Language",
   fields: [
     { name: "name", label: "Name", required: true },
-    { name: "code", label: "Code", placeholder: "en", required: true },
+    { name: "code", label: "Code", required: true },
+    { name: "locale", label: "Locale", placeholder: "en", required: true },
     { name: "direction", label: "Direction", type: "select", options: [{ value: "ltr", label: "LTR" }, { value: "rtl", label: "RTL" }] },
-    { name: "is_active", label: "Active", type: "select", options: [{ value: "1", label: "Yes" }, { value: "0", label: "No" }] },
-    { name: "is_default", label: "Default", type: "select", options: [{ value: "1", label: "Yes" }, { value: "0", label: "No" }] },
   ],
   listFn: listLanguages,
   createFn: createLanguage,
@@ -24,11 +23,11 @@ const config: SimpleCRUDConfig<LanguageRow> = {
   columns: (t) => [
     { accessorKey: "id", header: t("dashboard.users.col_id", "ID") },
     { accessorKey: "name", header: t("dashboard.users.col_name", "Name") },
-    { accessorKey: "code", header: t("dashboard.languages.code", "Code") },
+    { accessorKey: "locale", header: t("dashboard.languages.code", "Locale") },
     { accessorKey: "direction", header: t("dashboard.languages.direction", "Direction") },
   ],
-  toForm: (row) => ({ name: row.name, code: row.code, direction: row.direction, is_active: row.is_active ? "1" : "0", is_default: row.is_default ? "1" : "0" }),
-  fromForm: (form) => ({ ...form, is_active: form.is_active === "1", is_default: form.is_default === "1" }),
+  toForm: (row) => ({ name: row.name, code: row.code, locale: row.locale, direction: row.direction }),
+  fromForm: (form) => form,
 };
 
 export default function LanguagesPage() {

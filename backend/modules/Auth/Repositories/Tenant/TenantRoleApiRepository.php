@@ -2,11 +2,25 @@
 
 namespace Modules\Auth\Repositories\Tenant;
 
+use App\Repositories\Traits\TableListTrait;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Spatie\Permission\Models\Role;
 
 class TenantRoleApiRepository implements TenantRoleApiRepositoryInterface
 {
+    use TableListTrait;
+
+    public function list(array $params = []): LengthAwarePaginator|Collection
+    {
+        return $this->tableList(
+            Role::class,
+            $params,
+            ['name' => 'name'],  // searchable columns
+            ['id' => 'id', 'name' => 'name', 'created_at' => 'created_at']  // sortable columns
+        );
+    }
+
     public function paginate(array $filters = [], int $perPage = 50): LengthAwarePaginator
     {
         $query = Role::query();

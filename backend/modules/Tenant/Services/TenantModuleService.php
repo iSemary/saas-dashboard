@@ -82,6 +82,7 @@ class TenantModuleService
                 'icon' => $landlordModule->icon,
                 'route' => $landlordModule->route,
                 'slogan' => $landlordModule->slogan,
+                'navigation' => $landlordModule->navigation,
                 'status' => $brandModule->status,
                 'brand_id' => $brandModule->brand_id,
                 'brand_name' => $brandModule->brand?->name,
@@ -93,6 +94,20 @@ class TenantModuleService
         }
 
         return $result;
+    }
+
+    /**
+     * Get a single subscribed module by module_key.
+     */
+    public function getSubscribedModule(string $moduleKey): ?array
+    {
+        $modules = $this->getSubscribedModules();
+        foreach ($modules as $module) {
+            if ($module['module_key'] === $moduleKey) {
+                return $module;
+            }
+        }
+        return null;
     }
 
     /**

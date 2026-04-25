@@ -26,8 +26,8 @@ const config: SimpleCRUDConfig<CurrencyRow> = {
     { accessorKey: "code", header: t("dashboard.currencies.code", "Code") },
     { accessorKey: "symbol", header: t("dashboard.currencies.symbol", "Symbol") },
   ],
-  toForm: (row) => ({ name: row.name, code: row.code, symbol: row.symbol, is_active: row.is_active ? "1" : "0" }),
-  fromForm: (form) => ({ ...form, is_active: form.is_active === "1" }),
+  toForm: (row) => ({ name: row.name, code: row.code, symbol: row.symbol, decimal_places: row.decimal_places ? String(row.decimal_places) : "2", exchange_rate: row.exchange_rate ? String(row.exchange_rate) : "", exchange_rate_last_updated: row.exchange_rate_last_updated ?? "", symbol_position: row.symbol_position ?? "after", base_currency: row.base_currency ? "1" : "0", priority: row.priority ? String(row.priority) : "0", note: row.note ?? "", status: row.status ?? "active" }),
+  fromForm: (form) => ({ ...form, decimal_places: Number(form.decimal_places), exchange_rate: form.exchange_rate ? Number(form.exchange_rate) : null, base_currency: form.base_currency === "1", priority: Number(form.priority) }),
 };
 
 export default function CurrenciesPage() {

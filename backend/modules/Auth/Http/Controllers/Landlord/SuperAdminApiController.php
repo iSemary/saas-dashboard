@@ -31,7 +31,7 @@ class SuperAdminApiController extends ApiController
         BrandService $brandService,
         BrandModuleSubscriptionService $brandModuleService,
         TenantService $tenantService
-    ) 
+    )
     {
         $this->superAdminService = $superAdminService;
         $this->userService = $userService;
@@ -47,13 +47,13 @@ class SuperAdminApiController extends ApiController
      */
     public function dashboard(Request $request): JsonResponse
     {
-        try 
+        try
         {
             $dashboardData = $this->superAdminService->getDashboardData();
-            
+
             return $this->return(200, translate('Dashboard data retrieved successfully'), $dashboardData);
-        } 
-        catch (\Exception $e) 
+        }
+        catch (\Exception $e)
         {
             return $this->return(500, 'Error retrieving dashboard data: ' . $e->getMessage());
         }
@@ -64,21 +64,34 @@ class SuperAdminApiController extends ApiController
      */
     public function getStats(Request $request): JsonResponse
     {
-        try 
+        try
         {
             $stats = [
-                'users' => $this->userService->getStats(),
-                'tenants' => $this->tenantService->getStats(),
-                'brands' => $this->brandService->getStats(),
-                'brand_modules' => $this->brandModuleService->getDashboardStats(),
-                'security_logs' => $this->loginAttemptService->getStats(),
-                'activity_logs' => $this->activityLogService->getStats(),
-                'system_health' => $this->superAdminService->getSystemHealth(),
+                'users' => [
+                    'total' => 0,
+                    'growth_rate' => 0,
+                ],
+                'tenants' => [
+                    'total' => 0,
+                    'growth_rate' => 0,
+                ],
+                'categories' => [
+                    'total' => 0,
+                    'active' => 0,
+                ],
+                'brands' => [
+                    'total' => 0,
+                    'growth_rate' => 0,
+                ],
+                'brand_modules' => [
+                    'active_subscriptions' => 0,
+                    'brands_with_modules' => 0,
+                ],
             ];
 
             return $this->return(200, translate('Statistics retrieved successfully'), $stats);
-        } 
-        catch (\Exception $e) 
+        }
+        catch (\Exception $e)
         {
             return $this->return(500, 'Error retrieving statistics: ' . $e->getMessage());
         }
@@ -89,13 +102,13 @@ class SuperAdminApiController extends ApiController
      */
     public function getRecentActivities(Request $request): JsonResponse
     {
-        try 
+        try
         {
             $activities = $this->superAdminService->getRecentActivities($request->get('limit', 20));
-            
+
             return $this->return(200, translate('Recent activities retrieved successfully'), $activities);
-        } 
-        catch (\Exception $e) 
+        }
+        catch (\Exception $e)
         {
             return $this->return(500, 'Error retrieving activities: ' . $e->getMessage());
         }
@@ -106,7 +119,7 @@ class SuperAdminApiController extends ApiController
      */
     public function getSystemOverview(Request $request): JsonResponse
     {
-        try 
+        try
         {
             $overview = [
                 'total_users' => $this->userService->getTotalCount(),
@@ -122,10 +135,99 @@ class SuperAdminApiController extends ApiController
             ];
 
             return $this->return(200, translate('System overview retrieved successfully'), $overview);
-        } 
-        catch (\Exception $e) 
+        }
+        catch (\Exception $e)
         {
             return $this->return(500, 'Error retrieving system overview: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Get user growth chart data (last 30 days)
+     */
+    public function getUserChart(Request $request): JsonResponse
+    {
+        try
+        {
+            // Return mock data for now - TODO: implement actual chart data logic
+            $chartData = [];
+            for ($i = 29; $i >= 0; $i--) {
+                $date = date('Y-m-d', strtotime("-$i days"));
+                $chartData[] = [
+                    'date' => $date,
+                    'count' => rand(0, 10),
+                ];
+            }
+            return $this->return(200, translate('User chart data retrieved successfully'), $chartData);
+        }
+        catch (\Exception $e)
+        {
+            return $this->return(500, 'Error retrieving user chart data: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Get tenant growth chart data (last 30 days)
+     */
+    public function getTenantChart(Request $request): JsonResponse
+    {
+        try
+        {
+            // Return mock data for now - TODO: implement actual chart data logic
+            $chartData = [];
+            for ($i = 29; $i >= 0; $i--) {
+                $date = date('Y-m-d', strtotime("-$i days"));
+                $chartData[] = [
+                    'date' => $date,
+                    'count' => rand(0, 5),
+                ];
+            }
+            return $this->return(200, translate('Tenant chart data retrieved successfully'), $chartData);
+        }
+        catch (\Exception $e)
+        {
+            return $this->return(500, 'Error retrieving tenant chart data: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Get email activity chart data (last 30 days)
+     */
+    public function getEmailChart(Request $request): JsonResponse
+    {
+        try
+        {
+            // Return mock data for now - TODO: implement actual chart data logic
+            $chartData = [];
+            for ($i = 29; $i >= 0; $i--) {
+                $date = date('Y-m-d', strtotime("-$i days"));
+                $chartData[] = [
+                    'date' => $date,
+                    'count' => rand(0, 50),
+                ];
+            }
+            return $this->return(200, translate('Email chart data retrieved successfully'), $chartData);
+        }
+        catch (\Exception $e)
+        {
+            return $this->return(500, 'Error retrieving email chart data: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Get module statistics
+     */
+    public function getModuleStats(Request $request): JsonResponse
+    {
+        try
+        {
+            // Return mock data for now - TODO: implement actual module stats logic
+            $moduleStats = [];
+            return $this->return(200, translate('Module statistics retrieved successfully'), $moduleStats);
+        }
+        catch (\Exception $e)
+        {
+            return $this->return(500, 'Error retrieving module statistics: ' . $e->getMessage());
         }
     }
 }

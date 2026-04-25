@@ -37,10 +37,70 @@ class CRMServiceProvider extends ServiceProvider
         $this->app->register(EventServiceProvider::class);
         // $this->app->register(RouteServiceProvider::class);
 
-        // CRM Repository Bindings
+        $this->registerRepositories();
+        $this->registerStrategies();
+    }
+
+    /**
+     * Register repository bindings.
+     */
+    protected function registerRepositories(): void
+    {
+        // Legacy repository bindings
         $this->app->bind(\Modules\CRM\Repositories\CompanyRepositoryInterface::class, \Modules\CRM\Repositories\CompanyRepository::class);
         $this->app->bind(\Modules\CRM\Repositories\ContactRepositoryInterface::class, \Modules\CRM\Repositories\ContactRepository::class);
         $this->app->bind(\Modules\CRM\Repositories\CrmDashboardRepositoryInterface::class, \Modules\CRM\Repositories\CrmDashboardRepository::class);
+
+        // DDD Infrastructure repository bindings
+        $this->app->bind(\Modules\CRM\Infrastructure\Persistence\LeadRepositoryInterface::class, \Modules\CRM\Infrastructure\Persistence\LeadRepository::class);
+        $this->app->bind(\Modules\CRM\Infrastructure\Persistence\OpportunityRepositoryInterface::class, \Modules\CRM\Infrastructure\Persistence\OpportunityRepository::class);
+        $this->app->bind(\Modules\CRM\Infrastructure\Persistence\ActivityRepositoryInterface::class, \Modules\CRM\Infrastructure\Persistence\ActivityRepository::class);
+        $this->app->bind(\Modules\CRM\Infrastructure\Persistence\CrmNoteRepositoryInterface::class, \Modules\CRM\Infrastructure\Persistence\CrmNoteRepository::class);
+        $this->app->bind(\Modules\CRM\Infrastructure\Persistence\CrmFileRepositoryInterface::class, \Modules\CRM\Infrastructure\Persistence\CrmFileRepository::class);
+        $this->app->bind(\Modules\CRM\Infrastructure\Persistence\CrmPipelineStageRepositoryInterface::class, \Modules\CRM\Infrastructure\Persistence\CrmPipelineStageRepository::class);
+        $this->app->bind(\Modules\CRM\Infrastructure\Persistence\CrmAutomationRuleRepositoryInterface::class, \Modules\CRM\Infrastructure\Persistence\CrmAutomationRuleRepository::class);
+        $this->app->bind(\Modules\CRM\Infrastructure\Persistence\CrmWebhookRepositoryInterface::class, \Modules\CRM\Infrastructure\Persistence\CrmWebhookRepository::class);
+        $this->app->bind(\Modules\CRM\Infrastructure\Persistence\CrmImportJobRepositoryInterface::class, \Modules\CRM\Infrastructure\Persistence\CrmImportJobRepository::class);
+    }
+
+    /**
+     * Register strategy bindings.
+     */
+    protected function registerStrategies(): void
+    {
+        // Lead Qualification Strategies
+        $this->app->bind(
+            \Modules\CRM\Domain\Strategies\LeadQualification\LeadQualificationStrategyInterface::class,
+            \Modules\CRM\Domain\Strategies\LeadQualification\BasicQualificationStrategy::class
+        );
+
+        // Pipeline Transition Strategies
+        $this->app->bind(
+            \Modules\CRM\Domain\Strategies\PipelineTransition\PipelineTransitionStrategyInterface::class,
+            \Modules\CRM\Domain\Strategies\PipelineTransition\StrictTransitionStrategy::class
+        );
+
+        // Automation Action Strategies (tagged collection)
+        $this->app->tag([
+            \Modules\CRM\Domain\Strategies\AutomationAction\AssignUserAction::class,
+            \Modules\CRM\Domain\Strategies\AutomationAction\UpdateFieldAction::class,
+            \Modules\CRM\Domain\Strategies\AutomationAction\CreateActivityAction::class,
+            \Modules\CRM\Domain\Strategies\AutomationAction\SendNotificationAction::class,
+            \Modules\CRM\Domain\Strategies\AutomationAction\SendEmailAction::class,
+        ], 'crm.automation_actions');
+
+        // Import Strategies (tagged collection)
+        $this->app->tag([
+            \Modules\CRM\Domain\Strategies\Import\LeadImportStrategy::class,
+            \Modules\CRM\Domain\Strategies\Import\ContactImportStrategy::class,
+        ], 'crm.import_strategies');
+
+        // Notification Strategies (tagged collection)
+        $this->app->tag([
+            \Modules\CRM\Domain\Strategies\Notification\EmailNotificationStrategy::class,
+            \Modules\CRM\Domain\Strategies\Notification\SmsNotificationStrategy::class,
+            \Modules\CRM\Domain\Strategies\Notification\PushNotificationStrategy::class,
+        ], 'crm.notification_strategies');
     }
 
     /**

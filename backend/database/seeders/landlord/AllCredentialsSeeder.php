@@ -76,7 +76,7 @@ class AllCredentialsSeeder extends Seeder
         );
 
         // Assign landlord role
-        $landlordRole = Role::on('landlord')->where('name', 'landlord')->first();
+        $landlordRole = Role::on('landlord')->where('name', 'landlord')->where('guard_name', 'web')->first();
         if ($landlordRole) {
             $user->assignRole($landlordRole);
         }
@@ -132,12 +132,12 @@ class AllCredentialsSeeder extends Seeder
             // Check if tenant database exists, if not initialize it
             // Use landlord connection to query tenants table
             $tenant = Tenant::on('landlord')->where('name', $tenantName)->first();
-            
+
             if ($tenant) {
                 // Check if database exists (use landlord connection for this query)
                 $dbName = $tenant->database;
                 $dbExists = \DB::connection('landlord')->select("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?", [$dbName]);
-                
+
                 if (empty($dbExists)) {
                     $this->command->info("  ⚠️  Database for {$tenantName} doesn't exist. Initializing...");
                     $tenantRepository->init($tenantName);
@@ -163,10 +163,11 @@ class AllCredentialsSeeder extends Seeder
         $credentials = $this->getTenantCredentials($tenantName);
 
         $user = $userClass::updateOrCreate(
-            ['email' => $credentials['email']],
+            ['username' => $credentials['username']],
             [
                 'name' => $credentials['name'],
-                'username' => $credentials['username'],
+                'email' => $credentials['email'],
+                'customer_id' => 1,
                 'country_id' => 1,
                 'language_id' => 1,
                 'factor_authenticate' => 0,
@@ -175,8 +176,8 @@ class AllCredentialsSeeder extends Seeder
             ]
         );
 
-        // Assign super_admin role
-        $superAdminRole = $roleClass::where('name', 'super_admin')->first();
+        // Assign super_admin role (web guard matches User model)
+        $superAdminRole = $roleClass::where('name', 'super_admin')->where('guard_name', 'web')->first();
         if ($superAdminRole) {
             $user->assignRole($superAdminRole);
         }
@@ -218,7 +219,7 @@ class AllCredentialsSeeder extends Seeder
     private function installPassportClients(): void
     {
         $this->command->info('🔐 Installing Passport OAuth clients...');
-        
+
         try {
             $this->call(PassportClientsSeeder::class);
         } catch (\Exception $e) {

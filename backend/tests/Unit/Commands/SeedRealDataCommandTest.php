@@ -3,7 +3,7 @@
 namespace Tests\Unit\Commands;
 
 use Tests\TestCase;
-use App\Console\Commands\SeedRealDataCommand;
+use App\Console\Commands\ProjectSetup\SeedRealDataCommand;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;

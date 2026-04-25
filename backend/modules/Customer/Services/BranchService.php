@@ -22,9 +22,9 @@ class BranchService
         $this->branchRepository = $branchRepository;
     }
 
-    public function getAll(array $filters = [], int $perPage = 15): LengthAwarePaginator
+    public function getAll(array $params = []): LengthAwarePaginator|Collection
     {
-        return $this->branchRepository->getAll($filters, $perPage);
+        return $this->branchRepository->getAll($params);
     }
 
     public function getDataTables()

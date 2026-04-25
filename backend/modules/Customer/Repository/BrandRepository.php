@@ -4,6 +4,7 @@ namespace Modules\Customer\Repository;
 
 use Modules\Customer\Entities\Brand;
 use Modules\Customer\Repository\BrandRepositoryInterface;
+use App\Repositories\Traits\TableListTrait;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use App\Helpers\TableHelper;
@@ -13,7 +14,19 @@ use Illuminate\Support\Facades\Auth;
 
 class BrandRepository implements BrandRepositoryInterface
 {
-    public function getAll(array $filters = [], int $perPage = 15): LengthAwarePaginator
+    use TableListTrait;
+
+    public function getAll(array $params = []): LengthAwarePaginator|Collection
+    {
+        return $this->tableList(
+            Brand::class,
+            $params,
+            ['name' => 'name', 'slug' => 'slug', 'domain' => 'domain'],  // searchable columns
+            ['id' => 'id', 'name' => 'name', 'slug' => 'slug', 'domain' => 'domain']  // sortable columns
+        );
+    }
+
+    public function getAllLegacy(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
         $query = Brand::on('landlord')->with(['tenant', 'creator', 'updater']);
 

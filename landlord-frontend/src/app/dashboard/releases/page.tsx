@@ -11,9 +11,10 @@ const config: SimpleCRUDConfig<ReleaseRow> = {
   createLabelKey: "dashboard.releases.create",
   createLabelFallback: "Add Release",
   fields: [
-    { name: "version", label: "Version", placeholder: "1.0.0", required: true },
+    { name: "version", label: "Version", required: true },
     { name: "title", label: "Title", required: true },
     { name: "body", label: "Body", type: "textarea" },
+    { name: "release_date", label: "Release Date", type: "datetime" },
     { name: "is_published", label: "Published", type: "select", options: [{ value: "1", label: "Yes" }, { value: "0", label: "No" }] },
   ],
   listFn: listReleases,

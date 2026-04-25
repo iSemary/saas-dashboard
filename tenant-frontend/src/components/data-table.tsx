@@ -16,7 +16,7 @@ import {
   PaginationState,
   useReactTable,
 } from "@tanstack/react-table";
-import { ReactNode, useState, useMemo, useEffect } from "react";
+import { ReactNode, useState, useMemo, useEffect, useRef } from "react";
 import { useI18n } from "@/context/i18n-context";
 import * as XLSX from "xlsx";
 import { FileSpreadsheet, Download, TableProperties, ChevronLeft, ChevronRight, ChevronFirst, ChevronLast, ArrowUpDown, ArrowUp, ArrowDown, Search, Loader2 } from "lucide-react";
@@ -208,12 +208,17 @@ export function DataTable<TData>({
   });
 
   // Handle search changes with debounce for server-side
+  const isFirstRender = useRef(true);
   useEffect(() => {
     if (!serverSide || !onTableChange) return;
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
 
     const timeout = setTimeout(() => {
       onTableChange({
-        page: pagination.pageIndex + 1,
+        page: 1,
         perPage: pagination.pageSize,
         search: globalFilter,
         sortBy: sorting[0]?.id ?? null,
@@ -222,7 +227,8 @@ export function DataTable<TData>({
     }, 300);
 
     return () => clearTimeout(timeout);
-  }, [globalFilter]); // eslint-disable-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [globalFilter]);
   const exportCsv = () => {
     const exportRows = table.getFilteredRowModel().rows;
     const cols = table.getVisibleLeafColumns().filter((c) => c.id !== "actions");

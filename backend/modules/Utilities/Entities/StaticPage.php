@@ -20,6 +20,7 @@ class StaticPage extends Model implements Auditable
         'name',
         'slug',
         'description',
+        'body',
         'status',
         'type',
         'image',
@@ -53,7 +54,7 @@ class StaticPage extends Model implements Auditable
             ->where('language_code', $languageCode)
             ->where('status', 'active')
             ->first();
-            
+
         return $attribute ? $attribute->value : '';
     }
 }

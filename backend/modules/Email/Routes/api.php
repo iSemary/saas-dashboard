@@ -1,36 +1,27 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Email\Http\Controllers\Api\EmailCampaignApiController;
 use Modules\Email\Http\Controllers\Api\EmailTemplateApiController;
 use Modules\Email\Http\Controllers\Api\EmailCredentialApiController;
+use Modules\Email\Http\Controllers\Api\EmailRecipientApiController;
+use Modules\Email\Http\Controllers\Api\EmailGroupApiController;
+use Modules\Email\Http\Controllers\Api\EmailSubscriberApiController;
+use Modules\Email\Http\Controllers\Api\EmailLogApiController;
+use Modules\Email\Http\Controllers\Api\ComposeEmailApiController;
 
-/*
- *--------------------------------------------------------------------------
- * Email API Routes
- *--------------------------------------------------------------------------
- *
- * Here is where you can register API routes for the Email module.
- *
- */
-
-Route::middleware('auth:api')->prefix('email')->group(function () {
-    // Email Templates
-    Route::prefix('templates')->group(function () {
-        Route::get('/', [EmailTemplateApiController::class, 'index'])->name('api.email.templates.index');
-        Route::post('/', [EmailTemplateApiController::class, 'store'])->name('api.email.templates.store');
-        Route::get('/{id}', [EmailTemplateApiController::class, 'show'])->name('api.email.templates.show');
-        Route::put('/{id}', [EmailTemplateApiController::class, 'update'])->name('api.email.templates.update');
-        Route::delete('/{id}', [EmailTemplateApiController::class, 'destroy'])->name('api.email.templates.destroy');
-        Route::post('/{id}/test', [EmailTemplateApiController::class, 'sendTest'])->name('api.email.templates.test');
+// ─── Landlord Email / Mailing ───────────────────────────────────────
+Route::prefix('landlord')->name('landlord.')->middleware(['auth:api', 'landlord_roles', 'throttle:60,1'])->group(function () {
+    Route::prefix('email-campaigns')->name('email-campaigns.')->group(function () {
+        Route::get('/', [EmailCampaignApiController::class, 'index'])->name('index');
+        Route::post('/', [EmailCampaignApiController::class, 'store'])->name('store');
+        Route::delete('/{id}', [EmailCampaignApiController::class, 'destroy'])->name('destroy');
     });
-
-    // SMTP Configuration
-    Route::prefix('smtp')->group(function () {
-        Route::get('/', [EmailCredentialApiController::class, 'index'])->name('api.email.smtp.index');
-        Route::post('/', [EmailCredentialApiController::class, 'store'])->name('api.email.smtp.store');
-        Route::get('/{id}', [EmailCredentialApiController::class, 'show'])->name('api.email.smtp.show');
-        Route::put('/{id}', [EmailCredentialApiController::class, 'update'])->name('api.email.smtp.update');
-        Route::delete('/{id}', [EmailCredentialApiController::class, 'destroy'])->name('api.email.smtp.destroy');
-        Route::post('/{id}/test', [EmailCredentialApiController::class, 'testConnection'])->name('api.email.smtp.test');
-    });
+    Route::apiResource('email-templates', EmailTemplateApiController::class);
+    Route::apiResource('email-credentials', EmailCredentialApiController::class);
+    Route::apiResource('email-recipients', EmailRecipientApiController::class);
+    Route::apiResource('email-groups', EmailGroupApiController::class);
+    Route::apiResource('email-subscribers', EmailSubscriberApiController::class);
+    Route::apiResource('email-log', EmailLogApiController::class)->only(['index', 'destroy']);
+    Route::post('compose-email', [ComposeEmailApiController::class, 'send'])->name('compose-email.send');
 });

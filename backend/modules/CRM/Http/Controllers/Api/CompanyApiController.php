@@ -4,14 +4,26 @@ namespace Modules\CRM\Http\Controllers\Api;
 
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Modules\CRM\DTOs\CreateCompanyData;
 use Modules\CRM\DTOs\UpdateCompanyData;
 use Modules\CRM\Http\Requests\StoreCompanyRequest;
 use Modules\CRM\Http\Requests\UpdateCompanyRequest;
 use Modules\CRM\Services\CompanyService;
 
-class CompanyApiController extends ApiController
+class CompanyApiController extends ApiController implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:read.crm.companies', only: ['index', 'show', 'activity']),
+            new Middleware('permission:create.crm.companies', only: ['store']),
+            new Middleware('permission:update.crm.companies', only: ['update']),
+            new Middleware('permission:delete.crm.companies', only: ['destroy', 'bulkDelete']),
+        ];
+    }
+
     public function __construct(protected CompanyService $service) {}
 
     public function index(Request $request)

@@ -81,7 +81,7 @@ export default function BackupsPage() {
         header: "",
         cell: ({ row }) => (
           <div className="flex justify-end gap-1">
-            <Button type="button" variant="outline" size="sm" className="h-8" onClick={() => { window.open(`${process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api/admin"}/backups/${row.original.id}/download`); }}>
+            <Button type="button" variant="outline" size="sm" className="h-8" onClick={() => { window.open(`${process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api/landlord"}/backups/${row.original.id}/download`); }}>
               <Download className="size-3.5" />
             </Button>
             <Button type="button" variant="outline" size="sm" className="h-8 text-destructive" onClick={() => void remove(row.original.id)}>

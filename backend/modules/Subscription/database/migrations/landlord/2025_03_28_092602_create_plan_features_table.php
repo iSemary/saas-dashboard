@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('plan_features', function (Blueprint $table) {
+        if (!Schema::hasTable('plan_features')) {
+            Schema::create('plan_features', function (Blueprint $table) {
             $table->id();
             $table->foreignId('plan_id')->constrained()->onDelete('cascade');
             $table->string('name');
@@ -18,7 +19,8 @@ return new class extends Migration
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
             $table->softDeletes();
-        });
+            });
+        }
     }
 
     public function down(): void

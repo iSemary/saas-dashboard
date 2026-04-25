@@ -2,7 +2,7 @@ import axios, { type AxiosResponse, type InternalAxiosRequestConfig } from "axio
 import { redirectToLoginSPA } from "@/lib/auth-navigation";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api/admin",
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api/landlord",
 });
 
 /** Axios response after Laravel `ApiResponse` unwrap (optional metadata from envelope). */
@@ -17,8 +17,8 @@ function unwrapApiEnvelope(response: AxiosResponse): void {
     payload &&
     typeof payload === "object" &&
     !Array.isArray(payload) &&
-    "status" in payload &&
-    (payload as { status: unknown }).status === "success" &&
+    "success" in payload &&
+    (payload as { success: unknown }).success === true &&
     "data" in payload
   ) {
     const p = payload as { data: unknown; message: string; meta: unknown };

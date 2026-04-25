@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ColumnDef } from "@tanstack/react-table";
-import { Loader2, Plus, Pencil, Trash2 } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, LayoutDashboard } from "lucide-react";
 import { toast } from "sonner";
 import { DataTable } from "@/components/data-table";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ import {
 } from "@/components/ui/sheet";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useI18n } from "@/context/i18n-context";
+import { useModule } from "@/context/module-context";
 import { useAnimation } from "@/context/animation-context";
 import { Blur } from "@/components/animate-ui/primitives/effects/blur";
 import type { TableParams, PaginatedResponse } from "@/lib/tenant-resources";
@@ -67,6 +69,10 @@ export type SimpleCRUDConfig<T extends { id: number }> = {
   searchableColumns?: string[];
   /** Sortable columns for backend sort (required when serverSide=true) */
   sortableColumns?: string[];
+  /** Module key for dynamic header from backend */
+  moduleKey?: string;
+  /** Dashboard href for "Open Dashboard" button */
+  dashboardHref?: string;
 };
 
 function AnimatedSheetContent({ children, enabled }: { children: React.ReactNode; enabled: boolean }) {
@@ -84,11 +90,16 @@ export function SimpleCRUDPage<T extends { id: number }>({
   config: SimpleCRUDConfig<T>;
 }) {
   const { t } = useI18n();
+  const { getModuleByKey } = useModule();
+  const router = useRouter();
   const { enabled: animationEnabled } = useAnimation();
   const [rows, setRows] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
   const [tableMeta, setTableMeta] = useState<{ current_page: number; last_page: number; per_page: number; total: number } | undefined>(undefined);
   const serverSide = config.serverSide ?? false;
+  const moduleData = config.moduleKey ? getModuleByKey(config.moduleKey) : undefined;
+  const title = moduleData ? moduleData.name : t(config.titleKey, config.titleFallback);
+  const subtitle = moduleData?.slogan ?? moduleData?.description ?? t(config.subtitleKey, config.subtitleFallback);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
@@ -118,7 +129,8 @@ export function SimpleCRUDPage<T extends { id: number }>({
     } finally {
       setLoading(false);
     }
-  }, [config]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     // Initial load - only for client-side mode
@@ -135,12 +147,6 @@ export function SimpleCRUDPage<T extends { id: number }>({
     const init: Record<string, string> = {};
     for (const f of config.fields) init[f.name] = "";
     setForm(init);
-    setSheetOpen(true);
-  };
-
-  const openEdit = (row: T) => {
-    setEditingId(row.id);
-    setForm(config.toForm(row));
     setSheetOpen(true);
   };
 
@@ -162,12 +168,6 @@ export function SimpleCRUDPage<T extends { id: number }>({
     } finally {
       setSaving(false);
     }
-  };
-
-  const remove = async (id: number) => {
-    if (!config.deleteFn) return;
-    setDeletingId(id);
-    setConfirmOpen(true);
   };
 
   const handleConfirmDelete = async () => {
@@ -208,11 +208,19 @@ export function SimpleCRUDPage<T extends { id: number }>({
           cell: ({ row }: { row: { original: T } }) => (
             <div className="flex justify-end gap-1">
               {config.updateFn && (
-                <Button type="button" variant="outline" size="sm" className="h-8" onClick={() => openEdit(row.original)}>
+                <Button type="button" variant="outline" size="sm" className="h-8" onClick={() => {
+                  setEditingId(row.original.id);
+                  setForm(config.toForm(row.original));
+                  setSheetOpen(true);
+                }}>
                   <Pencil className="size-3.5" />
                 </Button>
               )}
-              <Button type="button" variant="outline" size="sm" className="h-8 text-destructive" onClick={() => void remove(row.original.id)}>
+              <Button type="button" variant="outline" size="sm" className="h-8 text-destructive" onClick={() => {
+                if (!config.deleteFn) return;
+                setDeletingId(row.original.id);
+                setConfirmOpen(true);
+              }}>
                 <Trash2 className="size-3.5" />
               </Button>
             </div>
@@ -221,7 +229,8 @@ export function SimpleCRUDPage<T extends { id: number }>({
       ] as Array<ColumnDef<T>>;
     }
     return base;
-  }, [t, config, openEdit, remove]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [t]);
 
   if (loading) {
     return (
@@ -235,18 +244,32 @@ export function SimpleCRUDPage<T extends { id: number }>({
     <div className="space-y-4">
       <div className="rounded-xl border bg-muted/40 p-4 flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold">{t(config.titleKey, config.titleFallback)}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{t(config.subtitleKey, config.subtitleFallback)}</p>
+          <h1 className="text-xl font-semibold">{title}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
         </div>
-        <Button
-          type="button"
-          size="sm"
-          className="h-9 gap-1 shrink-0"
-          onClick={openCreate}
-        >
-          <Plus className="size-4" />
-          {t(config.createLabelKey, config.createLabelFallback)}
-        </Button>
+        <div className="flex items-center gap-2">
+          {config.dashboardHref ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-9 gap-1 shrink-0"
+              onClick={() => router.push(config.dashboardHref!)}
+            >
+              <LayoutDashboard className="size-4" />
+              {t("dashboard.modules.open_dashboard", "Open Dashboard")}
+            </Button>
+          ) : null}
+          <Button
+            type="button"
+            size="sm"
+            className="h-9 gap-1 shrink-0"
+            onClick={openCreate}
+          >
+            <Plus className="size-4" />
+            {t(config.createLabelKey, config.createLabelFallback)}
+          </Button>
+        </div>
       </div>
       <DataTable
         columns={columns}

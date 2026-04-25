@@ -40,10 +40,10 @@ function isCredentialFlowRequest(config: InternalAxiosRequestConfig | undefined)
   const joined = `${base.replace(/\/$/, "")}/${path.replace(/^\//, "")}`.replace(/([^:]\/)\/+/g, "$1");
   const haystack = `${path} ${joined} ${base}`;
   return (
-    haystack.includes("auth/login") ||
-    haystack.includes("auth/2fa/verify") ||
-    haystack.includes("auth/forgot-password") ||
-    haystack.includes("auth/reset-password")
+    haystack.includes("tenant/auth/login") ||
+    haystack.includes("tenant/auth/2fa/verify") ||
+    haystack.includes("tenant/auth/forgot-password") ||
+    haystack.includes("tenant/auth/reset-password")
   );
 }
 

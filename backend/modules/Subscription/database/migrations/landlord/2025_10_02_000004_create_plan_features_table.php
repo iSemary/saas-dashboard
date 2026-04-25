@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('plan_features', function (Blueprint $table) {
+        if (!Schema::hasTable('plan_features')) {
+            Schema::create('plan_features', function (Blueprint $table) {
             $table->id();
             $table->foreignId('plan_id')->constrained('plans')->onDelete('cascade');
             $table->string('feature_key')->comment('Unique identifier for the feature');
@@ -28,7 +29,8 @@ return new class extends Migration
             $table->unique(['plan_id', 'feature_key']);
             $table->index(['plan_id', 'status', 'sort_order']);
             $table->index('feature_key');
-        });
+            });
+        }
     }
 
     public function down(): void

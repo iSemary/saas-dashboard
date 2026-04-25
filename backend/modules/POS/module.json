@@ -1,0 +1,13 @@
+{
+    "name": "POS",
+    "alias": "pos",
+    "description": "Point of Sale module - Products, Categories, Barcodes, Stock management",
+    "keywords": ["pos", "products", "categories", "barcodes"],
+    "priority": 100,
+    "providers": [
+        "Modules\\POS\\Infrastructure\\Providers\\POSServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

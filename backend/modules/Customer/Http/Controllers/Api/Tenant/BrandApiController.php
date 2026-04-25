@@ -3,6 +3,7 @@
 namespace Modules\Customer\Http\Controllers\Api\Tenant;
 
 use App\Http\Controllers\ApiResponseEnvelope;
+use App\Http\Requests\TableListRequest;
 use App\Services\CrossDb\LandlordService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -21,10 +22,10 @@ class BrandApiController extends Controller
         protected LandlordService $landlordService,
     ) {}
 
-    public function index(Request $request)
+    public function index(TableListRequest $request)
     {
-        $filters = $request->only(['search']);
-        return $this->apiPaginated($this->brandService->getAll($filters, $request->get('per_page', 50)));
+        $params = $request->getTableParams();
+        return $this->apiPaginated($this->brandService->getAll($params));
     }
 
     public function store(Request $request)

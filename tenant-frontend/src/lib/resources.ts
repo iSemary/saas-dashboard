@@ -1,23 +1,25 @@
 import api from "@/lib/api";
 
+const T = "/tenant";
+
 export interface Paginated<T> {
   data: T[];
 }
 
 export async function listUsers() {
-  const res = await api.get("/users");
+  const res = await api.get(`${T}/users`);
   return Array.isArray(res.data) ? res.data : [];
 }
 export async function listRoles() {
-  const res = await api.get("/roles");
+  const res = await api.get(`${T}/roles`);
   return Array.isArray(res.data) ? res.data : [];
 }
 export async function listPermissions() {
-  const res = await api.get("/permissions");
+  const res = await api.get(`${T}/permissions`);
   return Array.isArray(res.data) ? res.data : [];
 }
 export async function dashboardStats() {
-  const res = await api.get("/dashboard/stats");
+  const res = await api.get(`${T}/dashboard/stats`);
   return res.data;
 }
 export interface AppNotificationRow {
@@ -30,25 +32,25 @@ export interface AppNotificationRow {
 }
 
 export async function listNotifications(params?: { per_page?: number }) {
-  const res = await api.get("/notifications", { params });
+  const res = await api.get(`${T}/notifications`, { params });
   return Array.isArray(res.data) ? (res.data as AppNotificationRow[]) : [];
 }
 
 export async function getUnreadNotificationCount(): Promise<number> {
-  const res = await api.get<{ count: number }>("/notifications/unread-count");
+  const res = await api.get<{ count: number }>(`${T}/notifications/unread-count`);
   const data = res.data as { count?: number };
   return typeof data?.count === "number" ? data.count : 0;
 }
 
 export async function markNotificationRead(id: number) {
-  await api.post(`/notifications/${id}/read`);
+  await api.post(`${T}/notifications/${id}/read`);
 }
 
 export async function markAllNotificationsRead() {
-  await api.post("/notifications/mark-all-read");
+  await api.post(`${T}/notifications/read-all`);
 }
 export async function listActivityLogs() {
-  const res = await api.get("/activity-logs");
+  const res = await api.get(`${T}/activity-logs`);
   return Array.isArray(res.data) ? res.data : [];
 }
 export async function listFeatureFlags() {

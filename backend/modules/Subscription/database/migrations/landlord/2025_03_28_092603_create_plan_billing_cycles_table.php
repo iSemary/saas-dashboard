@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('plan_billing_cycles', function (Blueprint $table) {
+        if (!Schema::hasTable('plan_billing_cycles')) {
+            Schema::create('plan_billing_cycles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('plan_id')->constrained()->onDelete('cascade');
             $table->enum('billing_cycle', ['monthly', 'yearly', 'quarterly', 'semi-annually'])->default('monthly');
@@ -18,7 +19,8 @@ return new class extends Migration
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
             $table->softDeletes();
-        });
+            });
+        }
     }
 
     public function down(): void

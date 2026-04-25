@@ -12,7 +12,7 @@
 */
 
 // Generic API resource routes - commented out to avoid conflicts with specific API routes
-// The specific API routes are defined in routes/api/nextjs/admin.php and tenant.php
+// The specific API routes are defined in each module's Routes/api.php
 // Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 //     Route::apiResource('api', APIController::class)->names('api');
 // });

@@ -43,7 +43,7 @@ function ResetPasswordForm() {
     }
     setSubmitting(true);
     try {
-      await api.post("/auth/reset-password", { token, email, password, password_confirmation: passwordConfirmation });
+      await api.post("/tenant/auth/reset-password", { token, email, password, password_confirmation: passwordConfirmation });
       toast.success(t("dashboard.auth.password_reset_success", "Password reset successfully. You can now sign in."));
       router.push("/login");
     } catch {

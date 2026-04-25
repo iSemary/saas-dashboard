@@ -24,7 +24,7 @@ export default function ForgotPasswordPage() {
     setError(null);
     setSubmitting(true);
     try {
-      await api.post("/auth/forgot-password", { email });
+      await api.post("/tenant/auth/forgot-password", { email });
       setSent(true);
       toast.success(t("dashboard.auth.forgot_check_email", "Check your email for reset instructions."));
     } catch {

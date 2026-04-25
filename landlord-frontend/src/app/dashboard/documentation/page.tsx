@@ -24,6 +24,7 @@ type DocRow = {
   title: string;
   slug: string;
   category: string | null;
+  sort_order: number;
   is_published: boolean;
   created_at?: string;
 };
@@ -35,7 +36,7 @@ export default function DocumentationPage() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({ title: "", slug: "", category: "", body: "", is_published: "0" });
+  const [form, setForm] = useState({ title: "", slug: "", category: "", body: "", sort_order: "0", is_published: "0" });
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -49,7 +50,7 @@ export default function DocumentationPage() {
 
   const openCreate = () => {
     setEditingId(null);
-    setForm({ title: "", slug: "", category: "", body: "", is_published: "0" });
+    setForm({ title: "", slug: "", category: "", body: "", sort_order: "0", is_published: "0" });
     setSheetOpen(true);
   };
 
@@ -59,7 +60,7 @@ export default function DocumentationPage() {
     try {
       const res = await api.get(`/documentation/${id}`);
       const doc = res.data as DocRow & { body?: string };
-      setForm({ title: doc.title, slug: doc.slug, category: doc.category ?? "", body: (doc as { body?: string }).body ?? "", is_published: doc.is_published ? "1" : "0" });
+      setForm({ title: doc.title, slug: doc.slug, category: doc.category ?? "", body: (doc as { body?: string }).body ?? "", sort_order: doc.sort_order ? String(doc.sort_order) : "0", is_published: doc.is_published ? "1" : "0" });
     } catch {
       toast.error(t("dashboard.documentation.toast_load_error", "Could not load document."));
       setSheetOpen(false);
@@ -173,6 +174,10 @@ export default function DocumentationPage() {
             <div className="space-y-2">
               <Label htmlFor="doc-category">{t("dashboard.documentation.category", "Category")}</Label>
               <Input id="doc-category" value={form.category} onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="doc-sort-order">{t("dashboard.documentation.sort_order", "Sort Order")}</Label>
+              <Input id="doc-sort-order" type="number" value={form.sort_order} onChange={(e) => setForm((f) => ({ ...f, sort_order: e.target.value }))} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="doc-body">{t("dashboard.documentation.body", "Body")}</Label>

@@ -132,7 +132,7 @@ export async function markNotificationRead(id: number) {
 }
 
 export async function markAllNotificationsRead() {
-  await api.post("/notifications/mark-all-read");
+  await api.post("/notifications/read-all");
 }
 export async function listActivityLogs(params?: TableParams) {
   const res = await api.get(`/activity-logs${buildTableQuery(params)}`);
@@ -295,12 +295,12 @@ export type EmailLogRow = {
 };
 
 export async function listEmailLog() {
-  const res = await api.get("/emails");
+  const res = await api.get("/email-log");
   return Array.isArray(res.data) ? (res.data as EmailLogRow[]) : [];
 }
 
 export async function deleteEmailLog(id: number) {
-  await api.delete(`/emails/${id}`);
+  await api.delete(`/email-log/${id}`);
 }
 
 // --- Email Templates ---
@@ -470,9 +470,8 @@ export type LanguageRow = {
   id: number;
   name: string;
   code: string;
+  locale: string;
   direction: string;
-  is_active: boolean;
-  is_default: boolean;
   created_at?: string;
 };
 
@@ -496,11 +495,12 @@ export async function deleteLanguage(id: number) {
 
 export type TranslationRow = {
   id: number;
-  key: string;
-  value: string;
+  translation_key: string;
+  translation_value: string;
+  translation_context: string | null;
+  is_shareable: boolean;
   language_id: number;
-  language?: { id: number; name: string; code: string };
-  group?: string;
+  language?: { id: number; name: string; locale: string };
   created_at?: string;
 };
 
@@ -520,14 +520,48 @@ export async function deleteTranslation(id: number) {
   await api.delete(`/translations/${id}`);
 }
 
+export async function generateTranslationsJson() {
+  const res = await api.post("/landlord/translations/generate-json");
+  return res.data;
+}
+
+export async function syncMissingTranslations() {
+  const res = await api.post("/landlord/translations/sync-missing");
+  return res.data;
+}
+
+export async function syncJsonFiles() {
+  const res = await api.post("/landlord/translations/sync-json-files");
+  return res.data;
+}
+
+export async function scanTranslationJs() {
+  const res = await api.get("/landlord/translations/used-translations/js");
+  return res.data;
+}
+
+export async function scanTranslationPhp() {
+  const res = await api.get("/landlord/translations/used-translations/php");
+  return res.data;
+}
+
 // --- Countries ---
 
 export type CountryRow = {
   id: number;
   name: string;
   code: string;
+  region: string | null;
+  flag: string | null;
   phone_code: string | null;
-  is_active: boolean;
+  timezone: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  currency_code: string | null;
+  currency_symbol: string | null;
+  language_code: string | null;
+  area_km2: number | null;
+  population: number | null;
   created_at?: string;
 };
 
@@ -554,6 +588,11 @@ export type ProvinceRow = {
   name: string;
   code: string | null;
   country_id: number;
+  flag: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  area_km2: number | null;
+  population: number | null;
   country?: { id: number; name: string };
   created_at?: string;
 };
@@ -575,7 +614,16 @@ export async function deleteProvince(id: number) {
 export type CityRow = {
   id: number;
   name: string;
+  postal_code: string | null;
+  is_capital: boolean;
+  phone_code: string | null;
+  timezone: string | null;
   province_id: number;
+  latitude: number | null;
+  longitude: number | null;
+  area_km2: number | null;
+  population: number | null;
+  elevation_m: number | null;
   province?: { id: number; name: string };
   created_at?: string;
 };
@@ -598,6 +646,11 @@ export type TownRow = {
   id: number;
   name: string;
   city_id: number;
+  latitude: number | null;
+  longitude: number | null;
+  area_km2: number | null;
+  population: number | null;
+  elevation_m: number | null;
   city?: { id: number; name: string };
   created_at?: string;
 };
@@ -642,8 +695,11 @@ export type CategoryRow = {
   id: number;
   name: string;
   slug: string;
+  description: string | null;
   parent_id: number | null;
-  is_active: boolean;
+  icon: string | null;
+  priority: number;
+  status: string;
   created_at?: string;
 };
 
@@ -669,6 +725,10 @@ export type TagRow = {
   id: number;
   name: string;
   slug: string;
+  description: string | null;
+  icon: string | null;
+  priority: number;
+  status: string;
   created_at?: string;
 };
 
@@ -690,6 +750,10 @@ export type TypeRow = {
   id: number;
   name: string;
   slug: string;
+  description: string | null;
+  status: string;
+  icon: string | null;
+  priority: number;
   created_at?: string;
 };
 
@@ -711,6 +775,10 @@ export type IndustryRow = {
   id: number;
   name: string;
   slug: string;
+  description: string | null;
+  status: string;
+  icon: string | null;
+  priority: number;
   created_at?: string;
 };
 
@@ -730,10 +798,17 @@ export async function deleteIndustry(id: number) {
 
 export type CurrencyRow = {
   id: number;
-  name: string;
   code: string;
+  name: string;
   symbol: string;
-  is_active: boolean;
+  decimal_places: number;
+  exchange_rate: number | null;
+  exchange_rate_last_updated: string | null;
+  symbol_position: string;
+  base_currency: boolean;
+  priority: number;
+  note: string | null;
+  status: string;
   created_at?: string;
 };
 
@@ -758,7 +833,11 @@ export async function deleteCurrency(id: number) {
 export type UnitRow = {
   id: number;
   name: string;
-  slug: string;
+  code: string;
+  type_id: string;
+  base_conversion: number | null;
+  description: string | null;
+  is_base_unit: boolean;
   created_at?: string;
 };
 
@@ -778,9 +857,12 @@ export async function deleteUnit(id: number) {
 
 export type AnnouncementRow = {
   id: number;
-  title: string;
+  name: string;
+  description: string | null;
   body: string | null;
   type: string;
+  start_at: string | null;
+  end_at: string | null;
   is_active: boolean;
   created_at?: string;
 };
@@ -807,8 +889,10 @@ export type StaticPageRow = {
   id: number;
   title: string;
   slug: string;
+  description: string | null;
   body: string | null;
-  is_active: boolean;
+  image: string | null;
+  status: string;
   created_at?: string;
 };
 
@@ -835,6 +919,7 @@ export type ReleaseRow = {
   version: string;
   title: string;
   body: string | null;
+  release_date: string | null;
   is_published: boolean;
   created_at?: string;
 };
@@ -853,11 +938,24 @@ export async function deleteRelease(id: number) {
 
 // --- Modules ---
 
+export type NavItem = {
+  key: string;
+  label: string;
+  route: string;
+  icon: string;
+};
+
 export type ModuleRow = {
   id: number;
+  module_key: string;
   name: string;
   slug: string;
   description: string | null;
+  route: string | null;
+  icon: string | null;
+  slogan: string | null;
+  navigation: NavItem[] | null;
+  status: string;
   is_active: boolean;
   version: string | null;
   created_at?: string;
@@ -866,6 +964,18 @@ export type ModuleRow = {
 export async function listModules() {
   const res = await api.get("/modules");
   return Array.isArray(res.data) ? (res.data as ModuleRow[]) : [];
+}
+export async function getModule(id: number) {
+  const res = await api.get(`/modules/${id}`);
+  return res.data?.data ?? res.data as ModuleRow;
+}
+export async function createModule(payload: Record<string, unknown>) {
+  const res = await api.post("/modules", payload);
+  return res.data;
+}
+export async function updateModule(id: number, payload: Record<string, unknown>) {
+  const res = await api.put(`/modules/${id}`, payload);
+  return res.data;
 }
 export async function toggleModule(id: number, is_active: boolean) {
   const res = await api.patch(`/modules/${id}`, { is_active });
@@ -879,10 +989,12 @@ export type PlanRow = {
   name: string;
   slug: string;
   description: string | null;
-  price: number;
-  currency: string;
-  billing_period: string;
-  is_active: boolean;
+  features_summary: string | null;
+  sort_order: number;
+  is_popular: boolean;
+  is_custom: boolean;
+  metadata: string | null;
+  status: string;
   created_at?: string;
 };
 
@@ -928,7 +1040,12 @@ export type PaymentMethodRow = {
   id: number;
   name: string;
   slug: string;
+  description: string | null;
+  provider: string | null;
+  provider_config: string | null;
   is_active: boolean;
+  priority: number;
+  metadata: string | null;
   created_at?: string;
 };
 

@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SlugInput } from "@/components/ui/slug-input";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { FileUpload } from "@/components/ui/file-upload";
 import {
   Sheet,
   SheetContent,
@@ -22,11 +23,13 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useI18n } from "@/context/i18n-context";
 import type { TableParams, PaginatedResponse } from "@/lib/resources";
 import { EntitySelector } from "@/components/entity-selector";
+import { NavigationItemsEditor } from "@/components/navigation-items-editor";
+import Link from "next/link";
 
 export type FieldDef = {
   name: string;
   label: string;
-  type?: "text" | "email" | "password" | "number" | "url" | "textarea" | "select" | "richtext" | "slug" | "entity";
+  type?: "text" | "email" | "password" | "number" | "url" | "textarea" | "select" | "richtext" | "slug" | "entity" | "file" | "datetime" | "navItems";
   placeholder?: string;
   required?: boolean;
   options?: Array<{ value: string; label: string }>;
@@ -41,6 +44,20 @@ export type FieldDef = {
   parentKey?: string;
   /** For entity type: property key for parent label (default: "name") */
   parentLabelKey?: string;
+  /** For file type: accepted file types (e.g., "image/*") */
+  accept?: string;
+};
+
+export type ActionButton = {
+  labelKey: string;
+  labelFallback: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  variant?: "default" | "outline" | "destructive" | "secondary" | "ghost" | "link";
+  onClick?: () => void | Promise<void>;
+  href?: string;
+  className?: string;
+  disabled?: boolean;
+  iconClassName?: string;
 };
 
 export type SimpleCRUDConfig<T extends { id: number }> = {
@@ -65,6 +82,8 @@ export type SimpleCRUDConfig<T extends { id: number }> = {
   searchableColumns?: string[];
   /** Sortable columns for backend sort (required when serverSide=true) */
   sortableColumns?: string[];
+  /** Custom action buttons to display in the header */
+  actionButtons?: ActionButton[];
 };
 
 
@@ -227,15 +246,50 @@ export function SimpleCRUDPage<T extends { id: number }>({
           <h1 className="text-xl font-semibold">{t(config.titleKey, config.titleFallback)}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{t(config.subtitleKey, config.subtitleFallback)}</p>
         </div>
-        <Button
-          type="button"
-          size="sm"
-          className="h-9 gap-1 shrink-0"
-          onClick={openCreate}
-        >
-          <Plus className="size-4" />
-          {t(config.createLabelKey, config.createLabelFallback)}
-        </Button>
+        <div className="flex items-center gap-2">
+          {config.actionButtons?.map((btn, idx) => {
+            const Icon = btn.icon;
+            if (btn.href) {
+              return (
+                <Link key={idx} href={btn.href}>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={btn.variant ?? "outline"}
+                    className={`h-9 gap-1 shrink-0 ${btn.className ?? ""}`}
+                    disabled={btn.disabled}
+                  >
+                    {Icon && <Icon className={`size-4 ${btn.iconClassName ?? ""}`} />}
+                    {t(btn.labelKey, btn.labelFallback)}
+                  </Button>
+                </Link>
+              );
+            }
+            return (
+              <Button
+                key={idx}
+                type="button"
+                size="sm"
+                variant={btn.variant ?? "outline"}
+                className={`h-9 gap-1 shrink-0 ${btn.className ?? ""}`}
+                onClick={() => void btn.onClick?.()}
+                disabled={btn.disabled}
+              >
+                {Icon && <Icon className={`size-4 ${btn.iconClassName ?? ""}`} />}
+                {t(btn.labelKey, btn.labelFallback)}
+              </Button>
+            );
+          })}
+          <Button
+            type="button"
+            size="sm"
+            className="h-9 gap-1 shrink-0"
+            onClick={openCreate}
+          >
+            <Plus className="size-4" />
+            {t(config.createLabelKey, config.createLabelFallback)}
+          </Button>
+        </div>
       </div>
       <DataTable
         columns={columns}
@@ -312,6 +366,37 @@ export function SimpleCRUDPage<T extends { id: number }>({
                     required={field.required}
                     disabled={saving}
                   />
+                ) : field.type === "datetime" ? (
+                  <Input
+                    id={`field-${field.name}`}
+                    type="datetime-local"
+                    value={form[field.name] ?? ""}
+                    onChange={(e) => setForm((f) => ({ ...f, [field.name]: e.target.value }))}
+                    placeholder={field.placeholder}
+                    required={field.required}
+                  />
+                ) : field.type === "navItems" ? (
+                  <NavigationItemsEditor
+                    value={form[field.name] ?? ""}
+                    onChange={(v) => setForm((f) => ({ ...f, [field.name]: v }))}
+                    disabled={saving}
+                  />
+                ) : field.type === "file" ? (
+                  <div className="space-y-2">
+                    <FileUpload
+                      accept={field.accept ?? "image/*"}
+                      maxFiles={1}
+                      onFileSelect={(files) => {
+                        if (files.length > 0) {
+                          setForm((f) => ({ ...f, [field.name]: files[0].name }));
+                        }
+                      }}
+                      disabled={saving}
+                    />
+                    {form[field.name] && (
+                      <p className="text-xs text-muted-foreground">Selected: {form[field.name]}</p>
+                    )}
+                  </div>
                 ) : (
                   <Input
                     id={`field-${field.name}`}

@@ -222,7 +222,8 @@ export function DataTable<TData>({
     }, 300);
 
     return () => clearTimeout(timeout);
-  }, [globalFilter]); // eslint-disable-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [globalFilter]);
   const exportCsv = () => {
     const exportRows = table.getFilteredRowModel().rows;
     const cols = table.getVisibleLeafColumns().filter((c) => c.id !== "actions");

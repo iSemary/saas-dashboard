@@ -26,7 +26,6 @@ import {
   LogOut,
   Mail,
   Map,
-  Palette,
   Rocket,
   ScrollText,
   Search,
@@ -39,12 +38,12 @@ import {
   UserCog,
   Users,
   Send,
-  ExternalLink,
   FolderOpen,
   Ban,
   Code,
   FileDiff,
   Box,
+  GitBranch,
 } from "lucide-react";
 import { toast } from "sonner";
 import { APP_NAME } from "@/lib/app-config";
@@ -60,12 +59,10 @@ import {
   type CommandPaletteItem,
 } from "@/components/dashboard-command-palette";
 import { DashboardAuthShell } from "@/components/dashboard-auth-shell";
-import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggleIcon } from "@/components/theme-toggle-icon";
 import { UserNavMenu } from "@/components/user-nav-menu";
 import { NotificationHeaderMenu } from "@/components/notification-header-menu";
 import { DashboardLogo } from "@/components/dashboard-logo";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import {
   Sidebar,
@@ -113,70 +110,73 @@ const navSections: NavSectionDef[] = [
     titleFallback: "Account Management",
     items: [
       { href: "/dashboard/system-users", labelKey: "dashboard.nav.system_users", fallback: "System Users", icon: UserCog, permission: "view.system_users" },
+      { href: "/dashboard/clients", labelKey: "dashboard.nav.clients", fallback: "Clients", icon: Building2, permission: "view.clients" },
       { href: "/dashboard/tenants", labelKey: "dashboard.nav.tenants", fallback: "Tenants", icon: Building2, permission: "view.tenants" },
       { href: "/dashboard/brands", labelKey: "dashboard.nav.brands", fallback: "Brands", icon: Tags, permission: "view.brands" },
       { href: "/dashboard/branches", labelKey: "dashboard.nav.branches", fallback: "Branches", icon: Building2, permission: "view.branches" },
+      { href: "/dashboard/tenant-owners", labelKey: "dashboard.nav.tenant_owners", fallback: "Tenant Owners", icon: Users, permission: "view.tenant_owners" },
     ],
   },
   {
     titleKey: "dashboard.nav.section_mailing",
     titleFallback: "Mailing",
     items: [
-      { href: "/dashboard/email-campaigns", labelKey: "dashboard.nav.email_campaigns", fallback: "Email Campaigns", icon: Mail },
-      { href: "/dashboard/email-templates", labelKey: "dashboard.nav.email_templates", fallback: "Email Templates", icon: Mail },
-      { href: "/dashboard/email-credentials", labelKey: "dashboard.nav.email_credentials", fallback: "Email Credentials", icon: Key },
-      { href: "/dashboard/email-recipients", labelKey: "dashboard.nav.email_recipients", fallback: "Email Recipients", icon: Users },
-      { href: "/dashboard/email-groups", labelKey: "dashboard.nav.email_groups", fallback: "Email Groups", icon: UserCog },
-      { href: "/dashboard/email-subscribers", labelKey: "dashboard.nav.email_subscribers", fallback: "Email Subscribers", icon: Users },
-      { href: "/dashboard/email-log", labelKey: "dashboard.nav.email_log", fallback: "Email Log", icon: Activity },
-      { href: "/dashboard/compose-email", labelKey: "dashboard.nav.compose_email", fallback: "Compose Email", icon: Send },
+      { href: "/dashboard/email-campaigns", labelKey: "dashboard.nav.email_campaigns", fallback: "Email Campaigns", icon: Mail, permission: "view.email_campaigns" },
+      { href: "/dashboard/email-templates", labelKey: "dashboard.nav.email_templates", fallback: "Email Templates", icon: Mail, permission: "view.email_templates" },
+      { href: "/dashboard/email-credentials", labelKey: "dashboard.nav.email_credentials", fallback: "Email Credentials", icon: Key, permission: "view.email_credentials" },
+      { href: "/dashboard/email-recipients", labelKey: "dashboard.nav.email_recipients", fallback: "Email Recipients", icon: Users, permission: "view.email_recipients" },
+      { href: "/dashboard/email-groups", labelKey: "dashboard.nav.email_groups", fallback: "Email Groups", icon: UserCog, permission: "view.email_groups" },
+      { href: "/dashboard/email-subscribers", labelKey: "dashboard.nav.email_subscribers", fallback: "Email Subscribers", icon: Users, permission: "view.email_subscribers" },
+      { href: "/dashboard/email-log", labelKey: "dashboard.nav.email_log", fallback: "Email Log", icon: Activity, permission: "view.email_log" },
+      { href: "/dashboard/compose-email", labelKey: "dashboard.nav.compose_email", fallback: "Compose Email", icon: Send, permission: "send.emails" },
     ],
   },
   {
     titleKey: "dashboard.nav.section_locale",
     titleFallback: "Locale",
     items: [
-      { href: "/dashboard/languages", labelKey: "dashboard.nav.languages", fallback: "Languages", icon: Languages },
-      { href: "/dashboard/translations", labelKey: "dashboard.nav.translations", fallback: "Translations", icon: Globe2 },
+      { href: "/dashboard/languages", labelKey: "dashboard.nav.languages", fallback: "Languages", icon: Languages, permission: "view.languages" },
+      { href: "/dashboard/translations", labelKey: "dashboard.nav.translations", fallback: "Translations", icon: Globe2, permission: "view.translations" },
     ],
   },
   {
     titleKey: "dashboard.nav.section_geography",
     titleFallback: "Geography",
     items: [
-      { href: "/dashboard/countries", labelKey: "dashboard.nav.countries", fallback: "Countries", icon: Flag },
-      { href: "/dashboard/provinces", labelKey: "dashboard.nav.provinces", fallback: "Provinces", icon: Map },
-      { href: "/dashboard/cities", labelKey: "dashboard.nav.cities", fallback: "Cities", icon: Building2 },
-      { href: "/dashboard/towns", labelKey: "dashboard.nav.towns", fallback: "Towns", icon: Home },
-      { href: "/dashboard/streets", labelKey: "dashboard.nav.streets", fallback: "Streets", icon: Map },
+      { href: "/dashboard/countries", labelKey: "dashboard.nav.countries", fallback: "Countries", icon: Flag, permission: "view.countries" },
+      { href: "/dashboard/provinces", labelKey: "dashboard.nav.provinces", fallback: "Provinces", icon: Map, permission: "view.provinces" },
+      { href: "/dashboard/cities", labelKey: "dashboard.nav.cities", fallback: "Cities", icon: Building2, permission: "view.cities" },
+      { href: "/dashboard/towns", labelKey: "dashboard.nav.towns", fallback: "Towns", icon: Home, permission: "view.towns" },
+      { href: "/dashboard/streets", labelKey: "dashboard.nav.streets", fallback: "Streets", icon: Map, permission: "view.streets" },
     ],
   },
   {
     titleKey: "dashboard.nav.section_utilities",
     titleFallback: "Utilities",
     items: [
-      { href: "/dashboard/categories", labelKey: "dashboard.nav.categories", fallback: "Categories", icon: FolderTree },
-      { href: "/dashboard/tags", labelKey: "dashboard.nav.tags", fallback: "Tags", icon: TagsIcon },
-      { href: "/dashboard/types", labelKey: "dashboard.nav.types", fallback: "Types", icon: Layers },
-      { href: "/dashboard/industries", labelKey: "dashboard.nav.industries", fallback: "Industries", icon: Building2 },
-      { href: "/dashboard/currencies", labelKey: "dashboard.nav.currencies", fallback: "Currencies", icon: CreditCard },
-      { href: "/dashboard/units", labelKey: "dashboard.nav.units", fallback: "Units", icon: Wrench },
+      { href: "/dashboard/categories", labelKey: "dashboard.nav.categories", fallback: "Categories", icon: FolderTree, permission: "view.categories" },
+      { href: "/dashboard/tags", labelKey: "dashboard.nav.tags", fallback: "Tags", icon: TagsIcon, permission: "view.tags" },
+      { href: "/dashboard/types", labelKey: "dashboard.nav.types", fallback: "Types", icon: Layers, permission: "view.types" },
+      { href: "/dashboard/industries", labelKey: "dashboard.nav.industries", fallback: "Industries", icon: Building2, permission: "view.industries" },
+      { href: "/dashboard/currencies", labelKey: "dashboard.nav.currencies", fallback: "Currencies", icon: CreditCard, permission: "view.currencies" },
+      { href: "/dashboard/units", labelKey: "dashboard.nav.units", fallback: "Units", icon: Wrench, permission: "view.units" },
     ],
   },
   {
     titleKey: "dashboard.nav.section_payments",
     titleFallback: "Payments",
     items: [
-      { href: "/dashboard/payment-methods", labelKey: "dashboard.nav.payment_methods", fallback: "Payment Methods", icon: CreditCard },
-      { href: "/dashboard/payment-analytics", labelKey: "dashboard.nav.payment_analytics", fallback: "Payment Analytics", icon: Activity },
+      { href: "/dashboard/payment-methods", labelKey: "dashboard.nav.payment_methods", fallback: "Payment Methods", icon: CreditCard, permission: "view.payment_methods" },
+      { href: "/dashboard/payment-logs", labelKey: "dashboard.nav.payment_logs", fallback: "Payment Logs", icon: FileText, permission: "view.payment_logs" },
+      { href: "/dashboard/payment-analytics", labelKey: "dashboard.nav.payment_analytics", fallback: "Payment Analytics", icon: Activity, permission: "view.payment_analytics" },
     ],
   },
   {
     titleKey: "dashboard.nav.section_subscriptions",
     titleFallback: "Subscriptions",
     items: [
-      { href: "/dashboard/subscriptions", labelKey: "dashboard.nav.subscriptions", fallback: "Subscriptions", icon: Calendar },
-      { href: "/dashboard/plans", labelKey: "dashboard.nav.plans", fallback: "Plans", icon: ScrollText },
+      { href: "/dashboard/subscriptions", labelKey: "dashboard.nav.subscriptions", fallback: "Subscriptions", icon: Calendar, permission: "view.subscriptions" },
+      { href: "/dashboard/plans", labelKey: "dashboard.nav.plans", fallback: "Plans", icon: ScrollText, permission: "view.plans" },
     ],
   },
   {
@@ -186,17 +186,17 @@ const navSections: NavSectionDef[] = [
       { href: "/dashboard/permissions", labelKey: "dashboard.nav.permissions", fallback: "Permissions", icon: Key, permission: "view.permissions" },
       { href: "/dashboard/roles", labelKey: "dashboard.nav.roles", fallback: "Roles", icon: Shield, permission: "view.roles" },
       { href: "/dashboard/permission-groups", labelKey: "dashboard.nav.permission_groups", fallback: "Permission Groups", icon: Shield, permission: "view.permission_groups" },
-      { href: "/dashboard/profile", labelKey: "dashboard.nav.profile", fallback: "Profile", icon: UserCog },
+      { href: "/dashboard/profile", labelKey: "dashboard.nav.profile", fallback: "Profile", icon: UserCog, permission: "view.profile" },
     ],
   },
   {
     titleKey: "dashboard.nav.section_system_settings",
     titleFallback: "System Settings",
     items: [
-      { href: "/dashboard/announcements", labelKey: "dashboard.nav.announcements", fallback: "Announcements", icon: Bell },
-      { href: "/dashboard/static-pages", labelKey: "dashboard.nav.static_pages", fallback: "Static Pages", icon: ScrollText },
-      { href: "/dashboard/releases", labelKey: "dashboard.nav.releases", fallback: "Releases", icon: Rocket },
-      { href: "/dashboard/modules", labelKey: "dashboard.nav.modules", fallback: "Modules", icon: Layers },
+      { href: "/dashboard/announcements", labelKey: "dashboard.nav.announcements", fallback: "Announcements", icon: Bell, permission: "view.announcements" },
+      { href: "/dashboard/static-pages", labelKey: "dashboard.nav.static_pages", fallback: "Static Pages", icon: ScrollText, permission: "view.static_pages" },
+      { href: "/dashboard/releases", labelKey: "dashboard.nav.releases", fallback: "Releases", icon: Rocket, permission: "view.releases" },
+      { href: "/dashboard/modules", labelKey: "dashboard.nav.modules", fallback: "Modules", icon: Layers, permission: "view.modules" },
     ],
   },
   {
@@ -213,6 +213,8 @@ const navSections: NavSectionDef[] = [
       { href: "/dashboard/code-builder", labelKey: "dashboard.nav.code_builder", fallback: "Code Builder", icon: Code, permission: "view.code_builder" },
       { href: "/dashboard/env-diff", labelKey: "dashboard.nav.env_diff", fallback: "Env Diff", icon: FileDiff, permission: "view.env_diff" },
       { href: "/dashboard/entities", labelKey: "dashboard.nav.modules_entities", fallback: "Modules Entities", icon: Box, permission: "view.entities" },
+      { href: "/dashboard/modules-flow", labelKey: "dashboard.nav.modules_flow", fallback: "Modules Flow", icon: GitBranch, permission: "view.modules_flow" },
+      { href: "/dashboard/database-flow", labelKey: "dashboard.nav.database_flow", fallback: "Database Flow", icon: GitBranch, permission: "view.database_flow" },
     ],
   },
   {
@@ -222,15 +224,18 @@ const navSections: NavSectionDef[] = [
       { href: "/dashboard/monitoring", labelKey: "dashboard.nav.monitoring", fallback: "Monitoring", icon: Activity, permission: "view.monitoring" },
       { href: "/dashboard/system-health", labelKey: "dashboard.nav.system_health", fallback: "System Health", icon: Heart, permission: "view.system_health" },
       { href: "/dashboard/tenant-monitoring", labelKey: "dashboard.nav.tenant_monitoring", fallback: "Tenant Monitoring", icon: Building2, permission: "view.tenant_monitoring" },
-      { href: "/dashboard/activity-logs", labelKey: "dashboard.nav.activity_logs", fallback: "Activity Logs", icon: ScrollText },
+      { href: "/dashboard/activity-logs", labelKey: "dashboard.nav.activity_logs", fallback: "Activity Logs", icon: ScrollText, permission: "view.activity_logs" },
+      { href: "/horizon", labelKey: "dashboard.nav.horizon", fallback: "Horizon", icon: Activity, permission: "view.horizon" },
+      { href: "/telescope", labelKey: "dashboard.nav.telescope", fallback: "Telescope", icon: Search, permission: "view.telescope" },
+      { href: "/log-viewer", labelKey: "dashboard.nav.log_viewer", fallback: "Log Viewer", icon: FileText, permission: "view.log_viewer" },
     ],
   },
   {
     titleKey: "dashboard.nav.section_documentation",
     titleFallback: "Documentation",
     items: [
-      { href: "/dashboard/documentation", labelKey: "dashboard.nav.documentation", fallback: "Documentation", icon: BookOpen },
-      { href: "/dashboard/tickets", labelKey: "dashboard.nav.tickets", fallback: "Tickets", icon: FileText },
+      { href: "/dashboard/documentation", labelKey: "dashboard.nav.documentation", fallback: "Documentation", icon: BookOpen, permission: "view.documentation" },
+      { href: "/dashboard/tickets", labelKey: "dashboard.nav.tickets", fallback: "Tickets", icon: FileText, permission: "view.tickets" },
     ],
   },
 ];
@@ -261,6 +266,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [loading, isAuthenticated, router]);
 
   const userPerms = useMemo(() => new Set(user?.permissions ?? []), [user]);
+  const userRoles = useMemo(() => new Set(user?.roles?.map((r: { name: string }) => r.name) ?? []), [user]);
+  const isLandlord = userRoles.has('landlord') || userRoles.has('superadmin');
 
   const visibleSections = useMemo(() => {
     return navSections
@@ -268,12 +275,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         ...section,
         items: section.items.filter((item) => {
           if (item.flag && !isEnabled(item.flag, true)) return false;
-          if (item.permission && !userPerms.has(item.permission)) return false;
+          if (item.permission && !isLandlord && !userPerms.has(item.permission)) return false;
           return true;
         }),
       }))
       .filter((section) => section.items.length > 0);
-  }, [isEnabled, userPerms]);
+  }, [isEnabled, userPerms, isLandlord]);
 
   const commandItems: CommandPaletteItem[] = useMemo(() => {
     const out: CommandPaletteItem[] = [];

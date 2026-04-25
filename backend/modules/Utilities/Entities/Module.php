@@ -24,7 +24,12 @@ class Module extends Model implements Auditable
         'route',
         'icon',
         'slogan',
+        'navigation',
         'status',
+    ];
+
+    protected $casts = [
+        'navigation' => 'array',
     ];
 
     protected $fileColumns = [
@@ -43,7 +48,7 @@ class Module extends Model implements Auditable
      */
     public function getIconAttribute($value)
     {
-        return $this->getFileUrl($value);
+        return $this->getFileUrl($value ? (int) $value : null);
     }
 
     /**

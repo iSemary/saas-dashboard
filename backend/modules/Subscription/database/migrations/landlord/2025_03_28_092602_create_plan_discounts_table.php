@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('plan_discounts', function (Blueprint $table) {
+        if (!Schema::hasTable('plan_discounts')) {
+            Schema::create('plan_discounts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('plan_id')->constrained()->onDelete('cascade');
             $table->enum('discount_type', ['percentage', 'fixed'])->default('percentage');
@@ -19,7 +20,8 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
-        });
+            });
+        }
     }
 
     public function down(): void

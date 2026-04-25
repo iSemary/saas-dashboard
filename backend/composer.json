@@ -50,6 +50,9 @@
             "Database\\Seeders\\": "database/seeders/",
             "Modules\\": "modules/"
         },
+        "classmap": [
+            "modules"
+        ],
         "files": [
             "app/Functions/AppFunctions.php"
         ]

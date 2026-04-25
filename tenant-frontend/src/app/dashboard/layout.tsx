@@ -21,11 +21,14 @@ import {
   UsersRound,
   Briefcase,
   ShoppingCart,
+  ShoppingBag,
+  Warehouse,
 } from "lucide-react";
 import { toast } from "sonner";
 import { APP_NAME } from "@/lib/app-config";
 import { useAuth } from "@/context/auth-context";
 import { useI18n } from "@/context/i18n-context";
+import { useModule, type SubscribedModule, type ModuleNavItem } from "@/context/module-context";
 import { ChartPaletteProvider } from "@/context/chart-palette-context";
 import { DashboardBrandingProvider } from "@/context/dashboard-branding-context";
 import { useFeatureFlags } from "@/context/feature-flag-context";
@@ -54,6 +57,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { resolveIcon } from "@/lib/lucide-icon-map";
 import { useAnimation } from "@/context/animation-context";
 import { Fades } from "@/components/animate-ui/primitives/effects/fade";
 
@@ -115,11 +119,7 @@ const navSections: NavSectionDef[] = [
   {
     titleKey: "dashboard.nav.section_modules",
     titleFallback: "Modules",
-    items: [
-      { href: "/dashboard/modules/crm", labelKey: "dashboard.nav.crm", fallback: "CRM", icon: UsersRound },
-      { href: "/dashboard/modules/hr", labelKey: "dashboard.nav.hr", fallback: "HR", icon: Briefcase },
-      { href: "/dashboard/modules/pos", labelKey: "dashboard.nav.pos", fallback: "POS", icon: ShoppingCart },
-    ],
+    items: [] as NavLinkDef[],
   },
   {
     titleKey: "dashboard.nav.section_security",
@@ -141,6 +141,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const { t, dir } = useI18n();
   const { isEnabled } = useFeatureFlags();
   const { enabled: animationsEnabled } = useAnimation();
+  const { subscribedModules, modulesLoading } = useModule();
   const router = useRouter();
   const pathname = usePathname();
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -161,13 +162,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const hasPerm = useCallback((p?: string) => !p || userPerms.has(p) || userPerms.has("*"), [userPerms]);
 
   const visibleSections = useMemo(() => {
+    const moduleItems: NavLinkDef[] = (subscribedModules as SubscribedModule[]).map((mod) => ({
+      href: mod.route ?? `/dashboard/modules/${mod.module_key}`,
+      labelKey: `dashboard.nav.${mod.module_key}`,
+      fallback: mod.name,
+      icon: resolveIcon(mod.module_key === "crm" ? "UsersRound" : mod.module_key === "hr" ? "Briefcase" : mod.module_key === "pos" ? "ShoppingCart" : null),
+    }));
+
     return navSections
-      .map((section) => ({
-        ...section,
-        items: section.items.filter((item) => (item.flag ? isEnabled(item.flag, true) : true) && hasPerm(item.permission)),
-      }))
+      .map((section) => {
+        if (section.titleKey === "dashboard.nav.section_modules") {
+          return { ...section, items: moduleItems };
+        }
+        return {
+          ...section,
+          items: section.items.filter((item) => (item.flag ? isEnabled(item.flag, true) : true) && hasPerm(item.permission)),
+        };
+      })
       .filter((section) => section.items.length > 0);
-  }, [isEnabled, hasPerm]);
+  }, [isEnabled, hasPerm, subscribedModules]);
 
   const commandItems: CommandPaletteItem[] = useMemo(() => {
     const out: CommandPaletteItem[] = [];
@@ -244,6 +257,44 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </SidebarMenu>
           </SidebarHeader>
           <SidebarContent>
+            {/* Active module sub-navigation */}
+            {(() => {
+              const activeModuleKey = pathname.startsWith("/dashboard/modules/")
+                ? pathname.split("/")[3] ?? null
+                : null;
+              const activeMod = activeModuleKey
+                ? (subscribedModules as SubscribedModule[]).find((m) => m.module_key === activeModuleKey)
+                : null;
+              if (activeMod?.navigation?.length) {
+                return (
+                  <SidebarGroup>
+                    <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      {activeMod.name}
+                    </SidebarGroupLabel>
+                    <SidebarGroupContent>
+                      <SidebarMenu>
+                        {activeMod.navigation.map((nav) => {
+                          const NavIcon = resolveIcon(nav.icon);
+                          return (
+                            <SidebarMenuItem key={nav.key}>
+                              <SidebarMenuButton
+                                isActive={pathname === nav.route}
+                                tooltip={nav.label}
+                                render={<Link href={nav.route} />}
+                              >
+                                <NavIcon />
+                                <span>{nav.label}</span>
+                              </SidebarMenuButton>
+                            </SidebarMenuItem>
+                          );
+                        })}
+                      </SidebarMenu>
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+                );
+              }
+              return null;
+            })()}
             {animationsEnabled ? (
               <Fades holdDelay={75}>
                 {visibleSections.map((section, si) => (

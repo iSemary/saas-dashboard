@@ -17,3 +17,6 @@ use Modules\Inventory\Http\Controllers\InventoryController;
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     Route::apiResource('inventory', InventoryController::class)->names('inventory');
 });
+
+// ─── Inventory DDD Routes ─────────────────────────────────────────
+require __DIR__ . '/../Presentation/Routes/api.php';

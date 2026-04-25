@@ -23,10 +23,14 @@ import { useI18n } from "@/context/i18n-context";
 
 type TicketRow = {
   id: number;
-  subject: string;
+  ticket_number: string;
+  title: string;
+  description: string | null;
   status: string;
   priority: string;
-  category: string | null;
+  assigned_to: number | null;
+  brand_id: number | null;
+  due_date: string | null;
   created_at?: string;
 };
 
@@ -39,7 +43,7 @@ export default function TicketsPage() {
   const [saving, setSaving] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
-  const [form, setForm] = useState({ subject: "", status: "open", priority: "medium", category: "" });
+  const [form, setForm] = useState({ ticket_number: "", title: "", description: "", status: "open", priority: "medium", assigned_to: "", brand_id: "", due_date: "" });
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -53,13 +57,13 @@ export default function TicketsPage() {
 
   const openCreate = () => {
     setEditingId(null);
-    setForm({ subject: "", status: "open", priority: "medium", category: "" });
+    setForm({ ticket_number: "", title: "", description: "", status: "open", priority: "medium", assigned_to: "", brand_id: "", due_date: "" });
     setSheetOpen(true);
   };
 
   const openEdit = (row: TicketRow) => {
     setEditingId(row.id);
-    setForm({ subject: row.subject, status: row.status, priority: row.priority, category: row.category ?? "" });
+    setForm({ ticket_number: row.ticket_number, title: row.title, description: row.description ?? "", status: row.status, priority: row.priority, assigned_to: row.assigned_to ? String(row.assigned_to) : "", brand_id: row.brand_id ? String(row.brand_id) : "", due_date: row.due_date ?? "" });
     setSheetOpen(true);
   };
 
@@ -103,7 +107,8 @@ export default function TicketsPage() {
   const columns: Array<ColumnDef<TicketRow>> = useMemo(
     () => [
       { accessorKey: "id", header: t("dashboard.users.col_id", "ID") },
-      { accessorKey: "subject", header: t("dashboard.tickets.subject", "Subject") },
+      { accessorKey: "ticket_number", header: t("dashboard.tickets.ticket_number", "Ticket #") },
+      { accessorKey: "title", header: t("dashboard.tickets.title_col", "Title") },
       {
         accessorKey: "status",
         header: t("dashboard.tickets.status", "Status"),
@@ -177,8 +182,21 @@ export default function TicketsPage() {
           </SheetHeader>
           <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pb-4">
             <div className="space-y-2">
-              <Label htmlFor="tk-subject">{t("dashboard.tickets.subject", "Subject")}</Label>
-              <Input id="tk-subject" value={form.subject} onChange={(e) => setForm((f) => ({ ...f, subject: e.target.value }))} />
+              <Label htmlFor="tk-ticket-number">{t("dashboard.tickets.ticket_number", "Ticket #")}</Label>
+              <Input id="tk-ticket-number" value={form.ticket_number} onChange={(e) => setForm((f) => ({ ...f, ticket_number: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="tk-title">{t("dashboard.tickets.title_col", "Title")}</Label>
+              <Input id="tk-title" value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="tk-description">{t("dashboard.tickets.description", "Description")}</Label>
+              <textarea
+                id="tk-description"
+                className="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={form.description}
+                onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="tk-status">{t("dashboard.tickets.status", "Status")}</Label>
@@ -197,8 +215,16 @@ export default function TicketsPage() {
               </select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="tk-category">{t("dashboard.tickets.category", "Category")}</Label>
-              <Input id="tk-category" value={form.category} onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))} />
+              <Label htmlFor="tk-assigned-to">{t("dashboard.tickets.assigned_to", "Assigned To")}</Label>
+              <Input id="tk-assigned-to" type="number" value={form.assigned_to} onChange={(e) => setForm((f) => ({ ...f, assigned_to: e.target.value }))} placeholder="User ID" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="tk-brand-id">{t("dashboard.tickets.brand_id", "Brand")}</Label>
+              <Input id="tk-brand-id" type="number" value={form.brand_id} onChange={(e) => setForm((f) => ({ ...f, brand_id: e.target.value }))} placeholder="Brand ID" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="tk-due-date">{t("dashboard.tickets.due_date", "Due Date")}</Label>
+              <Input id="tk-due-date" type="datetime-local" value={form.due_date} onChange={(e) => setForm((f) => ({ ...f, due_date: e.target.value }))} />
             </div>
           </div>
           <SheetFooter className="border-t border-border/80 px-4 py-3">

@@ -13,6 +13,10 @@ const config: SimpleCRUDConfig<TagRow> = {
   fields: [
     { name: "name", label: "Name", required: true },
     { name: "slug", label: "Slug", type: "slug", sourceField: "name" },
+    { name: "description", label: "Description", type: "textarea" },
+    { name: "icon", label: "Icon", type: "file", accept: "image/*" },
+    { name: "priority", label: "Priority", type: "number", placeholder: "0" },
+    { name: "status", label: "Status", type: "select", options: [{ value: "active", label: "Active" }, { value: "inactive", label: "Inactive" }] },
   ],
   listFn: listTags,
   createFn: createTag,
@@ -22,8 +26,8 @@ const config: SimpleCRUDConfig<TagRow> = {
     { accessorKey: "name", header: t("dashboard.users.col_name", "Name") },
     { accessorKey: "slug", header: t("dashboard.tags.slug", "Slug") },
   ],
-  toForm: (row) => ({ name: row.name, slug: row.slug }),
-  fromForm: (form) => form,
+  toForm: (row) => ({ name: row.name, slug: row.slug, description: row.description ?? "", icon: row.icon ?? "", priority: row.priority ? String(row.priority) : "0", status: row.status ?? "active" }),
+  fromForm: (form) => ({ ...form, priority: Number(form.priority) }),
 };
 
 export default function TagsPage() {
