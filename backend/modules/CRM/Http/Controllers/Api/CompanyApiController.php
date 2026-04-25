@@ -35,15 +35,13 @@ class CompanyApiController extends ApiController implements HasMiddleware
             $companies = $this->service->list($filters, $perPage);
 
             return response()->json([
-                'data' => [
-                    'data' => $companies->items(),
-                    'current_page' => $companies->currentPage(),
-                    'last_page' => $companies->lastPage(),
-                    'per_page' => $companies->perPage(),
-                    'total' => $companies->total(),
-                    'from' => $companies->firstItem(),
-                    'to' => $companies->lastItem(),
-                ]
+                'data' => $companies->items(),
+                'current_page' => $companies->currentPage(),
+                'last_page' => $companies->lastPage(),
+                'per_page' => $companies->perPage(),
+                'total' => $companies->total(),
+                'from' => $companies->firstItem(),
+                'to' => $companies->lastItem(),
             ]);
         } catch (\Exception $e) {
             return response()->json([

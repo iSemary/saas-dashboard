@@ -1,7 +1,5 @@
 <?php
 
-use Laravel\Telescope\Http\Middleware\Authorize;
-
 return [
 
     /*
@@ -76,7 +74,6 @@ return [
     'middleware' => [
         'web',
         \Opcodes\LogViewer\Http\Middleware\AuthorizeLogViewer::class,
-        Authorize::class,
         'auth:web',
         'role:landlord|developer',
         'permission:read.log_viewer'

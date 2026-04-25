@@ -15,8 +15,8 @@ use Modules\Utilities\Http\Controllers\Api\ModuleApiController;
 Route::prefix('landlord')->name('landlord.')->middleware(['auth:api', 'landlord_roles', 'throttle:60,1'])->group(function () {
     Route::apiResource('categories', CategoryApiController::class);
     Route::apiResource('tags', TagApiController::class)->except(['show', 'update']);
-    Route::apiResource('types', TypeApiController::class)->except(['show', 'update']);
-    Route::apiResource('industries', IndustryApiController::class)->except(['show', 'update']);
+    Route::apiResource('types', TypeApiController::class)->except(['show']);
+    Route::apiResource('industries', IndustryApiController::class)->except(['show']);
     Route::apiResource('currencies', CurrencyApiController::class);
     Route::apiResource('units', UnitApiController::class)->except(['show', 'update']);
     Route::apiResource('announcements', AnnouncementApiController::class);

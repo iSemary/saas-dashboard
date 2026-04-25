@@ -112,17 +112,31 @@ class BrandModuleSubscriptionService
                     continue;
                 }
 
-                $subscriptionData = [
-                    'brand_id' => $brandId,
-                    'module_id' => $moduleIdMap[$moduleKey],
-                    'module_key' => $moduleKey,
-                    'status' => 'active',
-                    'subscribed_at' => now(),
-                    'module_config' => $moduleConfigs[$moduleKey] ?? null,
-                ];
+                $existing = $this->getByBrandAndModule($brandId, $moduleKey);
 
-                $subscription = $this->create($subscriptionData);
-                $results[] = $subscription;
+                if ($existing) {
+                     if ($existing->trashed()) {
+                         $existing->restore();
+                     }
+                     $this->update($existing->id, [
+                         'status' => 'active',
+                         'subscribed_at' => now(),
+                         'module_config' => $moduleConfigs[$moduleKey] ?? $existing->module_config,
+                     ]);
+                     $results[] = $existing->refresh();
+                 } else {
+                    $subscriptionData = [
+                        'brand_id' => $brandId,
+                        'module_id' => $moduleIdMap[$moduleKey],
+                        'module_key' => $moduleKey,
+                        'status' => 'active',
+                        'subscribed_at' => now(),
+                        'module_config' => $moduleConfigs[$moduleKey] ?? null,
+                    ];
+
+                    $subscription = $this->create($subscriptionData);
+                    $results[] = $subscription;
+                }
             }
 
             DB::commit();

@@ -17,7 +17,7 @@ class PermissionGroupRepository implements PermissionGroupInterface
 
     public function all()
     {
-        return $this->model->with('permissions')->get();
+        return $this->model->with('permissions')->withCount('permissions')->get();
     }
 
     public function datatables()
@@ -62,7 +62,7 @@ class PermissionGroupRepository implements PermissionGroupInterface
 
     public function find($id)
     {
-        return $this->model->with('permissions')->find($id);
+        return $this->model->with('permissions')->withCount('permissions')->find($id);
     }
 
     public function create(array $data)

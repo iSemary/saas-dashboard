@@ -8,11 +8,11 @@ export default function HrEmployeesPage() {
   return (
     <SimpleCRUDPage<Employee>
       config={{
-        titleKey: 'hr.employees.title',
+        titleKey: 'dashboard.hr.employees_title',
         titleFallback: 'Employees',
-        subtitleKey: 'hr.employees.subtitle',
+        subtitleKey: 'dashboard.hr.employees_subtitle',
         subtitleFallback: 'Manage your employees directory',
-        createLabelKey: 'hr.employees.create',
+        createLabelKey: 'dashboard.hr.employees_create',
         createLabelFallback: 'Create Employee',
         moduleKey: 'hr',
         dashboardHref: '/dashboard/modules/hr',

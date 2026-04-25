@@ -159,13 +159,11 @@ class WebhookApiController extends Controller
             $logs = $this->webhookService->getLogs($id, $request->user('api')->id, $perPage);
 
             return response()->json([
-                'data' => [
-                    'data' => $logs->items(),
-                    'current_page' => $logs->currentPage(),
-                    'last_page' => $logs->lastPage(),
-                    'per_page' => $logs->perPage(),
-                    'total' => $logs->total(),
-                ]
+                'data' => $logs->items(),
+                'current_page' => $logs->currentPage(),
+                'last_page' => $logs->lastPage(),
+                'per_page' => $logs->perPage(),
+                'total' => $logs->total(),
             ]);
         } catch (\Exception $e) {
             return response()->json([

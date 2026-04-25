@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Modules\Tenant\Entities\Tenant;
 
 class TenantSetupCommand extends Command
@@ -134,6 +135,10 @@ class TenantSetupCommand extends Command
 
         // Run migrations using tenant context with all paths combined
         $tenant->execute(function () use ($isFresh, $migrationPaths) {
+            if (!$isFresh) {
+                $this->markExistingCreateTableMigrationsAsRan($migrationPaths);
+            }
+
             $params = [
                 '--database' => 'tenant',
                 '--force' => true,
@@ -156,6 +161,69 @@ class TenantSetupCommand extends Command
         }
 
         $this->newLine();
+    }
+
+    /**
+     * Mark pending create-table migrations as ran when tables already exist.
+     *
+     * This makes tenant setup idempotent for existing databases where some tables
+     * were created previously but their migration rows are missing.
+     */
+    private function markExistingCreateTableMigrationsAsRan(array $migrationPaths): void
+    {
+        // Ensure the migrations table exists before we read or insert rows.
+        if (!Schema::connection('tenant')->hasTable('migrations')) {
+            Artisan::call('migrate:install', [
+                '--database' => 'tenant',
+            ]);
+        }
+
+        $existingMigrations = DB::connection('tenant')
+            ->table('migrations')
+            ->pluck('migration')
+            ->flip();
+
+        $currentBatch = (int) DB::connection('tenant')
+            ->table('migrations')
+            ->max('batch');
+
+        $insertBatch = $currentBatch > 0 ? $currentBatch + 1 : 1;
+        $migrationsToInsert = [];
+
+        foreach ($migrationPaths as $relativePath) {
+            $absolutePath = base_path($relativePath);
+            if (!is_dir($absolutePath)) {
+                continue;
+            }
+
+            $migrationFiles = glob($absolutePath . '/*.php') ?: [];
+
+            foreach ($migrationFiles as $migrationFile) {
+                $migrationName = basename($migrationFile, '.php');
+
+                if ($existingMigrations->has($migrationName)) {
+                    continue;
+                }
+
+                if (!preg_match('/create_([a-z0-9_]+)_table$/i', $migrationName, $matches)) {
+                    continue;
+                }
+
+                $tableName = $matches[1];
+                if (!Schema::connection('tenant')->hasTable($tableName)) {
+                    continue;
+                }
+
+                $migrationsToInsert[] = [
+                    'migration' => $migrationName,
+                    'batch' => $insertBatch,
+                ];
+            }
+        }
+
+        if (!empty($migrationsToInsert)) {
+            DB::connection('tenant')->table('migrations')->insert($migrationsToInsert);
+        }
     }
 
     /**

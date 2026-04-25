@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Geography\DTOs\CreateProvinceData;
 use Modules\Geography\Http\Requests\StoreProvinceRequest;
+use Modules\Geography\Http\Requests\UpdateProvinceRequest;
 use Modules\Geography\Services\ProvinceService;
 
 class ProvinceApiController extends Controller
@@ -25,6 +26,11 @@ class ProvinceApiController extends Controller
     {
         $data = CreateProvinceData::fromRequest($request);
         return $this->apiSuccess($this->service->create($data), 'Province created successfully', 201);
+    }
+
+    public function update(UpdateProvinceRequest $request, $id)
+    {
+        return $this->apiSuccess($this->service->update($id, $request->validated()), 'Province updated successfully');
     }
 
     public function destroy($id)

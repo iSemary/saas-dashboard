@@ -14,16 +14,25 @@ class SimpleUserSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::updateOrCreate(
-            ['email' => 'admin@customer1.local'],
-            [
-                'name' => 'Admin User',
-                'username' => 'admin',
-                'password' => Hash::make('password123'),
-                'customer_id' => 1, // Required field
-                'email_verified_at' => now(),
-            ]
-        );
+        // Keep this seeder idempotent even when username already exists with a different email.
+        $user = User::where('username', 'admin')->first();
+        if (!$user) {
+            $user = User::where('email', 'admin@customer1.local')->first();
+        }
+
+        if (!$user) {
+            $user = new User();
+        }
+
+        $user->fill([
+            'name' => 'Admin User',
+            'email' => 'admin@customer1.local',
+            'username' => 'admin',
+            'password' => Hash::make('password123'),
+            'customer_id' => 1, // Required field
+            'email_verified_at' => now(),
+        ]);
+        $user->save();
 
         // Try to assign the highest role available (super_admin, then owner, then admin)
         $highestRole = null;

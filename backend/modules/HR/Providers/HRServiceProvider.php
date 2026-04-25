@@ -4,9 +4,15 @@ namespace Modules\HR\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Console\Scheduling\Schedule;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use Modules\HR\Infrastructure\Jobs\BirthdayReminderJob;
+use Modules\HR\Infrastructure\Jobs\DocumentExpiryReminderJob;
+use Modules\HR\Infrastructure\Jobs\MarkAbsentJob;
+use Modules\HR\Infrastructure\Jobs\MonthlyLeaveAccrualJob;
+use Modules\HR\Infrastructure\Jobs\YearEndCarryOverJob;
 
 class HRServiceProvider extends ServiceProvider
 {
@@ -80,7 +86,7 @@ class HRServiceProvider extends ServiceProvider
 
         // Recruitment
         $this->app->bind(\Modules\HR\Infrastructure\Persistence\JobOpeningRepositoryInterface::class, \Modules\HR\Infrastructure\Persistence\JobOpeningRepository::class);
-        $this->app->bind(\Modules\HR\Infrastructure\Persistence\RecruitmentPipelineStageRepositoryInterface::class, \Modules\HR\Infrastructure\Persistence\RecruitmentPipelineStageRepository::class);
+        $this->app->bind(\Modules\HR\Infrastructure\Persistence\PipelineStageRepositoryInterface::class, \Modules\HR\Infrastructure\Persistence\PipelineStageRepository::class);
         $this->app->bind(\Modules\HR\Infrastructure\Persistence\CandidateRepositoryInterface::class, \Modules\HR\Infrastructure\Persistence\CandidateRepository::class);
         $this->app->bind(\Modules\HR\Infrastructure\Persistence\ApplicationRepositoryInterface::class, \Modules\HR\Infrastructure\Persistence\ApplicationRepository::class);
         $this->app->bind(\Modules\HR\Infrastructure\Persistence\InterviewRepositoryInterface::class, \Modules\HR\Infrastructure\Persistence\InterviewRepository::class);
@@ -166,12 +172,8 @@ class HRServiceProvider extends ServiceProvider
             \Modules\HR\Domain\Strategies\PayslipExport\HtmlPayslipStrategy::class,
         ], 'hr.payslip_export_strategies');
 
-        // Recruitment Pipeline Strategies
-        $this->app->bind(\Modules\HR\Domain\Strategies\RecruitmentPipeline\RecruitmentPipelineStrategyInterface::class, \Modules\HR\Domain\Strategies\RecruitmentPipeline\LinearStageStrategy::class);
-        $this->app->tag([
-            \Modules\HR\Domain\Strategies\RecruitmentPipeline\LinearStageStrategy::class,
-            \Modules\HR\Domain\Strategies\RecruitmentPipeline\FlexibleStageStrategy::class,
-        ], 'hr.recruitment_pipeline_strategies');
+        // Recruitment Pipeline Strategy
+        $this->app->bind(\Modules\HR\Domain\Strategies\RecruitmentPipelineStrategy::class, \Modules\HR\Domain\Strategies\LinearRecruitmentPipelineStrategy::class);
 
         // Onboarding Assignment Strategies
         $this->app->bind(\Modules\HR\Domain\Strategies\OnboardingAssignment\OnboardingAssignmentStrategyInterface::class, \Modules\HR\Domain\Strategies\OnboardingAssignment\RoleBasedAssignmentStrategy::class);
@@ -209,10 +211,14 @@ class HRServiceProvider extends ServiceProvider
      */
     protected function registerCommandSchedules(): void
     {
-        // $this->app->booted(function () {
-        //     $schedule = $this->app->make(Schedule::class);
-        //     $schedule->command('inspire')->hourly();
-        // });
+        $this->app->booted(function () {
+            $schedule = $this->app->make(Schedule::class);
+            $schedule->call(fn () => app(MarkAbsentJob::class)->handle())->dailyAt('23:00');
+            $schedule->call(fn () => app(MonthlyLeaveAccrualJob::class)->handle())->monthlyOn(1, '02:00');
+            $schedule->call(fn () => app(YearEndCarryOverJob::class)->handle())->yearlyOn(12, 31, '03:00');
+            $schedule->call(fn () => app(BirthdayReminderJob::class)->handle())->dailyAt('08:00');
+            $schedule->call(fn () => app(DocumentExpiryReminderJob::class)->handle())->dailyAt('09:00');
+        });
     }
 
     /**

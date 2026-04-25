@@ -1,7 +1,7 @@
 "use client";
 
 import { SimpleCRUDPage, type SimpleCRUDConfig } from "@/components/simple-crud-page";
-import { listTowns, createTown, deleteTown, listCities, type TownRow } from "@/lib/resources";
+import { listTowns, createTown, updateTown, deleteTown, listCities, type TownRow } from "@/lib/resources";
 
 const config: SimpleCRUDConfig<TownRow> = {
   titleKey: "dashboard.towns.title",
@@ -21,6 +21,7 @@ const config: SimpleCRUDConfig<TownRow> = {
   ],
   listFn: listTowns,
   createFn: createTown,
+  updateFn: updateTown,
   deleteFn: deleteTown,
   columns: (t) => [
     { accessorKey: "id", header: t("dashboard.users.col_id", "ID") },

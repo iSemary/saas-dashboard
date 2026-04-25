@@ -32,13 +32,11 @@ class EmailTemplateApiController extends ApiController
             $templates = $this->templateService->list($filters, $perPage);
 
             return response()->json([
-                'data' => [
-                    'data' => $templates->items(),
-                    'current_page' => $templates->currentPage(),
-                    'last_page' => $templates->lastPage(),
-                    'per_page' => $templates->perPage(),
-                    'total' => $templates->total(),
-                ]
+                'data' => $templates->items(),
+                'current_page' => $templates->currentPage(),
+                'last_page' => $templates->lastPage(),
+                'per_page' => $templates->perPage(),
+                'total' => $templates->total(),
             ]);
         } catch (\Exception $e) {
             return response()->json([

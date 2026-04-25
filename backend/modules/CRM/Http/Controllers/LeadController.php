@@ -28,7 +28,13 @@ class LeadController extends Controller
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
-                'data' => $leads,
+                'data' => $leads->items(),
+                'current_page' => $leads->currentPage(),
+                'last_page' => $leads->lastPage(),
+                'per_page' => $leads->perPage(),
+                'total' => $leads->total(),
+                'from' => $leads->firstItem(),
+                'to' => $leads->lastItem(),
                 'statistics' => $this->leadService->getLeadStatistics(),
             ]);
         }
@@ -287,7 +293,7 @@ class LeadController extends Controller
         ]);
 
         try {
-            $leads = $this->leadService->searchLeads($request->query);
+            $leads = $this->leadService->searchLeads($request->query('query'));
 
             return response()->json([
                 'success' => true,

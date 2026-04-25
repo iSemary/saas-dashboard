@@ -27,6 +27,12 @@ class IndustryApiController extends Controller
         return $this->apiSuccess($this->service->create($data), 'Industry created successfully', 201);
     }
 
+    public function update(StoreIndustryRequest $request, $id)
+    {
+        $data = CreateIndustryData::fromRequest($request);
+        return $this->apiSuccess($this->service->update($id, (array) $data), 'Industry updated successfully');
+    }
+
     public function destroy($id)
     {
         $this->service->delete($id);

@@ -21,14 +21,20 @@ class RolePermissionService
      */
     public function getRolesWithPermissions(): array
     {
-        return Role::with('permissions')->get()->map(function ($role) {
+        return Role::with(['permissions', 'permissionGroups'])->get()->map(function ($role) {
             return [
                 'id' => $role->id,
                 'name' => $role->name,
                 'guard_name' => $role->guard_name,
                 'permissions' => $role->permissions->pluck('name')->toArray(),
                 'permission_count' => $role->permissions->count(),
-                'users_count' => $role->users->count(),
+                'permissions_count' => $role->permissions->count(),
+                'permission_groups' => $role->permissionGroups->map(fn ($g) => [
+                    'id' => $g->id,
+                    'name' => $g->name,
+                    'slug' => $g->slug ?? '',
+                ])->values()->all(),
+                'users_count' => $role->users()->count(),
                 'created_at' => $role->created_at,
                 'updated_at' => $role->updated_at,
             ];

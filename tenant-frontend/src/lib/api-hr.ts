@@ -1,4 +1,5 @@
 import { apiClient } from '@/lib/api-client';
+import { TableParams, PaginatedResponse } from '@/lib/tenant-resources';
 
 // Department types
 export interface Department {
@@ -335,7 +336,7 @@ export interface Holiday {
 }
 
 // Shift API
-export async function getShifts(params?: Record<string, unknown>) {
+export async function getShifts(params?: TableParams): Promise<PaginatedResponse<Shift>> {
   const response = await apiClient.get('/tenant/hr/shifts', { params });
   return response.data;
 }
@@ -363,7 +364,7 @@ export async function getActiveShifts() {
 }
 
 // Work Schedule API
-export async function getWorkSchedules(params?: Record<string, unknown>) {
+export async function getWorkSchedules(params?: TableParams): Promise<PaginatedResponse<WorkSchedule>> {
   const response = await apiClient.get('/tenant/hr/work-schedules', { params });
   return response.data;
 }
@@ -391,7 +392,7 @@ export async function getCurrentSchedule(employeeId: number) {
 }
 
 // Attendance API
-export async function getAttendance(params?: Record<string, unknown>) {
+export async function getAttendance(params?: TableParams): Promise<PaginatedResponse<Attendance>> {
   const response = await apiClient.get('/tenant/hr/attendance', { params });
   return response.data;
 }
@@ -419,7 +420,7 @@ export async function getTodayAttendance(employeeId: number) {
 }
 
 // Leave Type API
-export async function getLeaveTypes(params?: Record<string, unknown>) {
+export async function getLeaveTypes(params?: TableParams): Promise<PaginatedResponse<LeaveType>> {
   const response = await apiClient.get('/tenant/hr/leave-types', { params });
   return response.data;
 }
@@ -447,7 +448,7 @@ export async function getActiveLeaveTypes() {
 }
 
 // Leave Request API
-export async function getLeaveRequests(params?: Record<string, unknown>) {
+export async function getLeaveRequests(params?: TableParams): Promise<PaginatedResponse<LeaveRequest>> {
   const response = await apiClient.get('/tenant/hr/leave-requests', { params });
   return response.data;
 }
@@ -481,7 +482,7 @@ export async function checkLeaveOverlap(employeeId: number, startDate: string, e
 }
 
 // Holiday API
-export async function getHolidays(params?: Record<string, unknown>) {
+export async function getHolidays(params?: TableParams): Promise<PaginatedResponse<Holiday>> {
   const response = await apiClient.get('/tenant/hr/holidays', { params });
   return response.data;
 }
@@ -505,5 +506,335 @@ export async function deleteHoliday(id: number): Promise<void> {
 
 export async function getHolidaysByYear(year: number, country?: string) {
   const response = await apiClient.get(`/tenant/hr/holidays/year/${year}`, { params: { country } });
+  return response.data;
+}
+
+// ==================== SPRINT 3: EPIC 5 - PAYROLL ====================
+
+// Payroll types
+export interface Payroll {
+  id: number;
+  payroll_number: string;
+  employee_id: number;
+  employee?: Employee;
+  pay_period_start: string;
+  pay_period_end: string;
+  pay_date: string;
+  status: 'draft' | 'calculated' | 'approved' | 'paid' | 'cancelled';
+  basic_salary: number;
+  overtime_pay: number;
+  bonus: number;
+  allowances: number;
+  gross_pay: number;
+  tax_deduction: number;
+  social_security: number;
+  health_insurance: number;
+  other_deductions: number;
+  total_deductions: number;
+  net_pay: number;
+  currency: string;
+  notes?: string;
+  approved_by?: number;
+  approved_at?: string;
+  payslip_pdf_path?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// Payroll API
+export async function getPayrolls(params?: TableParams): Promise<PaginatedResponse<Payroll>> {
+  const response = await apiClient.get('/tenant/hr/payrolls', { params });
+  return response.data;
+}
+
+export async function getPayroll(id: number) {
+  const response = await apiClient.get(`/tenant/hr/payrolls/${id}`);
+  return response.data;
+}
+
+export async function generatePayroll(data: { employee_id: number; pay_period_start: string; pay_period_end: string; pay_date: string; notes?: string }) {
+  return apiClient.post('/tenant/hr/payrolls/generate', data);
+}
+
+export async function calculatePayroll(id: number) {
+  return apiClient.post(`/tenant/hr/payrolls/${id}/calculate`);
+}
+
+export async function approvePayroll(id: number, notes?: string) {
+  return apiClient.post(`/tenant/hr/payrolls/${id}/approve`, { notes });
+}
+
+export async function markPayrollPaid(id: number) {
+  return apiClient.post(`/tenant/hr/payrolls/${id}/mark-paid`);
+}
+
+export async function deletePayroll(id: number): Promise<void> {
+  await apiClient.delete(`/tenant/hr/payrolls/${id}`);
+}
+
+export async function getPayrollsByEmployee(employeeId: number) {
+  const response = await apiClient.get(`/tenant/hr/payrolls/employee/${employeeId}`);
+  return response.data;
+}
+
+export async function getPayrollsByStatus(status: string) {
+  const response = await apiClient.get(`/tenant/hr/payrolls/status/${status}`);
+  return response.data;
+}
+
+// ==================== SPRINT 4: EPIC 7 - RECRUITMENT ====================
+
+export interface JobOpening {
+  id: number;
+  title: string;
+  department_id: number;
+  position_id?: number;
+  location?: string;
+  type: string;
+  employment_type: string;
+  salary_min?: number;
+  salary_max?: number;
+  currency: string;
+  description?: string;
+  requirements?: string;
+  status: 'draft' | 'published' | 'closed' | 'on_hold';
+  vacancies: number;
+  filled_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Candidate {
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone?: string;
+  current_title?: string;
+  current_company?: string;
+  source?: string;
+  rating?: number;
+  blacklisted: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RecruitmentApplication {
+  id: number;
+  job_opening_id: number;
+  candidate_id: number;
+  pipeline_stage_id?: number;
+  status: string;
+  applied_at: string;
+  cover_letter?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PipelineStage {
+  id: number;
+  name: string;
+  order: number;
+  color?: string;
+  maps_to_status?: string;
+  is_default: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RecruitmentInterview {
+  id: number;
+  application_id: number;
+  candidate_id: number;
+  type: string;
+  scheduled_at: string;
+  duration_minutes: number;
+  location?: string;
+  meeting_link?: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RecruitmentOffer {
+  id: number;
+  application_id: number;
+  candidate_id: number;
+  job_opening_id: number;
+  salary: number;
+  currency: string;
+  bonus: number;
+  status: string;
+  start_date: string;
+  expiry_date: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function getJobOpenings(params?: TableParams): Promise<PaginatedResponse<JobOpening>> {
+  const response = await apiClient.get('/tenant/hr/recruitment/jobs', { params });
+  return response.data;
+}
+
+export async function createJobOpening(data: Partial<JobOpening>) {
+  return apiClient.post('/tenant/hr/recruitment/jobs', data);
+}
+
+export async function updateJobOpening(id: number, data: Partial<JobOpening>) {
+  return apiClient.put(`/tenant/hr/recruitment/jobs/${id}`, data);
+}
+
+export async function deleteJobOpening(id: number): Promise<void> {
+  await apiClient.delete(`/tenant/hr/recruitment/jobs/${id}`);
+}
+
+export async function getCandidates(params?: TableParams): Promise<PaginatedResponse<Candidate>> {
+  const response = await apiClient.get('/tenant/hr/recruitment/candidates', { params });
+  return response.data;
+}
+
+export async function createCandidate(data: Partial<Candidate>) {
+  return apiClient.post('/tenant/hr/recruitment/candidates', data);
+}
+
+export async function updateCandidate(id: number, data: Partial<Candidate>) {
+  return apiClient.put(`/tenant/hr/recruitment/candidates/${id}`, data);
+}
+
+export async function deleteCandidate(id: number): Promise<void> {
+  await apiClient.delete(`/tenant/hr/recruitment/candidates/${id}`);
+}
+
+export async function getApplications(params?: TableParams): Promise<PaginatedResponse<RecruitmentApplication>> {
+  const response = await apiClient.get('/tenant/hr/recruitment/applications', { params });
+  return response.data;
+}
+
+export async function applyToJob(data: Record<string, unknown>) {
+  return apiClient.post('/tenant/hr/recruitment/applications', data);
+}
+
+export async function advanceApplication(id: number, pipelineStageId: number) {
+  return apiClient.post(`/tenant/hr/recruitment/applications/${id}/advance`, { pipeline_stage_id: pipelineStageId });
+}
+
+export async function rejectApplication(id: number, reason: string) {
+  return apiClient.post(`/tenant/hr/recruitment/applications/${id}/reject`, { reason });
+}
+
+export async function getPipelineStages() {
+  const response = await apiClient.get('/tenant/hr/recruitment/pipeline-stages');
+  return response.data as PipelineStage[];
+}
+
+export async function getInterviews(params?: TableParams): Promise<PaginatedResponse<RecruitmentInterview>> {
+  const response = await apiClient.get('/tenant/hr/recruitment/interviews', { params });
+  return response.data;
+}
+
+export async function scheduleInterview(applicationId: number, data: Record<string, unknown>) {
+  return apiClient.post(`/tenant/hr/recruitment/applications/${applicationId}/interviews`, data);
+}
+
+export async function getOffers(params?: TableParams): Promise<PaginatedResponse<RecruitmentOffer>> {
+  const response = await apiClient.get('/tenant/hr/recruitment/offers', { params });
+  return response.data;
+}
+
+export async function makeOffer(applicationId: number, data: Record<string, unknown>) {
+  return apiClient.post(`/tenant/hr/recruitment/applications/${applicationId}/offers`, data);
+}
+
+export async function sendOffer(id: number) {
+  return apiClient.post(`/tenant/hr/recruitment/offers/${id}/send`);
+}
+
+export async function acceptOffer(id: number) {
+  return apiClient.post(`/tenant/hr/recruitment/offers/${id}/accept`);
+}
+
+export async function rejectOffer(id: number, reason: string) {
+  return apiClient.post(`/tenant/hr/recruitment/offers/${id}/reject`, { reason });
+}
+
+// ==================== EPICS 8-15 SUPPORT ====================
+
+export async function getOnboardingTemplates(params?: TableParams) {
+  const response = await apiClient.get('/tenant/hr/onboarding/templates', { params });
+  return response.data as PaginatedResponse<Record<string, unknown>>;
+}
+
+export async function createOnboardingTemplate(data: Record<string, unknown>) {
+  return apiClient.post('/tenant/hr/onboarding/templates', data);
+}
+
+export async function getCourses(params?: TableParams) {
+  const response = await apiClient.get('/tenant/hr/training/courses', { params });
+  return response.data as PaginatedResponse<Record<string, unknown>>;
+}
+
+export async function createCourse(data: Record<string, unknown>) {
+  return apiClient.post('/tenant/hr/training/courses', data);
+}
+
+export async function getAssets(params?: TableParams) {
+  const response = await apiClient.get('/tenant/hr/assets', { params });
+  return response.data as PaginatedResponse<Record<string, unknown>>;
+}
+
+export async function createAsset(data: Record<string, unknown>) {
+  return apiClient.post('/tenant/hr/assets', data);
+}
+
+export async function getExpenseClaims(params?: TableParams) {
+  const response = await apiClient.get('/tenant/hr/expenses/claims', { params });
+  return response.data as PaginatedResponse<Record<string, unknown>>;
+}
+
+export async function createExpenseClaim(data: Record<string, unknown>) {
+  return apiClient.post('/tenant/hr/expenses/claims', data);
+}
+
+export async function getAnnouncements(params?: TableParams) {
+  const response = await apiClient.get('/tenant/hr/communication/announcements', { params });
+  return response.data as PaginatedResponse<Record<string, unknown>>;
+}
+
+export async function createAnnouncement(data: Record<string, unknown>) {
+  return apiClient.post('/tenant/hr/communication/announcements', data);
+}
+
+export async function getHrReportHeadcount() {
+  const response = await apiClient.get('/tenant/hr/reports/headcount');
+  return response.data;
+}
+
+export async function getMyHrProfile() {
+  const response = await apiClient.get('/tenant/hr/me');
+  return response.data;
+}
+
+export async function getMyHrLeaves() {
+  const response = await apiClient.get('/tenant/hr/me/leaves');
+  return response.data;
+}
+
+export async function getMyHrAttendance() {
+  const response = await apiClient.get('/tenant/hr/me/attendance');
+  return response.data;
+}
+
+export async function getMyHrPayroll() {
+  const response = await apiClient.get('/tenant/hr/me/payroll');
+  return response.data;
+}
+
+export async function getMyHrGoals() {
+  const response = await apiClient.get('/tenant/hr/me/goals');
+  return response.data;
+}
+
+export async function getMyHrAssets() {
+  const response = await apiClient.get('/tenant/hr/me/assets');
   return response.data;
 }

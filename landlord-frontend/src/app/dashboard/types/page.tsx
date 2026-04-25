@@ -1,7 +1,7 @@
 "use client";
 
 import { SimpleCRUDPage, type SimpleCRUDConfig } from "@/components/simple-crud-page";
-import { listTypes, createType, deleteType, type TypeRow } from "@/lib/resources";
+import { listTypes, createType, updateType, deleteType, type TypeRow } from "@/lib/resources";
 
 const config: SimpleCRUDConfig<TypeRow> = {
   titleKey: "dashboard.types.title",
@@ -20,6 +20,7 @@ const config: SimpleCRUDConfig<TypeRow> = {
   ],
   listFn: listTypes,
   createFn: createType,
+  updateFn: updateType,
   deleteFn: deleteType,
   columns: (t) => [
     { accessorKey: "id", header: t("dashboard.users.col_id", "ID") },

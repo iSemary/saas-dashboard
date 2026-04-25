@@ -1,7 +1,7 @@
 "use client";
 
 import { SimpleCRUDPage, type SimpleCRUDConfig } from "@/components/simple-crud-page";
-import { listCities, createCity, deleteCity, listProvinces, type CityRow } from "@/lib/resources";
+import { listCities, createCity, updateCity, deleteCity, listProvinces, type CityRow } from "@/lib/resources";
 
 const config: SimpleCRUDConfig<CityRow> = {
   titleKey: "dashboard.cities.title",
@@ -25,6 +25,7 @@ const config: SimpleCRUDConfig<CityRow> = {
   ],
   listFn: listCities,
   createFn: createCity,
+  updateFn: updateCity,
   deleteFn: deleteCity,
   columns: (t) => [
     { accessorKey: "id", header: t("dashboard.users.col_id", "ID") },
@@ -32,7 +33,12 @@ const config: SimpleCRUDConfig<CityRow> = {
     {
       id: "province",
       header: t("dashboard.cities.province", "Province"),
-      cell: ({ row }: { row: { original: CityRow } }) => row.original.province?.name ?? "—",
+      cell: ({ row }: { row: { original: CityRow } }) => {
+        const province = row.original.province;
+        if (typeof province === "string" && province.trim().length > 0) return province;
+        if (province && typeof province === "object" && "name" in province) return province.name;
+        return row.original.province_name ?? "—";
+      },
     },
   ],
   toForm: (row) => ({ name: row.name, postal_code: row.postal_code ?? "", is_capital: row.is_capital ? "1" : "0", phone_code: row.phone_code ?? "", timezone: row.timezone ?? "", province_id: String(row.province_id), latitude: row.latitude ? String(row.latitude) : "", longitude: row.longitude ? String(row.longitude) : "", area_km2: row.area_km2 ? String(row.area_km2) : "", population: row.population ? String(row.population) : "", elevation_m: row.elevation_m ? String(row.elevation_m) : "" }),

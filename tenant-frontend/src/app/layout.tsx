@@ -9,6 +9,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppToaster } from "@/components/app-toaster";
 import { AccentProvider } from "@/context/accent-context";
 import { AnimationProvider } from "@/context/animation-context";
+import { ModuleProvider } from "@/context/module-context";
 import { APP_DESCRIPTION, APP_TITLE } from "@/lib/app-config";
 
 const geistSans = Geist({
@@ -46,11 +47,13 @@ export default function RootLayout({
           <TooltipProvider delay={0}>
             <I18nProvider>
               <AuthProvider>
-                <AccentProvider>
-                  <AnimationProvider>
-                    <FeatureFlagProvider>{children}</FeatureFlagProvider>
-                  </AnimationProvider>
-                </AccentProvider>
+                <ModuleProvider>
+                  <AccentProvider>
+                    <AnimationProvider>
+                      <FeatureFlagProvider>{children}</FeatureFlagProvider>
+                    </AnimationProvider>
+                  </AccentProvider>
+                </ModuleProvider>
               </AuthProvider>
               <AppToaster />
             </I18nProvider>

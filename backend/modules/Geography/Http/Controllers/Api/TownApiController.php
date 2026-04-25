@@ -27,6 +27,12 @@ class TownApiController extends Controller
         return $this->apiSuccess($this->service->create($data), 'Town created successfully', 201);
     }
 
+    public function update(StoreTownRequest $request, $id)
+    {
+        $data = CreateTownData::fromRequest($request);
+        return $this->apiSuccess($this->service->update($id, (array) $data), 'Town updated successfully');
+    }
+
     public function destroy($id)
     {
         $this->service->delete($id);

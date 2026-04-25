@@ -35,15 +35,13 @@ class ContactApiController extends ApiController implements HasMiddleware
             $contacts = $this->service->list($filters, $perPage);
 
             return response()->json([
-                'data' => [
-                    'data' => $contacts->items(),
-                    'current_page' => $contacts->currentPage(),
-                    'last_page' => $contacts->lastPage(),
-                    'per_page' => $contacts->perPage(),
-                    'total' => $contacts->total(),
-                    'from' => $contacts->firstItem(),
-                    'to' => $contacts->lastItem(),
-                ]
+                'data' => $contacts->items(),
+                'current_page' => $contacts->currentPage(),
+                'last_page' => $contacts->lastPage(),
+                'per_page' => $contacts->perPage(),
+                'total' => $contacts->total(),
+                'from' => $contacts->firstItem(),
+                'to' => $contacts->lastItem(),
             ]);
         } catch (\Exception $e) {
             return response()->json([

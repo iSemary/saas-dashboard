@@ -2,6 +2,7 @@
 
 namespace Modules\Geography\Entities;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -19,4 +20,9 @@ class Street extends Model implements Auditable
     protected $fillable = ['name', 'postal_code', 'town_id', 'latitude', 'longitude', 'area_km2', 'population', 'elevation_m', 'phone_code', 'timezone'];
     
     protected $hidden = [];
+
+    public function town(): BelongsTo
+    {
+        return $this->belongsTo(Town::class);
+    }
 }

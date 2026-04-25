@@ -47,6 +47,14 @@ export type FieldDef = {
   parentLabelKey?: string;
 };
 
+type CreateFn = {
+  bivarianceHack(payload: Record<string, unknown>): Promise<unknown>;
+}["bivarianceHack"];
+
+type UpdateFn = {
+  bivarianceHack(id: number, payload: Record<string, unknown>): Promise<unknown>;
+}["bivarianceHack"];
+
 export type SimpleCRUDConfig<T extends { id: number }> = {
   titleKey: string;
   titleFallback: string;
@@ -57,8 +65,8 @@ export type SimpleCRUDConfig<T extends { id: number }> = {
   fields: FieldDef[];
   /** List function - supports both client-side and server-side */
   listFn: (params?: TableParams) => Promise<T[]> | Promise<PaginatedResponse<T>>;
-  createFn: (payload: Record<string, unknown>) => Promise<unknown>;
-  updateFn?: ((id: number, payload: Record<string, unknown>) => Promise<unknown>) | null;
+  createFn: CreateFn;
+  updateFn?: UpdateFn | null;
   deleteFn?: ((id: number) => Promise<void>) | null;
   columns: (t: (key: string, fallback: string) => string) => Array<ColumnDef<T>>;
   toForm: (row: T) => Record<string, string>;

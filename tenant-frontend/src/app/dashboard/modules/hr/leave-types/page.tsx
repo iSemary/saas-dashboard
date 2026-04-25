@@ -8,11 +8,11 @@ export default function HrLeaveTypesPage() {
   return (
     <SimpleCRUDPage<LeaveType>
       config={{
-        titleKey: 'hr.leave_types.title',
+        titleKey: 'dashboard.hr.leave_types_title',
         titleFallback: 'Leave Types',
-        subtitleKey: 'hr.leave_types.subtitle',
+        subtitleKey: 'dashboard.hr.leave_types_subtitle',
         subtitleFallback: 'Configure leave types and policies',
-        createLabelKey: 'hr.leave_types.create',
+        createLabelKey: 'dashboard.hr.leave_types_create',
         createLabelFallback: 'Create Leave Type',
         moduleKey: 'hr',
         dashboardHref: '/dashboard/modules/hr',

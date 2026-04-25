@@ -76,7 +76,7 @@ class TownRepository implements TownInterface
 
     public function paginate(array $filters = [], int $perPage = 50): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        $query = $this->model->query();
+        $query = $this->model->query()->with('city');
         if (isset($filters['search'])) {
             $query->where('name', 'like', "%{$filters['search']}%");
         }

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Geography\DTOs\CreateStreetData;
 use Modules\Geography\Http\Requests\StoreStreetRequest;
+use Modules\Geography\Http\Requests\UpdateStreetRequest;
 use Modules\Geography\Services\StreetService;
 
 class StreetApiController extends Controller
@@ -25,6 +26,11 @@ class StreetApiController extends Controller
     {
         $data = CreateStreetData::fromRequest($request);
         return $this->apiSuccess($this->service->create($data), 'Street created successfully', 201);
+    }
+
+    public function update(UpdateStreetRequest $request, $id)
+    {
+        return $this->apiSuccess($this->service->update($id, $request->validated()), 'Street updated successfully');
     }
 
     public function destroy($id)

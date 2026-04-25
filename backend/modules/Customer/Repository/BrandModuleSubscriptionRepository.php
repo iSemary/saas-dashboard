@@ -26,9 +26,9 @@ class BrandModuleSubscriptionRepository implements BrandModuleSubscriptionReposi
             $query->where('module_key', $filters['module_key']);
         }
 
-        if (isset($filters['subscription_status'])) 
+        if (isset($filters['status'])) 
         {
-            $query->where('subscription_status', $filters['subscription_status']);
+            $query->where('status', $filters['status']);
         }
 
         if (isset($filters['search'])) 
@@ -39,7 +39,6 @@ class BrandModuleSubscriptionRepository implements BrandModuleSubscriptionReposi
                 {
                     $brandQuery->where('name', 'like', '%' . $filters['search'] . '%');
                 })
-                ->orWhere('module_name', 'like', '%' . $filters['search'] . '%')
                 ->orWhere('module_key', 'like', '%' . $filters['search'] . '%');
             });
         }
@@ -59,12 +58,13 @@ class BrandModuleSubscriptionRepository implements BrandModuleSubscriptionReposi
 
     public function getById(int $id): ?BrandModuleSubscription
     {
-        return BrandModuleSubscription::with(['brand', 'creator', 'updater'])->find($id);
+        return BrandModuleSubscription::withTrashed()->with(['brand', 'creator', 'updater'])->find($id);
     }
 
     public function getByBrandAndModule(int $brandId, string $moduleKey): ?BrandModuleSubscription
     {
-        return BrandModuleSubscription::where('brand_id', $brandId)
+        return BrandModuleSubscription::withTrashed()
+                                   ->where('brand_id', $brandId)
                                    ->where('module_key', $moduleKey)
                                    ->first();
     }
@@ -104,7 +104,7 @@ class BrandModuleSubscriptionRepository implements BrandModuleSubscriptionReposi
             return false;
         }
 
-        return $subscription->Restore();
+        return $subscription->restore();
     }
 
     public function getByBrand(int $brandId): Collection
@@ -137,9 +137,9 @@ class BrandModuleSubscriptionRepository implements BrandModuleSubscriptionReposi
             return false;
         }
 
-        $newStatus = $subscription->subscription_status === 'active' ? 'inactive' : 'active';
+        $newStatus = $subscription->status === 'active' ? 'inactive' : 'active';
         
-        return $subscription->update(['subscription_status' => $newStatus]);
+        return $subscription->update(['status' => $newStatus]);
     }
 
     public function hasActiveSubscription(int $brandId, string $moduleKey): bool
@@ -155,11 +155,11 @@ class BrandModuleSubscriptionRepository implements BrandModuleSubscriptionReposi
         return [
             'total_subscriptions' => BrandModuleSubscription::count(),
             'active_subscriptions' => BrandModuleSubscription::active()->count(),
-            'inactive_subscriptions' => BrandModuleSubscription::where('subscription_status', 'inactive')->count(),
-            'suspended_subscriptions' => BrandModuleSubscription::where('subscription_status', 'suspended')->count(),
-            'expired_subscriptions' => BrandModuleSubscription::where('subscription_status', 'expired')->count(),
-            'subscriptions_by_module' => BrandModuleSubscription::select('module_key', 'module_name', DB::raw('count(*) as count'))
-                                           ->groupBy('module_key', 'module_name')
+            'inactive_subscriptions' => BrandModuleSubscription::where('status', 'inactive')->count(),
+            'suspended_subscriptions' => BrandModuleSubscription::where('status', 'suspended')->count(),
+            'expired_subscriptions' => BrandModuleSubscription::where('status', 'expired')->count(),
+            'subscriptions_by_module' => BrandModuleSubscription::select('module_key', DB::raw('count(*) as count'))
+                                           ->groupBy('module_key')
                                            ->get()
                                            ->pluck('count', 'module_key'),
             'subscriptions_by_brand' => BrandModuleSubscription::select('brand_id', DB::raw('count(*) as count'))
@@ -195,7 +195,7 @@ class BrandModuleSubscriptionRepository implements BrandModuleSubscriptionReposi
             ->addColumn('status_badge', function ($row) 
             {
                 return '<span class="badge ' . $row->getStatusBadgeClass() . '">' . 
-                       ucfirst($row->subscription_status) . 
+                       ucfirst($row->status) . 
                        '</span>';
             })
             ->addColumn('valid_subscription', function ($row) 
@@ -217,7 +217,7 @@ class BrandModuleSubscriptionRepository implements BrandModuleSubscriptionReposi
                 $actions = '';
                 
                 $actions .= TableHelper::editButton($row->id);
-                $actions .= TableHelper::switchButton($row->id, $row->subscription_status === 'active');
+                $actions .= TableHelper::switchButton($row->id, $row->status === 'active');
                 
                 if ($row->trashed()) 
                 {

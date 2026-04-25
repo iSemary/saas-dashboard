@@ -89,6 +89,8 @@ type NavLinkDef = {
   flag?: string;
   icon: LucideIcon;
   permission?: string;
+  external?: boolean;
+  target?: "_self" | "_blank" | "_parent" | "_top";
 };
 
 type NavSectionDef = {
@@ -110,7 +112,6 @@ const navSections: NavSectionDef[] = [
     titleFallback: "Account Management",
     items: [
       { href: "/dashboard/system-users", labelKey: "dashboard.nav.system_users", fallback: "System Users", icon: UserCog, permission: "view.system_users" },
-      { href: "/dashboard/clients", labelKey: "dashboard.nav.clients", fallback: "Clients", icon: Building2, permission: "view.clients" },
       { href: "/dashboard/tenants", labelKey: "dashboard.nav.tenants", fallback: "Tenants", icon: Building2, permission: "view.tenants" },
       { href: "/dashboard/brands", labelKey: "dashboard.nav.brands", fallback: "Brands", icon: Tags, permission: "view.brands" },
       { href: "/dashboard/branches", labelKey: "dashboard.nav.branches", fallback: "Branches", icon: Building2, permission: "view.branches" },
@@ -224,9 +225,9 @@ const navSections: NavSectionDef[] = [
       { href: "/dashboard/system-health", labelKey: "dashboard.nav.system_health", fallback: "System Health", icon: Heart, permission: "view.system_health" },
       { href: "/dashboard/tenant-monitoring", labelKey: "dashboard.nav.tenant_monitoring", fallback: "Tenant Monitoring", icon: Building2, permission: "view.tenant_monitoring" },
       { href: "/dashboard/activity-logs", labelKey: "dashboard.nav.activity_logs", fallback: "Activity Logs", icon: ScrollText, permission: "view.activity_logs" },
-      { href: "/horizon", labelKey: "dashboard.nav.horizon", fallback: "Horizon", icon: Activity, permission: "view.horizon" },
-      { href: "/telescope", labelKey: "dashboard.nav.telescope", fallback: "Telescope", icon: Search, permission: "view.telescope" },
-      { href: "/log-viewer", labelKey: "dashboard.nav.log_viewer", fallback: "Log Viewer", icon: FileText, permission: "view.log_viewer" },
+      { href: "/landlord/horizon", labelKey: "dashboard.nav.horizon", fallback: "Horizon", icon: Activity, permission: "view.horizon", external: true, target: "_blank" },
+      { href: "/landlord/telescope", labelKey: "dashboard.nav.telescope", fallback: "Telescope", icon: Search, permission: "view.telescope", external: true, target: "_blank" },
+      { href: "/landlord/log-viewer", labelKey: "dashboard.nav.log_viewer", fallback: "Log Viewer", icon: FileText, permission: "view.log_viewer", external: true, target: "_blank" },
     ],
   },
   {
@@ -371,9 +372,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       return (
                         <SidebarMenuItem key={item.href}>
                           <SidebarMenuButton
-                            isActive={pathname === item.href}
+                            isActive={!item.external && pathname === item.href}
                             tooltip={label}
-                            render={<Link href={item.href} />}
+                            render={
+                              item.external ? (
+                                <a
+                                  href={item.href}
+                                  target={item.target ?? "_blank"}
+                                  rel={item.target === "_blank" ? "noopener noreferrer" : undefined}
+                                />
+                              ) : (
+                                <Link href={item.href} />
+                              )
+                            }
                           >
                             <Icon />
                             <span>{label}</span>

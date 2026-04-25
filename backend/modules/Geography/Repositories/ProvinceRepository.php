@@ -72,9 +72,12 @@ class ProvinceRepository implements ProvinceInterface
 
     public function paginate(array $filters = [], int $perPage = 50): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        $query = $this->model->query();
+        $query = $this->model->query()->with('country');
         if (isset($filters['search'])) {
             $query->where('name', 'like', "%{$filters['search']}%");
+        }
+        if (isset($filters['country_id'])) {
+            $query->where('country_id', $filters['country_id']);
         }
         return $query->orderBy('created_at', 'desc')->paginate($perPage);
     }

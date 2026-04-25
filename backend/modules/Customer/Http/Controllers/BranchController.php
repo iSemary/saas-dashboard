@@ -45,7 +45,13 @@ class BranchController extends Controller implements HasMiddleware
 
                 return response()->json([
                     'success' => true,
-                    'data' => $branches,
+                    'data' => $branches->items(),
+                    'current_page' => $branches->currentPage(),
+                    'last_page' => $branches->lastPage(),
+                    'per_page' => $branches->perPage(),
+                    'total' => $branches->total(),
+                    'from' => $branches->firstItem(),
+                    'to' => $branches->lastItem(),
                     'statistics' => $this->branchService->getBranchesStatistics()
                 ]);
             }

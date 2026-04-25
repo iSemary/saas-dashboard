@@ -5,14 +5,19 @@ import { getHolidays, createHoliday, updateHoliday, deleteHoliday, Holiday } fro
 import { ColumnDef } from '@tanstack/react-table';
 
 export default function HrHolidaysPage() {
+  const createHolidayAdapter = (payload: Record<string, unknown>) =>
+    createHoliday(payload as Omit<Holiday, 'id' | 'created_at' | 'updated_at'>);
+  const updateHolidayAdapter = (id: number, payload: Record<string, unknown>) =>
+    updateHoliday(id, payload as Partial<Holiday>);
+
   return (
     <SimpleCRUDPage<Holiday>
       config={{
-        titleKey: 'hr.holidays.title',
+        titleKey: 'dashboard.hr.holidays_title',
         titleFallback: 'Holidays',
-        subtitleKey: 'hr.holidays.subtitle',
+        subtitleKey: 'dashboard.hr.holidays_subtitle',
         subtitleFallback: 'Manage company holidays',
-        createLabelKey: 'hr.holidays.create',
+        createLabelKey: 'dashboard.hr.holidays_create',
         createLabelFallback: 'Add Holiday',
         moduleKey: 'hr',
         dashboardHref: '/dashboard/modules/hr',
@@ -30,8 +35,8 @@ export default function HrHolidaysPage() {
           ]},
         ],
         listFn: getHolidays,
-        createFn: createHoliday,
-        updateFn: updateHoliday,
+        createFn: createHolidayAdapter,
+        updateFn: updateHolidayAdapter,
         deleteFn: deleteHoliday,
         columns: () => [
           { accessorKey: 'id', header: 'ID', size: 80 },

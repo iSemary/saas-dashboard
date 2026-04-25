@@ -81,9 +81,12 @@ class StreetRepository implements StreetInterface
 
     public function paginate(array $filters = [], int $perPage = 50): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        $query = $this->model->query();
+        $query = $this->model->query()->with(['town.city']);
         if (isset($filters['search'])) {
             $query->where('name', 'like', "%{$filters['search']}%");
+        }
+        if (isset($filters['town_id'])) {
+            $query->where('town_id', $filters['town_id']);
         }
         return $query->orderBy('created_at', 'desc')->paginate($perPage);
     }

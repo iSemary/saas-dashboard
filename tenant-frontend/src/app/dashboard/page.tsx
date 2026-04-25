@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Loader2, Users, Shield, Ticket, Building2 } from "lucide-react";
 import { useI18n } from "@/context/i18n-context";
 import { useAnimation } from "@/context/animation-context";
+import { useModule } from "@/context/module-context";
 import { getDashboardStats } from "@/lib/tenant-resources";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CountingNumber } from "@/components/animate-ui/primitives/texts/counting-number";
@@ -22,6 +24,7 @@ type Stats = {
 export default function DashboardPage() {
   const { t } = useI18n();
   const { enabled: animationsEnabled } = useAnimation();
+  const { subscribedModules, modulesLoading } = useModule();
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -82,6 +85,36 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
           ))
+        )}
+      </div>
+      <div className="space-y-3">
+        <h2 className="text-lg font-semibold">{t("dashboard.nav.section_modules", "Modules")}</h2>
+        {modulesLoading ? (
+          <div className="flex min-h-[96px] items-center justify-center rounded-xl border bg-background">
+            <Loader2 className="size-5 animate-spin text-muted-foreground" />
+          </div>
+        ) : subscribedModules.length > 0 ? (
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {subscribedModules.map((mod) => (
+              <Link
+                key={`${mod.brand_id}-${mod.module_key}`}
+                href={mod.route ?? `/dashboard/modules/${mod.module_key}`}
+                className="rounded-xl border bg-background p-4 transition-colors hover:bg-muted/50"
+              >
+                <div className="text-sm font-medium">{mod.name}</div>
+                <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+                  {mod.description || t("dashboard.subtitle", "Overview of your tenant.")}
+                </p>
+                <div className="mt-2 text-xs text-muted-foreground">
+                  {mod.brand_name ? `${t("dashboard.nav.brands", "Brands")}: ${mod.brand_name}` : ""}
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-xl border bg-muted/30 p-4 text-sm text-muted-foreground">
+            {t("dashboard.modules.empty", "No subscribed modules were found for your tenant brands.")}
+          </div>
         )}
       </div>
     </div>

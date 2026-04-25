@@ -8,11 +8,11 @@ export default function HrShiftsPage() {
   return (
     <SimpleCRUDPage<Shift>
       config={{
-        titleKey: 'hr.shifts.title',
+        titleKey: 'dashboard.hr.shifts_title',
         titleFallback: 'Shifts',
-        subtitleKey: 'hr.shifts.subtitle',
+        subtitleKey: 'dashboard.hr.shifts_subtitle',
         subtitleFallback: 'Manage work shifts and schedules',
-        createLabelKey: 'hr.shifts.create',
+        createLabelKey: 'dashboard.hr.shifts_create',
         createLabelFallback: 'Create Shift',
         moduleKey: 'hr',
         dashboardHref: '/dashboard/modules/hr',

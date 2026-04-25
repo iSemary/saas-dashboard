@@ -46,7 +46,13 @@ class TenantUserManagementController extends Controller
 
                 return response()->json([
                     'success' => true,
-                    'data' => $users,
+                    'data' => $users->items(),
+                    'current_page' => $users->currentPage(),
+                    'last_page' => $users->lastPage(),
+                    'per_page' => $users->perPage(),
+                    'total' => $users->total(),
+                    'from' => $users->firstItem(),
+                    'to' => $users->lastItem(),
                     'statistics' => $this->userService->getUserStatistics()
                 ]);
             }

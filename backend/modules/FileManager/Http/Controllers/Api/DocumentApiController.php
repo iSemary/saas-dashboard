@@ -19,15 +19,13 @@ class DocumentApiController extends ApiController
             $files = $this->service->list($filters, $perPage);
 
             return response()->json([
-                'data' => [
-                    'data' => $files->items(),
-                    'current_page' => $files->currentPage(),
-                    'last_page' => $files->lastPage(),
-                    'per_page' => $files->perPage(),
-                    'total' => $files->total(),
-                    'from' => $files->firstItem(),
-                    'to' => $files->lastItem(),
-                ]
+                'data' => $files->items(),
+                'current_page' => $files->currentPage(),
+                'last_page' => $files->lastPage(),
+                'per_page' => $files->perPage(),
+                'total' => $files->total(),
+                'from' => $files->firstItem(),
+                'to' => $files->lastItem(),
             ]);
         } catch (\Exception $e) {
             return response()->json([

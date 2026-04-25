@@ -64,13 +64,6 @@
                                     'single' => true,
                                     'external' => false,
                                 ],
-                                'clients' => [
-                                    'icon' => 'fas fa-briefcase',
-                                    'permission' => 'read.clients',
-                                    'route' => 'landlord.clients.index',
-                                    'single' => true,
-                                    'external' => false,
-                                ],
                                 'tenants' => [
                                     'icon' => 'fas fa-cubes',
                                     'permission' => 'read.tenants',
@@ -487,7 +480,7 @@
                                     ],
                                     'external' => true,
                                     'translate' => false,
-                                    'path' => '/' . env('HORIZON_PATH'),
+                                    'path' => '/' . ltrim(config('horizon.path', 'landlord/horizon'), '/'),
                                 ],
                                 'telescope' => [
                                     'icon' => 'fas fa-search-plus',
@@ -497,7 +490,7 @@
                                     ],
                                     'external' => true,
                                     'translate' => false,
-                                    'path' => '/' . env('TELESCOPE_PATH'),
+                                    'path' => '/' . ltrim(config('telescope.path', 'landlord/telescope'), '/'),
                                 ],
                                 'log_viewer' => [
                                     'icon' => 'fas fa-file-alt',
@@ -506,7 +499,7 @@
                                         'create' => false,
                                     ],
                                     'external' => true,
-                                    'path' => '/' . env('LOG_VIEWER_PATH'),
+                                    'path' => '/' . ltrim(config('log-viewer.route_path', 'landlord/log-viewer'), '/'),
                                 ],
                             ],
                         ],
@@ -634,7 +627,7 @@
                                     @if (isset($item['external']) && $item['external'])
                                         <li class="nav-item">
                                             <a href="{{ $item['path'] ?? route($item['routes']['index']) }}"
-                                                target="_blank" class="nav-link">
+                                                target="_blank" rel="noopener noreferrer" class="nav-link">
                                                 <i class="nav-icon fas fa-{{ $item['icon'] ?? '' }}"></i>
                                                 {{-- <p>@translate($key)</p> --}}
                                                 <p>{{ isset($item['translate']) && !$item['translate'] ? translate($key, [], 'en') : translate($key) }}

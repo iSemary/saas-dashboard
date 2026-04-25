@@ -154,6 +154,11 @@ export const crmSearch = (q: string, limit?: number) => api.get(`${CRM}/search`,
 export const getHrData = () => api.get(`${T}/modules/hr`).then((r) => r.data?.data ?? r.data);
 export const getPosData = () => api.get(`${T}/modules/pos`).then((r) => r.data?.data ?? r.data);
 
+// ─── HR Module Helpers ───────────────────────────────────────────────────────
+export const getHrMe = () => api.get(`${T}/hr/me`).then((r) => r.data?.data ?? r.data);
+export const getHrReportsHeadcount = () => api.get(`${T}/hr/reports/headcount`).then((r) => r.data?.data ?? r.data);
+export const listHrRecruitmentJobs = (params?: TableParams) => api.get(`${T}/hr/recruitment/jobs${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+
 export const getSubscribedModules = () => api.get(`${T}/modules`).then((r) => r.data?.data ?? r.data);
 export const getModule = (moduleKey: string) => api.get(`${T}/modules/${moduleKey}`).then((r) => r.data?.data ?? r.data);
 
@@ -209,12 +214,6 @@ export const createSalesOrder = (p: Record<string, unknown>) => api.post(`${SALE
 export const cancelSalesOrder = (id: number) => api.patch(`${SALES}/orders/${id}/cancel`);
 export const deleteSalesOrder = (id: number) => api.delete(`${SALES}/orders/${id}`);
 export const bulkDeleteSalesOrders = (ids: number[]) => api.post(`${SALES}/orders/bulk-delete`, { ids });
-
-export const listSalesClients = (params?: TableParams) => api.get(`${SALES}/clients${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
-export const getSalesClient = (id: number) => api.get(`${SALES}/clients/${id}`).then((r) => r.data?.data ?? r.data);
-export const createSalesClient = (p: Record<string, unknown>) => api.post(`${SALES}/clients`, p);
-export const updateSalesClient = (id: number, p: Record<string, unknown>) => api.put(`${SALES}/clients/${id}`, p);
-export const deleteSalesClient = (id: number) => api.delete(`${SALES}/clients/${id}`);
 
 // ─── Inventory Module ─────────────────────────────────────────────────────────
 const INV = `${T}/inventory`;

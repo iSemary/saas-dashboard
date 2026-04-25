@@ -36,6 +36,16 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:api', 'landlord_
     Route::apiResource('documentation', DocumentationApiController::class);
 });
 
+// ─── Tenant Development (Runtime Flags) ─────────────────────────────
+Route::prefix('tenant')->name('tenant.')->middleware(['auth:api', 'tenant_roles', 'throttle:60,1'])->group(function () {
+    Route::match(['get', 'post'], 'feature-flags/evaluate', [FeatureFlagApiController::class, 'evaluate'])->name('feature-flags.evaluate');
+});
+
+// Backward-compatible tenant fallback for older frontend bundles.
+Route::match(['get', 'post'], 'feature-flags/evaluate', [FeatureFlagApiController::class, 'evaluate'])
+    ->middleware(['auth:api', 'tenant_roles', 'throttle:60,1'])
+    ->name('feature-flags.evaluate.fallback');
+
 // ─── Development Utility Routes ─────────────────────────────────
 Route::prefix('development')->group(function () {
     Route::get('routes', [DevelopmentController::class, "routes"]);

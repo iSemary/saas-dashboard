@@ -54,10 +54,6 @@ class Resources
                 'actions' => ['read', 'create', 'update', 'delete', 'restore']
             ],
             [
-                'name' => 'clients',
-                'actions' => ['read', 'create', 'update', 'delete', 'restore']
-            ],
-            [
                 'name' => 'tenants',
                 'actions' => ['read', 'create', 'update', 'delete', 'restore']
             ],
@@ -280,10 +276,9 @@ class Resources
             [
                 'name' => 'tenant_management',
                 'guard_name' => 'api',
-                'description' => 'Tenant and client management',
+                'description' => 'Tenant management',
                 'permissions' => [
                     'read.tenants', 'create.tenants', 'update.tenants', 'delete.tenants', 'restore.tenants',
-                    'read.clients', 'create.clients', 'update.clients', 'delete.clients', 'restore.clients',
                 ],
             ],
             [

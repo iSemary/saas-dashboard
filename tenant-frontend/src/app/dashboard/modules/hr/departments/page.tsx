@@ -8,11 +8,11 @@ export default function HrDepartmentsPage() {
   return (
     <SimpleCRUDPage<Department>
       config={{
-        titleKey: 'hr.departments.title',
+        titleKey: 'dashboard.hr.departments_title',
         titleFallback: 'Departments',
-        subtitleKey: 'hr.departments.subtitle',
+        subtitleKey: 'dashboard.hr.departments_subtitle',
         subtitleFallback: 'Manage your organization departments',
-        createLabelKey: 'hr.departments.create',
+        createLabelKey: 'dashboard.hr.departments_create',
         createLabelFallback: 'Create Department',
         moduleKey: 'hr',
         dashboardHref: '/dashboard/modules/hr',

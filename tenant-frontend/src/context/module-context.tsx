@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { useAuth } from "@/context/auth-context";
 import { applyDashboardThemeColors, clearDashboardThemeColors } from "@/lib/dashboard-theme";
 import { type ModulePalette, resolveModulePalette } from "@/lib/module-palette";
 import { getSubscribedModules } from "@/lib/tenant-resources";
@@ -57,20 +58,38 @@ type ModuleContextValue = {
 const ModuleContext = createContext<ModuleContextValue | null>(null);
 
 export function ModuleProvider({ children }: { children: ReactNode }) {
+  const { isAuthenticated } = useAuth();
   const [activeModule, setActiveModule] = useState<ActiveModule>(null);
   const [subscribedModules, setSubscribedModules] = useState<SubscribedModule[]>([]);
   const [modulesLoading, setModulesLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+
+    if (!isAuthenticated) {
+      setSubscribedModules([]);
+      setModulesLoading(false);
+      return;
+    }
+
+    setModulesLoading(true);
     getSubscribedModules()
       .then((data) => {
-        if (Array.isArray(data)) {
+        if (isMounted && Array.isArray(data)) {
           setSubscribedModules(data as SubscribedModule[]);
         }
       })
-      .catch(() => {})
-      .finally(() => setModulesLoading(false));
-  }, []);
+      .catch(() => {
+        if (isMounted) setSubscribedModules([]);
+      })
+      .finally(() => {
+        if (isMounted) setModulesLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isAuthenticated]);
 
   const getModuleByKey = useCallback(
     (key: string) => subscribedModules.find((m) => m.module_key === key),

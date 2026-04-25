@@ -1,7 +1,7 @@
 "use client";
 
 import { SimpleCRUDPage, type SimpleCRUDConfig } from "@/components/simple-crud-page";
-import { listStreets, createStreet, deleteStreet, listTowns, type StreetRow } from "@/lib/resources";
+import { listStreets, createStreet, updateStreet, deleteStreet, listTowns, type StreetRow } from "@/lib/resources";
 
 const config: SimpleCRUDConfig<StreetRow> = {
   titleKey: "dashboard.streets.title",
@@ -16,6 +16,7 @@ const config: SimpleCRUDConfig<StreetRow> = {
   ],
   listFn: listStreets,
   createFn: createStreet,
+  updateFn: updateStreet,
   deleteFn: deleteStreet,
   columns: (t) => [
     { accessorKey: "id", header: t("dashboard.users.col_id", "ID") },
@@ -24,6 +25,11 @@ const config: SimpleCRUDConfig<StreetRow> = {
       id: "town",
       header: t("dashboard.streets.town", "Town"),
       cell: ({ row }: { row: { original: StreetRow } }) => row.original.town?.name ?? "—",
+    },
+    {
+      id: "city",
+      header: t("dashboard.streets.city", "City"),
+      cell: ({ row }: { row: { original: StreetRow } }) => row.original.town?.city?.name ?? "—",
     },
   ],
   toForm: (row) => ({ name: row.name, town_id: String(row.town_id) }),

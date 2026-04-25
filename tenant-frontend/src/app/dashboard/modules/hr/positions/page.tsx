@@ -8,11 +8,11 @@ export default function HrPositionsPage() {
   return (
     <SimpleCRUDPage<Position>
       config={{
-        titleKey: 'hr.positions.title',
+        titleKey: 'dashboard.hr.positions_title',
         titleFallback: 'Positions',
-        subtitleKey: 'hr.positions.subtitle',
+        subtitleKey: 'dashboard.hr.positions_subtitle',
         subtitleFallback: 'Manage job positions',
-        createLabelKey: 'hr.positions.create',
+        createLabelKey: 'dashboard.hr.positions_create',
         createLabelFallback: 'Create Position',
         moduleKey: 'hr',
         dashboardHref: '/dashboard/modules/hr',

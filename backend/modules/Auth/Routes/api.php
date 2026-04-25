@@ -52,6 +52,12 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:api', 'landlord_
         Route::get('/module-stats', [LandlordDashboardController::class, 'getModuleStats'])->name('module-stats');
     });
 
+    // Activity logs (SPA alias — same handler as security/activity-logs)
+    Route::get('activity-logs', [ActivityLogApiController::class, 'index'])->name('activity-logs.index');
+
+    // Permissions list (SPA alias — same handler as roles/permissions)
+    Route::get('permissions', [RolePermissionApiController::class, 'permissions'])->name('permissions.index');
+
     // User Management Routes
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [UserManagementApiController::class, 'index'])->name('landlord.index');

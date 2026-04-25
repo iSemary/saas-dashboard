@@ -12,7 +12,9 @@ export default function PermissionsPage() {
   const { t } = useI18n();
   const [rows, setRows] = useState<PermissionRow[]>([]);
   useEffect(() => {
-    listPermissions().then(setRows).catch(() => setRows([]));
+    listPermissions()
+      .then((permissions) => setRows(permissions as PermissionRow[]))
+      .catch(() => setRows([]));
   }, []);
   const columns = useMemo<Array<ColumnDef<PermissionRow>>>(
     () => [

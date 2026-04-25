@@ -71,11 +71,19 @@ class CityRepository implements CityInterface
 
     public function paginate(array $filters = [], int $perPage = 50): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        $query = $this->model->query();
+        $query = $this->model->query()
+            ->leftJoin('provinces', 'provinces.id', '=', 'cities.province_id')
+            ->select([
+                'cities.*',
+                'provinces.name as province_name',
+            ]);
         if (isset($filters['search'])) {
-            $query->where('name', 'like', "%{$filters['search']}%");
+            $query->where('cities.name', 'like', "%{$filters['search']}%");
         }
-        return $query->orderBy('created_at', 'desc')->paginate($perPage);
+        if (isset($filters['province_id'])) {
+            $query->where('cities.province_id', (int) $filters['province_id']);
+        }
+        return $query->orderBy('cities.created_at', 'desc')->paginate($perPage);
     }
 
     public function create(array $data)

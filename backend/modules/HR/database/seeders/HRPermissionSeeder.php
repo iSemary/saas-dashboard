@@ -107,6 +107,39 @@ class HRPermissionSeeder extends Seeder
             // Reports
             ['name' => 'hr.reports.view', 'display_name' => 'View HR Reports', 'group' => 'hr_reports'],
             ['name' => 'hr.reports.export', 'display_name' => 'Export HR Reports', 'group' => 'hr_reports'],
+
+            // Recruitment
+            ['name' => 'hr.recruitment.view', 'display_name' => 'View Recruitment', 'group' => 'hr_recruitment'],
+            ['name' => 'hr.recruitment.create', 'display_name' => 'Create Recruitment Items', 'group' => 'hr_recruitment'],
+            ['name' => 'hr.recruitment.edit', 'display_name' => 'Edit Recruitment Items', 'group' => 'hr_recruitment'],
+            ['name' => 'hr.recruitment.delete', 'display_name' => 'Delete Recruitment Items', 'group' => 'hr_recruitment'],
+
+            // Performance
+            ['name' => 'hr.performance.view', 'display_name' => 'View Performance', 'group' => 'hr_performance'],
+            ['name' => 'hr.performance.create', 'display_name' => 'Create Performance Records', 'group' => 'hr_performance'],
+            ['name' => 'hr.performance.edit', 'display_name' => 'Edit Performance Records', 'group' => 'hr_performance'],
+            ['name' => 'hr.performance.delete', 'display_name' => 'Delete Performance Records', 'group' => 'hr_performance'],
+
+            // New Feature Areas
+            ['name' => 'hr.onboarding.view', 'display_name' => 'View Onboarding', 'group' => 'hr_onboarding'],
+            ['name' => 'hr.training.view', 'display_name' => 'View Training', 'group' => 'hr_training'],
+            ['name' => 'hr.assets.view', 'display_name' => 'View HR Assets', 'group' => 'hr_assets'],
+            ['name' => 'hr.expenses.view', 'display_name' => 'View HR Expenses', 'group' => 'hr_expenses'],
+            ['name' => 'hr.announcements.view', 'display_name' => 'View HR Announcements', 'group' => 'hr_announcements'],
+
+            // Self Service (own scope)
+            ['name' => 'hr.own.profile.view', 'display_name' => 'View Own HR Profile', 'group' => 'hr_self_service'],
+            ['name' => 'hr.own.leaves.view', 'display_name' => 'View Own Leaves', 'group' => 'hr_self_service'],
+            ['name' => 'hr.own.attendance.view', 'display_name' => 'View Own Attendance', 'group' => 'hr_self_service'],
+            ['name' => 'hr.own.payroll.view', 'display_name' => 'View Own Payroll', 'group' => 'hr_self_service'],
+            ['name' => 'hr.own.goals.view', 'display_name' => 'View Own Goals', 'group' => 'hr_self_service'],
+            ['name' => 'hr.own.assets.view', 'display_name' => 'View Own Assets', 'group' => 'hr_self_service'],
+            ['name' => 'view.own.hr.profile', 'display_name' => 'View Own HR Profile (Scoped)', 'group' => 'hr_self_service'],
+            ['name' => 'view.own.hr.leaves', 'display_name' => 'View Own Leaves (Scoped)', 'group' => 'hr_self_service'],
+            ['name' => 'view.own.hr.attendance', 'display_name' => 'View Own Attendance (Scoped)', 'group' => 'hr_self_service'],
+            ['name' => 'view.own.hr.payroll', 'display_name' => 'View Own Payroll (Scoped)', 'group' => 'hr_self_service'],
+            ['name' => 'view.own.hr.goals', 'display_name' => 'View Own Goals (Scoped)', 'group' => 'hr_self_service'],
+            ['name' => 'view.own.hr.assets', 'display_name' => 'View Own Assets (Scoped)', 'group' => 'hr_self_service'],
         ];
 
         foreach ($permissions as $permission) {

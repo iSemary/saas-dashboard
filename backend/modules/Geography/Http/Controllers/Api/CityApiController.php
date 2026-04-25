@@ -27,6 +27,16 @@ class CityApiController extends Controller
         return $this->apiSuccess($this->service->create($data), 'City created successfully', 201);
     }
 
+    public function update(StoreCityRequest $request, $id)
+    {
+        $data = CreateCityData::fromRequest($request);
+        $city = $this->service->update($id, [
+            'name' => $data->name,
+            'province_id' => $data->province_id,
+        ]);
+        return $this->apiSuccess($city, 'City updated successfully');
+    }
+
     public function destroy($id)
     {
         $this->service->delete($id);

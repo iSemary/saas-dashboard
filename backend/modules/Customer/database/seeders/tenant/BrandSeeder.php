@@ -26,50 +26,13 @@ class BrandSeeder extends Seeder
                 'status' => 'active',
                 'created_by' => 1,
             ],
-            [
-                'name' => 'GreenEnergy Corp',
-                'description' => 'Sustainable energy solutions and environmental consulting services.',
-                'website' => 'https://greenenergy.example.com',
-                'email' => 'contact@greenenergy.example.com',
-                'phone' => '+1-555-0456',
-                'address' => '456 Green Avenue, Portland, OR 97201',
-                'status' => 'active',
-                'created_by' => 1,
-            ],
-            [
-                'name' => 'HealthFirst Medical',
-                'description' => 'Comprehensive healthcare services and medical technology solutions.',
-                'website' => 'https://healthfirst.example.com',
-                'email' => 'info@healthfirst.example.com',
-                'phone' => '+1-555-0789',
-                'address' => '789 Health Boulevard, Boston, MA 02101',
-                'status' => 'active',
-                'created_by' => 1,
-            ],
-            [
-                'name' => 'EduTech Academy',
-                'description' => 'Educational technology and online learning platform development.',
-                'website' => 'https://edutech.example.com',
-                'email' => 'support@edutech.example.com',
-                'phone' => '+1-555-0321',
-                'address' => '321 Education Drive, Austin, TX 78701',
-                'status' => 'active',
-                'created_by' => 1,
-            ],
-            [
-                'name' => 'FinancePro Group',
-                'description' => 'Financial advisory services and investment management solutions.',
-                'website' => 'https://financepro.example.com',
-                'email' => 'info@financepro.example.com',
-                'phone' => '+1-555-0654',
-                'address' => '654 Finance Plaza, New York, NY 10001',
-                'status' => 'active',
-                'created_by' => 1,
-            ],
         ];
 
         foreach ($brands as $brandData) {
-            $brand = Brand::create($brandData);
+            $brand = Brand::updateOrCreate(
+                ['name' => $brandData['name']],
+                $brandData
+            );
 
             // Assign random modules to each brand
             $this->assignModulesToBrand($brand);
@@ -90,8 +53,16 @@ class BrandSeeder extends Seeder
 
             $moduleIds = $randomModules->pluck('id')->toArray();
 
-            // Sync modules to brand
-            $brand->modules()->sync($moduleIds);
+            // Sync modules using the tenant pivot table directly.
+            // Brand::modules() returns a collection by design, not a relation builder.
+            DB::table('brand_module')->where('brand_id', $brand->id)->delete();
+
+            $rows = array_map(fn ($moduleId) => [
+                'brand_id' => $brand->id,
+                'module_id' => $moduleId,
+            ], $moduleIds);
+
+            DB::table('brand_module')->insert($rows);
         }
     }
 }

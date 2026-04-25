@@ -3,6 +3,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import api from "@/lib/api";
 
+const TENANT_PREFIX = "/tenant";
+
 interface FeatureFlagContextValue {
   flags: Record<string, boolean>;
   isEnabled: (key: string, defaultValue?: boolean) => boolean;
@@ -16,7 +18,7 @@ export function FeatureFlagProvider({ children }: { children: React.ReactNode })
 
   const refresh = useCallback(async () => {
     try {
-      const res = await api.post<{ flags: Record<string, boolean> }>("/tenant/feature-flags/evaluate");
+      const res = await api.post<{ flags: Record<string, boolean> }>(`${TENANT_PREFIX}/feature-flags/evaluate`);
       setFlags(res.data.flags ?? {});
     } catch {
       setFlags({});
@@ -25,7 +27,7 @@ export function FeatureFlagProvider({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     let mounted = true;
-    api.post<{ flags: Record<string, boolean> }>("/tenant/feature-flags/evaluate")
+    api.post<{ flags: Record<string, boolean> }>(`${TENANT_PREFIX}/feature-flags/evaluate`)
       .then((res) => {
         if (mounted) setFlags(res.data.flags ?? {});
       })

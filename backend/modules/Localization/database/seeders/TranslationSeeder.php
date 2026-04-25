@@ -382,6 +382,84 @@ class TranslationSeeder extends Seeder
                 'translation_context' => 'status',
                 'is_shareable' => true,
             ],
+            [
+                'translation_key' => 'dashboard.hr.reports',
+                'translations' => ['en' => 'HR Reports', 'ar' => 'تقارير الموارد البشرية', 'de' => 'HR-Berichte'],
+                'translation_context' => 'dashboard',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'dashboard.hr.reports_subtitle',
+                'translations' => ['en' => 'Headcount and operational HR analytics', 'ar' => 'تحليلات الموارد البشرية', 'de' => 'Personalanalysen und Kennzahlen'],
+                'translation_context' => 'dashboard',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'dashboard.hr.recruitment',
+                'translations' => ['en' => 'Recruitment', 'ar' => 'التوظيف', 'de' => 'Recruiting'],
+                'translation_context' => 'dashboard',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'dashboard.hr.recruitment_subtitle',
+                'translations' => ['en' => 'Manage hiring pipeline, interviews, and offers.', 'ar' => 'إدارة مسار التوظيف والمقابلات والعروض', 'de' => 'Bewerbungspipeline, Interviews und Angebote verwalten'],
+                'translation_context' => 'dashboard',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'dashboard.hr.onboarding',
+                'translations' => ['en' => 'Onboarding', 'ar' => 'التهيئة الوظيفية', 'de' => 'Onboarding'],
+                'translation_context' => 'dashboard',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'dashboard.hr.training',
+                'translations' => ['en' => 'Training', 'ar' => 'التدريب', 'de' => 'Schulungen'],
+                'translation_context' => 'dashboard',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'dashboard.hr.assets',
+                'translations' => ['en' => 'Assets', 'ar' => 'الأصول', 'de' => 'Assets'],
+                'translation_context' => 'dashboard',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'dashboard.hr.expenses',
+                'translations' => ['en' => 'Expenses', 'ar' => 'المصروفات', 'de' => 'Ausgaben'],
+                'translation_context' => 'dashboard',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'dashboard.hr.announcements',
+                'translations' => ['en' => 'Announcements & Policies', 'ar' => 'الإعلانات والسياسات', 'de' => 'Ankündigungen und Richtlinien'],
+                'translation_context' => 'dashboard',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'dashboard.hr.me',
+                'translations' => ['en' => 'My HR Profile', 'ar' => 'ملفي الوظيفي', 'de' => 'Mein HR-Profil'],
+                'translation_context' => 'dashboard',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'dashboard.hr.me_leaves',
+                'translations' => ['en' => 'My Leaves', 'ar' => 'إجازاتي', 'de' => 'Meine Urlaube'],
+                'translation_context' => 'dashboard',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'dashboard.hr.me_attendance',
+                'translations' => ['en' => 'My Attendance', 'ar' => 'حضوري', 'de' => 'Meine Anwesenheit'],
+                'translation_context' => 'dashboard',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'dashboard.hr.me_payroll',
+                'translations' => ['en' => 'My Payroll', 'ar' => 'مسير رواتبي', 'de' => 'Meine Gehaltsabrechnung'],
+                'translation_context' => 'dashboard',
+                'is_shareable' => true,
+            ],
         ];
 
         foreach ($translations as $translationData) {

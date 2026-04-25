@@ -28,6 +28,15 @@ class TypeApiController extends Controller
         return $this->apiSuccess($this->service->create($validated), 'Type created successfully', 201);
     }
 
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255',
+        ]);
+        return $this->apiSuccess($this->service->update($id, $validated), 'Type updated successfully');
+    }
+
     public function destroy($id)
     {
         $this->service->delete($id);

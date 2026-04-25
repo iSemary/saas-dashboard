@@ -8,6 +8,7 @@ use Modules\Auth\Entities\Role;
 use Modules\Auth\Entities\Permission;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 
 class TenantEntitiesSeeder extends Seeder
 {
@@ -49,6 +50,13 @@ class TenantEntitiesSeeder extends Seeder
         $this->createNotifications();
 
         $this->command->info('✅ Tenant entities seeding completed successfully!');
+    }
+
+    private function userIdByRole(string $role, int $fallback = 1): int
+    {
+        return User::whereHas('roles', function ($query) use ($role) {
+            $query->where('name', $role)->where('guard_name', 'web');
+        })->first()?->id ?? $fallback;
     }
 
     private function createRolesAndPermissions()
@@ -247,6 +255,11 @@ class TenantEntitiesSeeder extends Seeder
 
     private function createProjects()
     {
+        if (!Schema::hasTable('projects')) {
+            $this->command->warn('   ⚠️  Skipping projects seeding: projects table not found');
+            return;
+        }
+
         $this->command->info('📝 Creating sample projects...');
 
         $projects = [
@@ -268,7 +281,7 @@ class TenantEntitiesSeeder extends Seeder
                 'start_date' => now()->subDays(15),
                 'end_date' => now()->addDays(90),
                 'budget' => 75000.00,
-                'manager_id' => User::where('role', 'manager')->first()?->id ?? 1
+                'manager_id' => $this->userIdByRole('manager')
             ],
             [
                 'name' => 'Data Migration Project',
@@ -278,7 +291,7 @@ class TenantEntitiesSeeder extends Seeder
                 'start_date' => now()->subDays(90),
                 'end_date' => now()->subDays(30),
                 'budget' => 25000.00,
-                'manager_id' => User::where('role', 'manager')->first()?->id ?? 1
+                'manager_id' => $this->userIdByRole('manager')
             ],
             [
                 'name' => 'Security Audit & Implementation',
@@ -288,7 +301,7 @@ class TenantEntitiesSeeder extends Seeder
                 'start_date' => now()->addDays(7),
                 'end_date' => now()->addDays(45),
                 'budget' => 35000.00,
-                'manager_id' => User::where('role', 'admin')->first()?->id ?? 1
+                'manager_id' => $this->userIdByRole('admin')
             ],
             [
                 'name' => 'Customer Portal Enhancement',
@@ -298,7 +311,7 @@ class TenantEntitiesSeeder extends Seeder
                 'start_date' => now()->addDays(30),
                 'end_date' => now()->addDays(120),
                 'budget' => 40000.00,
-                'manager_id' => User::where('role', 'manager')->first()?->id ?? 1
+                'manager_id' => $this->userIdByRole('manager')
             ]
         ];
 
@@ -314,6 +327,11 @@ class TenantEntitiesSeeder extends Seeder
 
     private function createTasks()
     {
+        if (!Schema::hasTable('tasks')) {
+            $this->command->warn('   ⚠️  Skipping tasks seeding: tasks table not found');
+            return;
+        }
+
         $this->command->info('📋 Creating sample tasks...');
 
         $projects = DB::table('projects')->pluck('id', 'name');
@@ -362,6 +380,7 @@ class TenantEntitiesSeeder extends Seeder
             DB::table('tasks')->updateOrInsert(
                 ['title' => $taskData['title'], 'project_id' => $taskData['project_id']],
                 array_merge($taskData, [
+                    'created_by' => $this->userIdByRole('admin'),
                     'created_at' => now(),
                     'updated_at' => now()
                 ])
@@ -373,6 +392,11 @@ class TenantEntitiesSeeder extends Seeder
 
     private function createOrganizations()
     {
+        if (!Schema::hasTable('organizations')) {
+            $this->command->warn('   ⚠️  Skipping organizations seeding: organizations table not found');
+            return;
+        }
+
         $this->command->info('🏢 Creating sample organizations...');
 
         $organizations = [
@@ -426,43 +450,48 @@ class TenantEntitiesSeeder extends Seeder
 
     private function createDepartments()
     {
+        if (!Schema::hasTable('departments')) {
+            $this->command->warn('   ⚠️  Skipping departments seeding: departments table not found');
+            return;
+        }
+
         $this->command->info('🏛️ Creating sample departments...');
 
         $departments = [
             [
                 'name' => 'Engineering',
                 'description' => 'Software development and technical operations',
-                'head_id' => User::where('role', 'manager')->first()?->id ?? 1,
-                'budget' => 150000.00,
-                'location' => 'Building A, Floor 2'
+                'code' => 'ENG',
+                'status' => 'active',
+                'created_by' => $this->userIdByRole('admin')
             ],
             [
                 'name' => 'Marketing',
                 'description' => 'Brand management and customer acquisition',
-                'head_id' => User::where('username', 'emmadavis')->first()?->id ?? 1,
-                'budget' => 80000.00,
-                'location' => 'Building B, Floor 1'
+                'code' => 'MKT',
+                'status' => 'active',
+                'created_by' => $this->userIdByRole('admin')
             ],
             [
                 'name' => 'Sales',
                 'description' => 'Customer sales and business development',
-                'head_id' => User::where('username', 'davidbrown')->first()?->id ?? 1,
-                'budget' => 120000.00,
-                'location' => 'Building C, Floor 1'
+                'code' => 'SLS',
+                'status' => 'active',
+                'created_by' => $this->userIdByRole('admin')
             ],
             [
                 'name' => 'Human Resources',
                 'description' => 'Employee management and organizational development',
-                'head_id' => User::where('role', 'manager')->first()?->id ?? 1,
-                'budget' => 60000.00,
-                'location' => 'Building D, Floor 1'
+                'code' => 'HR',
+                'status' => 'active',
+                'created_by' => $this->userIdByRole('admin')
             ],
             [
                 'name' => 'Finance',
                 'description' => 'Financial planning and accounting operations',
-                'head_id' => User::where('username', 'roberttaylor')->first()?->id ?? 1,
-                'budget' => 70000.00,
-                'location' => 'Building E, Floor 2'
+                'code' => 'FIN',
+                'status' => 'active',
+                'created_by' => $this->userIdByRole('admin')
             ]
         ];
 
@@ -481,6 +510,16 @@ class TenantEntitiesSeeder extends Seeder
 
     private function createTeams()
     {
+        if (!Schema::hasTable('teams')) {
+            $this->command->warn('   ⚠️  Skipping teams seeding: teams table not found');
+            return;
+        }
+
+        if (!Schema::hasColumn('teams', 'name')) {
+            $this->command->warn('   ⚠️  Skipping teams seeding: teams schema is minimal');
+            return;
+        }
+
         $this->command->info('👥 Creating sample teams...');
 
         $teams = [
@@ -529,6 +568,11 @@ class TenantEntitiesSeeder extends Seeder
 
     private function createMeetings()
     {
+        if (!Schema::hasTable('meetings')) {
+            $this->command->warn('   ⚠️  Skipping meetings seeding: meetings table not found');
+            return;
+        }
+
         $this->command->info('📅 Creating sample meetings...');
 
         $meetings = [
@@ -540,7 +584,7 @@ class TenantEntitiesSeeder extends Seeder
                 'start_time' => now()->addDay()->setTime(9, 0),
                 'end_time' => now()->addDay()->setTime(9, 30),
                 'location' => 'Conference Room A',
-                'organizer_id' => User::where('role', 'manager')->first()?->id ?? 1
+                'organizer_id' => $this->userIdByRole('manager')
             ],
             [
                 'title' => 'Project Review Meeting',
@@ -549,7 +593,7 @@ class TenantEntitiesSeeder extends Seeder
                 'start_time' => now()->addDays(2)->setTime(14, 0),
                 'end_time' => now()->addDays(2)->setTime(15, 0),
                 'location' => 'Conference Room B',
-                'organizer_id' => User::where('role', 'admin')->first()?->id ?? 1
+                'organizer_id' => $this->userIdByRole('admin')
             ],
             [
                 'title' => 'Quarterly Planning Session',
@@ -577,6 +621,11 @@ class TenantEntitiesSeeder extends Seeder
 
     private function createDocuments()
     {
+        if (!Schema::hasTable('documents')) {
+            $this->command->warn('   ⚠️  Skipping documents seeding: documents table not found');
+            return;
+        }
+
         $this->command->info('📄 Creating sample documents...');
 
         $documents = [
@@ -585,7 +634,7 @@ class TenantEntitiesSeeder extends Seeder
                 'description' => 'Project charter document outlining scope and objectives',
                 'type' => 'pdf',
                 'size' => 2048576, // 2MB
-                'author_id' => User::where('role', 'admin')->first()?->id ?? 1,
+                'author_id' => $this->userIdByRole('admin'),
                 'category' => 'project_documents'
             ],
             [
@@ -601,7 +650,7 @@ class TenantEntitiesSeeder extends Seeder
                 'description' => 'Updated employee handbook with policies and procedures',
                 'type' => 'pdf',
                 'size' => 5242880, // 5MB
-                'author_id' => User::where('role', 'manager')->first()?->id ?? 1,
+                'author_id' => $this->userIdByRole('manager'),
                 'category' => 'hr_documents'
             ],
             [
@@ -630,53 +679,58 @@ class TenantEntitiesSeeder extends Seeder
 
     private function createNotifications()
     {
+        if (!Schema::hasTable('notifications')) {
+            $this->command->warn('   ⚠️  Skipping notifications seeding: notifications table not found');
+            return;
+        }
+
         $this->command->info('🔔 Creating sample notifications...');
 
         $notifications = [
             [
-                'title' => 'Welcome to the Team!',
-                'message' => 'Welcome to our organization. Please complete your profile setup.',
-                'type' => 'welcome',
+                'name' => 'Welcome to the Team!',
+                'description' => 'Welcome to our organization. Please complete your profile setup.',
+                'type' => 'info',
                 'priority' => 'high',
                 'user_id' => User::where('username', 'emmadavis')->first()?->id ?? 1,
-                'is_read' => false
+                'metadata' => json_encode(['source' => 'tenant-seeder'])
             ],
             [
-                'title' => 'Project Deadline Approaching',
-                'message' => 'Mobile App Development project deadline is approaching in 2 weeks.',
-                'type' => 'deadline',
+                'name' => 'Project Deadline Approaching',
+                'description' => 'Mobile App Development project deadline is approaching in 2 weeks.',
+                'type' => 'alert',
                 'priority' => 'medium',
-                'user_id' => User::where('role', 'manager')->first()?->id ?? 1,
-                'is_read' => false
+                'user_id' => $this->userIdByRole('manager'),
+                'metadata' => json_encode(['source' => 'tenant-seeder'])
             ],
             [
-                'title' => 'Meeting Scheduled',
-                'message' => 'Team Standup meeting is scheduled for tomorrow at 9:00 AM.',
-                'type' => 'meeting',
+                'name' => 'Meeting Scheduled',
+                'description' => 'Team Standup meeting is scheduled for tomorrow at 9:00 AM.',
+                'type' => 'announcement',
                 'priority' => 'low',
                 'user_id' => User::where('username', 'mikewilson')->first()?->id ?? 1,
-                'is_read' => false
+                'metadata' => json_encode(['source' => 'tenant-seeder'])
             ],
             [
-                'title' => 'System Maintenance Notice',
-                'message' => 'Scheduled system maintenance will occur this weekend from 2 AM to 4 AM.',
-                'type' => 'system',
+                'name' => 'System Maintenance Notice',
+                'description' => 'Scheduled system maintenance will occur this weekend from 2 AM to 4 AM.',
+                'type' => 'announcement',
                 'priority' => 'medium',
                 'user_id' => User::where('username', 'tenantadmin')->first()?->id ?? 1,
-                'is_read' => false
+                'metadata' => json_encode(['source' => 'tenant-seeder'])
             ]
         ];
 
         foreach ($notifications as $noteData) {
             DB::table('notifications')->updateOrInsert(
-                ['title' => $noteData['title'], 'user_id' => $noteData['user_id']],
+                ['name' => $noteData['name'], 'user_id' => $noteData['user_id']],
                 array_merge($noteData, [
                     'created_at' => now(),
                     'updated_at' => now()
                 ])
             );
 
-            $this->command->info("   ✅ Created notification: {$noteData['title']}");
+            $this->command->info("   ✅ Created notification: {$noteData['name']}");
         }
     }
 }

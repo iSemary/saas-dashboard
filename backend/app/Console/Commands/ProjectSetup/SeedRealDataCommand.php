@@ -130,8 +130,11 @@ class SeedRealDataCommand extends Command
                         'Modules\\Utilities\\Database\\Seeders\\CurrencySeeder',
                         'Modules\\Utilities\\Database\\Seeders\\StaticPageSeeder',
                         'Modules\\Utilities\\Database\\Seeders\\StaticPageAttributeSeeder',
+                        'Modules\\Utilities\\Database\\Seeders\\TagSeeder',
+                        'Modules\\Utilities\\Database\\Seeders\\IndustrySeeder',
                         'Modules\\Utilities\\Database\\Seeders\\UnitSeeder',
                         'Modules\\Utilities\\Database\\Seeders\\ModuleEntitySeeder',
+                        'Modules\\Utilities\\Database\\Seeders\\CategorySeeder',
                     ]
                 ],
             'Auth' => [

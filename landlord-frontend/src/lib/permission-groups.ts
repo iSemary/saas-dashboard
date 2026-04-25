@@ -1,4 +1,5 @@
 import api from "@/lib/api";
+import { pickArray } from "@/lib/resources";
 
 export type PermissionRef = { id: number; name: string };
 
@@ -11,14 +12,24 @@ export type PermissionGroup = {
   permissions_count?: number;
 };
 
+function unwrapNestedData<T>(payload: unknown): T {
+  if (payload && typeof payload === "object" && "data" in payload) {
+    const inner = (payload as { data: unknown }).data;
+    if (inner && typeof inner === "object") {
+      return inner as T;
+    }
+  }
+  return payload as T;
+}
+
 export async function listPermissionGroups(): Promise<PermissionGroup[]> {
   const res = await api.get("/permission-groups", { params: { per_page: 200 } });
-  return Array.isArray(res.data) ? (res.data as PermissionGroup[]) : [];
+  return pickArray<PermissionGroup>(res.data, "data");
 }
 
 export async function fetchPermissionGroup(id: number): Promise<PermissionGroup> {
   const res = await api.get(`/permission-groups/${id}`);
-  return res.data as PermissionGroup;
+  return unwrapNestedData<PermissionGroup>(res.data);
 }
 
 export async function createPermissionGroup(payload: {
@@ -28,7 +39,7 @@ export async function createPermissionGroup(payload: {
   permission_ids?: number[];
 }): Promise<PermissionGroup> {
   const res = await api.post("/permission-groups", payload);
-  return res.data as PermissionGroup;
+  return unwrapNestedData<PermissionGroup>(res.data);
 }
 
 export async function updatePermissionGroup(
@@ -41,7 +52,7 @@ export async function updatePermissionGroup(
   },
 ): Promise<PermissionGroup> {
   const res = await api.put(`/permission-groups/${id}`, payload);
-  return res.data as PermissionGroup;
+  return unwrapNestedData<PermissionGroup>(res.data);
 }
 
 export async function deletePermissionGroup(id: number): Promise<void> {

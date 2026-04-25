@@ -3,6 +3,7 @@
 namespace Modules\Tenant\Services;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Modules\Customer\Entities\Tenant\BrandModule;
 use Modules\Utilities\Entities\Module;
 
@@ -37,21 +38,33 @@ class TenantModuleService
             ->get();
 
         if ($brandModules->isEmpty()) {
-            return [];
+            return $this->getLegacySubscribedModules($brandIds);
         }
 
         // Get landlord module details in one query
-        $moduleIds = $brandModules->pluck('module_id')->unique()->toArray();
+        $moduleIds = $brandModules->pluck('module_id')->filter()->unique()->values()->toArray();
+        $moduleKeys = $brandModules->pluck('module_key')->filter()->unique()->values()->toArray();
         $landlordModules = Module::on('landlord')
-            ->whereIn('id', $moduleIds)
+            ->where(function ($query) use ($moduleIds, $moduleKeys) {
+                if (!empty($moduleIds)) {
+                    $query->whereIn('id', $moduleIds);
+                }
+                if (!empty($moduleKeys)) {
+                    $query->orWhereIn('module_key', $moduleKeys);
+                }
+            })
             ->where('status', 'active')
             ->get()
             ->keyBy('id');
+        $landlordModulesByKey = $landlordModules->keyBy('module_key');
 
         // Get notification counts per module_id
+        $resolvedModuleIds = $landlordModules->pluck('id')->unique()->values()->toArray();
         $notificationCounts = DB::table('notifications')
             ->where('is_read', false)
-            ->whereIn('module_id', $moduleIds)
+            ->when(!empty($resolvedModuleIds), function ($query) use ($resolvedModuleIds) {
+                $query->whereIn('module_id', $resolvedModuleIds);
+            })
             ->select('module_id', DB::raw('count(*) as count'))
             ->groupBy('module_id')
             ->pluck('count', 'module_id')
@@ -68,15 +81,16 @@ class TenantModuleService
 
         $result = [];
         foreach ($brandModules as $brandModule) {
-            $landlordModule = $landlordModules->get($brandModule->module_id);
+            $landlordModule = $landlordModules->get($brandModule->module_id)
+                ?? $landlordModulesByKey->get($brandModule->module_key);
             if (!$landlordModule) {
                 continue;
             }
 
             $result[] = [
                 'id' => $brandModule->id,
-                'module_id' => $brandModule->module_id,
-                'module_key' => $brandModule->module_key,
+                'module_id' => $landlordModule->id,
+                'module_key' => $landlordModule->module_key ?? $brandModule->module_key,
                 'name' => $landlordModule->name,
                 'description' => $landlordModule->description,
                 'icon' => $landlordModule->icon,
@@ -88,7 +102,7 @@ class TenantModuleService
                 'brand_name' => $brandModule->brand?->name,
                 'color_palette' => $brandModule->color_palette,
                 'subscribed_at' => $brandModule->subscribed_at?->toIso8601String(),
-                'unread_notifications' => $notificationCounts[$brandModule->module_id] ?? 0,
+                'unread_notifications' => $notificationCounts[$landlordModule->id] ?? 0,
                 'open_tickets' => $ticketCounts[$brandModule->brand_id] ?? 0,
             ];
         }
@@ -115,15 +129,124 @@ class TenantModuleService
      */
     private function getUserBrandIds($user): array
     {
-        // If user has a brand_id field, use it
-        if (method_exists($user, 'brands')) {
-            return $user->brands()->pluck('brands.id')->toArray();
+        $brandIds = [];
+
+        // Prefer explicit single-brand mapping if present.
+        if (isset($user->brand_id) && !empty($user->brand_id)) {
+            $brandIds[] = (int) $user->brand_id;
         }
 
-        // Fallback: get all active brands
-        return DB::table('brands')
-            ->where('status', 'active')
+        // Use many-to-many relation when available.
+        if (method_exists($user, 'brands')) {
+            try {
+                $relatedBrandIds = $user->brands()->pluck('brands.id')->map(fn ($id) => (int) $id)->toArray();
+                $brandIds = array_merge($brandIds, $relatedBrandIds);
+            } catch (\Throwable $e) {
+                // Ignore relation mismatches and continue to fallback.
+            }
+        }
+
+        $brandIds = array_values(array_unique(array_filter($brandIds)));
+        if (!empty($brandIds)) {
+            return $brandIds;
+        }
+
+        // Fallback for legacy setups: expose all active brands.
+        // Some tenants still use `is_active` instead of `status`.
+        $brandsQuery = DB::table('brands');
+
+        if (Schema::hasColumn('brands', 'status')) {
+            $brandsQuery->where('status', 'active');
+        } elseif (Schema::hasColumn('brands', 'is_active')) {
+            $brandsQuery->where('is_active', true);
+        }
+
+        return $brandsQuery
             ->pluck('id')
+            ->map(fn ($id) => (int) $id)
             ->toArray();
+    }
+
+    /**
+     * Legacy fallback: read old brand_module pivot records.
+     */
+    private function getLegacySubscribedModules(array $brandIds): array
+    {
+        if (!DB::getSchemaBuilder()->hasTable('brand_module')) {
+            return [];
+        }
+
+        $legacyRows = DB::table('brand_module')
+            ->whereIn('brand_id', $brandIds)
+            ->get(['id', 'brand_id', 'module_id', 'created_at']);
+
+        if ($legacyRows->isEmpty()) {
+            return [];
+        }
+
+        $moduleIds = $legacyRows->pluck('module_id')->filter()->unique()->values()->toArray();
+        if (empty($moduleIds)) {
+            return [];
+        }
+
+        $landlordModules = Module::on('landlord')
+            ->whereIn('id', $moduleIds)
+            ->where('status', 'active')
+            ->get()
+            ->keyBy('id');
+
+        if ($landlordModules->isEmpty()) {
+            return [];
+        }
+
+        $brandNames = DB::table('brands')
+            ->whereIn('id', $brandIds)
+            ->pluck('name', 'id')
+            ->toArray();
+
+        $notificationCounts = DB::table('notifications')
+            ->where('is_read', false)
+            ->whereIn('module_id', $landlordModules->pluck('id')->toArray())
+            ->select('module_id', DB::raw('count(*) as count'))
+            ->groupBy('module_id')
+            ->pluck('count', 'module_id')
+            ->toArray();
+
+        $ticketCounts = DB::table('tickets')
+            ->whereIn('brand_id', $brandIds)
+            ->whereNotIn('status', ['resolved', 'closed'])
+            ->select('brand_id', DB::raw('count(*) as count'))
+            ->groupBy('brand_id')
+            ->pluck('count', 'brand_id')
+            ->toArray();
+
+        $result = [];
+        foreach ($legacyRows as $row) {
+            $landlordModule = $landlordModules->get($row->module_id);
+            if (!$landlordModule) {
+                continue;
+            }
+
+            $result[] = [
+                'id' => $row->id,
+                'module_id' => $landlordModule->id,
+                'module_key' => $landlordModule->module_key,
+                'name' => $landlordModule->name,
+                'description' => $landlordModule->description,
+                'icon' => $landlordModule->icon,
+                'route' => $landlordModule->route,
+                'slogan' => $landlordModule->slogan,
+                'navigation' => $landlordModule->navigation,
+                'status' => 'active',
+                'brand_id' => $row->brand_id,
+                'brand_name' => $brandNames[$row->brand_id] ?? null,
+                'color_palette' => null,
+                'subscribed_at' => $row->created_at,
+                'unread_notifications' => $notificationCounts[$landlordModule->id] ?? 0,
+                'open_tickets' => $ticketCounts[$row->brand_id] ?? 0,
+            ];
+        }
+
+        return $result;
     }
 }

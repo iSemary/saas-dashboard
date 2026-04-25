@@ -2,6 +2,7 @@
 
 namespace Modules\Geography\Entities;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -54,6 +55,11 @@ class Province extends Model implements Auditable
         } else {
             $this->attributes['flag'] = $value;
         }
+    }
+
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class);
     }
 
 }

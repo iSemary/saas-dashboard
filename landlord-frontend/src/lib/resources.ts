@@ -1,5 +1,17 @@
 import api from "@/lib/api";
 
+/** Unwrap legacy Laravel API payloads where the list lives under a named key. */
+export function pickArray<T>(payload: unknown, ...keys: string[]): T[] {
+  if (Array.isArray(payload)) return payload as T[];
+  if (payload && typeof payload === "object") {
+    for (const k of keys) {
+      const v = (payload as Record<string, unknown>)[k];
+      if (Array.isArray(v)) return v as T[];
+    }
+  }
+  return [];
+}
+
 export interface Paginated<T> {
   data: T[];
 }
@@ -57,11 +69,11 @@ export async function listUsers(params?: TableParams) {
 }
 export async function listRoles(params?: TableParams) {
   const res = await api.get(`/roles${buildTableQuery(params)}`);
-  return Array.isArray(res.data) ? res.data : [];
+  return pickArray(res.data, "roles", "data");
 }
 export async function listPermissions(params?: TableParams) {
   const res = await api.get(`/permissions${buildTableQuery(params)}`);
-  return Array.isArray(res.data) ? res.data : [];
+  return pickArray(res.data, "permissions", "data");
 }
 export async function dashboardStats() {
   const res = await api.get("/dashboard/stats");
@@ -136,7 +148,7 @@ export async function markAllNotificationsRead() {
 }
 export async function listActivityLogs(params?: TableParams) {
   const res = await api.get(`/activity-logs${buildTableQuery(params)}`);
-  return Array.isArray(res.data) ? res.data : [];
+  return pickArray(res.data, "logs", "data");
 }
 export async function listFeatureFlags(params?: TableParams) {
   const res = await api.get(`/feature-flags${buildTableQuery(params)}`);
@@ -282,6 +294,51 @@ export async function updateTenant(id: number, payload: { name?: string; domain?
 
 export async function deleteTenant(id: number) {
   await api.delete(`/tenants/${id}`);
+}
+
+// --- Tenant Owners ---
+
+export type TenantOwnerRow = {
+  id: number;
+  tenant_id: number;
+  user_id: number;
+  role: string;
+  is_super_admin: boolean;
+  status: string;
+  permissions: string[] | null;
+  tenant?: { id: number; name: string };
+  user?: { id: number; name: string; email: string };
+  created_at?: string;
+};
+
+export async function listTenantOwners(params?: { tenant_id?: number; status?: string; search?: string; per_page?: number }) {
+  const query = new URLSearchParams();
+  if (params?.tenant_id) query.append('tenant_id', String(params.tenant_id));
+  if (params?.status) query.append('status', params.status);
+  if (params?.search) query.append('search', params.search);
+  if (params?.per_page) query.append('per_page', String(params.per_page));
+  const qs = query.toString();
+  const res = await api.get(`/tenant-owners${qs ? `?${qs}` : ''}`);
+  return Array.isArray(res.data) ? (res.data as TenantOwnerRow[]) : [];
+}
+
+export async function fetchTenantOwner(id: number) {
+  const res = await api.get<TenantOwnerRow>(`/tenant-owners/${id}`);
+  return res.data;
+}
+
+export async function createTenantOwner(payload: Record<string, unknown>) {
+  const res = await api.post('/tenant-owners', payload);
+  return res.data;
+}
+
+export async function updateTenantOwner(id: number, payload: Record<string, unknown>) {
+  const res = await api.put(`/tenant-owners/${id}`, payload);
+  return res.data;
+}
+
+export async function deleteTenantOwner(id: number) {
+  await api.delete(`/tenant-owners/${id}`);
 }
 
 // --- Email Log ---
@@ -605,6 +662,10 @@ export async function createProvince(payload: Record<string, unknown>) {
   const res = await api.post("/provinces", payload);
   return res.data;
 }
+export async function updateProvince(id: number, payload: Record<string, unknown>) {
+  const res = await api.put(`/provinces/${id}`, payload);
+  return res.data;
+}
 export async function deleteProvince(id: number) {
   await api.delete(`/provinces/${id}`);
 }
@@ -624,7 +685,8 @@ export type CityRow = {
   area_km2: number | null;
   population: number | null;
   elevation_m: number | null;
-  province?: { id: number; name: string };
+  province_name?: string | null;
+  province?: { id: number; name: string } | string;
   created_at?: string;
 };
 
@@ -634,6 +696,10 @@ export async function listCities() {
 }
 export async function createCity(payload: Record<string, unknown>) {
   const res = await api.post("/cities", payload);
+  return res.data;
+}
+export async function updateCity(id: number, payload: Record<string, unknown>) {
+  const res = await api.put(`/cities/${id}`, payload);
   return res.data;
 }
 export async function deleteCity(id: number) {
@@ -663,6 +729,10 @@ export async function createTown(payload: Record<string, unknown>) {
   const res = await api.post("/towns", payload);
   return res.data;
 }
+export async function updateTown(id: number, payload: Record<string, unknown>) {
+  const res = await api.put(`/towns/${id}`, payload);
+  return res.data;
+}
 export async function deleteTown(id: number) {
   await api.delete(`/towns/${id}`);
 }
@@ -673,7 +743,7 @@ export type StreetRow = {
   id: number;
   name: string;
   town_id: number;
-  town?: { id: number; name: string };
+  town?: { id: number; name: string; city?: { id: number; name: string } };
   created_at?: string;
 };
 
@@ -683,6 +753,10 @@ export async function listStreets() {
 }
 export async function createStreet(payload: Record<string, unknown>) {
   const res = await api.post("/streets", payload);
+  return res.data;
+}
+export async function updateStreet(id: number, payload: Record<string, unknown>) {
+  const res = await api.put(`/streets/${id}`, payload);
   return res.data;
 }
 export async function deleteStreet(id: number) {
@@ -765,6 +839,10 @@ export async function createType(payload: Record<string, unknown>) {
   const res = await api.post("/types", payload);
   return res.data;
 }
+export async function updateType(id: number, payload: Record<string, unknown>) {
+  const res = await api.put(`/types/${id}`, payload);
+  return res.data;
+}
 export async function deleteType(id: number) {
   await api.delete(`/types/${id}`);
 }
@@ -788,6 +866,10 @@ export async function listIndustries() {
 }
 export async function createIndustry(payload: Record<string, unknown>) {
   const res = await api.post("/industries", payload);
+  return res.data;
+}
+export async function updateIndustry(id: number, payload: Record<string, unknown>) {
+  const res = await api.put(`/industries/${id}`, payload);
   return res.data;
 }
 export async function deleteIndustry(id: number) {
