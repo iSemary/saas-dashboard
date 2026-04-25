@@ -13,7 +13,7 @@ const config: SimpleCRUDConfig<ReleaseRow> = {
   fields: [
     { name: "version", label: "Version", required: true },
     { name: "title", label: "Title", required: true },
-    { name: "body", label: "Body", type: "textarea" },
+    { name: "body", label: "Body", type: "richtext" },
     { name: "release_date", label: "Release Date", type: "datetime" },
     { name: "is_published", label: "Published", type: "select", options: [{ value: "1", label: "Yes" }, { value: "0", label: "No" }] },
   ],

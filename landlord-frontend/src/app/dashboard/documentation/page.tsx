@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/sheet";
 import api from "@/lib/api";
 import { useI18n } from "@/context/i18n-context";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 
 type DocRow = {
   id: number;
@@ -181,11 +182,9 @@ export default function DocumentationPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="doc-body">{t("dashboard.documentation.body", "Body")}</Label>
-              <textarea
-                id="doc-body"
-                className="flex min-h-[160px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              <RichTextEditor
                 value={form.body}
-                onChange={(e) => setForm((f) => ({ ...f, body: e.target.value }))}
+                onChange={(value) => setForm((f) => ({ ...f, body: value }))}
               />
             </div>
             <div className="space-y-2">

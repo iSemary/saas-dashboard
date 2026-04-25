@@ -16,6 +16,7 @@ SKIP_BACKEND=false
 SKIP_FRONTEND=false
 SKIP_BUILD=false
 FORCE=false
+NO_APP_START=false
 
 for arg in "$@"; do
   case "$arg" in
@@ -23,6 +24,7 @@ for arg in "$@"; do
     --skip-frontend) SKIP_FRONTEND=true ;;
     --skip-build)    SKIP_BUILD=true ;;
     --force)         FORCE=true ;;
+    --no-app-start)  NO_APP_START=true ;;
     --help|-h)
       echo "Usage: ./autorun.sh [options]"
       echo ""
@@ -30,6 +32,7 @@ for arg in "$@"; do
       echo "  --skip-frontend  Skip frontend build"
       echo "  --skip-build     Skip npm build, only create symlinks"
       echo "  --force          Force rebuild frontends even if out/ exists"
+      echo "  --no-app-start   Skip php artisan app:start (migrations/seeding)"
       echo "  --help           Show this help"
       exit 0
       ;;
@@ -64,32 +67,23 @@ if [ "$SKIP_BACKEND" = false ]; then
     php artisan key:generate --force
   fi
 
-  # Run landlord migrations + seed
-  if [ "$FORCE" = true ] || [ ! -f ".setup-done-landlord" ]; then
-    echo "  → Running landlord:setup..."
-    php artisan landlord:setup --force || true
-    touch .setup-done-landlord
+  # Run full app setup (migrations + essential/real seeding + tenant setup + passport + storage)
+  if [ "$NO_APP_START" = false ]; then
+    if [ "$FORCE" = true ] || [ ! -f ".setup-done" ]; then
+      if [ "$FORCE" = true ]; then
+        echo "  → Running app:start --refresh (force mode)..."
+        yes | php artisan app:start --refresh || true
+      else
+        echo "  → Running app:start..."
+        php artisan app:start || true
+      fi
+      touch .setup-done
+    else
+      echo "  ✓ App setup already done (use --force to redo)"
+    fi
   else
-    echo "  ✓ Landlord setup already done (use --force to redo)"
+    echo "  ⚠ Skipped app:start (--no-app-start)"
   fi
-
-  # Run tenant migrations + seed
-  if [ "$FORCE" = true ] || [ ! -f ".setup-done-tenant" ]; then
-    echo "  → Running tenant:setup..."
-    php artisan tenant:setup --force || true
-    touch .setup-done-tenant
-  else
-    echo "  ✓ Tenant setup already done (use --force to redo)"
-  fi
-
-  # Passport keys
-  if [ ! -f "storage/oauth-private.key" ]; then
-    echo "  → Installing Passport keys..."
-    php artisan passport:keys --force 2>/dev/null || true
-  fi
-
-  # Storage link
-  php artisan storage:link 2>/dev/null || true
 
   echo ""
 fi

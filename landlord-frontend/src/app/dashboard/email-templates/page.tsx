@@ -17,6 +17,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { listEmailTemplates, fetchEmailTemplate, createEmailTemplate, updateEmailTemplate, deleteEmailTemplate, type EmailTemplateRow } from "@/lib/resources";
 import { useI18n } from "@/context/i18n-context";
 
@@ -174,11 +175,9 @@ export default function EmailTemplatesPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="tpl-body">{t("dashboard.email_templates.body", "Body")}</Label>
-              <textarea
-                id="tpl-body"
-                className="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              <RichTextEditor
                 value={form.body}
-                onChange={(e) => setForm((f) => ({ ...f, body: e.target.value }))}
+                onChange={(value) => setForm((f) => ({ ...f, body: value }))}
               />
             </div>
           </div>

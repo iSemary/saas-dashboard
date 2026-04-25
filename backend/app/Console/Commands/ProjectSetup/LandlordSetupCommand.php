@@ -75,7 +75,7 @@ class LandlordSetupCommand extends Command
         $this->info('🌱 Running Landlord Seeding...');
 
         // Run landlord:seed for seeder files
-        if (!$this->option('skip-real-data') || !$this->option('skip-dummy-data')) {
+        if (!$this->option('skip-real-data') && !$this->option('skip-dummy-data')) {
             try {
                 $this->call('landlord:seed');
                 $this->info('✅ Landlord seeders completed successfully');

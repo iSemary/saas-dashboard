@@ -170,11 +170,67 @@ php artisan storage:link
 
 ### Start Application
 
-Runs all necessary services to start the application:
+Runs all necessary setup steps to start the application (env, storage link, migrations, seeding, tenant setup, Passport keys):
 
 ```bash
 php artisan app:start
 ```
+
+To **drop all tables** in both landlord and tenant databases and start fresh:
+
+```bash
+php artisan app:start --refresh
+```
+
+> ⚠️ `--refresh` is destructive — it will wipe all data. A confirmation prompt will appear before proceeding.
+
+### Seeding Data
+
+#### Real Data (languages, roles, configurations, currencies, etc.)
+
+Seeds production-ready reference data required for the application to function correctly:
+
+```bash
+php artisan seed:real-data
+```
+
+Seed specific modules only:
+
+```bash
+php artisan seed:real-data --modules=Localization --modules=Auth
+```
+
+Available modules: `Localization`, `Email`, `Development`, `Utilities`, `Auth`, `Tenant`, `Geography`
+
+Force seeding even if data already exists:
+
+```bash
+php artisan seed:real-data --force
+```
+
+#### Dummy Data (users, categories, types, tenants, etc.)
+
+Seeds fake data for testing and development purposes:
+
+```bash
+php artisan seed:dummy-data
+```
+
+Seed specific modules only:
+
+```bash
+php artisan seed:dummy-data --modules=Auth --modules=Utilities
+```
+
+Available modules: `Auth`, `Utilities`, `Email`, `Geography`, `Tenant`
+
+Force seeding even if data already exists:
+
+```bash
+php artisan seed:dummy-data --force
+```
+
+> 💡 Both commands are automatically run as part of `php artisan app:start` unless skipped via `--skip-real-data` or `--skip-dummy-data`.
 
 # Landlord Setup
 php artisan landlord:setup

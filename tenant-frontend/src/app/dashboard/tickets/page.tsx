@@ -16,7 +16,7 @@ const config: SimpleCRUDConfig<Ticket> = {
   createLabelFallback: "New Ticket",
   fields: [
     { name: "subject", label: "Subject", placeholder: "Issue with...", required: true },
-    { name: "body", label: "Description", type: "textarea", placeholder: "Describe the issue...", required: true },
+    { name: "body", label: "Description", type: "richtext", placeholder: "Describe the issue...", required: true },
     { name: "priority", label: "Priority", type: "select", options: [{ value: "low", label: "Low" }, { value: "medium", label: "Medium" }, { value: "high", label: "High" }, { value: "urgent", label: "Urgent" }] },
     { name: "status", label: "Status", type: "select", options: [{ value: "open", label: "Open" }, { value: "in_progress", label: "In Progress" }, { value: "closed", label: "Closed" }] },
   ],

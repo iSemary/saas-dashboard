@@ -13,7 +13,7 @@ class SeedRealDataCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'seed:real-data 
+    protected $signature = 'seed:real-data
                             {--force : Force seeding even if data exists}
                             {--modules=* : Specific modules to seed (e.g., --modules=Localization,Email)}';
 
@@ -145,6 +145,7 @@ class SeedRealDataCommand extends Command
                     'description' => 'Landlord tenant setup',
                     'seeders' => [
                         'Database\\Seeders\\Landlord\\LandlordTenantSeeder',
+                        'Database\\Seeders\\Landlord\\AllCredentialsSeeder',
                     ]
                 ],
                 'Geography' => [
@@ -171,7 +172,7 @@ class SeedRealDataCommand extends Command
             }
 
             $this->info("📦 Seeding {$module} module: {$availableModules[$module]['description']}");
-            
+
             foreach ($availableModules[$module]['seeders'] as $seeder) {
                 try {
                     $this->line("   → Running {$seeder}...");
@@ -184,7 +185,7 @@ class SeedRealDataCommand extends Command
                     $this->error("   ❌ {$seeder} failed: " . $e->getMessage());
                 }
             }
-            
+
             $this->newLine();
         }
     }

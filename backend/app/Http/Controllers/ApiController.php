@@ -9,7 +9,7 @@ use stdClass;
 class ApiController extends Controller {
     /**
      * The function returns a JSON response with a status code, message, data, errors, and timestamp.
-     * 
+     *
      * @param int status The status parameter is an integer that represents the HTTP status code of the
      * response. It indicates the success or failure of the request.
      * @param string message The "message" parameter is a string that represents a custom message that you
@@ -20,7 +20,7 @@ class ApiController extends Controller {
      * @param array errors The `errors` parameter is an array that contains any error messages or
      * information related to the request or operation. It can be used to provide additional details about
      * any errors that occurred during the execution of the code.
-     * 
+     *
      * @return JsonResponse a JsonResponse object.
      */
     public function return(int $status, string $message = '', array $data = [], array $errors = [], mixed $debug = []): JsonResponse {
@@ -37,7 +37,7 @@ class ApiController extends Controller {
 
     /**
      * The function returns a JSON response with a status code of 403 and a message of "Unauthenticated".
-     * 
+     *
      * @return JsonResponse A JsonResponse object is being returned.
      */
     public function returnUnAuthenticated(): JsonResponse {
@@ -46,10 +46,45 @@ class ApiController extends Controller {
 
     /**
      * The function returns a JSON response with a status code of 401 and a message of "Unauthorized".
-     * 
+     *
      * @return JsonResponse A JsonResponse object is being returned.
      */
     public function returnUnAuthorized(): JsonResponse {
         return $this->return(401, "Unauthorized");
+    }
+
+    /**
+     * Return a successful response with data array
+     */
+    public function respondWithArray(array $data, string $message = ''): JsonResponse {
+        return $this->return(200, $message, $data);
+    }
+
+    /**
+     * Return a 201 created response
+     */
+    public function respondCreated(array $data, string $message = 'Created successfully'): JsonResponse {
+        return $this->return(201, $message, $data);
+    }
+
+    /**
+     * Return a 204 no content response
+     */
+    public function respondNoContent(string $message = ''): JsonResponse {
+        return $this->return(204, $message);
+    }
+
+    /**
+     * Return a 404 not found response
+     */
+    public function respondNotFound(string $message = 'Resource not found'): JsonResponse {
+        return $this->return(404, $message);
+    }
+
+    /**
+     * Return an error response
+     */
+    public function respondError(string $message, int $status = 400): JsonResponse {
+        return $this->return($status, $message);
     }
 }

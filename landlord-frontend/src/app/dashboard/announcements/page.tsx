@@ -13,7 +13,7 @@ const config: SimpleCRUDConfig<AnnouncementRow> = {
   fields: [
     { name: "name", label: "Name", required: true },
     { name: "description", label: "Description", type: "textarea" },
-    { name: "body", label: "Body", type: "textarea" },
+    { name: "body", label: "Body", type: "richtext" },
     { name: "type", label: "Type", type: "select", options: [{ value: "info", label: "Info" }, { value: "warning", label: "Warning" }, { value: "success", label: "Success" }, { value: "error", label: "Error" }] },
     { name: "start_at", label: "Start Date", type: "datetime" },
     { name: "end_at", label: "End Date", type: "datetime" },

@@ -14,22 +14,28 @@ export type ApiAxiosResponse<T = unknown> = AxiosResponse<T> & {
 function unwrapApiEnvelope(response: AxiosResponse): void {
   const payload = response.data;
   if (
-    payload &&
-    typeof payload === "object" &&
-    !Array.isArray(payload) &&
-    "success" in payload &&
-    (payload as { success: unknown }).success === true &&
-    "data" in payload
+    !payload ||
+    typeof payload !== "object" ||
+    Array.isArray(payload) ||
+    !("data" in payload)
   ) {
-    const p = payload as { data: unknown; message: string; meta: unknown };
-    response.data = p.data as typeof response.data;
-    const r = response as ApiAxiosResponse;
-    r.apiMessage = p.message;
-    r.apiMeta =
-      p.meta && typeof p.meta === "object" && !Array.isArray(p.meta) && Object.keys(p.meta as object).length > 0
-        ? (p.meta as Record<string, unknown>)
-        : undefined;
+    return;
   }
+  // Accept both backend envelope shapes:
+  //   A) ApiResponseEnvelope trait: { status: "success", data, message }
+  //   B) Legacy ApiController::return(): { status: 200, success: true, data, message, errors, ... }
+  const isEnvelopeA = (payload as { status?: unknown }).status === "success";
+  const isEnvelopeB = (payload as { success?: unknown }).success === true;
+  if (!isEnvelopeA && !isEnvelopeB) return;
+
+  const p = payload as { data: unknown; message: string; meta: unknown };
+  response.data = p.data as typeof response.data;
+  const r = response as ApiAxiosResponse;
+  r.apiMessage = p.message;
+  r.apiMeta =
+    p.meta && typeof p.meta === "object" && !Array.isArray(p.meta) && Object.keys(p.meta as object).length > 0
+      ? (p.meta as Record<string, unknown>)
+      : undefined;
 }
 
 /** Match login / 2FA / password flows — skip global 401 logout (axios `url` / `method` vary). */

@@ -1,0 +1,659 @@
+{
+  "info": {
+    "name": "Survey Module",
+    "description": "Full Survey Module API Collection - Authenticated Tenant Routes + Public Respondent Routes",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Tenant Routes (Authenticated)",
+      "item": [
+        {
+          "name": "Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tenant_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tenant/survey/dashboard",
+              "host": ["{{base_url}}"],
+              "path": ["tenant", "survey", "dashboard"]
+            }
+          }
+        },
+        {
+          "name": "Surveys",
+          "item": [
+            {
+              "name": "List Surveys",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/surveys",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "surveys"]
+                }
+              }
+            },
+            {
+              "name": "Create Survey",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/surveys",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "surveys"]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Customer Satisfaction Survey\",\n  \"description\": \"Help us improve our services\",\n  \"status\": \"draft\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Get Survey",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/surveys/{{survey_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "surveys", "{{survey_id}}"]
+                }
+              }
+            },
+            {
+              "name": "Update Survey",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/surveys/{{survey_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "surveys", "{{survey_id}}"]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Updated Survey Title\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Delete Survey",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/surveys/{{survey_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "surveys", "{{survey_id}}"]
+                }
+              }
+            },
+            {
+              "name": "Publish Survey",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/surveys/{{survey_id}}/publish",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "surveys", "{{survey_id}}", "publish"]
+                }
+              }
+            },
+            {
+              "name": "Duplicate Survey",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/surveys/{{survey_id}}/duplicate",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "surveys", "{{survey_id}}", "duplicate"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Pages",
+          "item": [
+            {
+              "name": "List Pages",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/surveys/{{survey_id}}/pages",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "surveys", "{{survey_id}}", "pages"]
+                }
+              }
+            },
+            {
+              "name": "Create Page",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/surveys/{{survey_id}}/pages",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "surveys", "{{survey_id}}", "pages"]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Page 1\",\n  \"order\": 1\n}"
+                }
+              }
+            },
+            {
+              "name": "Reorder Pages",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/surveys/{{survey_id}}/pages/reorder",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "surveys", "{{survey_id}}", "pages", "reorder"]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ordered_ids\": [3, 1, 2]\n}"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Questions",
+          "item": [
+            {
+              "name": "List Questions",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/surveys/{{survey_id}}/questions",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "surveys", "{{survey_id}}", "questions"]
+                }
+              }
+            },
+            {
+              "name": "Create Question",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/surveys/{{survey_id}}/questions",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "surveys", "{{survey_id}}", "questions"]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"multiple_choice\",\n  \"title\": \"How satisfied are you?\",\n  \"is_required\": true,\n  \"options\": [\n    {\"label\": \"Very Satisfied\", \"value\": \"5\"},\n    {\"label\": \"Satisfied\", \"value\": \"4\"},\n    {\"label\": \"Neutral\", \"value\": \"3\"},\n    {\"label\": \"Dissatisfied\", \"value\": \"2\"},\n    {\"label\": \"Very Dissatisfied\", \"value\": \"1\"}\n  ]\n}"
+                }
+              }
+            },
+            {
+              "name": "Reorder Questions",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/surveys/{{survey_id}}/questions/reorder",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "surveys", "{{survey_id}}", "questions", "reorder"]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ordered_ids\": [2, 1, 3]\n}"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Responses",
+          "item": [
+            {
+              "name": "List Responses",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/surveys/{{survey_id}}/responses",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "surveys", "{{survey_id}}", "responses"]
+                }
+              }
+            },
+            {
+              "name": "Get Response Details",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/responses/{{response_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "responses", "{{response_id}}"]
+                }
+              }
+            },
+            {
+              "name": "Delete Response",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/responses/{{response_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "responses", "{{response_id}}"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Analytics",
+          "item": [
+            {
+              "name": "Survey Analytics",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/surveys/{{survey_id}}/analytics",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "surveys", "{{survey_id}}", "analytics"]
+                }
+              }
+            },
+            {
+              "name": "Export Responses",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/surveys/{{survey_id}}/analytics/export?format=csv",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "surveys", "{{survey_id}}", "analytics", "export"],
+                  "query": [
+                    {
+                      "key": "format",
+                      "value": "csv"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Shares",
+          "item": [
+            {
+              "name": "List Shares",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/surveys/{{survey_id}}/shares",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "surveys", "{{survey_id}}", "shares"]
+                }
+              }
+            },
+            {
+              "name": "Create Share",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/surveys/{{survey_id}}/shares",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "surveys", "{{survey_id}}", "shares"]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"channel\": \"link\",\n  \"max_uses\": null\n}"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Templates & Themes",
+          "item": [
+            {
+              "name": "List Templates",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/templates",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "templates"]
+                }
+              }
+            },
+            {
+              "name": "Create Survey from Template",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/templates/{{template_id}}/create-survey",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "templates", "{{template_id}}", "create-survey"]
+                }
+              }
+            },
+            {
+              "name": "List Themes",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tenant_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/tenant/survey/themes",
+                  "host": ["{{base_url}}"],
+                  "path": ["tenant", "survey", "themes"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Public Routes (No Auth)",
+      "item": [
+        {
+          "name": "Render Survey",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/public/survey/{{share_token}}",
+              "host": ["{{base_url}}"],
+              "path": ["public", "survey", "{{share_token}}"]
+            }
+          }
+        },
+        {
+          "name": "Start Survey Response",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/public/survey/{{share_token}}/start",
+              "host": ["{{base_url}}"],
+              "path": ["public", "survey", "{{share_token}}", "start"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"respondent_email\": \"test@example.com\",\n  \"respondent_name\": \"John Doe\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Submit Answer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/public/survey/{{share_token}}/answer",
+              "host": ["{{base_url}}"],
+              "path": ["public", "survey", "{{share_token}}", "answer"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"response_id\": {{response_id}},\n  \"question_id\": {{question_id}},\n  \"value\": \"5\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Complete Survey",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/public/survey/{{share_token}}/complete",
+              "host": ["{{base_url}}"],
+              "path": ["public", "survey", "{{share_token}}", "complete"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"response_id\": {{response_id}}\n}"
+            }
+          }
+        },
+        {
+          "name": "Resume Survey",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/public/survey/{{share_token}}/resume/{{resume_token}}",
+              "host": ["{{base_url}}"],
+              "path": ["public", "survey", "{{share_token}}", "resume", "{{resume_token}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Embed Routes",
+      "item": [
+        {
+          "name": "Get Embed HTML",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/embed/survey/{{share_token}}",
+              "host": ["{{base_url}}"],
+              "path": ["embed", "survey", "{{share_token}}"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "tenant_token",
+      "value": "your-jwt-token-here"
+    },
+    {
+      "key": "survey_id",
+      "value": "1"
+    },
+    {
+      "key": "share_token",
+      "value": "abc123xyz"
+    },
+    {
+      "key": "response_id",
+      "value": "1"
+    },
+    {
+      "key": "resume_token",
+      "value": "resume-token-here"
+    },
+    {
+      "key": "template_id",
+      "value": "1"
+    },
+    {
+      "key": "question_id",
+      "value": "1"
+    }
+  ]
+}

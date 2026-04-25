@@ -1,7 +1,6 @@
 "use client";
 
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { CKEditor } from "ckeditor4-react";
 import { forwardRef } from "react";
 
 export interface RichTextEditorProps {
@@ -15,67 +14,38 @@ export interface RichTextEditorProps {
 }
 
 const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
-  ({ value = "", onChange, placeholder, disabled, dir = "ltr", language = "en", className }, ref) => {
+  ({ value = "", onChange, disabled, dir = "ltr", language = "en", className }, ref) => {
     const editorConfig = {
       language: language,
-      direction: dir,
-      placeholder: placeholder,
+      contentsLangDirection: dir,
       toolbar: [
-        "heading",
-        "|",
-        "bold",
-        "italic",
-        "underline",
-        "strikethrough",
-        "|",
-        "link",
-        "imageUpload",
-        "blockQuote",
-        "insertTable",
-        "mediaEmbed",
-        "|",
-        "bulletedList",
-        "numberedList",
-        "|",
-        "alignment",
-        "|",
-        "undo",
-        "redo",
+        { name: "document", items: ["Source", "-", "Save", "NewPage", "Preview", "Print", "-", "Templates"] },
+        { name: "clipboard", items: ["Cut", "Copy", "Paste", "PasteText", "PasteFromWord", "-", "Undo", "Redo"] },
+        { name: "editing", items: ["Find", "Replace", "-", "SelectAll", "-", "Scayt"] },
+        { name: "forms", items: ["Form", "Checkbox", "Radio", "TextField", "Textarea", "Select", "Button", "ImageButton", "HiddenField"] },
+        "/",
+        { name: "basicstyles", items: ["Bold", "Italic", "Underline", "Strike", "Subscript", "Superscript", "-", "CopyFormatting", "RemoveFormat"] },
+        { name: "paragraph", items: ["NumberedList", "BulletedList", "-", "Outdent", "Indent", "-", "Blockquote", "CreateDiv", "-", "JustifyLeft", "JustifyCenter", "JustifyRight", "JustifyBlock", "-", "BidiLtr", "BidiRtl", "Language"] },
+        { name: "links", items: ["Link", "Unlink", "Anchor"] },
+        { name: "insert", items: ["Image", "Flash", "Table", "HorizontalRule", "Smiley", "SpecialChar", "PageBreak", "Iframe"] },
+        "/",
+        { name: "styles", items: ["Styles", "Format", "Font", "FontSize"] },
+        { name: "colors", items: ["TextColor", "BGColor"] },
+        { name: "tools", items: ["Maximize", "ShowBlocks"] },
+        { name: "about", items: ["About"] },
       ],
-      table: {
-        contentToolbar: [
-          "tableColumn",
-          "tableRow",
-          "mergeTableCells",
-          "tableProperties",
-          "tableCellProperties",
-        ],
-      },
-      image: {
-        toolbar: [
-          "imageStyle:inline",
-          "imageStyle:block",
-          "imageStyle:side",
-          "|",
-          "toggleImageCaption",
-          "imageTextAlternative",
-        ],
-      },
-      mediaEmbed: {
-        previewsInData: true,
-      },
+      height: 300,
+      removeButtons: "Save,NewPage,Preview,Print,Templates,Find,Replace,SelectAll,Scayt,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,Flash,Smiley,SpecialChar,PageBreak,Iframe,Maximize,ShowBlocks,About",
     };
 
     return (
       <div ref={ref} className={className} dir={dir}>
         <CKEditor
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          editor={ClassicEditor as any}
-          data={value}
+          initData={value}
           config={editorConfig}
-          disabled={disabled}
-          onChange={(_event, editor) => {
-            const data = editor.getData();
+          readOnly={disabled}
+          onChange={(event: { editor: { getData: () => string } }) => {
+            const data = event.editor.getData();
             onChange?.(data);
           }}
         />

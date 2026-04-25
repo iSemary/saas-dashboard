@@ -45,9 +45,9 @@ class FeatureFlagApiController extends Controller
         $slugs = $request->input('slugs', []);
 
         if (empty($slugs)) {
-            return $this->apiSuccess($this->service->evaluateAll());
+            return $this->apiSuccess(['flags' => $this->service->evaluateAll()]);
         }
 
-        return $this->apiSuccess($this->service->evaluate($slugs));
+        return $this->apiSuccess(['flags' => $this->service->evaluate($slugs)]);
     }
 }

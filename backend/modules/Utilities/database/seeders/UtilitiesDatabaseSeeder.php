@@ -19,11 +19,10 @@ class UtilitiesDatabaseSeeder extends Seeder
             TagSeeder::class,
             TypeSeeder::class,
             AnnouncementSeeder::class,
-            ModuleSeeder::class,
             ReleaseSeeder::class,
             StaticPageSeeder::class,
             EntitySeeder::class,
-            
+
             // Entities with dependencies
             UnitSeeder::class, // Depends on TypeSeeder
             StaticPageAttributeSeeder::class, // Depends on StaticPageSeeder

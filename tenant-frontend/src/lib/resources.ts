@@ -54,7 +54,7 @@ export async function listActivityLogs() {
   return Array.isArray(res.data) ? res.data : [];
 }
 export async function listFeatureFlags() {
-  const res = await api.get("/feature-flags");
+  const res = await api.get(`${T}/feature-flags`);
   return Array.isArray(res.data) ? res.data : [];
 }
 
@@ -74,7 +74,7 @@ export type ConfigurationRow = {
 };
 
 export async function listConfigurations(params?: { with_trashed?: boolean; per_page?: number }) {
-  const res = await api.get<ConfigurationRow[]>("/configurations", {
+  const res = await api.get<ConfigurationRow[]>(`${T}/configurations`, {
     params: {
       per_page: params?.per_page ?? 50,
       with_trashed: params?.with_trashed ? 1 : undefined,

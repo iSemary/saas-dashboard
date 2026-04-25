@@ -22,6 +22,7 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:api', 'landlord_
     Route::apiResource('configurations', ConfigurationApiController::class);
     Route::apiResource('backups', BackupApiController::class)->except(['show', 'update']);
     Route::get('backups/{id}/download', [BackupApiController::class, 'download'])->name('backups.download');
+    Route::match(['get', 'post'], 'feature-flags/evaluate', [FeatureFlagApiController::class, 'evaluate'])->withoutMiddleware(['landlord_roles'])->name('feature-flags.evaluate');
     Route::apiResource('feature-flags', FeatureFlagApiController::class);
     Route::apiResource('ip-blacklists', IpBlacklistApiController::class);
     Route::post('code-builder', [CodeBuilderApiController::class, 'build'])->name('code-builder.build');
@@ -33,11 +34,6 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:api', 'landlord_
     Route::get('system-health', [SystemHealthApiController::class, 'index'])->name('system-health.index');
     Route::get('tenant-monitoring', [TenantMonitoringApiController::class, 'index'])->name('tenant-monitoring.index');
     Route::apiResource('documentation', DocumentationApiController::class);
-});
-
-// ─── Public Feature Flags Evaluate ──────────────────────────────
-Route::middleware(['auth:api', 'throttle:60,1'])->group(function () {
-    Route::match(['get', 'post'], 'feature-flags/evaluate', [FeatureFlagApiController::class, 'evaluate']);
 });
 
 // ─── Development Utility Routes ─────────────────────────────────

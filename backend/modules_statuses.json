@@ -20,5 +20,6 @@
     "Accounting": true,
     "HR": true,
     "API": true,
-    "StaticPages": true
+    "StaticPages": true,
+    "POS": true
 }

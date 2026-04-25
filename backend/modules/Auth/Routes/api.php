@@ -11,6 +11,7 @@ use Modules\Auth\Http\Controllers\Api\TenantPermissionApiController;
 use Modules\Auth\Http\Controllers\Api\TenantUserApiController;
 use Modules\Auth\Http\Controllers\Api\TenantActivityLogApiController;
 use Modules\Auth\Http\Controllers\Api\TenantLoginAttemptApiController;
+use Modules\Auth\Http\Controllers\Landlord\DashboardController as LandlordDashboardController;
 use Modules\Auth\Http\Controllers\Landlord\SuperAdminApiController;
 use Modules\Auth\Http\Controllers\Landlord\UserManagementApiController;
 use Modules\Auth\Http\Controllers\Landlord\RolePermissionApiController;
@@ -45,6 +46,10 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:api', 'landlord_
         Route::get('/', [SuperAdminApiController::class, 'dashboard'])->name('show');
         Route::get('/stats', [SuperAdminApiController::class, 'getStats'])->name('stats');
         Route::get('/recent-activities', [SuperAdminApiController::class, 'getRecentActivities'])->name('recent');
+        Route::get('/user-chart', [LandlordDashboardController::class, 'getUserChartData'])->name('user-chart');
+        Route::get('/tenant-chart', [LandlordDashboardController::class, 'getTenantChartData'])->name('tenant-chart');
+        Route::get('/email-chart', [LandlordDashboardController::class, 'getEmailChartData'])->name('email-chart');
+        Route::get('/module-stats', [LandlordDashboardController::class, 'getModuleStats'])->name('module-stats');
     });
 
     // User Management Routes

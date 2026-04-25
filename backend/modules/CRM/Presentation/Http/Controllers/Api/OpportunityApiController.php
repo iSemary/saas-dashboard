@@ -7,7 +7,7 @@ namespace Modules\CRM\Presentation\Http\Controllers\Api;
 use App\Http\Controllers\ApiResponseEnvelope;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use App\Http\Controllers\ApiController;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Modules\CRM\Application\UseCases\Opportunity\CreateOpportunityUseCase;
@@ -17,7 +17,7 @@ use Modules\CRM\Application\UseCases\Opportunity\CloseOpportunityWonUseCase;
 use Modules\CRM\Application\UseCases\Opportunity\GetPipelineDataUseCase;
 use Modules\CRM\Infrastructure\Persistence\OpportunityRepositoryInterface;
 
-class OpportunityApiController extends Controller implements HasMiddleware
+class OpportunityApiController extends ApiController implements HasMiddleware
 {
     use ApiResponseEnvelope;
 

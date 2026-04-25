@@ -7,7 +7,7 @@ namespace Modules\CRM\Presentation\Http\Controllers\Api;
 use App\Http\Controllers\ApiResponseEnvelope;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use App\Http\Controllers\ApiController;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Modules\CRM\Application\DTOs\CreateLeadDTO;
@@ -19,7 +19,7 @@ use Modules\CRM\Application\UseCases\Lead\GetLeadUseCase;
 use Modules\CRM\Application\UseCases\Lead\ListLeadsUseCase;
 use Modules\CRM\Application\UseCases\Lead\ConvertLeadUseCase;
 
-class LeadApiController extends Controller implements HasMiddleware
+class LeadApiController extends ApiController implements HasMiddleware
 {
     use ApiResponseEnvelope;
 

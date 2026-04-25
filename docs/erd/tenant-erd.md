@@ -71,14 +71,6 @@ This document contains the tenant database schema for the SaaS Dashboard applica
 - **Columns**: name, description, type, industry, size, website, contact_email, phone, address, city, state, country, postal_code, social_links, business_registration, status, annual_revenue, employee_count, founded_date
 - **Indexes**: [type, industry], [country, state], status
 
-#### departments
-- **PK**: id
-- **Columns**: (empty - placeholder)
-
-#### teams
-- **PK**: id
-- **Columns**: (empty - placeholder)
-
 ---
 
 ### Accounting Module
@@ -222,32 +214,94 @@ This document contains the tenant database schema for the SaaS Dashboard applica
 
 ### HR Module
 
+#### departments
+- **PK**: id
+- **Columns**: name, code (unique, nullable), parent_id, manager_id, description, status, created_by, custom_fields
+- **FK**: parent_id → departments (null on delete), manager_id → employees (null on delete), created_by → users (null on delete)
+- **Indexes**: status, parent_id
+- **Soft Deletes**: Yes
+
+#### positions
+- **PK**: id
+- **Columns**: title, code (unique, nullable), department_id, level, min_salary, max_salary, description, requirements, is_active, created_by, custom_fields
+- **FK**: department_id → departments (null on delete), created_by → users (null on delete)
+- **Indexes**: department_id, level, is_active
+- **Soft Deletes**: Yes
+
 #### employees
 - **PK**: id
-- **Columns**: employee_number (unique), user_id, first_name, last_name, email, phone, date_of_birth, gender, national_id, passport_number, address, city, state, postal_code, country, hire_date, termination_date, employment_status, job_title, department, manager_id, salary, currency, pay_frequency, emergency_contact_name, emergency_contact_phone, emergency_contact_relationship, created_by, custom_fields
-- **FK**: user_id → users, manager_id → employees, created_by → users
-- **Indexes**: [employment_status, hire_date], [department, job_title], [manager_id, employment_status], employee_number
+- **Columns**: employee_number (unique), user_id (nullable), first_name, middle_name (nullable), last_name, email (unique), phone (nullable), date_of_birth (nullable), gender (nullable), marital_status (nullable), national_id (nullable), passport_number (nullable), address (nullable), city (nullable), state (nullable), postal_code (nullable), country (nullable), hire_date, probation_end_date (nullable), termination_date (nullable), employment_status, employment_type, department_id (nullable), position_id (nullable), manager_id (nullable), salary (nullable), currency, pay_frequency, emergency_contact_name (nullable), emergency_contact_phone (nullable), emergency_contact_relationship (nullable), avatar (nullable), created_by, custom_fields
+- **FK**: user_id → users (null on delete), department_id → departments (null on delete), position_id → positions (null on delete), manager_id → employees (null on delete), created_by → users (null on delete)
+- **Indexes**: employee_number, user_id, employment_status, employment_type, department_id, position_id, manager_id, hire_date
+- **Soft Deletes**: Yes
+
+#### employee_documents
+- **PK**: id
+- **Columns**: employee_id, type, title, file_path, file_name, file_size, mime_type, issued_date (nullable), expiry_date (nullable), issued_by (nullable), document_number (nullable), notify_before_days (nullable), notes (nullable), created_by, custom_fields
+- **FK**: employee_id → employees (cascade delete), created_by → users (null on delete)
+- **Indexes**: employee_id, type, expiry_date
+- **Soft Deletes**: Yes
+
+#### employee_contracts
+- **PK**: id
+- **Columns**: employee_id, contract_number (unique), type, status, start_date, end_date (nullable), basic_salary, currency, benefits (json), file_path (nullable), notes (nullable), created_by, custom_fields
+- **FK**: employee_id → employees (cascade delete), created_by → users (null on delete)
+- **Indexes**: employee_id, status, end_date
+- **Soft Deletes**: Yes
+
+#### employment_history
+- **PK**: id
+- **Columns**: employee_id, change_type, from_value (nullable), to_value (nullable), effective_date, notes (nullable), created_by
+- **FK**: employee_id → employees (cascade delete), created_by → users (null on delete)
+- **Indexes**: employee_id, change_type, effective_date
+
+#### shifts
+- **PK**: id
+- **Columns**: name, start_time, end_time, break_minutes, working_days (json), grace_minutes (nullable), description (nullable), is_active, created_by, custom_fields
+- **FK**: created_by → users (null on delete)
+- **Indexes**: is_active
+- **Soft Deletes**: Yes
+
+#### work_schedules
+- **PK**: id
+- **Columns**: employee_id, shift_id, effective_from, effective_to (nullable), created_by
+- **FK**: employee_id → employees (cascade delete), shift_id → shifts (cascade delete), created_by → users (null on delete)
+- **Indexes**: employee_id, shift_id, effective_from
 - **Soft Deletes**: Yes
 
 #### attendances
 - **PK**: id
-- **Columns**: employee_id, date, check_in, check_out, break_start, break_end, total_hours, break_duration, overtime_hours, status, notes, is_approved, approved_by, approved_at, created_by, custom_fields
-- **FK**: employee_id → employees, approved_by → users, created_by → users
-- **Indexes**: [employee_id, date], [date, status], [is_approved, date], unique [employee_id, date]
+- **Columns**: employee_id, date, check_in (nullable), check_out (nullable), break_start (nullable), break_end (nullable), total_hours (nullable), break_duration (nullable), overtime_hours (nullable), status, source, ip_address (nullable), latitude (nullable), longitude (nullable), notes (nullable), is_approved, approved_by (nullable), approved_at (nullable), created_by, custom_fields
+- **FK**: employee_id → employees (cascade delete), approved_by → users (null on delete), created_by → users (null on delete)
+- **Indexes**: [employee_id, date], [date, status], is_approved
 - **Soft Deletes**: Yes
 
-#### payrolls
+#### leave_types
 - **PK**: id
-- **Columns**: payroll_number (unique), employee_id, pay_period_start, pay_period_end, pay_date, status, basic_salary, overtime_pay, bonus, allowances, gross_pay, tax_deduction, social_security, health_insurance, other_deductions, total_deductions, net_pay, currency, notes, created_by, approved_by, approved_at, custom_fields
-- **FK**: employee_id → employees, created_by → users, approved_by → users
-- **Indexes**: [employee_id, pay_period_start], [status, pay_date], [pay_period_start, pay_period_end], payroll_number
+- **Columns**: name, code (unique, nullable), color (nullable), is_paid, requires_approval, max_consecutive_days (nullable), min_notice_days (nullable), allow_half_day, allow_negative_balance, is_active, created_by, custom_fields
+- **FK**: created_by → users (null on delete)
+- **Indexes**: is_active
+- **Soft Deletes**: Yes
+
+#### leave_balances
+- **PK**: id
+- **Columns**: employee_id, leave_type_id, year, allocated, accrued, used, carried_over, remaining, created_by
+- **FK**: employee_id → employees (cascade delete), leave_type_id → leave_types (cascade delete), created_by → users (null on delete)
+- **Indexes**: [employee_id, leave_type_id, year]
 - **Soft Deletes**: Yes
 
 #### leave_requests
 - **PK**: id
-- **Columns**: employee_id, leave_type, start_date, end_date, total_days, reason, status, approved_by, approved_at, approval_notes, rejection_reason, is_emergency, attachments, created_by, custom_fields
-- **FK**: employee_id → employees, approved_by → users, created_by → users
-- **Indexes**: [employee_id, start_date], [status, leave_type], [start_date, end_date], approved_by
+- **Columns**: employee_id, leave_type_id, start_date, end_date, total_days, is_half_day, half_day_session (nullable), reason (nullable), status, approved_by (nullable), approved_at (nullable), rejection_reason (nullable), created_by, custom_fields
+- **FK**: employee_id → employees (cascade delete), leave_type_id → leave_types (cascade delete), approved_by → users (null on delete), created_by → users (null on delete)
+- **Indexes**: [employee_id, start_date], [status, leave_type_id], [start_date, end_date]
+- **Soft Deletes**: Yes
+
+#### payrolls
+- **PK**: id
+- **Columns**: payroll_number (unique), employee_id, pay_period_start, pay_period_end, pay_date (nullable), status, basic_salary, overtime_pay (nullable), bonus (nullable), allowances (nullable), gross_pay, tax_deduction (nullable), social_security (nullable), health_insurance (nullable), other_deductions (nullable), total_deductions, net_pay, currency, notes (nullable), approved_by (nullable), approved_at (nullable), created_by, custom_fields
+- **FK**: employee_id → employees (cascade delete), approved_by → users (null on delete), created_by → users (null on delete)
+- **Indexes**: [employee_id, pay_period_start], [status, pay_date], payroll_number
 - **Soft Deletes**: Yes
 
 ---

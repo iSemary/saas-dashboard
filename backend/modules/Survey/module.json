@@ -1,0 +1,11 @@
+{
+    "name": "Survey",
+    "alias": "survey",
+    "description": "Full-featured Survey module with drag-drop builder, branching logic, quizzes, multi-language, and cross-module integrations",
+    "keywords": ["survey", "forms", "feedback", "nps", "csat", "quiz", "questionnaire"],
+    "priority": 1,
+    "providers": [
+        "Modules\\Survey\\Providers\\SurveyServiceProvider"
+    ],
+    "files": []
+}

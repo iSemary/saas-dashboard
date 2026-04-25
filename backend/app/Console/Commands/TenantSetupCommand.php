@@ -306,26 +306,38 @@ class TenantSetupCommand extends Command
             $className = $this->getTenantSeederClassName($passportSeederPath, 'database/seeders/tenant');
 
             if ($className) {
-                $tenant->execute(function () use ($className) {
-                    Artisan::call('db:seed', [
+                $exitCode = null;
+                $output = '';
+
+                $tenant->execute(function () use ($className, &$exitCode, &$output) {
+                    $exitCode = Artisan::call('db:seed', [
                         '--class' => $className,
                         '--database' => 'tenant',
                         '--force' => true,
                     ]);
+                    $output = Artisan::output();
                 });
 
-                $output = Artisan::output();
+                // Display seeder output
                 if (trim($output)) {
+                    foreach (explode("\n", trim($output)) as $line) {
+                        if ($line) {
+                            $this->line("      " . $line);
+                        }
+                    }
+                }
+
+                if ($exitCode === 0) {
                     $this->line("   ✅ Passport setup completed for tenant: {$tenant->name}");
                 } else {
-                    $this->line("   ⏭️  Passport setup skipped or already configured");
+                    $this->warn("   ⚠️  Passport setup exited with code: {$exitCode}");
                 }
             } else {
                 $this->warn("   ⚠️  Warning: Could not resolve PassportSetupSeeder class name");
             }
         } catch (\Exception $e) {
             $this->warn("   ⚠️  Warning: Passport setup failed - {$e->getMessage()}");
-            $this->line("   Manual Passport setup may be required for tenant: {$tenant->name}");
+            $this->line("   Manual Passport setup may be required: php artisan tenant:setup {$tenant->id}");
         }
 
         $this->newLine();

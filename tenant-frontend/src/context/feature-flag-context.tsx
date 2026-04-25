@@ -16,7 +16,7 @@ export function FeatureFlagProvider({ children }: { children: React.ReactNode })
 
   const refresh = useCallback(async () => {
     try {
-      const res = await api.post<{ flags: Record<string, boolean> }>("/feature-flags/evaluate");
+      const res = await api.post<{ flags: Record<string, boolean> }>("/tenant/feature-flags/evaluate");
       setFlags(res.data.flags ?? {});
     } catch {
       setFlags({});
@@ -25,7 +25,7 @@ export function FeatureFlagProvider({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     let mounted = true;
-    api.post<{ flags: Record<string, boolean> }>("/feature-flags/evaluate")
+    api.post<{ flags: Record<string, boolean> }>("/tenant/feature-flags/evaluate")
       .then((res) => {
         if (mounted) setFlags(res.data.flags ?? {});
       })

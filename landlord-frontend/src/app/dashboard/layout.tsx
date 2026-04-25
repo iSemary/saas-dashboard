@@ -186,7 +186,6 @@ const navSections: NavSectionDef[] = [
       { href: "/dashboard/permissions", labelKey: "dashboard.nav.permissions", fallback: "Permissions", icon: Key, permission: "view.permissions" },
       { href: "/dashboard/roles", labelKey: "dashboard.nav.roles", fallback: "Roles", icon: Shield, permission: "view.roles" },
       { href: "/dashboard/permission-groups", labelKey: "dashboard.nav.permission_groups", fallback: "Permission Groups", icon: Shield, permission: "view.permission_groups" },
-      { href: "/dashboard/profile", labelKey: "dashboard.nav.profile", fallback: "Profile", icon: UserCog, permission: "view.profile" },
     ],
   },
   {

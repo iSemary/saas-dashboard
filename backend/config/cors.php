@@ -20,12 +20,7 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        'http://localhost:3000',
-        'http://localhost:3001',
-        'http://customer1.saas.test:3000',
-        'http://customer2.saas.test:3000',
-        'http://customer1.saas.test',
-        'http://customer2.saas.test',
+        '*'
     ],
 
     'allowed_origins_patterns' => [],

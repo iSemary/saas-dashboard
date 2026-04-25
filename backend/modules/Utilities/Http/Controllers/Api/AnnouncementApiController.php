@@ -22,7 +22,7 @@ class AnnouncementApiController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'body' => 'nullable|string',
             'type' => 'nullable|string|max:50',
             'is_active' => 'nullable|boolean',
@@ -35,7 +35,7 @@ class AnnouncementApiController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'title' => 'sometimes|required|string|max:255',
+            'name' => 'sometimes|required|string|max:255',
             'body' => 'nullable|string',
             'type' => 'nullable|string|max:50',
             'is_active' => 'nullable|boolean',

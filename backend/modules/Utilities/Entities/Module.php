@@ -25,11 +25,13 @@ class Module extends Model implements Auditable
         'icon',
         'slogan',
         'navigation',
+        'theme',
         'status',
     ];
 
     protected $casts = [
         'navigation' => 'array',
+        'theme' => 'array',
     ];
 
     protected $fileColumns = [

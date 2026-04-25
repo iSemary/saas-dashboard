@@ -249,7 +249,13 @@ export default function BrandsPage() {
         onTableChange={handleTableChange}
       />
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-        <SheetContent className="flex w-full max-w-3xl flex-col gap-0 sm:max-w-[50vw]">
+        <SheetContent 
+          className="flex w-full max-w-3xl flex-col gap-0 sm:max-w-[50vw] max-h-[90vh]"
+          resizable={true}
+          defaultWidth={typeof window !== 'undefined' ? window.innerWidth * 0.5 : 600}
+          minWidth={320}
+          maxWidth={typeof window !== 'undefined' ? window.innerWidth * 0.8 : 1200}
+        >
           <Blur inView inViewOnce delay={100}>
             <SheetHeader>
               <SheetTitle>

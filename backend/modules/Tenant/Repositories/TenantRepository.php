@@ -232,8 +232,28 @@ class TenantRepository implements TenantInterface
     {
         $database = 'tenant';
 
+        // Run migrations and main seeders
         $command = "tenants:artisan 'migrate --database={$database} --seed' --tenant={$tenantId}";
         Artisan::call($command);
+
+        // Explicitly ensure Passport personal access client exists
+        $this->ensurePassportClient($tenantId);
+    }
+
+    /**
+     * Ensure Passport personal access client exists for tenant
+     */
+    private function ensurePassportClient($tenantId): void
+    {
+        try {
+            $className = 'Database\\Seeders\\tenant\\PassportSetupSeeder';
+
+            $command = "tenants:artisan 'db:seed --class={$className} --database=tenant --force' --tenant={$tenantId}";
+            Artisan::call($command);
+        } catch (\Exception $e) {
+            // Log but don't throw - main seeding succeeded
+            \Log::warning("Passport setup may need manual run for tenant {$tenantId}: " . $e->getMessage());
+        }
     }
 
     private function createLogMongoDatabase($customerUsername)

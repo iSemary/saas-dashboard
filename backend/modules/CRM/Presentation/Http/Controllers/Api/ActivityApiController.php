@@ -7,14 +7,14 @@ namespace Modules\CRM\Presentation\Http\Controllers\Api;
 use App\Http\Controllers\ApiResponseEnvelope;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use App\Http\Controllers\ApiController;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Modules\CRM\Application\UseCases\Activity\CreateActivityUseCase;
 use Modules\CRM\Application\UseCases\Activity\CompleteActivityUseCase;
 use Modules\CRM\Infrastructure\Persistence\ActivityRepositoryInterface;
 
-class ActivityApiController extends Controller implements HasMiddleware
+class ActivityApiController extends ApiController implements HasMiddleware
 {
     use ApiResponseEnvelope;
 
