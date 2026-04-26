@@ -21,7 +21,7 @@ class Lead extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'leads';
+    protected $table = 'crm_leads';
 
     protected $fillable = [
         'name',
@@ -36,6 +36,7 @@ class Lead extends Model
         'expected_close_date',
         'assigned_to',
         'created_by',
+        'brand_id',
         'custom_fields',
     ];
 
@@ -94,6 +95,11 @@ class Lead extends Model
         return $this->belongsTo(Opportunity::class);
     }
 
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Customer\Entities\Tenant\Brand::class);
+    }
+
     // ── Scopes ─────────────────────────────────────────────
 
     public function scopeByStatus($query, $status)
@@ -109,6 +115,11 @@ class Lead extends Model
     public function scopeAssignedTo($query, $userId)
     {
         return $query->where('assigned_to', $userId);
+    }
+
+    public function scopeForBrand($query, $brandId)
+    {
+        return $query->where('brand_id', $brandId);
     }
 
     public function scopeOpen($query)

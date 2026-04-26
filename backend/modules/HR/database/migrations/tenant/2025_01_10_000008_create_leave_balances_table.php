@@ -8,10 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('leave_balances', function (Blueprint $table) {
+        Schema::create('hr_leave_balances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
-            $table->foreignId('leave_type_id')->constrained('leave_types')->cascadeOnDelete();
+            $table->foreignId('employee_id')->constrained('hr_employees')->cascadeOnDelete();
+            $table->foreignId('leave_type_id')->constrained('hr_leave_types')->cascadeOnDelete();
             $table->integer('year');
             $table->decimal('allocated', 10, 2)->default(0);
             $table->decimal('accrued', 10, 2)->default(0);
@@ -28,6 +28,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('leave_balances');
+        Schema::dropIfExists('hr_leave_balances');
     }
 };

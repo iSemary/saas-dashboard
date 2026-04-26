@@ -9,5 +9,7 @@ class AssetCategory extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'hr_asset_categories';
+
     protected $fillable = ['name'];
 }

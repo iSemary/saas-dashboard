@@ -8,9 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('employee_contracts', function (Blueprint $table) {
+        Schema::create('hr_employee_contracts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
+            $table->foreignId('employee_id')->constrained('hr_employees')->cascadeOnDelete();
             $table->string('contract_number')->unique();
             $table->string('type')->default('full_time');
             $table->string('status')->default('active');
@@ -34,6 +34,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('employee_contracts');
+        Schema::dropIfExists('hr_employee_contracts');
     }
 };

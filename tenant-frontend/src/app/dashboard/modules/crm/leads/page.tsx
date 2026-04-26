@@ -3,6 +3,8 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { SimpleCRUDPage } from "@/components/simple-crud-page";
+import { useBrandFilter } from "@/context/brand-filter-context";
+import type { TableParams, PaginatedResponse } from "@/lib/tenant-resources";
 import {
   listCrmLeads,
   createCrmLead,
@@ -45,6 +47,20 @@ const columns = (): Array<ColumnDef<Lead>> => [
 ];
 
 export default function LeadsPage() {
+  const { brandFilter } = useBrandFilter();
+
+  // Wrap listFn to inject brand_id filter when available
+  const listFn = (params?: TableParams) => {
+    const mergedParams: TableParams = {
+      ...params,
+      filters: {
+        ...params?.filters,
+        ...(brandFilter?.id ? { brand_id: brandFilter.id } : {}),
+      },
+    };
+    return listCrmLeads<Lead>(mergedParams);
+  };
+
   return (
     <SimpleCRUDPage<Lead>
       config={{
@@ -91,7 +107,7 @@ export default function LeadsPage() {
           { name: "description", label: "Description", type: "textarea" },
         ],
         columns,
-        listFn: listCrmLeads,
+        listFn,
         createFn: createCrmLead,
         updateFn: updateCrmLead,
         deleteFn: deleteCrmLead,
@@ -112,6 +128,8 @@ export default function LeadsPage() {
           status: form.status || "new",
           source: form.source || undefined,
           expected_revenue: form.expected_revenue ? parseFloat(form.expected_revenue) : undefined,
+          // Include brand_id when creating if filtered
+          ...(brandFilter?.id ? { brand_id: brandFilter.id } : {}),
         }),
       }}
     />

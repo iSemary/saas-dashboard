@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('companies', function (Blueprint $table) {
+        Schema::table('crm_companies', function (Blueprint $table) {
             $table->unsignedBigInteger('parent_id')->nullable()->after('id');
             $table->foreign('parent_id')
                 ->references('id')
-                ->on('companies')
+                ->on('crm_companies')
                 ->nullOnDelete();
 
             $table->index('parent_id');
@@ -27,7 +27,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('companies', function (Blueprint $table) {
+        Schema::table('crm_companies', function (Blueprint $table) {
             $table->dropForeign(['parent_id']);
             $table->dropIndex(['parent_id']);
             $table->dropColumn('parent_id');

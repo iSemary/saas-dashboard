@@ -19,7 +19,7 @@ class Contact extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'contacts';
+    protected $table = 'crm_contacts';
 
     protected $fillable = [
         'first_name',
@@ -32,6 +32,7 @@ class Contact extends Model
         'type',
         'assigned_to',
         'created_by',
+        'brand_id',
         'address',
         'city',
         'state',
@@ -92,6 +93,11 @@ class Contact extends Model
         return $this->morphMany(CrmFile::class, 'related');
     }
 
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Customer\Entities\Tenant\Brand::class);
+    }
+
     // ── Scopes ─────────────────────────────────────────────
 
     public function scopeByType($query, $type)
@@ -102,6 +108,11 @@ class Contact extends Model
     public function scopeAssignedTo($query, $userId)
     {
         return $query->where('assigned_to', $userId);
+    }
+
+    public function scopeForBrand($query, $brandId)
+    {
+        return $query->where('brand_id', $brandId);
     }
 
     public function scopeByCompany($query, $companyId)

@@ -80,7 +80,17 @@ class Resources
                 'themes' => ['read', 'create', 'update', 'delete', 'activate'],
                 'seo' => ['read', 'create', 'update', 'delete'],
             ],
-            
+
+            // Billing & Subscription Resources
+            'billing' => [
+                'plans' => ['read', 'subscribe', 'change', 'cancel'],
+                'modules' => ['read', 'subscribe', 'unsubscribe'],
+                'invoices' => ['read', 'download', 'pay'],
+                'payments' => ['read', 'retry'],
+                'payment_methods' => ['read', 'create', 'update', 'delete', 'set_default'],
+                'subscription' => ['read', 'manage'],
+            ],
+
             // System Resources
             'users' => ['read', 'create', 'update', 'delete', 'invite'],
             'roles' => ['read', 'create', 'update', 'delete'],
@@ -107,6 +117,7 @@ class Resources
             'purchase' => 'Purchase Management',
             'marketing' => 'Marketing Automation',
             'website' => 'Website & E-commerce',
+            'billing' => 'Billing & Subscription',
         ];
     }
 
@@ -147,6 +158,10 @@ class Resources
             'connect' => 'Connect integrations',
             'share' => 'Share files',
             'customize' => 'Customize dashboards',
+            'subscribe' => 'Subscribe to plans/modules',
+            'pay' => 'Process payments',
+            'retry' => 'Retry failed operations',
+            'download' => 'Download files/reports',
         ];
     }
 

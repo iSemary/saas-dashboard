@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('employees', function (Blueprint $table) {
+        Schema::create('hr_employees', function (Blueprint $table) {
             $table->id();
             $table->string('employee_number')->unique();
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
@@ -32,9 +32,9 @@ return new class extends Migration
             $table->date('termination_date')->nullable();
             $table->string('employment_status')->default('active');
             $table->string('employment_type')->default('full_time');
-            $table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
-            $table->foreignId('position_id')->nullable()->constrained('positions')->nullOnDelete();
-            $table->foreignId('manager_id')->nullable()->constrained('employees')->nullOnDelete();
+            $table->foreignId('department_id')->nullable()->constrained('hr_departments')->nullOnDelete();
+            $table->foreignId('position_id')->nullable()->constrained('hr_positions')->nullOnDelete();
+            $table->foreignId('manager_id')->nullable()->constrained('hr_employees')->nullOnDelete();
             $table->decimal('salary', 12, 2)->nullable();
             $table->string('currency')->default('USD');
             $table->string('pay_frequency')->default('monthly');
@@ -60,6 +60,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('employees');
+        Schema::dropIfExists('hr_employees');
     }
 };

@@ -8,10 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('attendance_regularizations', function (Blueprint $table) {
+        Schema::create('hr_attendance_regularizations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
-            $table->foreignId('attendance_id')->nullable()->constrained('attendances');
+            $table->foreignId('employee_id')->constrained('hr_employees')->cascadeOnDelete();
+            $table->foreignId('attendance_id')->nullable()->constrained('hr_attendances');
             $table->date('date');
             $table->string('type'); // check_in, check_out, both, full_day
             $table->timestamp('requested_check_in')->nullable();
@@ -33,6 +33,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('attendance_regularizations');
+        Schema::dropIfExists('hr_attendance_regularizations');
     }
 };

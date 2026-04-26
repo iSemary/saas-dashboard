@@ -29,7 +29,7 @@ class ContactApiController extends ApiController implements HasMiddleware
     public function index(Request $request)
     {
         try {
-            $filters = $request->only(['search', 'company_id', 'assigned_to']);
+            $filters = $request->only(['search', 'company_id', 'assigned_to', 'brand_id']);
             $perPage = $request->get('per_page', 15);
 
             $contacts = $this->service->list($filters, $perPage);

@@ -301,7 +301,7 @@ class StartApp extends Command
     private function seedRealDataWithProgress()
     {
         $this->newLine();
-        $this->line('   � Seeding real data...');
+        $this->line('   🌍 Seeding real data...');
 
         $totalSeeders = $this->countRealDataSeeders();
 

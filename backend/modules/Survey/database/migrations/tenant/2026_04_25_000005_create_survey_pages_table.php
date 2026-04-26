@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('survey_pages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('survey_id')->constrained('surveys')->cascadeOnDelete();
+            $table->foreignId('survey_id')->constrained('survey_surveys')->cascadeOnDelete();
             $table->string('title')->nullable();
             $table->text('description')->nullable();
             $table->integer('order')->default(1);

@@ -12,7 +12,7 @@ class JobOpening extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'job_openings';
+    protected $table = 'hr_job_openings';
 
     protected $fillable = [
         'title',

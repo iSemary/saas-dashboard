@@ -9,6 +9,8 @@ class AssetAssignment extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'hr_asset_assignments';
+
     protected $fillable = [
         'asset_id',
         'employee_id',

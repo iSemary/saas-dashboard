@@ -8,11 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('job_offers', function (Blueprint $table) {
+        Schema::create('hr_job_offers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('application_id')->constrained('applications')->cascadeOnDelete();
-            $table->foreignId('candidate_id')->constrained('candidates');
-            $table->foreignId('job_opening_id')->constrained('job_openings');
+            $table->foreignId('application_id')->constrained('hr_applications')->cascadeOnDelete();
+            $table->foreignId('candidate_id')->constrained('hr_candidates');
+            $table->foreignId('job_opening_id')->constrained('hr_job_openings');
             $table->decimal('salary', 12, 2);
             $table->string('currency', 3)->default('USD');
             $table->decimal('bonus', 12, 2)->default(0);
@@ -38,6 +38,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('job_offers');
+        Schema::dropIfExists('hr_job_offers');
     }
 };

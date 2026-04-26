@@ -35,6 +35,7 @@ export type SubscribedModule = {
   status: string;
   brand_id: number;
   brand_name: string | null;
+  brand_slug: string | null;
   color_palette: ModulePalette | null;
   subscribed_at: string | null;
   unread_notifications: number;

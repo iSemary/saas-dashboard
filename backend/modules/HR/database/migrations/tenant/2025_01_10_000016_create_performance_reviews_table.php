@@ -8,11 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('performance_reviews', function (Blueprint $table) {
+        Schema::create('hr_performance_reviews', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('performance_cycle_id')->constrained('performance_cycles')->cascadeOnDelete();
-            $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
-            $table->foreignId('reviewer_id')->constrained('employees');
+            $table->foreignId('performance_cycle_id')->constrained('hr_performance_cycles')->cascadeOnDelete();
+            $table->foreignId('employee_id')->constrained('hr_employees')->cascadeOnDelete();
+            $table->foreignId('reviewer_id')->constrained('hr_employees');
             $table->json('self_review')->nullable();
             $table->json('manager_review')->nullable();
             $table->json('peer_reviews')->nullable();
@@ -33,6 +33,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('performance_reviews');
+        Schema::dropIfExists('hr_performance_reviews');
     }
 };

@@ -8,9 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('employment_history', function (Blueprint $table) {
+        Schema::create('hr_employment_history', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
+            $table->foreignId('employee_id')->constrained('hr_employees')->cascadeOnDelete();
             $table->string('change_type');
             $table->string('from_value')->nullable();
             $table->string('to_value')->nullable();
@@ -27,6 +27,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('employment_history');
+        Schema::dropIfExists('hr_employment_history');
     }
 };

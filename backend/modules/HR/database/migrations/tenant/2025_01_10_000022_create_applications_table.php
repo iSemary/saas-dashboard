@@ -8,11 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('applications', function (Blueprint $table) {
+        Schema::create('hr_applications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('job_opening_id')->constrained('job_openings')->cascadeOnDelete();
-            $table->foreignId('candidate_id')->constrained('candidates')->cascadeOnDelete();
-            $table->foreignId('pipeline_stage_id')->nullable()->constrained('pipeline_stages')->nullOnDelete();
+            $table->foreignId('job_opening_id')->constrained('hr_job_openings')->cascadeOnDelete();
+            $table->foreignId('candidate_id')->constrained('hr_candidates')->cascadeOnDelete();
+            $table->foreignId('pipeline_stage_id')->nullable()->constrained('hr_pipeline_stages')->nullOnDelete();
             $table->string('status')->default('new'); // new, screening, interview, offer, hired, rejected
             $table->timestamp('applied_at');
             $table->text('cover_letter')->nullable();
@@ -37,6 +37,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('applications');
+        Schema::dropIfExists('hr_applications');
     }
 };

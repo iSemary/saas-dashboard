@@ -551,7 +551,7 @@ This document contains the complete database schema for the SaaS Dashboard appli
 - **Columns**: name, description, type, industry, size, website, contact_email, phone, address, city, state, country, postal_code, social_links, business_registration, status, annual_revenue, employee_count, founded_date
 - **Indexes**: [type, industry], [country, state], status
 
-#### departments
+#### hr_departments
 - **PK**: id
 - **Columns**: (empty - placeholder)
 
@@ -644,35 +644,35 @@ This document contains the complete database schema for the SaaS Dashboard appli
 
 ### CRM Module
 
-#### leads
+#### crm_leads
 - **PK**: id
 - **Columns**: name, email, phone, company, title, description, status, source, expected_revenue, expected_close_date, assigned_to, created_by, custom_fields
 - **FK**: assigned_to → users, created_by → users
 - **Indexes**: [status, assigned_to], [source, created_at], expected_close_date
 - **Soft Deletes**: Yes
 
-#### opportunities
+#### crm_opportunities
 - **PK**: id
 - **Columns**: name, lead_id, contact_id, company_id, description, stage, expected_revenue, probability, expected_close_date, actual_close_date, assigned_to, created_by, custom_fields
-- **FK**: lead_id → leads, contact_id → contacts, company_id → companies, assigned_to → users, created_by → users
+- **FK**: lead_id → crm_leads, contact_id → crm_contacts, company_id → crm_companies, assigned_to → users, created_by → users
 - **Indexes**: [stage, assigned_to], [expected_close_date, stage], lead_id, contact_id, company_id
 - **Soft Deletes**: Yes
 
-#### contacts
+#### crm_contacts
 - **PK**: id
 - **Columns**: first_name, last_name, email, phone, mobile, title, company_id, address, city, state, postal_code, country, birthday, notes, type, assigned_to, created_by, custom_fields
-- **FK**: company_id → companies, assigned_to → users, created_by → users
+- **FK**: company_id → crm_companies, assigned_to → users, created_by → users
 - **Indexes**: [company_id, type], [assigned_to, type], email, phone
 - **Soft Deletes**: Yes
 
-#### companies
+#### crm_companies
 - **PK**: id
 - **Columns**: name, email, phone, website, industry, employee_count, annual_revenue, address, city, state, postal_code, country, description, notes, type, assigned_to, created_by, custom_fields
 - **FK**: assigned_to → users, created_by → users
 - **Indexes**: [type, industry], assigned_to, name, email
 - **Soft Deletes**: Yes
 
-#### activities
+#### crm_activities
 - **PK**: id
 - **Columns**: subject, description, type, status, due_date, completed_at, related_type, related_id, assigned_to, created_by, custom_fields
 - **FK**: assigned_to → users, created_by → users
@@ -702,33 +702,86 @@ This document contains the complete database schema for the SaaS Dashboard appli
 
 ### HR Module
 
-#### employees
+#### hr_employees
 - **PK**: id
 - **Columns**: employee_number (unique), user_id, first_name, last_name, email, phone, date_of_birth, gender, national_id, passport_number, address, city, state, postal_code, country, hire_date, termination_date, employment_status, job_title, department, manager_id, salary, currency, pay_frequency, emergency_contact_name, emergency_contact_phone, emergency_contact_relationship, created_by, custom_fields
-- **FK**: user_id → users, manager_id → employees, created_by → users
+- **FK**: user_id → users, manager_id → hr_employees, created_by → users
 - **Indexes**: [employment_status, hire_date], [department, job_title], [manager_id, employment_status], employee_number
 - **Soft Deletes**: Yes
 
-#### attendances
+#### hr_attendances
 - **PK**: id
 - **Columns**: employee_id, date, check_in, check_out, break_start, break_end, total_hours, break_duration, overtime_hours, status, notes, is_approved, approved_by, approved_at, created_by, custom_fields
-- **FK**: employee_id → employees, approved_by → users, created_by → users
+- **FK**: employee_id → hr_employees, approved_by → users, created_by → users
 - **Indexes**: [employee_id, date], [date, status], [is_approved, date], unique [employee_id, date]
 - **Soft Deletes**: Yes
 
-#### payrolls
+#### hr_payrolls
 - **PK**: id
 - **Columns**: payroll_number (unique), employee_id, pay_period_start, pay_period_end, pay_date, status, basic_salary, overtime_pay, bonus, allowances, gross_pay, tax_deduction, social_security, health_insurance, other_deductions, total_deductions, net_pay, currency, notes, created_by, approved_by, approved_at, custom_fields
-- **FK**: employee_id → employees, created_by → users, approved_by → users
+- **FK**: employee_id → hr_employees, created_by → users, approved_by → users
 - **Indexes**: [employee_id, pay_period_start], [status, pay_date], [pay_period_start, pay_period_end], payroll_number
 - **Soft Deletes**: Yes
 
-#### leave_requests
+#### hr_leave_requests
 - **PK**: id
 - **Columns**: employee_id, leave_type, start_date, end_date, total_days, reason, status, approved_by, approved_at, approval_notes, rejection_reason, is_emergency, attachments, created_by, custom_fields
-- **FK**: employee_id → employees, approved_by → users, created_by → users
+- **FK**: employee_id → hr_employees, approved_by → users, created_by → users
 - **Indexes**: [employee_id, start_date], [status, leave_type], [start_date, end_date], approved_by
 - **Soft Deletes**: Yes
+
+---
+
+### POS Module
+
+#### pos_categories
+- **PK**: id
+- **Columns**: name, branch_id, created_by, brand_id
+- **FK**: branch_id → branches, created_by → users, brand_id → brands
+
+#### pos_sub_categories
+- **PK**: id
+- **Columns**: name, category_id, branch_id, created_by, brand_id
+- **FK**: category_id → pos_categories, branch_id → branches, created_by → users, brand_id → brands
+
+#### pos_products
+- **PK**: id
+- **Columns**: name, amount, amount_type, description, image, category_id, sub_category_id, branch_id, created_by, brand_id
+- **FK**: category_id → pos_categories, sub_category_id → pos_sub_categories, branch_id → branches, created_by → users, brand_id → brands
+
+#### pos_product_stocks
+- **PK**: id
+- **Columns**: product_id, branch_id, tag_id, quantity, created_by, brand_id
+- **FK**: product_id → pos_products, branch_id → branches, tag_id → pos_tags, created_by → users, brand_id → brands
+
+---
+
+### Survey Module
+
+#### survey_surveys
+- **PK**: id
+- **Columns**: title, description, status, settings, theme_id, template_id, default_locale, supported_locales, published_at, closed_at, created_by, brand_id
+- **FK**: theme_id → survey_themes, template_id → survey_templates, created_by → users, brand_id → brands
+
+#### survey_pages
+- **PK**: id
+- **Columns**: survey_id, title, description, order, settings
+- **FK**: survey_id → survey_surveys
+
+#### survey_questions
+- **PK**: id
+- **Columns**: survey_id, page_id, type, title, description, is_required, order, config, validation, branching
+- **FK**: survey_id → survey_surveys, page_id → survey_pages
+
+#### survey_responses
+- **PK**: id
+- **Columns**: survey_id, share_id, respondent_type, respondent_id, respondent_email, status, started_at, completed_at, score, brand_id
+- **FK**: survey_id → survey_surveys, share_id → survey_shares, respondent_id → users, brand_id → brands
+
+#### survey_answers
+- **PK**: id
+- **Columns**: response_id, question_id, value, selected_options, matrix_answers, rating_value, computed_score
+- **FK**: response_id → survey_responses, question_id → survey_questions
 
 ---
 
@@ -800,21 +853,21 @@ This document contains the complete database schema for the SaaS Dashboard appli
 #### quotations
 - **PK**: id
 - **Columns**: quotation_number (unique), contact_id, company_id, opportunity_id, quotation_date, valid_until, status, subtotal, tax_amount, discount_amount, total_amount, currency, tax_rate, notes, terms_conditions, created_by, assigned_to, custom_fields
-- **FK**: contact_id → contacts, company_id → companies, opportunity_id → opportunities, created_by → users, assigned_to → users
+- **FK**: contact_id → crm_contacts, company_id → crm_companies, opportunity_id → crm_opportunities, created_by → users, assigned_to → users
 - **Indexes**: [status, quotation_date], [contact_id, status], [company_id, status], quotation_number
 - **Soft Deletes**: Yes
 
 #### orders
 - **PK**: id
 - **Columns**: order_number (unique), quotation_id, contact_id, company_id, order_date, delivery_date, status, payment_status, subtotal, tax_amount, discount_amount, shipping_amount, total_amount, currency, tax_rate, shipping_address, billing_address, notes, created_by, assigned_to, custom_fields
-- **FK**: quotation_id → quotations, contact_id → contacts, company_id → companies, created_by → users, assigned_to → users
+- **FK**: quotation_id → quotations, contact_id → crm_contacts, company_id → crm_companies, created_by → users, assigned_to → users
 - **Indexes**: [status, order_date], [payment_status, order_date], [contact_id, status], [company_id, status], order_number
 - **Soft Deletes**: Yes
 
 #### invoices
 - **PK**: id
 - **Columns**: invoice_number (unique), order_id, contact_id, company_id, invoice_date, due_date, status, subtotal, tax_amount, discount_amount, total_amount, paid_amount, balance_amount, currency, tax_rate, notes, terms_conditions, created_by, assigned_to, custom_fields
-- **FK**: order_id → orders, contact_id → contacts, company_id → companies, created_by → users, assigned_to → users
+- **FK**: order_id → orders, contact_id → crm_contacts, company_id → crm_companies, created_by → users, assigned_to → users
 - **Indexes**: [status, invoice_date], [due_date, status], [contact_id, status], [company_id, status], invoice_number
 - **Soft Deletes**: Yes
 
@@ -1070,5 +1123,5 @@ This document contains the complete database schema for the SaaS Dashboard appli
 - **Payment Module**: Extensive payment gateway integration with audit trails
 - **Subscription Module**: Complex pricing models with trials, discounts, and billing cycles
 - **Auth Module**: OAuth 2.0 implementation with Spatie permissions
-- **CRM Module**: Leads → Opportunities → Contacts → Companies flow
+- **CRM Module**: `crm_leads` → `crm_opportunities` → `crm_contacts` → `crm_companies` flow
 - **Geography Module**: Hierarchical structure: Countries → Provinces → Cities → Towns → Streets

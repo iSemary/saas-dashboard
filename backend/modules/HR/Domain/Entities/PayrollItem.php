@@ -10,6 +10,8 @@ class PayrollItem extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'hr_payroll_items';
+
     protected $fillable = [
         'payroll_id',
         'employee_id',

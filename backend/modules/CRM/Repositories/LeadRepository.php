@@ -52,6 +52,10 @@ class LeadRepository
             $query->whereDate('created_at', '<=', $filters['date_to']);
         }
 
+        if (isset($filters['brand_id'])) {
+            $query->where('brand_id', $filters['brand_id']);
+        }
+
         return $query->orderBy('created_at', 'desc')->paginate($perPage);
     }
 
@@ -77,7 +81,7 @@ class LeadRepository
     public function update(int $id, array $data): bool
     {
         $lead = $this->find($id);
-        
+
         if (!$lead) {
             return false;
         }
@@ -91,7 +95,7 @@ class LeadRepository
     public function delete(int $id): bool
     {
         $lead = $this->find($id);
-        
+
         if (!$lead) {
             return false;
         }
@@ -173,7 +177,7 @@ class LeadRepository
     {
         $total = $this->model->count();
         $converted = $this->model->where('status', 'converted')->count();
-        
+
         return $total > 0 ? ($converted / $total) * 100 : 0;
     }
 

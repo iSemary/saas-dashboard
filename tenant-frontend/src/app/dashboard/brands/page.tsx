@@ -137,6 +137,14 @@ export default function BrandsPage() {
   const save = async () => {
     setSaving(true);
     try {
+      // Validate reserved slugs
+      const reservedSlugs = ['new', 'create', 'edit', 'show', 'crm', 'hr', 'pos', 'survey', 'inventory', 'sales'];
+      if (form.slug && reservedSlugs.includes(form.slug.toLowerCase())) {
+        toast.error(t("dashboard.brands.reserved_slug", "This slug is reserved and cannot be used."));
+        setSaving(false);
+        return;
+      }
+
       const payload = {
         name: form.name,
         slug: form.slug || undefined,

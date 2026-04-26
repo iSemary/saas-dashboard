@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 use Modules\Auth\Entities\User;
 use Modules\Survey\Domain\ValueObjects\SurveyCategory;
+use Modules\Customer\Entities\Tenant\Brand;
 
 class SurveyTemplate extends Model
 {
@@ -24,6 +25,7 @@ class SurveyTemplate extends Model
         'structure',
         'is_system',
         'created_by',
+        'brand_id',
     ];
 
     protected $casts = [
@@ -34,6 +36,16 @@ class SurveyTemplate extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
+    public function scopeForBrand($query, $brandId)
+    {
+        return $query->where('brand_id', $brandId);
     }
 
     public function getCategoryLabel(): string

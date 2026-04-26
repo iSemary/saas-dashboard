@@ -12,10 +12,21 @@ use Modules\Auth\Entities\User;
 use Modules\Survey\Domain\ValueObjects\ResponseStatus;
 use Modules\Survey\Domain\Events\SurveyResponseCreated;
 use Modules\Survey\Domain\Events\SurveyResponseCompleted;
+use Modules\Customer\Entities\Tenant\Brand;
 
 class SurveyResponse extends Model
 {
     protected $table = 'survey_responses';
+
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
+    public function scopeForBrand($query, $brandId)
+    {
+        return $query->where('brand_id', $brandId);
+    }
 
     protected $fillable = [
         'survey_id',
@@ -36,6 +47,7 @@ class SurveyResponse extends Model
         'resume_token',
         'locale',
         'custom_fields',
+        'brand_id',
     ];
 
     protected $casts = [

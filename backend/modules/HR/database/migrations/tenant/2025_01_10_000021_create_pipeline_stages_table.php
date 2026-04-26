@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('pipeline_stages', function (Blueprint $table) {
+        Schema::create('hr_pipeline_stages', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
@@ -31,6 +31,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('pipeline_stages');
+        Schema::dropIfExists('hr_pipeline_stages');
     }
 };

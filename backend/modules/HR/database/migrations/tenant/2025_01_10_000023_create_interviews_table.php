@@ -8,10 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('interviews', function (Blueprint $table) {
+        Schema::create('hr_interviews', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('application_id')->constrained('applications')->cascadeOnDelete();
-            $table->foreignId('candidate_id')->constrained('candidates');
+            $table->foreignId('application_id')->constrained('hr_applications')->cascadeOnDelete();
+            $table->foreignId('candidate_id')->constrained('hr_candidates');
             $table->string('type')->default('video'); // phone, video, in_person, panel
             $table->timestamp('scheduled_at');
             $table->integer('duration_minutes')->default(30);
@@ -31,10 +31,10 @@ return new class extends Migration
         });
 
         // Pivot table for interviewers
-        Schema::create('interview_interviewer', function (Blueprint $table) {
+        Schema::create('hr_interview_interviewer', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('interview_id')->constrained('interviews')->cascadeOnDelete();
-            $table->foreignId('interviewer_id')->constrained('employees');
+            $table->foreignId('interview_id')->constrained('hr_interviews')->cascadeOnDelete();
+            $table->foreignId('interviewer_id')->constrained('hr_employees');
             $table->json('feedback')->nullable();
             $table->decimal('rating', 2, 1)->nullable();
             $table->boolean('completed')->default(false);
@@ -44,7 +44,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('interview_interviewer');
-        Schema::dropIfExists('interviews');
+        Schema::dropIfExists('hr_interview_interviewer');
+        Schema::dropIfExists('hr_interviews');
     }
 };

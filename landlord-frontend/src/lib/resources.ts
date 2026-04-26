@@ -1072,6 +1072,9 @@ export type PlanRow = {
   slug: string;
   description: string | null;
   features_summary: string | null;
+  price: number;
+  currency: string;
+  billing_period: string;
   sort_order: number;
   is_popular: boolean;
   is_custom: boolean;

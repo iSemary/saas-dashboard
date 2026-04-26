@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('survey_questions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('survey_id')->constrained('surveys')->cascadeOnDelete();
+            $table->foreignId('survey_id')->constrained('survey_surveys')->cascadeOnDelete();
             $table->foreignId('page_id')->constrained('survey_pages')->cascadeOnDelete();
             $table->enum('type', [
                 'text', 'textarea', 'email', 'number', 'phone', 'url', 'date',

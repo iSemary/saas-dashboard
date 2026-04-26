@@ -22,6 +22,9 @@ class Plan extends Model implements Auditable
         'slug',
         'description',
         'features_summary',
+        'price',
+        'currency',
+        'billing_period',
         'sort_order',
         'is_popular',
         'is_custom',
@@ -36,6 +39,7 @@ class Plan extends Model implements Auditable
         'is_popular' => 'boolean',
         'is_custom' => 'boolean',
         'sort_order' => 'integer',
+        'price' => 'decimal:2',
     ];
 
     /**

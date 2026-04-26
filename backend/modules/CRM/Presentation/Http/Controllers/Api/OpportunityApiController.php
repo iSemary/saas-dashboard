@@ -44,7 +44,7 @@ class OpportunityApiController extends ApiController implements HasMiddleware
     public function index(Request $request): JsonResponse
     {
         try {
-            $filters = $request->only(['stage', 'assigned_to', 'search']);
+            $filters = $request->only(['stage', 'assigned_to', 'search', 'brand_id']);
             $perPage = (int) $request->get('per_page', 15);
             return $this->apiPaginated($this->opportunities->paginate($filters, $perPage));
         } catch (\Throwable $e) {

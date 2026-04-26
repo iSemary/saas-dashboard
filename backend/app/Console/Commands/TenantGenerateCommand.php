@@ -16,18 +16,20 @@ use Illuminate\Support\Str;
 
 class TenantGenerateCommand extends Command
 {
-    protected $signature = 'tenant:generate 
+    protected $signature = 'tenant:generate
                             {--name= : Tenant name}
                             {--modules= : Comma-separated list of modules (e.g., hr,crm,ticket)}
                             {--domain= : Custom domain (optional)}
                             {--database= : Custom database name (optional)}
+                            {--plan= : Plan name to assign (default: Free Plan)}
+                            {--trial-days=14 : Number of trial days (default: 14)}
                             {--force : Force creation even if tenant exists}';
 
     protected $description = 'Generate a new tenant with specified modules, fake brand, and nginx configuration';
 
     private $availableModules = [
         'hr' => 'HR',
-        'crm' => 'CRM', 
+        'crm' => 'CRM',
         'ticket' => 'Ticket',
         'accounting' => 'Accounting',
         'inventory' => 'Inventory',
@@ -85,6 +87,8 @@ class TenantGenerateCommand extends Command
         $modulesInput = $this->option('modules');
         $customDomain = $this->option('domain');
         $customDatabase = $this->option('database');
+        $planName = $this->option('plan') ?: 'Free Plan';
+        $trialDays = (int) $this->option('trial-days');
         $force = $this->option('force');
 
         if (!$tenantName) {
@@ -106,7 +110,7 @@ class TenantGenerateCommand extends Command
 
         // Generate fake brand name
         $brandName = $this->generateFakeBrandName();
-        
+
         // Generate domain and database names
         $domain = $customDomain ?: $this->generateDomain($tenantName);
         $database = $customDatabase ?: $this->generateDatabaseName($tenantName);
@@ -117,6 +121,8 @@ class TenantGenerateCommand extends Command
         $this->line("   Domain: {$domain}");
         $this->line("   Database: {$database}");
         $this->line("   Modules: " . implode(', ', $validModules));
+        $this->line("   Plan: {$planName}");
+        $this->line("   Trial Days: {$trialDays}");
         $this->newLine();
 
         if (!$force && Tenant::where('name', $tenantName)->exists()) {
@@ -135,13 +141,16 @@ class TenantGenerateCommand extends Command
             // Step 3: Setup Tenant Database
             $this->setupTenantDatabase($tenantName);
 
-            // Step 4: Setup Passport for Tenant
+            // Step 4: Create Subscription and assign plan
+            $this->createSubscription($customer, $brand, $validModules, $planName, $trialDays);
+
+            // Step 5: Setup Passport for Tenant
             $this->setupPassportForTenant($tenantName);
 
-            // Step 5: Generate Nginx Configuration
+            // Step 6: Generate Nginx Configuration
             $this->generateNginxConfig($domain);
 
-            // Step 6: Restart Nginx
+            // Step 7: Restart Nginx
             $this->restartNginx();
 
             $this->newLine();
@@ -153,6 +162,7 @@ class TenantGenerateCommand extends Command
             $this->line("   Database: {$database}");
             $this->line("   Brand: {$brandName}");
             $this->line("   Modules: " . implode(', ', $validModules));
+            $this->line("   Plan: {$planName}");
             $this->newLine();
             $this->info('🔧 Next Steps:');
             $this->line('   1. Update your /etc/hosts file: 127.0.0.1 ' . $domain);
@@ -262,46 +272,64 @@ class TenantGenerateCommand extends Command
         return $brand;
     }
 
-    private function createSubscription(Customer $customer, Brand $brand, array $modules): void
+    private function createSubscription(Customer $customer, Brand $brand, array $modules, string $planName, int $trialDays): void
     {
         $this->info('📦 Creating subscription with modules...');
 
-        // Get or create a default plan
-        $plan = Plan::first();
+        // Get the specified plan or default to Free Plan
+        $plan = Plan::where('name', $planName)->first();
         if (!$plan) {
-            $plan = Plan::create([
-                'name' => 'Standard Plan',
-                'description' => 'Standard subscription plan',
-                'price' => 99.00,
-                'billing_cycle' => 'monthly',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            $this->warn("   ⚠️  Plan '{$planName}' not found. Trying 'Free Plan'...");
+            $plan = Plan::where('name', 'Free Plan')->first();
+
+            if (!$plan) {
+                $this->warn("   ⚠️  Free Plan not found. Using first available plan.");
+                $plan = Plan::first();
+            }
         }
+
+        if (!$plan) {
+            $this->error("   ❌ No plans found in database. Please seed plans first.");
+            return;
+        }
+
+        $this->line("   📋 Using plan: {$plan->name} (ID: {$plan->id})");
+
+        // Determine subscription status and dates based on trial
+        $isFreePlan = stripos($plan->name, 'free') !== false;
+        $status = $isFreePlan ? 'active' : 'trial';
+        $startDate = now();
+        $endDate = $isFreePlan ? now()->addYear(100) : now()->addDays($trialDays);
 
         // Create subscription
         $subscription = Subscription::create([
             'customer_id' => $customer->id,
             'brand_id' => $brand->id,
             'plan_id' => $plan->id,
-            'status' => 'active',
-            'start_date' => now(),
-            'end_date' => now()->addMonth(),
+            'status' => $status,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'trial_ends_at' => $isFreePlan ? null : $endDate,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
+        $this->line("   ✅ Subscription created: {$status} (ends: {$endDate->format('Y-m-d')})");
+
         // Enable modules for the brand
+        $enabledCount = 0;
         foreach ($modules as $moduleName) {
             $module = Module::where('name', $moduleName)->first();
             if ($module) {
                 $brand->modules()->syncWithoutDetaching([$module->id]);
                 $this->line("   ✅ Module enabled: {$moduleName}");
+                $enabledCount++;
+            } else {
+                $this->warn("   ⚠️  Module not found: {$moduleName}");
             }
         }
 
-        $this->line("   ✅ Subscription created with " . count($modules) . " modules");
+        $this->line("   ✅ Subscription created with {$enabledCount} modules enabled");
     }
 
     private function setupTenantDatabase(string $tenantName): void
@@ -336,10 +364,10 @@ class TenantGenerateCommand extends Command
 
         try {
             $this->line("   Running Passport setup seeder...");
-            
+
             $command = "tenants:artisan 'db:seed --class=Database\\Seeders\\Tenant\\PassportSetupSeeder --database=tenant --force' --tenant={$tenant->id}";
             Artisan::call($command);
-            
+
             $output = Artisan::output();
             if (trim($output)) {
                 $this->line("   ✅ Passport setup completed for tenant: {$tenantName}");
@@ -380,7 +408,7 @@ class TenantGenerateCommand extends Command
     private function generateNginxConfigContent(string $domain): string
     {
         $projectPath = base_path();
-        
+
         return <<<NGINX
 server {
     listen 80;

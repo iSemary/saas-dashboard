@@ -11,6 +11,8 @@ class Candidate extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'hr_candidates';
+
     protected $fillable = [
         'first_name',
         'last_name',

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('announcements', function (Blueprint $table) {
+        Schema::create('hr_announcements', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->longText('body')->nullable();
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-        Schema::create('policies', function (Blueprint $table) {
+        Schema::create('hr_policies', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->longText('body')->nullable();
@@ -38,7 +38,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('policies');
-        Schema::dropIfExists('announcements');
+        Schema::dropIfExists('hr_policies');
+        Schema::dropIfExists('hr_announcements');
     }
 };

@@ -12,7 +12,7 @@ class Offer extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'job_offers';
+    protected $table = 'hr_job_offers';
 
     protected $fillable = [
         'application_id',

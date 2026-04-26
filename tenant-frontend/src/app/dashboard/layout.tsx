@@ -60,7 +60,11 @@ import {
 import { cn } from "@/lib/utils";
 import { resolveIcon } from "@/lib/lucide-icon-map";
 import { useAnimation } from "@/context/animation-context";
+import { BrandFilterProvider, useBrandFilter } from "@/context/brand-filter-context";
 import { Fades } from "@/components/animate-ui/primitives/effects/fade";
+import { Badge } from "@/components/ui/badge";
+import { X } from "lucide-react";
+import ErrorPage from "@/app/error/page";
 
 type NavLinkDef = {
   href: string;
@@ -137,6 +141,84 @@ function isMacLike(): boolean {
   return /Mac|iPhone|iPad|iPod/i.test(navigator.platform) || navigator.userAgent.includes("Mac");
 }
 
+// Component to show active brand filter in header
+function BrandHeaderIndicator() {
+  const { brandFilter, brandError, clearBrandFilter } = useBrandFilter();
+  const router = useRouter();
+  const pathname = usePathname();
+  const { t } = useI18n();
+
+  // Show error if there's a brand resolution error
+  if (brandError) {
+    return (
+      <div className="flex items-center gap-2">
+        <Badge
+          variant="destructive"
+          className="flex items-center gap-1.5 px-2 py-1"
+        >
+          <span className="max-w-[300px] truncate text-xs font-medium">
+            {brandError}
+          </span>
+          <button
+            onClick={() => {
+              clearBrandFilter();
+              const pathParts = pathname.split("/");
+              const moduleKey = pathParts[3];
+              if (moduleKey) {
+                router.push(`/dashboard/modules/${moduleKey}`);
+              } else {
+                router.push("/dashboard");
+              }
+            }}
+            className="ml-1 rounded-full p-0.5 hover:bg-destructive/20 transition-colors"
+            title={t("dashboard.brand.go_back", "Go back")}
+          >
+            <X className="size-3" />
+          </button>
+        </Badge>
+      </div>
+    );
+  }
+
+  // Only show when inside a module with brand filter active
+  if (!brandFilter?.id) return null;
+
+  // Check if we're inside a module page (brand-scoped or regular)
+  const isInModule = pathname.startsWith("/dashboard/modules/");
+  if (!isInModule) return null;
+
+  // Extract module key from path
+  const pathParts = pathname.split("/");
+  const moduleKey = pathParts[3]; // /dashboard/modules/[module]/...
+
+  // Build URL to clear filter (go to non-brand-scoped module page)
+  const clearUrl = `/dashboard/modules/${moduleKey}`;
+
+  return (
+    <div className="flex items-center gap-2">
+      <Badge
+        variant="secondary"
+        className="flex items-center gap-1.5 px-2 py-1 bg-primary/10 text-primary hover:bg-primary/20"
+      >
+        <Building2 className="size-3" />
+        <span className="max-w-[120px] truncate text-xs font-medium">
+          {brandFilter.name}
+        </span>
+        <button
+          onClick={() => {
+            clearBrandFilter();
+            router.push(clearUrl);
+          }}
+          className="ml-1 rounded-full p-0.5 hover:bg-primary/20 transition-colors"
+          title={t("dashboard.brand.clear_filter", "Clear brand filter")}
+        >
+          <X className="size-3" />
+        </button>
+      </Badge>
+    </div>
+  );
+}
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { loading, isAuthenticated, logout, user } = useAuth();
   const { t, dir } = useI18n();
@@ -146,6 +228,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter();
   const pathname = usePathname();
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const { brandError } = useBrandFilter();
 
   const togglePalette = useCallback(() => {
     setPaletteOpen((o) => !o);
@@ -310,12 +393,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 <SidebarMenu>
                                   {items.map((nav) => {
                                     const NavIcon = resolveIcon(nav.icon);
+                                    // Get brand-scoped route if brand filter is active
+                                    const brandScopedRoute = (() => {
+                                      const brandSlug = pathname.split('/')[4]; // /dashboard/modules/[module]/[brand]/...
+                                      const isBrandScoped = brandSlug && brandSlug !== 'crm' && brandSlug !== 'hr' && brandSlug !== 'pos' && brandSlug !== 'survey' && brandSlug !== 'inventory' && brandSlug !== 'sales' && brandSlug !== 'new';
+                                      if (isBrandScoped && nav.route.startsWith(`/dashboard/modules/${activeModuleKey}`)) {
+                                        return nav.route.replace(
+                                          `/dashboard/modules/${activeModuleKey}`,
+                                          `/dashboard/modules/${activeModuleKey}/${brandSlug}`
+                                        );
+                                      }
+                                      return nav.route;
+                                    })();
                                     return (
                                       <SidebarMenuItem key={nav.key}>
                                         <SidebarMenuButton
-                                          isActive={pathname === nav.route}
+                                          isActive={pathname === nav.route || pathname === brandScopedRoute}
                                           tooltip={nav.label}
-                                          render={<Link href={nav.route} />}
+                                          render={<Link href={brandScopedRoute} />}
                                         >
                                           <NavIcon />
                                           <span>{nav.label}</span>
@@ -443,6 +538,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border bg-background/95 px-4 backdrop-blur supports-backdrop-filter:bg-background/80">
             <div className="flex min-w-0 items-center gap-3">
               <SidebarTrigger className="-ms-1 shrink-0" />
+              <BrandHeaderIndicator />
             </div>
             <div className="flex min-w-0 shrink-0 items-center gap-2">
               {isEnabled("dashboard.notifications", true) ? <NotificationHeaderMenu /> : null}
@@ -452,7 +548,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </header>
           <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
             <div className="flex flex-1 flex-col gap-4 p-4 md:p-6">
-              <div className="flex-1 rounded-xl border border-border/80 bg-card p-4 shadow-sm md:p-6">{children}</div>
+              <BrandFilterProvider>
+                {brandError ? (
+                  <ErrorPage
+                    title="Brand Error"
+                    description="There was an issue with the brand specified in the URL."
+                    errorDetails={brandError}
+                    showBackButton={true}
+                    showHomeButton={true}
+                  />
+                ) : (
+                  <div className="flex-1 rounded-xl border border-border/80 bg-card p-4 shadow-sm md:p-6">{children}</div>
+                )}
+              </BrandFilterProvider>
             </div>
             <AppFooter />
           </div>

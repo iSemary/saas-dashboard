@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('opportunities', function (Blueprint $table) {
+        Schema::create('crm_opportunities', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->unsignedBigInteger('lead_id')->nullable();
-            $table->unsignedBigInteger('contact_id')->nullable();
-            $table->unsignedBigInteger('company_id')->nullable();
+            $table->unsignedBigInteger('lead_id')->nullable(); // FK to crm_leads
+            $table->unsignedBigInteger('contact_id')->nullable(); // FK to crm_contacts
+            $table->unsignedBigInteger('company_id')->nullable(); // FK to crm_companies
             $table->text('description')->nullable();
             $table->enum('stage', ['prospecting', 'qualification', 'proposal', 'negotiation', 'closed_won', 'closed_lost'])->default('prospecting');
             $table->decimal('expected_revenue', 15, 2)->nullable();
@@ -42,6 +42,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('opportunities');
+        Schema::dropIfExists('crm_opportunities');
     }
 };

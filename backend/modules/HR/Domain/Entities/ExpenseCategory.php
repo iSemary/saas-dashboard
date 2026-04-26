@@ -9,5 +9,7 @@ class ExpenseCategory extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'hr_expense_categories';
+
     protected $fillable = ['name', 'max_amount'];
 }

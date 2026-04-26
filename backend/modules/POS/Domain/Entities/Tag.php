@@ -10,7 +10,7 @@ class Tag extends Model
 {
     protected $table = 'pos_tags';
 
-    protected $fillable = ['type', 'value', 'created_by'];
+    protected $fillable = ['type', 'value', 'created_by', 'brand_id'];
 
     public function creator(): BelongsTo
     {
@@ -20,5 +20,15 @@ class Tag extends Model
     public function products()
     {
         return $this->belongsToMany(Product::class, 'pos_product_tags', 'tag_id', 'product_id');
+    }
+
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Customer\Entities\Tenant\Brand::class);
+    }
+
+    public function scopeForBrand($query, $brandId)
+    {
+        return $query->where('brand_id', $brandId);
     }
 }

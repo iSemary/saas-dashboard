@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('survey_shares', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('survey_id')->constrained('surveys')->cascadeOnDelete();
+            $table->foreignId('survey_id')->constrained('survey_surveys')->cascadeOnDelete();
             $table->enum('channel', ['email', 'link', 'embed', 'sms', 'qr_code', 'social']);
             $table->string('token', 64)->unique();
             $table->json('config')->nullable();

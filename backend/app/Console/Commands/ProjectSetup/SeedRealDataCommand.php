@@ -50,7 +50,6 @@ class SeedRealDataCommand extends Command
             $this->newLine();
             $this->info('✅ Real data seeding completed successfully!');
             return 0;
-
         } catch (\Exception $e) {
             $this->error('❌ Error during seeding: ' . $e->getMessage());
             $this->error('Stack trace: ' . $e->getTraceAsString());
@@ -101,42 +100,50 @@ class SeedRealDataCommand extends Command
                     'Modules\\Localization\\Database\\Seeders\\TranslationSeeder',
                 ]
             ],
-                'Email' => [
-                    'description' => 'Email templates, credentials, and related entities',
-                    'seeders' => [
-                        'Modules\\Email\\Database\\Seeders\\EmailTemplateSeeder',
-                        'Modules\\Email\\Database\\Seeders\\EmailCredentialSeeder',
-                        'Modules\\Email\\Database\\Seeders\\EmailGroupSeeder',
-                        'Modules\\Email\\Database\\Seeders\\EmailRecipientSeeder',
-                        'Modules\\Email\\Database\\Seeders\\EmailSubscriberSeeder',
-                        'Modules\\Email\\Database\\Seeders\\EmailTemplateLogSeeder',
-                        'Modules\\Email\\Database\\Seeders\\EmailRecipientGroupSeeder',
-                        'Modules\\Email\\Database\\Seeders\\EmailRecipientMetaSeeder',
-                        'Modules\\Email\\Database\\Seeders\\EmailCampaignSeeder',
-                        'Modules\\Email\\Database\\Seeders\\EmailLogSeeder',
-                        'Modules\\Email\\Database\\Seeders\\EmailAttachmentSeeder',
-                    ]
-                ],
+            'Subscription' => [
+                'description' => 'Subscription plans and related entities',
+                'seeders' => [
+                    'Modules\\Subscription\\Database\\Seeders\\PlanSeeder',
+                    'Modules\\Subscription\\Database\\Seeders\\PlanFeatureSeeder',
+                    'Modules\\Subscription\\Database\\Seeders\\PlanPriceSeeder',
+                ]
+            ],
+            'Email' => [
+                'description' => 'Email templates, credentials, and related entities',
+                'seeders' => [
+                    'Modules\\Email\\Database\\Seeders\\EmailTemplateSeeder',
+                    'Modules\\Email\\Database\\Seeders\\EmailCredentialSeeder',
+                    'Modules\\Email\\Database\\Seeders\\EmailGroupSeeder',
+                    'Modules\\Email\\Database\\Seeders\\EmailRecipientSeeder',
+                    'Modules\\Email\\Database\\Seeders\\EmailSubscriberSeeder',
+                    'Modules\\Email\\Database\\Seeders\\EmailTemplateLogSeeder',
+                    'Modules\\Email\\Database\\Seeders\\EmailRecipientGroupSeeder',
+                    'Modules\\Email\\Database\\Seeders\\EmailRecipientMetaSeeder',
+                    'Modules\\Email\\Database\\Seeders\\EmailCampaignSeeder',
+                    'Modules\\Email\\Database\\Seeders\\EmailLogSeeder',
+                    'Modules\\Email\\Database\\Seeders\\EmailAttachmentSeeder',
+                ]
+            ],
             'Development' => [
                 'description' => 'System configurations and settings',
                 'seeders' => [
                     'Modules\\Development\\Database\\Seeders\\ConfigurationsSeeder',
                 ]
             ],
-                'Utilities' => [
-                    'description' => 'System modules, currencies, and utilities',
-                    'seeders' => [
-                        'Modules\\Utilities\\Database\\Seeders\\ModulesSeeder',
-                        'Modules\\Utilities\\Database\\Seeders\\CurrencySeeder',
-                        'Modules\\Utilities\\Database\\Seeders\\StaticPageSeeder',
-                        'Modules\\Utilities\\Database\\Seeders\\StaticPageAttributeSeeder',
-                        'Modules\\Utilities\\Database\\Seeders\\TagSeeder',
-                        'Modules\\Utilities\\Database\\Seeders\\IndustrySeeder',
-                        'Modules\\Utilities\\Database\\Seeders\\UnitSeeder',
-                        'Modules\\Utilities\\Database\\Seeders\\ModuleEntitySeeder',
-                        'Modules\\Utilities\\Database\\Seeders\\CategorySeeder',
-                    ]
-                ],
+            'Utilities' => [
+                'description' => 'System modules, currencies, and utilities',
+                'seeders' => [
+                    'Modules\\Utilities\\Database\\Seeders\\ModulesSeeder',
+                    'Modules\\Utilities\\Database\\Seeders\\CurrencySeeder',
+                    'Modules\\Utilities\\Database\\Seeders\\StaticPageSeeder',
+                    'Modules\\Utilities\\Database\\Seeders\\StaticPageAttributeSeeder',
+                    'Modules\\Utilities\\Database\\Seeders\\TagSeeder',
+                    'Modules\\Utilities\\Database\\Seeders\\IndustrySeeder',
+                    'Modules\\Utilities\\Database\\Seeders\\UnitSeeder',
+                    'Modules\\Utilities\\Database\\Seeders\\ModuleEntitySeeder',
+                    'Modules\\Utilities\\Database\\Seeders\\CategorySeeder',
+                ]
+            ],
             'Auth' => [
                 'description' => 'Roles, permissions, and default users',
                 'seeders' => [
@@ -144,23 +151,23 @@ class SeedRealDataCommand extends Command
                     'Modules\\Auth\\Database\\Seeders\\LandlordUserSeeder',
                 ]
             ],
-                'Tenant' => [
-                    'description' => 'Landlord tenant setup',
-                    'seeders' => [
-                        'Database\\Seeders\\Landlord\\LandlordTenantSeeder',
-                        'Database\\Seeders\\Landlord\\AllCredentialsSeeder',
-                    ]
-                ],
-                'Geography' => [
-                    'description' => 'Countries, provinces, cities, towns, and streets',
-                    'seeders' => [
-                        'Modules\\Geography\\Database\\Seeders\\CountrySeeder',
-                        'Modules\\Geography\\Database\\Seeders\\ProvinceSeeder',
-                        'Modules\\Geography\\Database\\Seeders\\CitySeeder',
-                        'Modules\\Geography\\Database\\Seeders\\TownSeeder',
-                        'Modules\\Geography\\Database\\Seeders\\StreetSeeder',
-                    ]
+            'Tenant' => [
+                'description' => 'Landlord tenant setup',
+                'seeders' => [
+                    'Database\\Seeders\\Landlord\\LandlordTenantSeeder',
+                    'Database\\Seeders\\Landlord\\AllCredentialsSeeder',
                 ]
+            ],
+            'Geography' => [
+                'description' => 'Countries, provinces, cities, towns, and streets',
+                'seeders' => [
+                    'Modules\\Geography\\Database\\Seeders\\CountrySeeder',
+                    'Modules\\Geography\\Database\\Seeders\\ProvinceSeeder',
+                    'Modules\\Geography\\Database\\Seeders\\CitySeeder',
+                    'Modules\\Geography\\Database\\Seeders\\TownSeeder',
+                    'Modules\\Geography\\Database\\Seeders\\StreetSeeder',
+                ]
+            ]
         ];
 
         // If no specific modules provided, seed all

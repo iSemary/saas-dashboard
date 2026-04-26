@@ -8,10 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('payrolls', function (Blueprint $table) {
+        Schema::create('hr_payrolls', function (Blueprint $table) {
             $table->id();
             $table->string('payroll_number')->unique();
-            $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
+            $table->foreignId('employee_id')->constrained('hr_employees')->cascadeOnDelete();
             $table->date('pay_period_start');
             $table->date('pay_period_end');
             $table->date('pay_date');
@@ -45,6 +45,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('payrolls');
+        Schema::dropIfExists('hr_payrolls');
     }
 };

@@ -425,6 +425,48 @@ php artisan tenants:migrate
 php artisan tenants:seed
 ```
 
+### Tenant Generation
+
+Generate a complete tenant with subscription, brand, modules, and nginx configuration:
+
+```bash
+# Generate tenant with default Free Plan
+php artisan tenant:generate --name=acme
+
+# Generate with specific plan
+php artisan tenant:generate --name=acme --plan="Starter Plan"
+
+# Generate with custom trial period (for paid plans)
+php artisan tenant:generate --name=acme --plan="Professional Plan" --trial-days=30
+
+# Generate with specific modules
+php artisan tenant:generate --name=acme --modules=hr,crm,ticket,sales
+
+# Generate with custom domain and database
+php artisan tenant:generate --name=acme --domain=acme.example.com --database=saas_acme
+
+# Force regenerate if tenant exists
+php artisan tenant:generate --name=acme --force
+```
+
+**Options:**
+- `--name` - Tenant name (required if not prompted)
+- `--modules` - Comma-separated module list (default: hr,crm,ticket)
+- `--plan` - Plan name to assign (default: Free Plan)
+- `--trial-days` - Trial period in days for paid plans (default: 14)
+- `--domain` - Custom domain (auto-generated if not provided)
+- `--database` - Custom database name (auto-generated if not provided)
+- `--force` - Overwrite existing tenant
+
+**What it creates:**
+1. Tenant record in landlord database
+2. Customer and Brand entities
+3. Tenant database with migrations
+4. Subscription with assigned plan (Free=active, Paid=trial)
+5. Passport OAuth keys
+6. Nginx configuration
+7. Enabled modules for the brand
+
 ### Email Processing
 
 Process emails for tenants:

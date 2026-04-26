@@ -11,6 +11,8 @@ class LeaveType extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'hr_leave_types';
+
     protected $fillable = [
         'name',
         'code',

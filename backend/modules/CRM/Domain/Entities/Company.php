@@ -19,7 +19,7 @@ class Company extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'companies';
+    protected $table = 'crm_companies';
 
     protected $fillable = [
         'name',
@@ -39,6 +39,7 @@ class Company extends Model
         'type',
         'assigned_to',
         'created_by',
+        'brand_id',
         'parent_id',
         'custom_fields',
     ];
@@ -102,6 +103,11 @@ class Company extends Model
         return $this->morphMany(CrmFile::class, 'related');
     }
 
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Customer\Entities\Tenant\Brand::class);
+    }
+
     // ── Scopes ─────────────────────────────────────────────
 
     public function scopeByType($query, $type)
@@ -122,6 +128,11 @@ class Company extends Model
     public function scopeWithChildren($query)
     {
         return $query->has('children');
+    }
+
+    public function scopeForBrand($query, $brandId)
+    {
+        return $query->where('brand_id', $brandId);
     }
 
     // ── Business Methods ─────────────────────────────────

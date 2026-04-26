@@ -11,6 +11,8 @@ class PerformanceReview extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'hr_performance_reviews';
+
     protected $fillable = [
         'performance_cycle_id',
         'employee_id',

@@ -9,6 +9,8 @@ class Holiday extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'hr_holidays';
+
     protected $fillable = [
         'name',
         'date',

@@ -12,6 +12,8 @@ class Interview extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'hr_interviews';
+
     protected $fillable = [
         'application_id',
         'candidate_id',

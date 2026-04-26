@@ -11,6 +11,8 @@ class EmployeeContract extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'hr_employee_contracts';
+
     protected $fillable = [
         'employee_id',
         'contract_number',

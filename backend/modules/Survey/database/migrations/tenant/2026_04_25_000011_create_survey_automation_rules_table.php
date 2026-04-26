@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('survey_automation_rules', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('survey_id')->constrained('surveys')->cascadeOnDelete();
+            $table->foreignId('survey_id')->constrained('survey_surveys')->cascadeOnDelete();
             $table->string('name');
             $table->enum('trigger_type', [
                 'response_created', 'response_completed', 'question_answered', 'survey_closed', 'score_reached'

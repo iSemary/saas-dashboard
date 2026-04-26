@@ -10,7 +10,7 @@ class Barcode extends Model
 {
     protected $table = 'pos_barcodes';
 
-    protected $fillable = ['barcode_number', 'product_id', 'category_id', 'created_by'];
+    protected $fillable = ['barcode_number', 'product_id', 'category_id', 'created_by', 'brand_id'];
 
     public function product(): BelongsTo
     {
@@ -25,5 +25,15 @@ class Barcode extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Customer\Entities\Tenant\Brand::class);
+    }
+
+    public function scopeForBrand($query, $brandId)
+    {
+        return $query->where('brand_id', $brandId);
     }
 }

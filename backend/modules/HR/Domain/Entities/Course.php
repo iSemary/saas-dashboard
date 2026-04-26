@@ -9,6 +9,8 @@ class Course extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'hr_courses';
+
     protected $fillable = [
         'title',
         'description',

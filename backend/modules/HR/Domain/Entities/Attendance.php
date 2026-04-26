@@ -11,6 +11,8 @@ class Attendance extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'hr_attendances';
+
     protected $fillable = [
         'employee_id',
         'date',

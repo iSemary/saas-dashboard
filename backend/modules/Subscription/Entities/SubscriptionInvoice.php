@@ -37,4 +37,5 @@ class SubscriptionInvoice extends Model
     public function plan() { return $this->belongsTo(Plan::class); }
     public function currency() { return $this->belongsTo(Currency::class); }
     public function payments() { return $this->hasMany(SubscriptionPayment::class, 'invoice_id'); }
+    public function items() { return $this->hasMany(SubscriptionInvoiceItem::class, 'invoice_id'); }
 }

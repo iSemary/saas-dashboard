@@ -10,7 +10,7 @@ class EmploymentHistory extends Model
 {
     use HasFactory;
 
-    protected $table = 'employment_history';
+    protected $table = 'hr_employment_history';
 
     protected $fillable = [
         'employee_id',

@@ -19,7 +19,7 @@ class Opportunity extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'opportunities';
+    protected $table = 'crm_opportunities';
 
     protected $fillable = [
         'name',
@@ -33,6 +33,7 @@ class Opportunity extends Model
         'actual_close_date',
         'assigned_to',
         'created_by',
+        'brand_id',
         'custom_fields',
         'description',
     ];
@@ -101,6 +102,11 @@ class Opportunity extends Model
         return $this->morphMany(CrmFile::class, 'related');
     }
 
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Customer\Entities\Tenant\Brand::class);
+    }
+
     // ── Scopes ─────────────────────────────────────────────
 
     public function scopeByStage($query, $stage)
@@ -111,6 +117,11 @@ class Opportunity extends Model
     public function scopeAssignedTo($query, $userId)
     {
         return $query->where('assigned_to', $userId);
+    }
+
+    public function scopeForBrand($query, $brandId)
+    {
+        return $query->where('brand_id', $brandId);
     }
 
     public function scopeOpen($query)

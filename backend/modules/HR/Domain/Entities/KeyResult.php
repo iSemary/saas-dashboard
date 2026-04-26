@@ -11,6 +11,8 @@ class KeyResult extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'hr_key_results';
+
     protected $fillable = [
         'goal_id',
         'title',
@@ -39,19 +41,19 @@ class KeyResult extends Model
     public function updateProgress(float $currentValue): void
     {
         $this->current_value = $currentValue;
-        
+
         if ($this->target_value > 0) {
             $this->progress = min(100, ($currentValue / $this->target_value) * 100);
         }
-        
+
         if ($this->progress >= 100) {
             $this->status = 'completed';
         } elseif ($this->progress > 0) {
             $this->status = 'in_progress';
         }
-        
+
         $this->save();
-        
+
         // Update parent goal progress
         $this->goal->updateProgress();
     }

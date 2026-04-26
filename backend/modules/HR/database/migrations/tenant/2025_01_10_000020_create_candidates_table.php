@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('candidates', function (Blueprint $table) {
+        Schema::create('hr_candidates', function (Blueprint $table) {
             $table->id();
             $table->string('first_name');
             $table->string('last_name');
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('portfolio_url')->nullable();
             $table->string('resume_path')->nullable();
             $table->string('source')->nullable(); // direct, referral, agency, job_board
-            $table->foreignId('referrer_id')->nullable()->constrained('employees')->nullOnDelete();
+            $table->foreignId('referrer_id')->nullable()->constrained('hr_employees')->nullOnDelete();
             $table->json('tags')->nullable();
             $table->decimal('rating', 2, 1)->nullable(); // 1-5 stars
             $table->text('notes')->nullable();
@@ -39,6 +39,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('candidates');
+        Schema::dropIfExists('hr_candidates');
     }
 };

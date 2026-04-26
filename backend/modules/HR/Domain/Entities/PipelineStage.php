@@ -11,7 +11,7 @@ class PipelineStage extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'pipeline_stages';
+    protected $table = 'hr_pipeline_stages';
 
     protected $fillable = [
         'name',

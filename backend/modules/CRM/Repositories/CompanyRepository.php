@@ -35,6 +35,10 @@ class CompanyRepository implements CompanyRepositoryInterface
             $query->where('assigned_to', $filters['assigned_to']);
         }
 
+        if (isset($filters['brand_id']) && $filters['brand_id']) {
+            $query->where('brand_id', $filters['brand_id']);
+        }
+
         return $query->orderBy('created_at', 'desc')->paginate($perPage);
     }
 

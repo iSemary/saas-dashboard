@@ -8,17 +8,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('asset_categories', function (Blueprint $table) {
+        Schema::create('hr_asset_categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->timestamps();
             $table->softDeletes();
         });
 
-        Schema::create('assets', function (Blueprint $table) {
+        Schema::create('hr_assets', function (Blueprint $table) {
             $table->id();
             $table->string('asset_tag')->unique();
-            $table->foreignId('category_id')->nullable()->constrained('asset_categories')->nullOnDelete();
+            $table->foreignId('category_id')->nullable()->constrained('hr_asset_categories')->nullOnDelete();
             $table->string('name');
             $table->string('brand')->nullable();
             $table->string('model')->nullable();
@@ -30,10 +30,10 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-        Schema::create('asset_assignments', function (Blueprint $table) {
+        Schema::create('hr_asset_assignments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('asset_id')->constrained('assets')->cascadeOnDelete();
-            $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
+            $table->foreignId('asset_id')->constrained('hr_assets')->cascadeOnDelete();
+            $table->foreignId('employee_id')->constrained('hr_employees')->cascadeOnDelete();
             $table->timestamp('assigned_at')->nullable();
             $table->timestamp('returned_at')->nullable();
             $table->string('condition_at_assignment')->nullable();
@@ -46,8 +46,8 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('asset_assignments');
-        Schema::dropIfExists('assets');
-        Schema::dropIfExists('asset_categories');
+        Schema::dropIfExists('hr_asset_assignments');
+        Schema::dropIfExists('hr_assets');
+        Schema::dropIfExists('hr_asset_categories');
     }
 };

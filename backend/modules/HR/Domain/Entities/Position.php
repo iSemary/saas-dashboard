@@ -9,10 +9,23 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\HR\Domain\Events\PositionCreated;
 use Modules\HR\Domain\ValueObjects\PositionLevel;
+use Modules\Customer\Entities\Tenant\Brand;
 
 class Position extends Model
 {
     use HasFactory, SoftDeletes;
+
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
+    public function scopeForBrand($query, $brandId)
+    {
+        return $query->where('brand_id', $brandId);
+    }
+
+    protected $table = 'hr_positions';
 
     protected $fillable = [
         'title',
@@ -25,6 +38,7 @@ class Position extends Model
         'requirements',
         'is_active',
         'created_by',
+        'brand_id',
         'custom_fields',
     ];
 

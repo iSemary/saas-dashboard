@@ -9,6 +9,8 @@ class CourseEnrollment extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'hr_course_enrollments';
+
     protected $fillable = [
         'course_id',
         'employee_id',

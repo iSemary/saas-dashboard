@@ -11,6 +11,8 @@ class Shift extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'hr_work_shifts';
+
     protected $fillable = [
         'name',
         'code',

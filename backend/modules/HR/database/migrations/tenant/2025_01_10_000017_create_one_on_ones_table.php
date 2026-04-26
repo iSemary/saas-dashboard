@@ -8,10 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('one_on_ones', function (Blueprint $table) {
+        Schema::create('hr_one_on_ones', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
-            $table->foreignId('manager_id')->constrained('employees');
+            $table->foreignId('employee_id')->constrained('hr_employees')->cascadeOnDelete();
+            $table->foreignId('manager_id')->constrained('hr_employees');
             $table->timestamp('scheduled_at');
             $table->integer('duration_minutes')->default(30);
             $table->string('status')->default('scheduled'); // scheduled, completed, cancelled
@@ -31,6 +31,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('one_on_ones');
+        Schema::dropIfExists('hr_one_on_ones');
     }
 };

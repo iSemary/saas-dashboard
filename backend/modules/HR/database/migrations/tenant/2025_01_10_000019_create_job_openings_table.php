@@ -8,11 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('job_openings', function (Blueprint $table) {
+        Schema::create('hr_job_openings', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->foreignId('department_id')->constrained('departments');
-            $table->foreignId('position_id')->nullable()->constrained('positions')->nullOnDelete();
+            $table->foreignId('department_id')->constrained('hr_departments');
+            $table->foreignId('position_id')->nullable()->constrained('hr_positions')->nullOnDelete();
             $table->string('location')->nullable();
             $table->string('type')->default('full-time'); // full-time, part-time, contract, internship
             $table->string('employment_type')->default('permanent'); // permanent, temporary
@@ -26,8 +26,8 @@ return new class extends Migration
             $table->string('status')->default('draft'); // draft, published, closed, on_hold
             $table->timestamp('published_at')->nullable();
             $table->timestamp('closes_at')->nullable();
-            $table->foreignId('hiring_manager_id')->nullable()->constrained('employees')->nullOnDelete();
-            $table->foreignId('recruiter_id')->nullable()->constrained('employees')->nullOnDelete();
+            $table->foreignId('hiring_manager_id')->nullable()->constrained('hr_employees')->nullOnDelete();
+            $table->foreignId('recruiter_id')->nullable()->constrained('hr_employees')->nullOnDelete();
             $table->integer('vacancies')->default(1);
             $table->integer('filled_count')->default(0);
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
@@ -42,6 +42,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('job_openings');
+        Schema::dropIfExists('hr_job_openings');
     }
 };

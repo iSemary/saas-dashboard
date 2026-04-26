@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('expense_categories', function (Blueprint $table) {
+        Schema::create('hr_expense_categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->decimal('max_amount', 12, 2)->nullable();
@@ -16,10 +16,10 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-        Schema::create('expense_claims', function (Blueprint $table) {
+        Schema::create('hr_expense_claims', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
-            $table->foreignId('category_id')->nullable()->constrained('expense_categories')->nullOnDelete();
+            $table->foreignId('employee_id')->constrained('hr_employees')->cascadeOnDelete();
+            $table->foreignId('category_id')->nullable()->constrained('hr_expense_categories')->nullOnDelete();
             $table->decimal('amount', 12, 2);
             $table->string('currency', 3)->default('USD');
             $table->date('expense_date')->nullable();
@@ -35,7 +35,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('expense_claims');
-        Schema::dropIfExists('expense_categories');
+        Schema::dropIfExists('hr_expense_claims');
+        Schema::dropIfExists('hr_expense_categories');
     }
 };

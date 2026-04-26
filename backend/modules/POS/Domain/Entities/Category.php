@@ -14,11 +14,16 @@ class Category extends Model
 
     protected $table = 'pos_categories';
 
-    protected $fillable = ['name', 'branch_id', 'created_by'];
+    protected $fillable = ['name', 'branch_id', 'created_by', 'brand_id'];
 
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Customer\Entities\Tenant\Brand::class);
     }
 
     public function products(): HasMany
@@ -34,5 +39,10 @@ class Category extends Model
     public function hasProducts(): bool
     {
         return $this->products()->exists();
+    }
+
+    public function scopeForBrand($query, $brandId)
+    {
+        return $query->where('brand_id', $brandId);
     }
 }

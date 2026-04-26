@@ -8,10 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('attendances', function (Blueprint $table) {
+        Schema::create('hr_attendances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
-            $table->foreignId('work_shift_id')->nullable()->constrained('work_shifts');
+            $table->foreignId('employee_id')->constrained('hr_employees')->cascadeOnDelete();
+            $table->foreignId('work_shift_id')->nullable()->constrained('hr_work_shifts');
             $table->date('date');
             $table->timestamp('check_in')->nullable();
             $table->timestamp('check_out')->nullable();
@@ -38,6 +38,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('attendances');
+        Schema::dropIfExists('hr_attendances');
     }
 };

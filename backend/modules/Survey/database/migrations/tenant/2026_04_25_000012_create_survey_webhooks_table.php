@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('survey_webhooks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('survey_id')->constrained('surveys')->cascadeOnDelete();
+            $table->foreignId('survey_id')->constrained('survey_surveys')->cascadeOnDelete();
             $table->string('name');
             $table->string('url');
             $table->string('secret');

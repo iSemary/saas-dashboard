@@ -81,6 +81,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import ErrorPage from "@/app/error/page";
 
 type NavLinkDef = {
   href: string;

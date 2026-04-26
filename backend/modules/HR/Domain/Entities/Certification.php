@@ -9,6 +9,8 @@ class Certification extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'hr_certifications';
+
     protected $fillable = [
         'employee_id',
         'course_id',

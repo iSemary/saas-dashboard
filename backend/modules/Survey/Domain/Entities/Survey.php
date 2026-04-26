@@ -18,12 +18,23 @@ use Modules\Survey\Domain\Exceptions\SurveyNotPublishableException;
 use Modules\Survey\Domain\Events\SurveyCreated;
 use Modules\Survey\Domain\Events\SurveyPublished;
 use Modules\Survey\Domain\Events\SurveyClosed;
+use Modules\Customer\Entities\Tenant\Brand;
 
 class Survey extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'surveys';
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
+    public function scopeForBrand($query, $brandId)
+    {
+        return $query->where('brand_id', $brandId);
+    }
+
+    protected $table = 'survey_surveys';
 
     protected $fillable = [
         'title',
@@ -37,6 +48,7 @@ class Survey extends Model
         'published_at',
         'closed_at',
         'created_by',
+        'brand_id',
     ];
 
     protected $casts = [

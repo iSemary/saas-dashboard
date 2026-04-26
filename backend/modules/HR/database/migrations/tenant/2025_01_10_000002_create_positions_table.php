@@ -8,11 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('positions', function (Blueprint $table) {
+        Schema::create('hr_positions', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->string('code')->nullable()->unique();
-            $table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
+            $table->foreignId('department_id')->nullable()->constrained('hr_departments')->nullOnDelete();
             $table->string('level')->nullable();
             $table->decimal('min_salary', 12, 2)->nullable();
             $table->decimal('max_salary', 12, 2)->nullable();
@@ -32,6 +32,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('positions');
+        Schema::dropIfExists('hr_positions');
     }
 };

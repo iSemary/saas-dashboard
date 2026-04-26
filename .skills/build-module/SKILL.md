@@ -193,6 +193,9 @@ Schema::create('{table_name}', function (Blueprint $table) {
 **Conventions:**
 - Tenant-scoped tables go in `database/migrations/tenant/`
 - Landlord tables go in `database/migrations/landlord/`
+- **Table naming: ALL tables must be prefixed with the lowercase module name** (e.g., `crm_leads`, `hr_employees`, `pos_products`, `survey_surveys`). Never use unprefixed generic names like `leads`, `employees`, `products`.
+- **Entity `$table` property: Always explicitly declare `protected $table = '{module}_{entity}';`** in every Eloquent entity to avoid Eloquent's convention-based guessing.
+- All FK references in migrations must also use the prefixed table names (e.g., `->constrained('hr_employees')` not `->constrained('employees')`).
 - Always include: `id`, `created_by`, `softDeletes()`, `timestamps()`
 - Foreign keys: `->nullable()->constrained('users')->nullOnDelete()`
 - Polymorphic: `related_type` (string) + `related_id` (unsignedBigInteger) + index
@@ -708,8 +711,8 @@ Follow `.skills/update-erd-on-db-change.md` to update ERD files after creating m
 
 - [ ] Value Object enum with transition rules
 - [ ] Domain Exception for business rule violations
-- [ ] Migration (tenant or landlord)
-- [ ] Rich Entity with business methods + event dispatching
+- [ ] Migration (tenant or landlord) — table name prefixed with `{module}_`
+- [ ] Rich Entity with business methods + event dispatching — explicit `protected $table = '{module}_{entity}';`
 - [ ] Repository interface + implementation
 - [ ] Strategy interface + default implementation (if applicable)
 - [ ] Domain Events (Created, StatusChanged, custom actions)

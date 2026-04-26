@@ -9,14 +9,14 @@ Full-featured Survey module with DDD architecture supporting 20 question types, 
 
 ```mermaid
 erDiagram
-    surveys ||--o{ survey_pages : contains
-    surveys ||--o{ survey_questions : contains
-    surveys ||--o{ survey_responses : receives
-    surveys ||--o{ survey_shares : distributed_via
-    surveys ||--o{ survey_automation_rules : has
-    surveys ||--o{ survey_webhooks : has
-    surveys }o--|| survey_themes : styled_by
-    surveys }o--|| survey_templates : created_from
+    survey_surveys ||--o{ survey_pages : contains
+    survey_surveys ||--o{ survey_questions : contains
+    survey_surveys ||--o{ survey_responses : receives
+    survey_surveys ||--o{ survey_shares : distributed_via
+    survey_surveys ||--o{ survey_automation_rules : has
+    survey_surveys ||--o{ survey_webhooks : has
+    survey_surveys }o--|| survey_themes : styled_by
+    survey_surveys }o--|| survey_templates : created_from
     
     survey_pages ||--o{ survey_questions : contains
     
@@ -27,9 +27,9 @@ erDiagram
     survey_responses ||--o{ survey_answers : contains
     survey_responses }o--|| survey_shares : via
     
-    survey_templates ||--o{ surveys : creates
+    survey_templates ||--o{ survey_surveys : creates
     
-    users ||--o{ surveys : creates
+    users ||--o{ survey_surveys : creates
     users ||--o{ survey_templates : creates
     users ||--o{ survey_themes : creates
 ```
@@ -38,7 +38,7 @@ erDiagram
 
 ## Table Definitions
 
-### surveys
+### survey_surveys
 Main survey entity with settings and status.
 
 | Column | Type | Constraints | Description |
@@ -69,7 +69,7 @@ Pages within a survey for multi-page mode.
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
 | id | bigint | PK | Auto-increment |
-| survey_id | bigint | FK → surveys, CASCADE | Parent survey |
+| survey_id | bigint | FK → survey_surveys, CASCADE | Parent survey |
 | title | string(255) | NULL | Page title |
 | description | text | NULL | Page description |
 | order | int | NOT NULL | Display order |
@@ -87,7 +87,7 @@ Questions within pages (20 types supported).
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
 | id | bigint | PK | Auto-increment |
-| survey_id | bigint | FK → surveys, CASCADE | Parent survey |
+| survey_id | bigint | FK → survey_surveys, CASCADE | Parent survey |
 | page_id | bigint | FK → survey_pages, CASCADE | Parent page |
 | type | enum | NOT NULL | Question type (20 options) |
 | title | string(500) | NOT NULL | Question text |
@@ -158,7 +158,7 @@ Individual survey responses from respondents.
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
 | id | bigint | PK | Auto-increment |
-| survey_id | bigint | FK → surveys, CASCADE | Parent survey |
+| survey_id | bigint | FK → survey_surveys, CASCADE | Parent survey |
 | share_id | bigint | FK → survey_shares | Distribution channel |
 | respondent_type | enum | NOT NULL | anonymous, authenticated, email |
 | respondent_id | bigint | FK → users | User if authenticated |
@@ -254,7 +254,7 @@ Automation triggers and actions.
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
 | id | bigint | PK | Auto-increment |
-| survey_id | bigint | FK → surveys, CASCADE | Parent survey |
+| survey_id | bigint | FK → survey_surveys, CASCADE | Parent survey |
 | name | string(255) | NOT NULL | Rule name |
 | trigger_type | enum | NOT NULL | When to trigger |
 | conditions | json | NULL | Filter conditions |
@@ -278,7 +278,7 @@ Outbound webhooks for integrations.
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
 | id | bigint | PK | Auto-increment |
-| survey_id | bigint | FK → surveys, CASCADE | Parent survey |
+| survey_id | bigint | FK → survey_surveys, CASCADE | Parent survey |
 | name | string(255) | NOT NULL | Webhook name |
 | url | string(500) | NOT NULL | Target URL |
 | secret | string(255) | NOT NULL | HMAC secret |
@@ -300,7 +300,7 @@ Distribution channels for surveys.
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
 | id | bigint | PK | Auto-increment |
-| survey_id | bigint | FK → surveys, CASCADE | Parent survey |
+| survey_id | bigint | FK → survey_surveys, CASCADE | Parent survey |
 | channel | enum | NOT NULL | Distribution type |
 | token | string(64) | UNIQUE | Share token |
 | config | json | NULL | Channel config |
@@ -321,21 +321,21 @@ Distribution channels for surveys.
 
 | Parent | Child | Type | On Delete |
 |--------|-------|------|-----------|
-| surveys | survey_pages | 1:N | CASCADE |
-| surveys | survey_questions | 1:N | CASCADE |
-| surveys | survey_responses | 1:N | CASCADE |
-| surveys | survey_shares | 1:N | CASCADE |
-| surveys | survey_automation_rules | 1:N | CASCADE |
-| surveys | survey_webhooks | 1:N | CASCADE |
-| surveys | survey_themes | N:1 | SET NULL |
-| surveys | survey_templates | N:1 | SET NULL |
+| survey_surveys | survey_pages | 1:N | CASCADE |
+| survey_surveys | survey_questions | 1:N | CASCADE |
+| survey_surveys | survey_responses | 1:N | CASCADE |
+| survey_surveys | survey_shares | 1:N | CASCADE |
+| survey_surveys | survey_automation_rules | 1:N | CASCADE |
+| survey_surveys | survey_webhooks | 1:N | CASCADE |
+| survey_surveys | survey_themes | N:1 | SET NULL |
+| survey_surveys | survey_templates | N:1 | SET NULL |
 | survey_pages | survey_questions | 1:N | CASCADE |
 | survey_questions | survey_question_options | 1:N | CASCADE |
 | survey_questions | survey_question_translations | 1:N | CASCADE |
 | survey_questions | survey_answers | 1:N | RESTRICT |
 | survey_responses | survey_answers | 1:N | CASCADE |
 | survey_responses | survey_shares | N:1 | SET NULL |
-| users | surveys | 1:N | - |
+| users | survey_surveys | 1:N | - |
 | users | survey_templates | 1:N | - |
 | users | survey_themes | 1:N | - |
 
@@ -343,7 +343,7 @@ Distribution channels for surveys.
 
 ## Indexes Summary
 
-**surveys:** status, created_by, theme_id, template_id
+**survey_surveys:** status, created_by, theme_id, template_id
 **survey_pages:** (survey_id, order)
 **survey_questions:** (survey_id, page_id, order), type
 **survey_question_options:** (question_id, order)
@@ -359,7 +359,7 @@ Distribution channels for surveys.
 
 ## Total Tables: 12
 
-1. surveys
+1. survey_surveys
 2. survey_pages
 3. survey_questions
 4. survey_question_options

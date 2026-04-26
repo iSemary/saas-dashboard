@@ -17,7 +17,7 @@ class Activity extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'activities';
+    protected $table = 'crm_activities';
 
     protected $fillable = [
         'subject',

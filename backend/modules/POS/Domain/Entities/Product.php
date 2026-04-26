@@ -20,7 +20,7 @@ class Product extends Model
         'name', 'amount', 'amount_type', 'description', 'image',
         'purchase_price', 'sale_price', 'supplier_id', 'category_id',
         'sub_category_id', 'ordered_count', 'is_offer', 'offer_price',
-        'offer_percentage', 'type', 'production_at', 'expired_at', 'created_by',
+        'offer_percentage', 'type', 'production_at', 'expired_at', 'created_by', 'brand_id',
     ];
 
     protected $casts = [
@@ -46,6 +46,11 @@ class Product extends Model
     public function isExpired(): bool
     {
         return $this->expired_at && $this->expired_at->isPast();
+    }
+
+    public function scopeForBrand($query, $brandId)
+    {
+        return $query->where('brand_id', $brandId);
     }
 
     public function hasOffer(): bool
@@ -113,6 +118,11 @@ class Product extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Customer\Entities\Tenant\Brand::class);
     }
 
     public function tags(): BelongsToMany

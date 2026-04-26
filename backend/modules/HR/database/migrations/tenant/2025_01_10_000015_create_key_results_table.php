@@ -8,9 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('key_results', function (Blueprint $table) {
+        Schema::create('hr_key_results', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('goal_id')->constrained('goals')->cascadeOnDelete();
+            $table->foreignId('goal_id')->constrained('hr_goals')->cascadeOnDelete();
             $table->string('title');
             $table->text('description')->nullable();
             $table->decimal('target_value', 12, 2);
@@ -29,6 +29,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('key_results');
+        Schema::dropIfExists('hr_key_results');
     }
 };

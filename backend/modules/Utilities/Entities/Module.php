@@ -27,11 +27,20 @@ class Module extends Model implements Auditable
         'navigation',
         'theme',
         'status',
+        'base_price',
+        'currency_id',
+        'billing_cycle',
+        'is_addon',
+        'trial_days',
+        'included_modules',
     ];
 
     protected $casts = [
         'navigation' => 'array',
         'theme' => 'array',
+        'included_modules' => 'array',
+        'base_price' => 'decimal:2',
+        'is_addon' => 'boolean',
     ];
 
     protected $fileColumns = [

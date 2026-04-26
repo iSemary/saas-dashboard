@@ -9,6 +9,8 @@ class Policy extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'hr_policies';
+
     protected $fillable = [
         'title',
         'body',

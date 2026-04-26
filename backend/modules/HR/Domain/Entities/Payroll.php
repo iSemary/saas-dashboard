@@ -11,6 +11,8 @@ class Payroll extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'hr_payrolls';
+
     protected $fillable = [
         'payroll_number',
         'employee_id',

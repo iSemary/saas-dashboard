@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('survey_responses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('survey_id')->constrained('surveys')->cascadeOnDelete();
+            $table->foreignId('survey_id')->constrained('survey_surveys')->cascadeOnDelete();
             $table->foreignId('share_id')->nullable()->constrained('survey_shares')->nullOnDelete();
             $table->enum('respondent_type', ['anonymous', 'authenticated', 'email'])->default('anonymous');
             $table->foreignId('respondent_id')->nullable()->constrained('users')->nullOnDelete();

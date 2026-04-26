@@ -15,7 +15,7 @@ class OfferPrice extends Model
 
     protected $fillable = [
         'product_id', 'branch_id', 'amount', 'original_price',
-        'total_price', 'buyer_name', 'reduce_stock', 'created_by',
+        'total_price', 'buyer_name', 'reduce_stock', 'created_by', 'brand_id',
     ];
 
     protected $casts = [
@@ -38,5 +38,15 @@ class OfferPrice extends Model
     public function shouldReduceStock(): bool
     {
         return (bool) $this->reduce_stock;
+    }
+
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Customer\Entities\Tenant\Brand::class);
+    }
+
+    public function scopeForBrand($query, $brandId)
+    {
+        return $query->where('brand_id', $brandId);
     }
 }

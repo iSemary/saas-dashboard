@@ -27,6 +27,10 @@ class OpportunityRepository implements OpportunityRepositoryInterface
             $query->where('name', 'like', '%' . $filters['search'] . '%');
         }
 
+        if (isset($filters['brand_id'])) {
+            $query->where('brand_id', $filters['brand_id']);
+        }
+
         return $query->orderBy('created_at', 'desc')->paginate($perPage);
     }
 

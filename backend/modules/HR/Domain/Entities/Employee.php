@@ -19,10 +19,23 @@ use Modules\HR\Domain\ValueObjects\EmploymentType;
 use Modules\HR\Domain\ValueObjects\Gender;
 use Modules\HR\Domain\ValueObjects\MaritalStatus;
 use Modules\HR\Domain\ValueObjects\PayFrequency;
+use Modules\Customer\Entities\Tenant\Brand;
 
 class Employee extends Model
 {
     use HasFactory, SoftDeletes;
+
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
+    public function scopeForBrand($query, $brandId)
+    {
+        return $query->where('brand_id', $brandId);
+    }
+
+    protected $table = 'hr_employees';
 
     protected $fillable = [
         'employee_number',
@@ -58,6 +71,7 @@ class Employee extends Model
         'emergency_contact_relationship',
         'avatar',
         'created_by',
+        'brand_id',
         'custom_fields',
     ];
 

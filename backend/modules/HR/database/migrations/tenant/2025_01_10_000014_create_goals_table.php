@@ -8,11 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('goals', function (Blueprint $table) {
+        Schema::create('hr_goals', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('performance_cycle_id')->constrained('performance_cycles')->cascadeOnDelete();
-            $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
-            $table->foreignId('manager_id')->nullable()->constrained('employees')->nullOnDelete();
+            $table->foreignId('performance_cycle_id')->constrained('hr_performance_cycles')->cascadeOnDelete();
+            $table->foreignId('employee_id')->constrained('hr_employees')->cascadeOnDelete();
+            $table->foreignId('manager_id')->nullable()->constrained('hr_employees')->nullOnDelete();
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('category')->nullable(); // professional_development, project_delivery, etc.
@@ -33,6 +33,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('goals');
+        Schema::dropIfExists('hr_goals');
     }
 };

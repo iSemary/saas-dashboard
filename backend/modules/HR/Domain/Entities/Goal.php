@@ -12,6 +12,8 @@ class Goal extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'hr_goals';
+
     protected $fillable = [
         'performance_cycle_id',
         'employee_id',
@@ -60,12 +62,12 @@ class Goal extends Model
     {
         $krProgress = $this->keyResults()->avg('progress') ?? 0;
         $this->progress = min(100, max(0, $krProgress));
-        
+
         if ($this->progress >= 100 && !$this->completed_at) {
             $this->completed_at = now();
             $this->status = 'completed';
         }
-        
+
         $this->save();
     }
 

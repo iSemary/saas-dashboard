@@ -10,6 +10,8 @@ class WorkSchedule extends Model
 {
     use HasFactory;
 
+    protected $table = 'hr_employee_work_schedules';
+
     protected $fillable = [
         'employee_id',
         'shift_id',

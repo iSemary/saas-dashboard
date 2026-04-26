@@ -8,10 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('feedback', function (Blueprint $table) {
+        Schema::create('hr_feedback', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('recipient_id')->constrained('employees')->cascadeOnDelete();
-            $table->foreignId('provider_id')->constrained('employees');
+            $table->foreignId('recipient_id')->constrained('hr_employees')->cascadeOnDelete();
+            $table->foreignId('provider_id')->constrained('hr_employees');
             $table->string('type')->default('praise'); // praise, constructive, peer_review
             $table->string('category')->nullable(); // communication, teamwork, technical, etc.
             $table->text('content');
@@ -29,6 +29,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('feedback');
+        Schema::dropIfExists('hr_feedback');
     }
 };

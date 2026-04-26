@@ -100,6 +100,7 @@ class TenantModuleService
                 'status' => $brandModule->status,
                 'brand_id' => $brandModule->brand_id,
                 'brand_name' => $brandModule->brand?->name,
+                'brand_slug' => $brandModule->brand?->slug,
                 'color_palette' => $brandModule->color_palette,
                 'subscribed_at' => $brandModule->subscribed_at?->toIso8601String(),
                 'unread_notifications' => $notificationCounts[$landlordModule->id] ?? 0,
@@ -199,10 +200,11 @@ class TenantModuleService
             return [];
         }
 
-        $brandNames = DB::table('brands')
+        $brandData = DB::table('brands')
             ->whereIn('id', $brandIds)
-            ->pluck('name', 'id')
-            ->toArray();
+            ->select(['id', 'name', 'slug'])
+            ->get()
+            ->keyBy('id');
 
         $notificationCounts = DB::table('notifications')
             ->where('is_read', false)
@@ -239,7 +241,8 @@ class TenantModuleService
                 'navigation' => $landlordModule->navigation,
                 'status' => 'active',
                 'brand_id' => $row->brand_id,
-                'brand_name' => $brandNames[$row->brand_id] ?? null,
+                'brand_name' => $brandData[$row->brand_id]?->name ?? null,
+                'brand_slug' => $brandData[$row->brand_id]?->slug ?? null,
                 'color_palette' => null,
                 'subscribed_at' => $row->created_at,
                 'unread_notifications' => $notificationCounts[$landlordModule->id] ?? 0,

@@ -11,6 +11,8 @@ class PerformanceCycle extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'hr_performance_cycles';
+
     protected $fillable = [
         'name',
         'start_date',
@@ -53,7 +55,7 @@ class PerformanceCycle extends Model
 
     public function isOpen(): bool
     {
-        return $this->status === 'active' 
+        return $this->status === 'active'
             && now()->between($this->review_start_date, $this->review_end_date);
     }
 }

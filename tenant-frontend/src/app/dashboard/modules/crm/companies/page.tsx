@@ -2,6 +2,8 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { SimpleCRUDPage } from "@/components/simple-crud-page";
+import { useBrandFilter } from "@/context/brand-filter-context";
+import type { TableParams } from "@/lib/tenant-resources";
 import {
   listCrmCompanies,
   createCrmCompany,
@@ -38,6 +40,20 @@ const columns = (): Array<ColumnDef<Company>> => [
 ];
 
 export default function CrmCompaniesPage() {
+  const { brandFilter } = useBrandFilter();
+
+  // Wrap listFn to inject brand_id filter when available
+  const listFn = (params?: TableParams) => {
+    const mergedParams: TableParams = {
+      ...params,
+      filters: {
+        ...params?.filters,
+        ...(brandFilter?.id ? { brand_id: brandFilter.id } : {}),
+      },
+    };
+    return listCrmCompanies<Company>(mergedParams);
+  };
+
   return (
     <SimpleCRUDPage<Company>
       config={{
@@ -84,7 +100,7 @@ export default function CrmCompaniesPage() {
           { name: "description", label: "Description", type: "textarea" },
         ],
         columns,
-        listFn: listCrmCompanies,
+        listFn,
         createFn: createCrmCompany,
         updateFn: updateCrmCompany,
         deleteFn: deleteCrmCompany,
@@ -103,6 +119,8 @@ export default function CrmCompaniesPage() {
           website: form.website || undefined,
           industry: form.industry || undefined,
           type: form.type || undefined,
+          // Include brand_id when creating if filtered
+          ...(brandFilter?.id ? { brand_id: brandFilter.id } : {}),
         }),
       }}
     />

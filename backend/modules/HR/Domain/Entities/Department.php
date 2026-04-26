@@ -14,10 +14,23 @@ use Modules\HR\Domain\Exceptions\DepartmentHasEmployees;
 use Modules\HR\Domain\Exceptions\DepartmentHasSubDepartments;
 use Modules\HR\Domain\Exceptions\InvalidDepartmentStatusTransition;
 use Modules\HR\Domain\ValueObjects\DepartmentStatus;
+use Modules\Customer\Entities\Tenant\Brand;
 
 class Department extends Model
 {
     use HasFactory, SoftDeletes;
+
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
+    public function scopeForBrand($query, $brandId)
+    {
+        return $query->where('brand_id', $brandId);
+    }
+
+    protected $table = 'hr_departments';
 
     protected $fillable = [
         'name',
@@ -27,6 +40,7 @@ class Department extends Model
         'description',
         'status',
         'created_by',
+        'brand_id',
         'custom_fields',
     ];
 

@@ -13,7 +13,7 @@ class Damaged extends Model
 
     protected $table = 'pos_damaged';
 
-    protected $fillable = ['product_id', 'branch_id', 'amount', 'created_by'];
+    protected $fillable = ['product_id', 'branch_id', 'amount', 'created_by', 'brand_id'];
 
     protected $casts = ['amount' => 'decimal:2'];
 
@@ -25,5 +25,15 @@ class Damaged extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Customer\Entities\Tenant\Brand::class);
+    }
+
+    public function scopeForBrand($query, $brandId)
+    {
+        return $query->where('brand_id', $brandId);
     }
 }

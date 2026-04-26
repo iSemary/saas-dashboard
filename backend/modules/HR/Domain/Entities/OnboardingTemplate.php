@@ -9,6 +9,8 @@ class OnboardingTemplate extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'hr_onboarding_templates';
+
     protected $fillable = [
         'name',
         'type',

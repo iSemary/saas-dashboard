@@ -6,10 +6,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Customer\Entities\Tenant\Brand;
 
 class LeaveRequest extends Model
 {
     use HasFactory, SoftDeletes;
+
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
+    public function scopeForBrand($query, $brandId)
+    {
+        return $query->where('brand_id', $brandId);
+    }
+
+    protected $table = 'hr_leave_requests';
 
     protected $fillable = [
         'employee_id',
@@ -26,6 +39,7 @@ class LeaveRequest extends Model
         'rejection_reason',
         'attachments',
         'created_by',
+        'brand_id',
         'custom_fields',
     ];
 

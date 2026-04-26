@@ -2,6 +2,8 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { SimpleCRUDPage } from "@/components/simple-crud-page";
+import { useBrandFilter } from "@/context/brand-filter-context";
+import type { TableParams } from "@/lib/tenant-resources";
 import {
   listCrmContacts,
   createCrmContact,
@@ -31,6 +33,20 @@ const columns = (): Array<ColumnDef<Contact>> => [
 ];
 
 export default function CrmContactsPage() {
+  const { brandFilter } = useBrandFilter();
+
+  // Wrap listFn to inject brand_id filter when available
+  const listFn = (params?: TableParams) => {
+    const mergedParams: TableParams = {
+      ...params,
+      filters: {
+        ...params?.filters,
+        ...(brandFilter?.id ? { brand_id: brandFilter.id } : {}),
+      },
+    };
+    return listCrmContacts<Contact>(mergedParams);
+  };
+
   return (
     <SimpleCRUDPage<Contact>
       config={{
@@ -52,7 +68,7 @@ export default function CrmContactsPage() {
           { name: "description", label: "Description", type: "textarea" },
         ],
         columns,
-        listFn: listCrmContacts,
+        listFn,
         createFn: createCrmContact,
         updateFn: updateCrmContact,
         deleteFn: deleteCrmContact,
@@ -69,6 +85,8 @@ export default function CrmContactsPage() {
           email: form.email || undefined,
           phone: form.phone || undefined,
           title: form.title || undefined,
+          // Include brand_id when creating if filtered
+          ...(brandFilter?.id ? { brand_id: brandFilter.id } : {}),
         }),
       }}
     />

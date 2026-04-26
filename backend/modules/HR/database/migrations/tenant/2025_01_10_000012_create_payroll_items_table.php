@@ -8,10 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('payroll_items', function (Blueprint $table) {
+        Schema::create('hr_payroll_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('payroll_id')->constrained('payrolls')->cascadeOnDelete();
-            $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
+            $table->foreignId('payroll_id')->constrained('hr_payrolls')->cascadeOnDelete();
+            $table->foreignId('employee_id')->constrained('hr_employees')->cascadeOnDelete();
             $table->string('type'); // earning, deduction
             $table->string('category'); // basic, overtime, bonus, tax, social_security, etc.
             $table->string('description');
@@ -32,6 +32,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('payroll_items');
+        Schema::dropIfExists('hr_payroll_items');
     }
 };

@@ -11,7 +11,7 @@ class OneOnOne extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'one_on_ones';
+    protected $table = 'hr_one_on_ones';
 
     protected $fillable = [
         'employee_id',

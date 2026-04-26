@@ -29,7 +29,7 @@ class CompanyApiController extends ApiController implements HasMiddleware
     public function index(Request $request)
     {
         try {
-            $filters = $request->only(['type', 'industry', 'search', 'assigned_to']);
+            $filters = $request->only(['type', 'industry', 'search', 'assigned_to', 'brand_id']);
             $perPage = $request->get('per_page', 15);
 
             $companies = $this->service->list($filters, $perPage);

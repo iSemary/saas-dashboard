@@ -6,7 +6,14 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\File;
 use Modules\Tenant\Entities\Tenant;
+use Modules\Customer\Entities\Customer;
+use Modules\Customer\Entities\Brand;
+use Modules\Subscription\Entities\Plan;
+use Modules\Subscription\Entities\Subscription;
+use Illuminate\Support\Str;
+use Symfony\Component\Process\Process;
 
 class TenantSetupCommand extends Command
 {
@@ -20,7 +27,10 @@ class TenantSetupCommand extends Command
                             {--force : Force the operation without confirmation}
                             {--migrate-only : Run migrations only, skip seeding}
                             {--seed-only : Run seeding only, skip migrations}
-                            {--fresh : Run fresh migrations (drop all tables and re-run migrations)}';
+                            {--fresh : Run fresh migrations (drop all tables and re-run migrations)}
+                            {--plan= : Plan name to assign (default: Free Plan)}
+                            {--trial-days=14 : Number of trial days (default: 14)}
+                            {--skip-subscription : Skip subscription creation}';
 
     /**
      * The console command description.
@@ -34,21 +44,29 @@ class TenantSetupCommand extends Command
      */
     public function handle()
     {
-        $this->info('🏗️  Starting Tenant Database Setup...');
-        $this->newLine();
+        $this->displayHeader();
 
         $tenantInput = $this->argument('tenant');
+        $planName = $this->option('plan') ?: 'Free Plan';
+        $trialDays = (int) $this->option('trial-days');
+        $skipSubscription = $this->option('skip-subscription');
         $tenants = $this->getTenants($tenantInput);
 
+        if ($tenants->isEmpty() && $tenantInput) {
+            // Tenant doesn't exist, create it
+            $this->displaySection('Creating New Tenant');
+            $this->info("   📝 Tenant '{$tenantInput}' not found. Creating...");
+            $tenant = $this->createTenant($tenantInput);
+            $tenants = collect([$tenant]);
+        }
+
         if ($tenants->isEmpty()) {
-            $this->error('No tenants found (excluding landlord). Please create a tenant first.');
+            $this->error('No tenants found (excluding landlord). Please provide a tenant name or ID.');
             return 1;
         }
 
         foreach ($tenants as $tenant) {
-            $this->info("📦 Setting up tenant: {$tenant->name} (ID: {$tenant->id})");
-            $this->line("   Database: {$tenant->database}");
-            $this->line("   Domain: {$tenant->domain}");
+            $this->displayTenantInfo($tenant);
             $this->newLine();
 
             // Ensure the tenant database exists before running migrations
@@ -64,16 +82,81 @@ class TenantSetupCommand extends Command
                 $this->runTenantSeeding($tenant);
             }
 
+            // Create subscription if not skipped
+            if (!$skipSubscription) {
+                $this->createSubscriptionForTenant($tenant, $planName, $trialDays);
+            }
+
             // Setup Passport for tenant
             $this->setupPassportForTenant($tenant);
+
+            // Generate nginx config for local environment
+            if (app()->environment('local')) {
+                $this->generateNginxConfig($tenant);
+            }
 
             $this->newLine();
             $this->info("✅ Tenant '{$tenant->name}' setup completed successfully!");
             $this->newLine();
         }
 
-        $this->info('🎉 All tenant setups completed successfully!');
+        $this->displaySuccess('All tenant setups completed successfully!');
         return 0;
+    }
+
+    /**
+     * Display formatted header
+     */
+    private function displayHeader()
+    {
+        $this->newLine();
+        $this->line('<fg=white;bg=blue> 🏗️  Tenant Database Setup </>');
+        $this->newLine();
+    }
+
+    /**
+     * Display section header
+     */
+    private function displaySection(string $title)
+    {
+        $this->newLine();
+        $this->line("<fg=cyan>━━━ {$title} ━━━</>");
+        $this->newLine();
+    }
+
+    /**
+     * Display tenant information
+     */
+    private function displayTenantInfo($tenant)
+    {
+        $this->displaySection("Setting Up Tenant: {$tenant->name}");
+        $this->line("   <fg=green>ID:</>        {$tenant->id}");
+        $this->line("   <fg=green>Database:</>  {$tenant->database}");
+        $this->line("   <fg=green>Domain:</>    {$tenant->domain}");
+    }
+
+    /**
+     * Display success message
+     */
+    private function displaySuccess(string $message)
+    {
+        $this->line("<fg=green;options=bold>✅ {$message}</>");
+    }
+
+    /**
+     * Display warning message
+     */
+    private function displayWarning(string $message)
+    {
+        $this->line("<fg=yellow>⚠️  {$message}</>");
+    }
+
+    /**
+     * Display error message
+     */
+    private function displayError(string $message)
+    {
+        $this->line("<fg=red>❌ {$message}</>");
     }
 
     /**
@@ -103,7 +186,7 @@ class TenantSetupCommand extends Command
     }
 
     /**
-     * Run all tenant migrations
+     * Run all tenant migrations with progress bar
      */
     private function runTenantMigrations($tenant)
     {
@@ -117,7 +200,6 @@ class TenantSetupCommand extends Command
         // Dynamically find all module migration paths
         $moduleBasePath = base_path('modules');
         if (is_dir($moduleBasePath)) {
-            // Unified lowercase paths: database/migrations (lowercase d, lowercase m)
             $modules = glob($moduleBasePath . '/*/database/migrations/tenant', GLOB_ONLYDIR);
             foreach ($modules as $modulePath) {
                 $relativePath = str_replace(base_path() . '/', '', $modulePath);
@@ -131,33 +213,71 @@ class TenantSetupCommand extends Command
             }
         }
 
+        // Count migration files
+        $totalMigrations = 0;
+        foreach ($migrationPaths as $path) {
+            $absolutePath = base_path($path);
+            if (is_dir($absolutePath)) {
+                $totalMigrations += count(glob($absolutePath . '/*.php'));
+            }
+        }
+
+        if ($totalMigrations === 0) {
+            $this->line('   ⏭️  No migrations found');
+            $this->newLine();
+            return;
+        }
+
         $isFresh = $this->option('fresh');
 
-        // Run migrations using tenant context with all paths combined
-        $tenant->execute(function () use ($isFresh, $migrationPaths) {
-            if (!$isFresh) {
-                $this->markExistingCreateTableMigrationsAsRan($migrationPaths);
+        // Create progress bar
+        $bar = $this->output->createProgressBar($totalMigrations);
+        $bar->setFormat('      %current%/%max% [%bar%] %percent:3s%% -- %message%');
+        $bar->setMessage('Starting migrations...');
+        $bar->start();
+
+        try {
+            // Run migrations using tenant context with all paths combined
+            $tenant->execute(function () use ($isFresh, $migrationPaths, $bar) {
+                if (!$isFresh) {
+                    $this->markExistingCreateTableMigrationsAsRan($migrationPaths);
+                }
+
+                $params = [
+                    '--database' => 'tenant',
+                    '--force' => true,
+                    '--path' => $migrationPaths,
+                ];
+
+                if ($isFresh) {
+                    Artisan::call('migrate:fresh', $params);
+                } else {
+                    Artisan::call('migrate', $params);
+                }
+
+                $output = Artisan::output();
+                foreach (explode("\n", trim($output)) as $line) {
+                    if (preg_match('/^\d{4}_\d{2}_\d{2}_\d+_\S+/', $line)) {
+                        $bar->setMessage('✓ ' . trim($line));
+                        $bar->advance();
+                    }
+                }
+            });
+
+            // Finish progress bar
+            if ($bar->getProgress() < $bar->getMaxSteps()) {
+                $bar->finish();
             }
+            $bar->setMessage('Migrations completed ✅');
+            $bar->finish();
 
-            $params = [
-                '--database' => 'tenant',
-                '--force' => true,
-                '--path' => $migrationPaths,
-            ];
-
-            if ($isFresh) {
-                // migrate:fresh drops all tables then runs only the specified paths
-                Artisan::call('migrate:fresh', $params);
-            } else {
-                Artisan::call('migrate', $params);
-            }
-        });
-
-        $output = Artisan::output();
-        if (trim($output) && !str_contains($output, 'Nothing to migrate')) {
-            $this->line("   ✅ All tenant migrations completed successfully");
-        } else {
-            $this->line("   ⏭️  No migrations found");
+            $this->newLine();
+            $this->line('   ✅ All tenant migrations completed successfully');
+        } catch (\Exception $e) {
+            $bar->finish();
+            $this->newLine();
+            $this->error('   ❌ Migration failed: ' . $e->getMessage());
+            throw $e;
         }
 
         $this->newLine();
@@ -227,7 +347,7 @@ class TenantSetupCommand extends Command
     }
 
     /**
-     * Run tenant seeding
+     * Run tenant seeding with progress bar
      */
     private function runTenantSeeding($tenant)
     {
@@ -240,7 +360,6 @@ class TenantSetupCommand extends Command
         // Dynamically find all module seeder paths
         $moduleBasePath = base_path('modules');
         if (is_dir($moduleBasePath)) {
-            // Unified lowercase paths: database/seeders (lowercase d, lowercase s)
             $modules = glob($moduleBasePath . '/*/database/seeders/tenant', GLOB_ONLYDIR);
             foreach ($modules as $modulePath) {
                 $relativePath = str_replace(base_path() . '/', '', $modulePath);
@@ -254,15 +373,39 @@ class TenantSetupCommand extends Command
             }
         }
 
+        // Count seeder files
+        $totalSeeders = 0;
+        foreach ($seederPaths as $path) {
+            $absolutePath = base_path($path);
+            if (is_dir($absolutePath)) {
+                $totalSeeders += count(glob($absolutePath . '/*Seeder.php'));
+            }
+        }
+
+        if ($totalSeeders === 0) {
+            $this->line('   ⏭️  No seeders found');
+            $this->newLine();
+            return;
+        }
+
+        // Create progress bar
+        $bar = $this->output->createProgressBar($totalSeeders);
+        $bar->setFormat('      %current%/%max% [%bar%] %percent:3s%% -- %message%');
+        $bar->setMessage('Starting seeders...');
+        $bar->start();
+
         foreach ($seederPaths as $path) {
             try {
-                $this->line("   Seeding from: {$path}");
-                $this->runTenantSeedersFromPath($path, $tenant);
+                $this->runTenantSeedersFromPath($path, $tenant, $bar);
             } catch (\Exception $e) {
                 $this->warn("   ⚠️  Warning: {$path} - {$e->getMessage()}");
             }
         }
 
+        $bar->setMessage('Seeding completed ✅');
+        $bar->finish();
+        $this->newLine();
+        $this->line('   ✅ All tenant seeders completed successfully');
         $this->newLine();
     }
 
@@ -275,9 +418,9 @@ class TenantSetupCommand extends Command
     }
 
     /**
-     * Run all tenant seeders from a specific path
+     * Run all tenant seeders from a specific path with progress bar
      */
-    private function runTenantSeedersFromPath($path, $tenant)
+    private function runTenantSeedersFromPath($path, $tenant, $bar)
     {
         if (!is_dir(base_path($path))) {
             return;
@@ -293,7 +436,7 @@ class TenantSetupCommand extends Command
 
             if ($className) {
                 try {
-                    $this->line("      Seeding: {$fileName}");
+                    $bar->setMessage('Seeding: ' . $fileName);
 
                     $tenant->execute(function () use ($className) {
                         Artisan::call('db:seed', [
@@ -303,9 +446,10 @@ class TenantSetupCommand extends Command
                         ]);
                     });
 
-                    $this->line("      ✅ {$fileName} seeded successfully");
+                    $bar->advance();
                 } catch (\Exception $e) {
-                    $this->warn("      ⚠️  Warning: {$fileName} - {$e->getMessage()}");
+                    $bar->setMessage('⚠️  ' . $fileName . ' failed');
+                    $bar->advance();
                 }
             }
         }
@@ -409,5 +553,243 @@ class TenantSetupCommand extends Command
         }
 
         $this->newLine();
+    }
+
+    /**
+     * Create or ensure subscription exists for tenant
+     */
+    private function createSubscriptionForTenant($tenant, string $planName, int $trialDays)
+    {
+        $this->info('📦 Checking subscription for tenant...');
+
+        // Check if tenant already has a customer, create if not
+        $customer = Customer::where('tenant_id', $tenant->id)->first();
+        if (!$customer) {
+            $this->info('   👤 Creating customer...');
+
+            // Get a default category
+            $category = \Modules\Utilities\Entities\Category::first();
+            if (!$category) {
+                $category = \Modules\Utilities\Entities\Category::create([
+                    'name' => 'Business',
+                    'slug' => 'business',
+                    'description' => 'General business category',
+                    'is_active' => true,
+                ]);
+            }
+
+            $customer = Customer::create([
+                'name' => $tenant->name,
+                'username' => strtolower(str_replace([' ', '.', '-'], ['_', '', ''], $tenant->name)) . '_' . rand(100, 999),
+                'tenant_id' => $tenant->id,
+                'category_id' => $category->id,
+            ]);
+
+            $this->line("   ✅ Customer created: {$customer->name} (ID: {$customer->id})");
+        }
+
+        // Check if customer already has a brand, create if not
+        $brand = Brand::where('tenant_id', $tenant->id)->first();
+        if (!$brand) {
+            $this->info('   🏢 Creating brand...');
+
+            $brandName = ucfirst($tenant->name) . ' Brand';
+
+            $brand = Brand::create([
+                'name' => $brandName,
+                'slug' => Str::slug($brandName),
+                'description' => 'Default brand for ' . $tenant->name,
+                'tenant_id' => $tenant->id,
+                'created_by' => 1, // Default user ID
+            ]);
+
+            $this->line("   ✅ Brand created: {$brand->name} (ID: {$brand->id})");
+        }
+
+        // Check if subscription already exists
+        $existingSubscription = Subscription::where('brand_id', $brand->id)
+            ->where('tenant_id', $tenant->id)
+            ->first();
+
+        if ($existingSubscription) {
+            $this->line("   ✓ Subscription already exists: {$existingSubscription->status}");
+            return;
+        }
+
+        // Get the specified plan or default to Free Plan
+        $plan = Plan::where('name', $planName)->first();
+        if (!$plan) {
+            $this->warn("   ⚠️  Plan '{$planName}' not found. Trying 'Free Plan'...");
+            $plan = Plan::where('name', 'Free Plan')->first();
+
+            if (!$plan) {
+                $this->warn("   ⚠️  Free Plan not found. Using first available plan.");
+                $plan = Plan::first();
+            }
+        }
+
+        if (!$plan) {
+            $this->error("   ❌ No plans found in database. Please seed plans first.");
+            return;
+        }
+
+        $this->line("   📋 Using plan: {$plan->name} (ID: {$plan->id})");
+
+        // Determine subscription status and dates based on trial
+        $isFreePlan = stripos($plan->name, 'free') !== false;
+        $status = $isFreePlan ? 'active' : 'trial';
+        $startDate = now();
+        $endDate = $isFreePlan ? now()->addYear(100) : now()->addDays($trialDays);
+
+        // Create subscription with landlord admin user (ID 1) as default
+        // The user_id will be updated when a tenant user is created later
+        $subscription = Subscription::create([
+            'tenant_id' => $tenant->id,
+            'brand_id' => $brand->id,
+            'user_id' => 1, // Landlord admin user
+            'plan_id' => $plan->id,
+            'status' => $status,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'price' => $plan->price ?? 0,
+            'currency_id' => 1, // Default currency ID (USD)
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $this->line("   ✅ Subscription created: {$status} (ends: {$endDate->format('Y-m-d')})");
+        $this->newLine();
+    }
+
+    /**
+     * Create a new tenant
+     */
+    private function createTenant(string $tenantName)
+    {
+        $this->info('🏗️  Creating tenant...');
+
+        // Generate domain and database names
+        $domain = strtolower($tenantName) . '.saas.test';
+        $database = 'saas_' . strtolower(str_replace([' ', '-'], '_', $tenantName));
+
+        $tenantData = [
+            'name' => $tenantName,
+            'domain' => $domain,
+            'database' => $database,
+        ];
+
+        $tenant = Tenant::create($tenantData);
+
+        $this->line("   ✅ Tenant created: {$tenant->name} (ID: {$tenant->id})");
+        $this->line("   Domain: {$domain}");
+        $this->line("   Database: {$database}");
+        $this->newLine();
+
+        // Create the database
+        $this->ensureDatabaseExists($tenant);
+
+        return $tenant;
+    }
+
+    /**
+     * Generate nginx configuration for tenant (local environment only)
+     */
+    private function generateNginxConfig($tenant)
+    {
+        $this->info('🌐 Generating nginx configuration...');
+
+        $templatePath = base_path('../docs/nginx/tenant-config.conf');
+        $configPath = "/etc/nginx/sites-available/{$tenant->domain}";
+        $enabledPath = "/etc/nginx/sites-enabled/{$tenant->domain}";
+
+        if (!File::exists($templatePath)) {
+            $this->warn("   ⚠️  Nginx template not found at: {$templatePath}");
+            return;
+        }
+
+        $projectPath = base_path();
+        $templateContent = File::get($templatePath);
+
+        // Replace placeholders
+        $nginxConfig = str_replace(
+            ['{DOMAIN}', '{PROJECT_PATH}'],
+            [$tenant->domain, $projectPath],
+            $templateContent
+        );
+
+        try {
+            // Write nginx configuration
+            File::put($configPath, $nginxConfig);
+            $this->line("   ✅ Nginx config written to: {$configPath}");
+
+            // Create symlink to sites-enabled
+            if (!File::exists($enabledPath)) {
+                shell_exec("sudo ln -s {$configPath} {$enabledPath}");
+                $this->line("   ✅ Symlink created: {$enabledPath}");
+            }
+
+            // Test and reload nginx
+            $testResult = shell_exec('sudo nginx -t 2>&1');
+            if (str_contains($testResult, 'successful') || str_contains($testResult, 'syntax is ok')) {
+                shell_exec('sudo systemctl reload nginx');
+                $this->line("   ✅ Nginx reloaded successfully");
+            } else {
+                $this->warn("   ⚠️  Nginx configuration test failed:");
+                $this->line("   " . trim($testResult));
+            }
+
+            // Add to /etc/hosts if not present
+            $hostsEntry = "127.0.0.1 {$tenant->domain}";
+            $hostsContent = File::get('/etc/hosts');
+            if (!str_contains($hostsContent, $tenant->domain)) {
+                shell_exec("echo '{$hostsEntry}' | sudo tee -a /etc/hosts > /dev/null");
+                $this->line("   ✅ Added to /etc/hosts: {$hostsEntry}");
+            } else {
+                $this->line("   ✓ Already in /etc/hosts");
+            }
+
+        } catch (\Exception $e) {
+            $this->warn("   ⚠️  Could not write nginx config: " . $e->getMessage());
+            $this->line("   Manual nginx config needed for domain: {$tenant->domain}");
+        }
+
+        $this->newLine();
+    }
+
+    /**
+     * Run an artisan command via Symfony Process and stream stdout line-by-line
+     * through the given callback. Throws if the command exits non-zero.
+     */
+    private function streamArtisanCommand(string $artisanArgs, callable $onLine): void
+    {
+        $php = PHP_BINARY ?: 'php';
+        $cmd = $php . ' artisan ' . $artisanArgs;
+
+        $process = Process::fromShellCommandline($cmd, base_path());
+        $process->setTimeout(0); // no timeout for long migrations/seeds
+
+        $buffer = '';
+        $process->run(function ($type, $chunk) use (&$buffer, $onLine) {
+            $buffer .= $chunk;
+            while (($pos = strpos($buffer, "\n")) !== false) {
+                $line = substr($buffer, 0, $pos);
+                $buffer = substr($buffer, $pos + 1);
+                // Strip ANSI escape codes
+                $clean = preg_replace('/\x1b\[[0-9;]*[a-zA-Z]/', '', $line);
+                $onLine(trim($clean));
+            }
+        });
+
+        // Flush any remaining buffered content
+        if ($buffer !== '') {
+            $clean = preg_replace('/\x1b\[[0-9;]*[a-zA-Z]/', '', $buffer);
+            $onLine(trim($clean));
+        }
+
+        if (!$process->isSuccessful()) {
+            throw new \RuntimeException(
+                'Command failed (' . $process->getExitCode() . '): ' . trim($process->getErrorOutput() ?: $process->getOutput())
+            );
+        }
     }
 }

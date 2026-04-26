@@ -46,7 +46,7 @@ class LeadApiController extends ApiController implements HasMiddleware
     public function index(Request $request): JsonResponse
     {
         try {
-            $filters = $request->only(['status', 'source', 'assigned_to', 'search']);
+            $filters = $request->only(['status', 'source', 'assigned_to', 'search', 'brand_id']);
             $perPage = (int) $request->get('per_page', 15);
             return $this->apiPaginated($this->listLeads->execute($filters, $perPage));
         } catch (\Throwable $e) {
