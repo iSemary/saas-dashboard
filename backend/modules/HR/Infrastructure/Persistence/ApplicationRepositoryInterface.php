@@ -15,4 +15,5 @@ interface ApplicationRepositoryInterface
     public function delete(int $id): bool;
     public function getByJobOpening(int $jobOpeningId): array;
     public function getByStage(int $stageId): array;
+    public function getCountByStatus(): \Illuminate\Support\Collection;
 }

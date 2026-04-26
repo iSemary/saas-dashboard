@@ -136,37 +136,37 @@ class SurveyAutomationRule extends Model
             'send_notification' => $this->executeSendNotification($config, $context),
             'trigger_webhook' => $this->executeTriggerWebhook($config, $context),
             'create_crm_activity' => $this->executeCreateCrmActivity($config, $context),
-            default => ['success' => false, 'message' => 'Unknown action type'],
+            default => ['success' => false, 'message' => translate('exception.unknown_action')],
         };
     }
 
     private function executeSendEmail(array $config, array $context): array
     {
-        return ['success' => true, 'message' => 'Email action queued', 'config' => $config];
+        return ['success' => true, 'message' => translate('message.action_completed'), 'config' => $config];
     }
 
     private function executeUpdateField(array $config, array $context): array
     {
-        return ['success' => true, 'message' => 'Field updated', 'config' => $config];
+        return ['success' => true, 'message' => translate('message.updated_successfully'), 'config' => $config];
     }
 
     private function executeCreateActivity(array $config, array $context): array
     {
-        return ['success' => true, 'message' => 'Activity created', 'config' => $config];
+        return ['success' => true, 'message' => translate('message.created_successfully'), 'config' => $config];
     }
 
     private function executeSendNotification(array $config, array $context): array
     {
-        return ['success' => true, 'message' => 'Notification sent', 'config' => $config];
+        return ['success' => true, 'message' => translate('message.action_completed'), 'config' => $config];
     }
 
     private function executeTriggerWebhook(array $config, array $context): array
     {
-        return ['success' => true, 'message' => 'Webhook triggered', 'config' => $config];
+        return ['success' => true, 'message' => translate('message.action_completed'), 'config' => $config];
     }
 
     private function executeCreateCrmActivity(array $config, array $context): array
     {
-        return ['success' => true, 'message' => 'CRM activity created', 'config' => $config];
+        return ['success' => true, 'message' => translate('message.created_successfully'), 'config' => $config];
     }
 }

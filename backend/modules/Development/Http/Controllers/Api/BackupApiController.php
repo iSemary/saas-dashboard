@@ -34,9 +34,9 @@ class BackupApiController extends Controller
     {
         try {
             Artisan::call('backup:run', ['--only-db' => true]);
-            return $this->apiSuccess(null, 'Backup created successfully');
+            return $this->apiSuccess(null, translate('message.created_successfully'));
         } catch (\Exception $e) {
-            return $this->apiError('Backup failed: ' . $e->getMessage(), 500);
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -45,7 +45,7 @@ class BackupApiController extends Controller
         $disk = Storage::disk('local');
         $path = 'backups/' . $id;
         if (!$disk->exists($path)) {
-            return $this->apiError('Backup not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
         return $disk->download($path);
     }
@@ -57,6 +57,6 @@ class BackupApiController extends Controller
         if ($disk->exists($path)) {
             $disk->delete($path);
         }
-        return $this->apiSuccess(null, 'Backup deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 }

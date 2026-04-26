@@ -33,13 +33,13 @@ class OnboardingApiController extends ApiController
         $template = $this->createTemplateUseCase->execute(
             $request->only(['name', 'type', 'department_id', 'is_active'])
         );
-        return $this->success(data: $template, message: 'Onboarding template created successfully');
+        return $this->success(data: $template, message: translate('message.action_completed'));
     }
 
     public function updateTemplate(Request $request, int $id): JsonResponse
     {
         $template = $this->templateRepository->update($id, $request->only(['name', 'type', 'department_id', 'is_active']));
-        return $this->success(data: $template, message: 'Onboarding template updated successfully');
+        return $this->success(data: $template, message: translate('message.action_completed'));
     }
 
     public function processes(Request $request): JsonResponse
@@ -53,12 +53,12 @@ class OnboardingApiController extends ApiController
         $process = $this->processRepository->create(
             $request->only(['employee_id', 'template_id', 'type', 'status', 'started_at', 'completed_at']) + ['created_by' => auth()->id()]
         );
-        return $this->success(data: $process, message: 'Onboarding process created successfully');
+        return $this->success(data: $process, message: translate('message.action_completed'));
     }
 
     public function updateProcess(Request $request, int $id): JsonResponse
     {
         $process = $this->processRepository->update($id, $request->only(['type', 'status', 'started_at', 'completed_at']));
-        return $this->success(data: $process, message: 'Onboarding process updated successfully');
+        return $this->success(data: $process, message: translate('message.action_completed'));
     }
 }

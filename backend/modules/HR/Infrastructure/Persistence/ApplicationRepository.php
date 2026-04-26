@@ -77,4 +77,12 @@ class ApplicationRepository implements ApplicationRepositoryInterface
             ->get()
             ->toArray();
     }
+
+    public function getCountByStatus(): \Illuminate\Support\Collection
+    {
+        return Application::query()
+            ->selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->get();
+    }
 }

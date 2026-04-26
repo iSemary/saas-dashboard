@@ -21,7 +21,7 @@ class CancelLeaveUseCase
 
         // Only pending or approved requests can be cancelled
         if (!in_array($leaveRequest->status, [LeaveStatus::PENDING->value, LeaveStatus::APPROVED->value])) {
-            throw new \RuntimeException('Only pending or approved leave requests can be cancelled');
+            throw new \RuntimeException(translate('message.operation_failed'));
         }
 
         // If already approved, restore the balance

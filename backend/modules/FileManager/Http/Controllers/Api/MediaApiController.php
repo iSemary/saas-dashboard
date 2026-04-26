@@ -40,14 +40,14 @@ class MediaApiController extends ApiController
             return response()->json([
                 'status' => 201,
                 'success' => true,
-                'message' => 'File uploaded successfully',
+                'message' => translate('message.action_completed'),
                 'data' => $media,
             ], 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'status' => 422,
                 'success' => false,
-                'message' => 'Validation failed',
+                'message' => translate('message.validation_failed'),
                 'errors' => $e->errors(),
             ], 422);
         } catch (\InvalidArgumentException $e) {
@@ -60,7 +60,7 @@ class MediaApiController extends ApiController
             return response()->json([
                 'status' => 500,
                 'success' => false,
-                'message' => 'Failed to upload file',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -96,7 +96,7 @@ class MediaApiController extends ApiController
                 return response()->json([
                     'status' => 422,
                     'success' => false,
-                    'message' => 'No valid files uploaded',
+                    'message' => translate('message.validation_failed'),
                 ], 422);
             }
 
@@ -105,14 +105,14 @@ class MediaApiController extends ApiController
             return response()->json([
                 'status' => 201,
                 'success' => true,
-                'message' => 'Files uploaded successfully',
+                'message' => translate('message.action_completed'),
                 'data' => $media,
             ], 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'status' => 422,
                 'success' => false,
-                'message' => 'Validation failed',
+                'message' => translate('message.validation_failed'),
                 'errors' => $e->errors(),
             ], 422);
         } catch (\InvalidArgumentException $e) {
@@ -125,7 +125,7 @@ class MediaApiController extends ApiController
             return response()->json([
                 'status' => 500,
                 'success' => false,
-                'message' => 'Failed to upload files',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -145,20 +145,20 @@ class MediaApiController extends ApiController
             return response()->json([
                 'status' => 200,
                 'success' => true,
-                'message' => 'OK',
+                'message' => translate('message.action_completed'),
                 'data' => $media,
             ]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'status' => 404,
                 'success' => false,
-                'message' => 'Media not found',
+                'message' => translate('message.resource_not_found'),
             ], 404);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
                 'success' => false,
-                'message' => 'Failed to retrieve media',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -178,19 +178,19 @@ class MediaApiController extends ApiController
             return response()->json([
                 'status' => 200,
                 'success' => true,
-                'message' => 'File deleted successfully',
+                'message' => translate('message.deleted_successfully'),
             ]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'status' => 404,
                 'success' => false,
-                'message' => 'Media not found',
+                'message' => translate('message.resource_not_found'),
             ], 404);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
                 'success' => false,
-                'message' => 'Failed to delete file',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage(),
             ], 500);
         }

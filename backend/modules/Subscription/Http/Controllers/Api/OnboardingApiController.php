@@ -15,7 +15,7 @@ class OnboardingApiController extends Controller
         $validated = $request->validate([
             'plan_id' => 'required|integer|exists:plans,id',
         ]);
-        return $this->apiSuccess($validated, 'Plan selected successfully');
+        return $this->apiSuccess($validated, translate('message.action_completed'));
     }
 
     public function selectModules(Request $request)
@@ -24,6 +24,6 @@ class OnboardingApiController extends Controller
             'module_ids' => 'required|array',
             'module_ids.*' => 'integer|exists:modules,id',
         ]);
-        return $this->apiSuccess($validated, 'Modules selected successfully');
+        return $this->apiSuccess($validated, translate('message.action_completed'));
     }
 }

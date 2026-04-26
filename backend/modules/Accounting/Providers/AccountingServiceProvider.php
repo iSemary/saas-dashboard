@@ -2,11 +2,34 @@
 
 namespace Modules\Accounting\Providers;
 
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Nwidart\Modules\Traits\PathNamespace;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
+use Modules\Accounting\Infrastructure\Persistence\ChartOfAccountRepositoryInterface;
+use Modules\Accounting\Infrastructure\Persistence\EloquentChartOfAccountRepository;
+use Modules\Accounting\Infrastructure\Persistence\JournalEntryRepositoryInterface;
+use Modules\Accounting\Infrastructure\Persistence\EloquentJournalEntryRepository;
+use Modules\Accounting\Infrastructure\Persistence\JournalItemRepositoryInterface;
+use Modules\Accounting\Infrastructure\Persistence\EloquentJournalItemRepository;
+use Modules\Accounting\Infrastructure\Persistence\FiscalYearRepositoryInterface;
+use Modules\Accounting\Infrastructure\Persistence\EloquentFiscalYearRepository;
+use Modules\Accounting\Infrastructure\Persistence\BudgetRepositoryInterface;
+use Modules\Accounting\Infrastructure\Persistence\EloquentBudgetRepository;
+use Modules\Accounting\Infrastructure\Persistence\BudgetItemRepositoryInterface;
+use Modules\Accounting\Infrastructure\Persistence\EloquentBudgetItemRepository;
+use Modules\Accounting\Infrastructure\Persistence\TaxRateRepositoryInterface;
+use Modules\Accounting\Infrastructure\Persistence\EloquentTaxRateRepository;
+use Modules\Accounting\Infrastructure\Persistence\BankAccountRepositoryInterface;
+use Modules\Accounting\Infrastructure\Persistence\EloquentBankAccountRepository;
+use Modules\Accounting\Infrastructure\Persistence\BankTransactionRepositoryInterface;
+use Modules\Accounting\Infrastructure\Persistence\EloquentBankTransactionRepository;
+use Modules\Accounting\Infrastructure\Persistence\ReconciliationRepositoryInterface;
+use Modules\Accounting\Infrastructure\Persistence\EloquentReconciliationRepository;
+use Modules\Accounting\Domain\Strategies\JournalValidation\JournalValidationStrategyInterface;
+use Modules\Accounting\Domain\Strategies\JournalValidation\DefaultJournalValidationStrategy;
+use Modules\Accounting\Domain\Strategies\BalanceCalculation\BalanceCalculationStrategyInterface;
+use Modules\Accounting\Domain\Strategies\BalanceCalculation\DefaultBalanceCalculationStrategy;
+use Modules\Accounting\Domain\Strategies\ReportGeneration\ReportGenerationStrategyInterface;
+use Modules\Accounting\Domain\Strategies\ReportGeneration\DefaultReportGenerationStrategy;
 
 class AccountingServiceProvider extends ServiceProvider
 {
@@ -16,54 +39,39 @@ class AccountingServiceProvider extends ServiceProvider
 
     protected string $nameLower = 'accounting';
 
-    /**
-     * Boot the application events.
-     */
     public function boot(): void
     {
-        $this->registerCommands();
-        $this->registerCommandSchedules();
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
-        $this->loadMigrationsFrom(module_path($this->name, 'Database/migrations'));
+        $this->loadMigrationsFrom(module_path($this->name, 'database/migrations/tenant'));
     }
 
-    /**
-     * Register the service provider.
-     */
     public function register(): void
     {
         $this->app->register(EventServiceProvider::class);
-        // $this->app->register(RouteServiceProvider::class);
+
+        // Repository bindings
+        $this->app->bind(ChartOfAccountRepositoryInterface::class, EloquentChartOfAccountRepository::class);
+        $this->app->bind(JournalEntryRepositoryInterface::class, EloquentJournalEntryRepository::class);
+        $this->app->bind(JournalItemRepositoryInterface::class, EloquentJournalItemRepository::class);
+        $this->app->bind(FiscalYearRepositoryInterface::class, EloquentFiscalYearRepository::class);
+        $this->app->bind(BudgetRepositoryInterface::class, EloquentBudgetRepository::class);
+        $this->app->bind(BudgetItemRepositoryInterface::class, EloquentBudgetItemRepository::class);
+        $this->app->bind(TaxRateRepositoryInterface::class, EloquentTaxRateRepository::class);
+        $this->app->bind(BankAccountRepositoryInterface::class, EloquentBankAccountRepository::class);
+        $this->app->bind(BankTransactionRepositoryInterface::class, EloquentBankTransactionRepository::class);
+        $this->app->bind(ReconciliationRepositoryInterface::class, EloquentReconciliationRepository::class);
+
+        // Strategy bindings
+        $this->app->bind(JournalValidationStrategyInterface::class, DefaultJournalValidationStrategy::class);
+        $this->app->bind(BalanceCalculationStrategyInterface::class, DefaultBalanceCalculationStrategy::class);
+        $this->app->bind(ReportGenerationStrategyInterface::class, DefaultReportGenerationStrategy::class);
     }
 
-    /**
-     * Register commands in the format of Command::class
-     */
-    protected function registerCommands(): void
-    {
-        // $this->commands([]);
-    }
-
-    /**
-     * Register command Schedules.
-     */
-    protected function registerCommandSchedules(): void
-    {
-        // $this->app->booted(function () {
-        //     $schedule = $this->app->make(Schedule::class);
-        //     $schedule->command('inspire')->hourly();
-        // });
-    }
-
-    /**
-     * Register translations.
-     */
     public function registerTranslations(): void
     {
         $langPath = resource_path('lang/modules/'.$this->nameLower);
-
         if (is_dir($langPath)) {
             $this->loadTranslationsFrom($langPath, $this->nameLower);
             $this->loadJsonTranslationsFrom($langPath);
@@ -73,28 +81,10 @@ class AccountingServiceProvider extends ServiceProvider
         }
     }
 
-    /**
-     * Register config.
-     */
     protected function registerConfig(): void
     {
-        $relativeConfigPath = config('modules.paths.generator.config.path');
-        $configPath = module_path($this->name, $relativeConfigPath);
-
-        if (is_dir($configPath)) {
-            $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($configPath));
-
-            foreach ($iterator as $file) {
-                if ($file->isFile() && $file->getExtension() === 'php') {
-                    $relativePath = str_replace($configPath . DIRECTORY_SEPARATOR, '', $file->getPathname());
-                    $configKey = $this->nameLower . '.' . str_replace([DIRECTORY_SEPARATOR, '.php'], ['.', ''], $relativePath);
-                    $key = ($relativePath === 'config.php') ? $this->nameLower : $configKey;
-
-                    $this->publishes([$file->getPathname() => config_path($relativePath)], 'config');
-                    $this->mergeConfigFrom($file->getPathname(), $key);
-                }
-            }
-        }
+        $this->publishes([module_path($this->name, 'config/config.php') => config_path($this->nameLower.'.php')], 'config');
+        $this->mergeConfigFrom(module_path($this->name, 'config/config.php'), $this->nameLower);
     }
 
     /**
@@ -108,9 +98,6 @@ class AccountingServiceProvider extends ServiceProvider
         $this->publishes([$sourcePath => $viewPath], ['views', $this->nameLower.'-module-views']);
 
         $this->loadViewsFrom(array_merge($this->getPublishableViewPaths(), [$sourcePath]), $this->nameLower);
-
-        $componentNamespace = $this->module_namespace($this->name, $this->app_path(config('modules.paths.generator.component-class.path')));
-        Blade::componentNamespace($componentNamespace, $this->nameLower);
     }
 
     /**

@@ -25,7 +25,7 @@ class SendNotificationAction implements AutomationActionStrategyInterface
         $notifyAssigned = $actionConfig['notify_assigned'] ?? true;
 
         if ($message === null) {
-            throw new AutomationExecutionException('Message is required for send_notification action');
+            throw new AutomationExecutionException(translate('message.validation_failed'));
         }
 
         // Get recipient IDs
@@ -46,7 +46,7 @@ class SendNotificationAction implements AutomationActionStrategyInterface
         $recipientIds = array_unique(array_filter($recipientIds));
 
         if (empty($recipientIds)) {
-            throw new AutomationExecutionException('No recipients found for notification');
+            throw new AutomationExecutionException(translate('message.operation_failed'));
         }
 
         // Use Notification module to send notifications

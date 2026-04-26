@@ -16,7 +16,7 @@ class MarkPaidUseCase
         $payroll = $this->payrollRepository->findOrFail($payrollId);
         
         if ($payroll->status !== 'approved') {
-            throw new \RuntimeException('Can only mark approved payrolls as paid');
+            throw new \RuntimeException(translate('message.operation_failed'));
         }
 
         return $this->payrollRepository->update($payrollId, [

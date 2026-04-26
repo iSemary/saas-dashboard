@@ -39,7 +39,7 @@ class AttendanceApiController extends ApiController
     public function store(Request $request): JsonResponse
     {
         $attendance = $this->repository->create($request->validated());
-        return $this->success(data: $attendance, message: 'Attendance record created successfully');
+        return $this->success(data: $attendance, message: translate('message.action_completed'));
     }
 
     public function show(int $id): JsonResponse
@@ -51,13 +51,13 @@ class AttendanceApiController extends ApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $attendance = $this->repository->update($id, $request->validated());
-        return $this->success(data: $attendance, message: 'Attendance record updated successfully');
+        return $this->success(data: $attendance, message: translate('message.action_completed'));
     }
 
     public function destroy(int $id): JsonResponse
     {
         $this->repository->delete($id);
-        return $this->success(message: 'Attendance record deleted successfully');
+        return $this->success(message: translate('message.action_completed'));
     }
 
     public function checkIn(Request $request): JsonResponse
@@ -71,7 +71,7 @@ class AttendanceApiController extends ApiController
         );
         
         $attendance = $this->checkInUseCase->execute($data);
-        return $this->success(data: $attendance, message: 'Check-in successful');
+        return $this->success(data: $attendance, message: translate('message.action_completed'));
     }
 
     public function checkOut(Request $request, int $id): JsonResponse
@@ -82,7 +82,7 @@ class AttendanceApiController extends ApiController
         );
         
         $attendance = $this->checkOutUseCase->execute($data);
-        return $this->success(data: $attendance, message: 'Check-out successful');
+        return $this->success(data: $attendance, message: translate('message.action_completed'));
     }
 
     public function approve(Request $request, int $id): JsonResponse
@@ -94,7 +94,7 @@ class AttendanceApiController extends ApiController
         );
         
         $attendance = $this->approveAttendanceUseCase->execute($data);
-        return $this->success(data: $attendance, message: 'Attendance approved successfully');
+        return $this->success(data: $attendance, message: translate('message.action_completed'));
     }
 
     public function pendingApprovals(): JsonResponse

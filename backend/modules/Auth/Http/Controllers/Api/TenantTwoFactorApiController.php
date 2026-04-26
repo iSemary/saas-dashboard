@@ -34,6 +34,6 @@ class TenantTwoFactorApiController extends Controller
     public function disable(Request $request)
     {
         $this->twoFactorService->disable($request->user()->id);
-        return $this->apiSuccess(null, '2FA disabled successfully');
+        return $this->apiSuccess(null, translate('message.action_completed'));
     }
 }

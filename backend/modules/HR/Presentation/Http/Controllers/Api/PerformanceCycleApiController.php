@@ -30,7 +30,7 @@ class PerformanceCycleApiController extends ApiController
     public function store(Request $request): JsonResponse
     {
         $cycle = $this->repository->create($request->validated());
-        return $this->success(data: $cycle, message: 'Performance cycle created successfully');
+        return $this->success(data: $cycle, message: translate('message.action_completed'));
     }
 
     public function show(int $id): JsonResponse
@@ -42,13 +42,13 @@ class PerformanceCycleApiController extends ApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $cycle = $this->repository->update($id, $request->validated());
-        return $this->success(data: $cycle, message: 'Performance cycle updated successfully');
+        return $this->success(data: $cycle, message: translate('message.action_completed'));
     }
 
     public function destroy(int $id): JsonResponse
     {
         $this->repository->delete($id);
-        return $this->success(message: 'Performance cycle deleted successfully');
+        return $this->success(message: translate('message.action_completed'));
     }
 
     public function active(): JsonResponse

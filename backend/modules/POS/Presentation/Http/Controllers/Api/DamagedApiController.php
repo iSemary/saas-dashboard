@@ -21,7 +21,7 @@ class DamagedApiController extends Controller
             $filters = $request->only(['product_id', 'branch_id']);
             return $this->apiPaginated($this->service->list($filters, (int) $request->get('per_page', 15)));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to retrieve damaged records', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -29,11 +29,11 @@ class DamagedApiController extends Controller
     {
         try {
             $record = $this->service->create($request->validated(), auth()->id());
-            return $this->apiSuccess($record->load('product'), 'Damaged record created successfully', 201);
+            return $this->apiSuccess($record->load('product'), translate('message.created_successfully'), 201);
         } catch (\DomainException $e) {
             return $this->apiError($e->getMessage(), 422);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to create damaged record', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -42,7 +42,7 @@ class DamagedApiController extends Controller
         try {
             return $this->apiSuccess($this->service->findOrFail($id));
         } catch (\Throwable $e) {
-            return $this->apiError('Record not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
     }
 
@@ -50,9 +50,9 @@ class DamagedApiController extends Controller
     {
         try {
             $this->service->delete($id);
-            return $this->apiSuccess(null, 'Damaged record deleted and stock restored');
+            return $this->apiSuccess(null, translate('message.action_completed'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to delete damaged record', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

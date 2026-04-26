@@ -26,7 +26,7 @@ class SubCategoryApiController extends Controller
 
             return $this->apiPaginated($this->service->list($filters, (int) $request->get('per_page', 15)));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to retrieve sub-categories', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -34,9 +34,9 @@ class SubCategoryApiController extends Controller
     {
         try {
             $sub = $this->service->create($request->validated(), auth()->id());
-            return $this->apiSuccess($sub, 'Sub-category created successfully', 201);
+            return $this->apiSuccess($sub, translate('message.created_successfully'), 201);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to create sub-category', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -45,7 +45,7 @@ class SubCategoryApiController extends Controller
         try {
             return $this->apiSuccess($this->service->findOrFail($id));
         } catch (\Throwable $e) {
-            return $this->apiError('Sub-category not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
     }
 
@@ -58,9 +58,9 @@ class SubCategoryApiController extends Controller
                 'branch_id'   => 'nullable|integer',
             ]);
             $sub = $this->service->update($id, $request->only(['name', 'category_id', 'branch_id']));
-            return $this->apiSuccess($sub, 'Sub-category updated successfully');
+            return $this->apiSuccess($sub, translate('message.updated_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to update sub-category', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -68,11 +68,11 @@ class SubCategoryApiController extends Controller
     {
         try {
             $this->service->delete($id);
-            return $this->apiSuccess(null, 'Sub-category deleted successfully');
+            return $this->apiSuccess(null, translate('message.deleted_successfully'));
         } catch (\DomainException $e) {
             return $this->apiError($e->getMessage(), 422);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to delete sub-category', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -83,7 +83,7 @@ class SubCategoryApiController extends Controller
             $count = $this->service->bulkDelete($request->ids);
             return $this->apiSuccess(null, "{$count} sub-categories deleted successfully");
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to delete sub-categories', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

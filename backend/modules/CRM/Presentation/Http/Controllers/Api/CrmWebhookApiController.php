@@ -21,7 +21,7 @@ class CrmWebhookApiController extends Controller
         try {
             return $this->apiPaginated($this->webhooks->paginate([], (int) $request->get('per_page', 15)));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to retrieve webhooks', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -41,9 +41,9 @@ class CrmWebhookApiController extends Controller
                 $data['secret'] = bin2hex(random_bytes(16));
             }
             $webhook = $this->webhooks->create($data);
-            return $this->apiSuccess($webhook, 'Webhook created', 201);
+            return $this->apiSuccess($webhook, translate('message.created_successfully'), 201);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to create webhook', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -52,7 +52,7 @@ class CrmWebhookApiController extends Controller
         try {
             return $this->apiSuccess($this->webhooks->findOrFail($id));
         } catch (\Throwable $e) {
-            return $this->apiError('Webhook not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
     }
 
@@ -60,9 +60,9 @@ class CrmWebhookApiController extends Controller
     {
         try {
             $webhook = $this->webhooks->update($id, $request->all());
-            return $this->apiSuccess($webhook, 'Webhook updated');
+            return $this->apiSuccess($webhook, translate('message.updated_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to update webhook', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -70,9 +70,9 @@ class CrmWebhookApiController extends Controller
     {
         try {
             $this->webhooks->delete($id);
-            return $this->apiSuccess(null, 'Webhook deleted');
+            return $this->apiSuccess(null, translate('message.deleted_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to delete webhook', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -81,9 +81,9 @@ class CrmWebhookApiController extends Controller
         try {
             $webhook = $this->webhooks->findOrFail($id);
             $webhook->update(['is_active' => !$webhook->is_active]);
-            return $this->apiSuccess($webhook, 'Webhook toggled');
+            return $this->apiSuccess($webhook, translate('message.action_completed'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to toggle webhook', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -93,9 +93,9 @@ class CrmWebhookApiController extends Controller
             $webhook = $this->webhooks->findOrFail($id);
             $newSecret = bin2hex(random_bytes(16));
             $webhook->update(['secret' => $newSecret]);
-            return $this->apiSuccess(['secret' => $newSecret], 'Secret regenerated');
+            return $this->apiSuccess(['secret' => $newSecret], translate('message.action_completed'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to regenerate secret', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

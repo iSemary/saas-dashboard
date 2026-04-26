@@ -50,7 +50,7 @@ class LeadApiController extends ApiController implements HasMiddleware
             $perPage = (int) $request->get('per_page', 15);
             return $this->apiPaginated($this->listLeads->execute($filters, $perPage));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to retrieve leads', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -66,9 +66,9 @@ class LeadApiController extends ApiController implements HasMiddleware
             ]);
             $dto = CreateLeadDTO::fromArray($request->all());
             $lead = $this->createLead->execute($dto, auth()->id());
-            return $this->apiSuccess($lead->load(['assignedUser', 'creator']), 'Lead created successfully', 201);
+            return $this->apiSuccess($lead->load(['assignedUser', 'creator']), translate('message.created_successfully'), 201);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to create lead', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -77,7 +77,7 @@ class LeadApiController extends ApiController implements HasMiddleware
         try {
             return $this->apiSuccess($this->getLead->execute($id)->load(['assignedUser', 'creator', 'activities']));
         } catch (\Throwable $e) {
-            return $this->apiError('Lead not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
     }
 
@@ -86,9 +86,9 @@ class LeadApiController extends ApiController implements HasMiddleware
         try {
             $dto = UpdateLeadDTO::fromArray($id, $request->all());
             $lead = $this->updateLead->execute($dto, auth()->id());
-            return $this->apiSuccess($lead->load(['assignedUser', 'creator']), 'Lead updated successfully');
+            return $this->apiSuccess($lead->load(['assignedUser', 'creator']), translate('message.updated_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to update lead', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -96,9 +96,9 @@ class LeadApiController extends ApiController implements HasMiddleware
     {
         try {
             $this->deleteLead->execute($id);
-            return $this->apiSuccess(null, 'Lead deleted successfully');
+            return $this->apiSuccess(null, translate('message.deleted_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to delete lead', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -106,9 +106,9 @@ class LeadApiController extends ApiController implements HasMiddleware
     {
         try {
             $opportunity = $this->convertLead->execute($id, $request->all(), auth()->id());
-            return $this->apiSuccess($opportunity, 'Lead converted to opportunity successfully');
+            return $this->apiSuccess($opportunity, translate('message.action_completed'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to convert lead', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

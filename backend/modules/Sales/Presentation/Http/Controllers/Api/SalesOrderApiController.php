@@ -26,7 +26,7 @@ class SalesOrderApiController extends Controller
             $filters = $request->only(['search', 'branch_id', 'status', 'pay_method', 'order_type', 'date_from', 'date_to']);
             return $this->apiPaginated($this->service->list($filters, (int) $request->get('per_page', 15)));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to retrieve orders', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -57,11 +57,11 @@ class SalesOrderApiController extends Controller
             };
 
             $order = $this->service->createOrder($data, auth()->id(), $paymentStrategy, $orderTypeStrategy);
-            return $this->apiSuccess($order->load(['installment', 'delivery', 'steward']), 'Order created successfully', 201);
+            return $this->apiSuccess($order->load(['installment', 'delivery', 'steward']), translate('message.created_successfully'), 201);
         } catch (\DomainException $e) {
             return $this->apiError($e->getMessage(), 422);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to create order', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -70,7 +70,7 @@ class SalesOrderApiController extends Controller
         try {
             return $this->apiSuccess($this->service->findOrFail($id));
         } catch (\Throwable $e) {
-            return $this->apiError('Order not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
     }
 
@@ -78,11 +78,11 @@ class SalesOrderApiController extends Controller
     {
         try {
             $order = $this->service->cancelOrder($id, auth()->id());
-            return $this->apiSuccess($order, 'Order cancelled and stock restored');
+            return $this->apiSuccess($order, translate('message.action_completed'));
         } catch (\DomainException $e) {
             return $this->apiError($e->getMessage(), 422);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to cancel order', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -90,9 +90,9 @@ class SalesOrderApiController extends Controller
     {
         try {
             $this->service->delete($id);
-            return $this->apiSuccess(null, 'Order deleted successfully');
+            return $this->apiSuccess(null, translate('message.deleted_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to delete order', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -105,7 +105,7 @@ class SalesOrderApiController extends Controller
             );
             return $this->apiSuccess($summary);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to get summary', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -116,7 +116,7 @@ class SalesOrderApiController extends Controller
             $count = $this->service->bulkDelete($request->ids);
             return $this->apiSuccess(null, "{$count} orders deleted successfully");
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to delete orders', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

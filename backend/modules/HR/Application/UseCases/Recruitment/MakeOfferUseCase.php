@@ -18,7 +18,7 @@ class MakeOfferUseCase
         $application = $this->applicationRepository->findOrFail($applicationId);
 
         if ($application->status === 'hired' || $application->status === 'rejected') {
-            throw new \RuntimeException('Cannot make offer for a closed application');
+            throw new \RuntimeException(translate('message.operation_failed'));
         }
 
         return $this->offerRepository->create([

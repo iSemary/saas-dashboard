@@ -1,0 +1,11 @@
+{
+    "name": "TimeManagement",
+    "alias": "time-management",
+    "description": "Full-featured Time Management module with time tracking, timesheets, attendance, calendar with OAuth sync, meeting link generation, and productivity analytics",
+    "keywords": ["time", "timer", "timesheet", "attendance", "calendar", "overtime", "schedule", "meeting", "oauth", "sync"],
+    "priority": 1,
+    "providers": [
+        "Modules\\TimeManagement\\Providers\\TimeManagementServiceProvider"
+    ],
+    "files": []
+}

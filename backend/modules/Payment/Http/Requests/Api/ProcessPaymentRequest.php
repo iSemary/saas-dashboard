@@ -109,7 +109,7 @@ class ProcessPaymentRequest extends FormRequest
                 'success' => false,
                 'error' => [
                     'code' => 'VALIDATION_ERROR',
-                    'message' => 'The given data was invalid',
+                    'message' => translate('message.validation_failed'),
                     'details' => $validator->errors(),
                 ],
             ], 422)

@@ -27,7 +27,7 @@ class CategoryApiController extends Controller
             'parent_id' => 'nullable|integer|exists:categories,id',
             'is_active' => 'nullable|boolean',
         ]);
-        return $this->apiSuccess($this->service->create($validated), 'Category created successfully', 201);
+        return $this->apiSuccess($this->service->create($validated), translate('message.created_successfully'), 201);
     }
 
     public function show($id) { return $this->apiSuccess($this->service->findOrFail($id)); }
@@ -41,12 +41,12 @@ class CategoryApiController extends Controller
             'is_active' => 'nullable|boolean',
         ]);
         $category = $this->service->update($id, $validated);
-        return $this->apiSuccess($category, 'Category updated successfully');
+        return $this->apiSuccess($category, translate('message.updated_successfully'));
     }
 
     public function destroy($id)
     {
         $this->service->delete($id);
-        return $this->apiSuccess(null, 'Category deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 }

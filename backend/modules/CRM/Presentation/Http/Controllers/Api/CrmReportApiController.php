@@ -27,7 +27,7 @@ class CrmReportApiController extends Controller
         try {
             return $this->apiSuccess($this->opportunities->getPipelineData());
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to get pipeline report', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -41,7 +41,7 @@ class CrmReportApiController extends Controller
             ];
             return $this->apiSuccess($data);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to get conversion report', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -60,7 +60,7 @@ class CrmReportApiController extends Controller
                 'today' => $today,
             ]);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to get activity report', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -69,7 +69,7 @@ class CrmReportApiController extends Controller
         try {
             return $this->apiSuccess($this->leads->getCountByStatus());
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to get leads by source report', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -84,19 +84,15 @@ class CrmReportApiController extends Controller
                 $trends[] = [
                     'month' => $date->format('Y-m'),
                     'label' => $date->format('M Y'),
-                    'leads' => \Modules\CRM\Domain\Entities\Lead::whereYear('created_at', $date->year)
-                        ->whereMonth('created_at', $date->month)->count(),
-                    'opportunities' => \Modules\CRM\Domain\Entities\Opportunity::whereYear('created_at', $date->year)
-                        ->whereMonth('created_at', $date->month)->count(),
-                    'closed_won' => \Modules\CRM\Domain\Entities\Opportunity::where('stage', 'closed_won')
-                        ->whereYear('actual_close_date', $date->year)
-                        ->whereMonth('actual_close_date', $date->month)->count(),
+                    'leads' => $this->leads->countByMonth($date->year, $date->month),
+                    'opportunities' => $this->opportunities->countByMonth($date->year, $date->month),
+                    'closed_won' => $this->opportunities->countClosedWonByMonth($date->year, $date->month),
                 ];
             }
 
             return $this->apiSuccess($trends);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to get monthly trends', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -109,7 +105,7 @@ class CrmReportApiController extends Controller
                 'pipeline' => $this->opportunities->getPipelineData(),
             ]);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to get overview report', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

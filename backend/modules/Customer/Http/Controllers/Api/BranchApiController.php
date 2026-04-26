@@ -97,7 +97,7 @@ class BranchApiController extends Controller
     {
         [$tenant, $tenantRecordId] = $this->resolveTenantRecord($id);
         if (!$tenant) {
-            return $this->apiError('Branch not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
 
         $originalTenantDatabase = config('database.connections.tenant.database');
@@ -106,7 +106,7 @@ class BranchApiController extends Controller
             DB::purge('tenant');
 
             if (!Schema::connection('tenant')->hasTable('branches')) {
-                return $this->apiError('Branch not found', 404);
+                return $this->apiError(translate('message.resource_not_found'), 404);
             }
 
             $branch = DB::connection('tenant')
@@ -129,7 +129,7 @@ class BranchApiController extends Controller
                 ->first();
 
             if (!$branch) {
-                return $this->apiError('Branch not found', 404);
+                return $this->apiError(translate('message.resource_not_found'), 404);
             }
 
             return $this->apiSuccess($this->toLandlordBranchResponse($tenant, $branch));
@@ -142,14 +142,14 @@ class BranchApiController extends Controller
     public function store(StoreBranchRequest $request)
     {
         $data = CreateBranchData::fromRequest($request);
-        return $this->apiSuccess($this->branchService->create($data), 'Branch created successfully', 201);
+        return $this->apiSuccess($this->branchService->create($data), translate('message.created_successfully'), 201);
     }
 
     public function update(UpdateBranchRequest $request, $id)
     {
         [$tenant, $tenantRecordId] = $this->resolveTenantRecord($id);
         if (!$tenant) {
-            return $this->apiError('Branch not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
 
         $payload = array_filter([
@@ -173,7 +173,7 @@ class BranchApiController extends Controller
             DB::purge('tenant');
 
             if (!Schema::connection('tenant')->hasTable('branches')) {
-                return $this->apiError('Branch not found', 404);
+                return $this->apiError(translate('message.resource_not_found'), 404);
             }
 
             $columns = Schema::connection('tenant')->getColumnListing('branches');
@@ -203,10 +203,10 @@ class BranchApiController extends Controller
                 ->first();
 
             if (!$branch) {
-                return $this->apiError('Branch not found', 404);
+                return $this->apiError(translate('message.resource_not_found'), 404);
             }
 
-            return $this->apiSuccess($this->toLandlordBranchResponse($tenant, $branch), 'Branch updated successfully');
+            return $this->apiSuccess($this->toLandlordBranchResponse($tenant, $branch), translate('message.updated_successfully'));
         } finally {
             config(['database.connections.tenant.database' => $originalTenantDatabase]);
             DB::purge('tenant');
@@ -217,7 +217,7 @@ class BranchApiController extends Controller
     {
         [$tenant, $tenantRecordId] = $this->resolveTenantRecord($id);
         if (!$tenant) {
-            return $this->apiError('Branch not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
 
         $originalTenantDatabase = config('database.connections.tenant.database');
@@ -226,11 +226,11 @@ class BranchApiController extends Controller
             DB::purge('tenant');
 
             if (!Schema::connection('tenant')->hasTable('branches')) {
-                return $this->apiError('Branch not found', 404);
+                return $this->apiError(translate('message.resource_not_found'), 404);
             }
 
             DB::connection('tenant')->table('branches')->where('id', $tenantRecordId)->delete();
-            return $this->apiSuccess(null, 'Branch deleted successfully');
+            return $this->apiSuccess(null, translate('message.deleted_successfully'));
         } finally {
             config(['database.connections.tenant.database' => $originalTenantDatabase]);
             DB::purge('tenant');

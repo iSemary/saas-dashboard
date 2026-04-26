@@ -22,7 +22,7 @@ class TenantController extends Controller
     {
         try {
             if (!$request->hasHeader('X-Cross-DB-Request')) {
-                return response()->json(['error' => 'Unauthorized cross-database request'], 403);
+                return response()->json(['error' => translate('auth.unauthorized')], 403);
             }
 
             $filters = $request->only(['search', 'status', 'created_by']);
@@ -38,7 +38,7 @@ class TenantController extends Controller
             \Log::error('Tenant Brands API Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'error' => 'Failed to fetch brands',
+                'error' => translate('message.operation_failed'),
                 'message' => $e->getMessage()
             ], 500);
         }
@@ -51,7 +51,7 @@ class TenantController extends Controller
     {
         try {
             if (!$request->hasHeader('X-Cross-DB-Request')) {
-                return response()->json(['error' => 'Unauthorized cross-database request'], 403);
+                return response()->json(['error' => translate('auth.unauthorized')], 403);
             }
 
             $brand = $this->tenantService->getBrand($id);
@@ -65,7 +65,7 @@ class TenantController extends Controller
             \Log::error('Tenant Brand API Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'error' => 'Failed to fetch brand',
+                'error' => translate('message.operation_failed'),
                 'message' => $e->getMessage()
             ], 500);
         }
@@ -78,7 +78,7 @@ class TenantController extends Controller
     {
         try {
             if (!$request->hasHeader('X-Cross-DB-Request')) {
-                return response()->json(['error' => 'Unauthorized cross-database request'], 403);
+                return response()->json(['error' => translate('auth.unauthorized')], 403);
             }
 
             $modules = $this->tenantService->getBrandModules($brandId);
@@ -93,7 +93,7 @@ class TenantController extends Controller
             \Log::error('Tenant Brand Modules API Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'error' => 'Failed to fetch brand modules',
+                'error' => translate('message.operation_failed'),
                 'message' => $e->getMessage()
             ], 500);
         }
@@ -106,7 +106,7 @@ class TenantController extends Controller
     {
         try {
             if (!$request->hasHeader('X-Cross-DB-Request')) {
-                return response()->json(['error' => 'Unauthorized cross-database request'], 403);
+                return response()->json(['error' => translate('auth.unauthorized')], 403);
             }
 
             $moduleIds = $request->input('module_ids', []);
@@ -114,7 +114,7 @@ class TenantController extends Controller
             if (empty($moduleIds)) {
                 return response()->json([
                     'success' => false,
-                    'error' => 'No module IDs provided'
+                    'error' => translate('message.validation_failed')
                 ], 400);
             }
 
@@ -122,7 +122,7 @@ class TenantController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Modules assigned successfully',
+                'message' => translate('message.action_completed'),
                 'assigned_count' => $assignedCount
             ]);
 
@@ -130,7 +130,7 @@ class TenantController extends Controller
             \Log::error('Tenant Assign Brand Modules API Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'error' => 'Failed to assign modules',
+                'error' => translate('message.operation_failed'),
                 'message' => $e->getMessage()
             ], 500);
         }
@@ -143,7 +143,7 @@ class TenantController extends Controller
     {
         try {
             if (!$request->hasHeader('X-Cross-DB-Request')) {
-                return response()->json(['error' => 'Unauthorized cross-database request'], 403);
+                return response()->json(['error' => translate('auth.unauthorized')], 403);
             }
 
             $stats = $this->tenantService->getBrandStats();
@@ -157,7 +157,7 @@ class TenantController extends Controller
             \Log::error('Tenant Brand Stats API Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'error' => 'Failed to fetch brand statistics',
+                'error' => translate('message.operation_failed'),
                 'message' => $e->getMessage()
             ], 500);
         }

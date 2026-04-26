@@ -46,7 +46,7 @@ class CrmSearchApiController extends Controller
                 'results' => $results,
             ]);
         } catch (\Throwable $e) {
-            return $this->apiError('Search failed', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

@@ -17,7 +17,7 @@ class ApprovePayrollUseCase
         $payroll = $this->payrollRepository->findOrFail($payrollId);
         
         if ($payroll->status !== 'calculated') {
-            throw new \RuntimeException('Can only approve calculated payrolls');
+            throw new \RuntimeException(translate('message.operation_failed'));
         }
 
         $updateData = [

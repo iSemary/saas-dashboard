@@ -31,7 +31,7 @@ class EmailNotificationStrategy implements NotificationStrategyInterface
 
         return [
             'success' => true,
-            'message' => 'Email notification queued',
+            'message' => translate('message.action_completed'),
             'channel' => 'email',
         ];
     }

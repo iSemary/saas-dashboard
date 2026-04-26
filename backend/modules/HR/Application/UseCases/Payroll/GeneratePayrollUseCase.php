@@ -25,7 +25,7 @@ class GeneratePayrollUseCase
         );
 
         if ($existing) {
-            throw new \RuntimeException('Payroll already exists for this employee and period');
+            throw new \RuntimeException(translate('message.operation_failed'));
         }
 
         $employee = $this->employeeRepository->findOrFail($data->employeeId);

@@ -1,0 +1,11 @@
+{
+    "name": "SmsMarketing",
+    "alias": "sms_marketing",
+    "description": "Tenant-level SMS Marketing module with campaigns, templates, contact lists, automation, A/B testing, and analytics",
+    "keywords": ["sms", "marketing", "campaigns", "text-messages", "automation"],
+    "priority": 1,
+    "providers": [
+        "Modules\\SmsMarketing\\Providers\\SmsMarketingServiceProvider"
+    ],
+    "files": []
+}

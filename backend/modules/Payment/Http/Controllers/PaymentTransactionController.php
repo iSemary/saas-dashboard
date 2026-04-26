@@ -250,7 +250,7 @@ class PaymentTransactionController extends Controller
     protected function exportToExcel($transactions)
     {
         // This would use a package like Laravel Excel
-        return response()->json(['message' => 'Excel export not implemented yet'], 501);
+        return response()->json(['message' => translate('message.operation_failed')], 501);
     }
 
     /**
@@ -259,6 +259,6 @@ class PaymentTransactionController extends Controller
     protected function exportToPdf($transactions)
     {
         // This would use a package like DomPDF or wkhtmltopdf
-        return response()->json(['message' => 'PDF export not implemented yet'], 501);
+        return response()->json(['message' => translate('message.operation_failed')], 501);
     }
 }

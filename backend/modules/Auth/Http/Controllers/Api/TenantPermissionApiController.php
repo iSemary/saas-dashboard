@@ -23,18 +23,18 @@ class TenantPermissionApiController extends Controller
 
     public function store(StorePermissionRequest $request)
     {
-        return $this->apiSuccess($this->permissionService->create($request->validated()), 'Permission created successfully', 201);
+        return $this->apiSuccess($this->permissionService->create($request->validated()), translate('message.created_successfully'), 201);
     }
 
     public function update(UpdatePermissionRequest $request, $id)
     {
         $permission = $this->permissionService->update($id, $request->validated());
-        return $this->apiSuccess($permission, 'Permission updated successfully');
+        return $this->apiSuccess($permission, translate('message.updated_successfully'));
     }
 
     public function destroy($id)
     {
         $this->permissionService->delete($id);
-        return $this->apiSuccess(null, 'Permission deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 }

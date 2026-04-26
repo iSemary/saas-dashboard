@@ -51,7 +51,7 @@ class LeaveRequestApiController extends ApiController
         );
         
         $leaveRequest = $this->requestLeaveUseCase->execute($data);
-        return $this->success(data: $leaveRequest, message: 'Leave request submitted successfully');
+        return $this->success(data: $leaveRequest, message: translate('message.action_completed'));
     }
 
     public function show(int $id): JsonResponse
@@ -68,7 +68,7 @@ class LeaveRequestApiController extends ApiController
         );
         
         $leaveRequest = $this->approveLeaveUseCase->execute($data);
-        return $this->success(data: $leaveRequest, message: 'Leave request approved successfully');
+        return $this->success(data: $leaveRequest, message: translate('message.action_completed'));
     }
 
     public function reject(Request $request, int $id): JsonResponse
@@ -79,13 +79,13 @@ class LeaveRequestApiController extends ApiController
         );
         
         $leaveRequest = $this->rejectLeaveUseCase->execute($data);
-        return $this->success(data: $leaveRequest, message: 'Leave request rejected successfully');
+        return $this->success(data: $leaveRequest, message: translate('message.action_completed'));
     }
 
     public function cancel(int $id): JsonResponse
     {
         $leaveRequest = $this->cancelLeaveUseCase->execute($id);
-        return $this->success(data: $leaveRequest, message: 'Leave request cancelled successfully');
+        return $this->success(data: $leaveRequest, message: translate('message.action_completed'));
     }
 
     public function pending(): JsonResponse

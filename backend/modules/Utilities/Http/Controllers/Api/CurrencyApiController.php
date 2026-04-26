@@ -28,18 +28,18 @@ class CurrencyApiController extends Controller
     public function store(StoreCurrencyRequest $request)
     {
         $data = CreateCurrencyData::fromRequest($request);
-        return $this->apiSuccess($this->service->create($data), 'Currency created successfully', 201);
+        return $this->apiSuccess($this->service->create($data), translate('message.created_successfully'), 201);
     }
 
     public function update(UpdateCurrencyRequest $request, $id)
     {
         $data = UpdateCurrencyData::fromRequest($request);
-        return $this->apiSuccess($this->service->update($id, $data), 'Currency updated successfully');
+        return $this->apiSuccess($this->service->update($id, $data), translate('message.updated_successfully'));
     }
 
     public function destroy($id)
     {
         $this->service->delete($id);
-        return $this->apiSuccess(null, 'Currency deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 }

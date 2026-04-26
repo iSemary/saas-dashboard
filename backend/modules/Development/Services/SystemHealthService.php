@@ -13,7 +13,7 @@ class SystemHealthService
         // Database check
         try {
             DB::connection()->getPdo();
-            $checks['database'] = ['status' => 'healthy', 'message' => 'Database connection is active'];
+            $checks['database'] = ['status' => 'healthy', 'message' => translate('message.action_completed')];
         } catch (\Exception $e) {
             $checks['database'] = ['status' => 'unhealthy', 'message' => $e->getMessage()];
         }
@@ -29,7 +29,7 @@ class SystemHealthService
 
         // Storage check
         try {
-            $checks['storage'] = ['status' => 'healthy', 'message' => 'Storage is writable'];
+            $checks['storage'] = ['status' => 'healthy', 'message' => translate('message.action_completed')];
         } catch (\Exception $e) {
             $checks['storage'] = ['status' => 'unhealthy', 'message' => $e->getMessage()];
         }

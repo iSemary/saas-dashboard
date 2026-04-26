@@ -87,4 +87,9 @@ interface LeadRepositoryInterface
      * Get statistics.
      */
     public function getStatistics(): array;
+
+    /**
+     * Count leads created in a specific month.
+     */
+    public function countByMonth(int $year, int $month): int;
 }

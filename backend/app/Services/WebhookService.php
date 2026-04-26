@@ -47,7 +47,7 @@ class WebhookService extends BaseService
         $webhook = $this->repository->findOrFail($webhookId);
 
         if ($webhook->created_by !== $userId) {
-            throw new \Exception('Unauthorized');
+            throw new \Exception(translate('auth.unauthorized'));
         }
 
         $payload = !empty($payload) ? $payload : ['test' => true, 'timestamp' => now()->toIso8601String()];

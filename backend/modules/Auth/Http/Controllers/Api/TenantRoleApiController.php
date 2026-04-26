@@ -26,18 +26,18 @@ class TenantRoleApiController extends Controller
     public function store(StoreRoleRequest $request)
     {
         $role = $this->roleService->create($request->validated());
-        return $this->apiSuccess($role, 'Role created successfully', 201);
+        return $this->apiSuccess($role, translate('message.created_successfully'), 201);
     }
 
     public function update(UpdateRoleRequest $request, $id)
     {
         $role = $this->roleService->update($id, $request->validated());
-        return $this->apiSuccess($role, 'Role updated successfully');
+        return $this->apiSuccess($role, translate('message.updated_successfully'));
     }
 
     public function destroy($id)
     {
         $this->roleService->delete($id);
-        return $this->apiSuccess(null, 'Role deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 }

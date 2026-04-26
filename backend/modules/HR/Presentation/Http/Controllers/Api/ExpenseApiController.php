@@ -30,7 +30,7 @@ class ExpenseApiController extends ApiController
     public function storeCategory(Request $request): JsonResponse
     {
         $category = $this->categoryRepository->create($request->only(['name', 'max_amount']));
-        return $this->success(data: $category, message: 'Expense category created successfully');
+        return $this->success(data: $category, message: translate('message.action_completed'));
     }
 
     public function claims(Request $request): JsonResponse
@@ -43,6 +43,6 @@ class ExpenseApiController extends ApiController
         $claim = $this->submitExpenseClaimUseCase->execute(
             $request->only(['employee_id', 'category_id', 'amount', 'currency', 'expense_date', 'description', 'receipt_path'])
         );
-        return $this->success(data: $claim, message: 'Expense claim submitted successfully');
+        return $this->success(data: $claim, message: translate('message.action_completed'));
     }
 }

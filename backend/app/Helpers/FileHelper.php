@@ -129,7 +129,7 @@ class FileHelper
     {
         $filePath = $file->storeAs($folderName, $hashName, $disk);
         if (!$filePath) {
-            throw new \Exception("Failed to store the file.");
+            throw new \Exception(translate('exception.failed_store_file'));
         }
         return [
             'path' => $filePath,

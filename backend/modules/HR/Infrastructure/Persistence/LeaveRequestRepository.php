@@ -71,11 +71,11 @@ class LeaveRequestRepository implements LeaveRequestRepositoryInterface
     public function getRequestsByEmployee(int $employeeId, ?string $status = null): array
     {
         $query = LeaveRequest::with('leaveType')->where('employee_id', $employeeId);
-        
+
         if ($status) {
             $query->where('status', $status);
         }
-        
+
         return $query->orderBy('start_date', 'desc')->get()->toArray();
     }
 
@@ -102,5 +102,13 @@ class LeaveRequestRepository implements LeaveRequestRepositoryInterface
     public function getPendingCountForApprover(int $approverId): int
     {
         return LeaveRequest::where('status', 'pending')->count();
+    }
+
+    public function getCountByStatus(): \Illuminate\Support\Collection
+    {
+        return LeaveRequest::query()
+            ->selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->get();
     }
 }

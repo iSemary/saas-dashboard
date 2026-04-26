@@ -22,6 +22,6 @@ class EmailLogApiController extends Controller
     public function destroy($id)
     {
         $this->service->delete($id);
-        return $this->apiSuccess(null, 'Log entry deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 }

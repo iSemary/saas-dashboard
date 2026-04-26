@@ -21,7 +21,7 @@ class BarcodeApiController extends Controller
             $filters = $request->only(['search', 'product_id']);
             return $this->apiPaginated($this->service->list($filters, (int) $request->get('per_page', 15)));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to retrieve barcodes', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -29,9 +29,9 @@ class BarcodeApiController extends Controller
     {
         try {
             $barcode = $this->service->create($request->validated(), auth()->id());
-            return $this->apiSuccess($barcode->load('product'), 'Barcode created successfully', 201);
+            return $this->apiSuccess($barcode->load('product'), translate('message.created_successfully'), 201);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to create barcode', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -39,10 +39,10 @@ class BarcodeApiController extends Controller
     {
         try {
             $result = $this->service->searchByNumber($barcode);
-            if (!$result) return $this->apiError('Barcode not found', 404);
+            if (!$result) return $this->apiError(translate('message.resource_not_found'), 404);
             return $this->apiSuccess($result->load(['product.category', 'product.productStocks']));
         } catch (\Throwable $e) {
-            return $this->apiError('Barcode search failed', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -50,9 +50,9 @@ class BarcodeApiController extends Controller
     {
         try {
             $this->service->delete($id);
-            return $this->apiSuccess(null, 'Barcode deleted successfully');
+            return $this->apiSuccess(null, translate('message.deleted_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to delete barcode', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

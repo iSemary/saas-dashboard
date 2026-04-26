@@ -29,7 +29,7 @@ class DocumentApiController extends ApiController
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to retrieve documents',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -49,16 +49,16 @@ class DocumentApiController extends ApiController
 
             return response()->json([
                 'data' => $document->load('folder'),
-                'message' => 'File uploaded successfully'
+                'message' => translate('message.action_completed')
             ], 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
-                'message' => 'Validation failed',
+                'message' => translate('message.validation_failed'),
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to upload file',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -71,7 +71,7 @@ class DocumentApiController extends ApiController
             return response()->json(['data' => $file]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'File not found',
+                'message' => translate('message.resource_not_found'),
                 'error' => $e->getMessage()
             ], 404);
         }
@@ -91,11 +91,11 @@ class DocumentApiController extends ApiController
 
             return response()->json([
                 'data' => $file,
-                'message' => 'File updated successfully'
+                'message' => translate('message.updated_successfully')
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to update file',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -105,10 +105,10 @@ class DocumentApiController extends ApiController
     {
         try {
             $this->service->delete($id);
-            return response()->json(['message' => 'File deleted successfully']);
+            return response()->json(['message' => translate('message.deleted_successfully')]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to delete file',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -127,7 +127,7 @@ class DocumentApiController extends ApiController
             $status = str_contains($e->getMessage(), 'permission') ? 403 :
                       (str_contains($e->getMessage(), 'not found') ? 404 : 500);
             return response()->json([
-                'message' => 'Failed to download file',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], $status);
         }
@@ -140,7 +140,7 @@ class DocumentApiController extends ApiController
             return response()->json(['data' => []]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to retrieve versions',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -161,7 +161,7 @@ class DocumentApiController extends ApiController
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to delete files',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }

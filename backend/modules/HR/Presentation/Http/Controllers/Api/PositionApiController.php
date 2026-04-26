@@ -43,7 +43,7 @@ class PositionApiController extends ApiController
             $data = CreatePositionData::fromRequest($request);
             $position = $this->createUseCase->execute($data);
             return $this->success(
-                message: 'Position created successfully',
+                message: translate('message.action_completed'),
                 data: $position->fresh(['department'])
             );
         } catch (\Exception $e) {
@@ -67,7 +67,7 @@ class PositionApiController extends ApiController
             $data = UpdatePositionData::fromRequest($request);
             $position = $this->updateUseCase->execute($id, $data);
             return $this->success(
-                message: 'Position updated successfully',
+                message: translate('message.action_completed'),
                 data: $position->fresh(['department'])
             );
         } catch (\Exception $e) {
@@ -79,7 +79,7 @@ class PositionApiController extends ApiController
     {
         try {
             $this->deleteUseCase->execute($id);
-            return $this->success(message: 'Position deleted successfully');
+            return $this->success(message: translate('message.action_completed'));
         } catch (\Exception $e) {
             return $this->error(message: $e->getMessage(), code: 422);
         }

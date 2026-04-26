@@ -16,4 +16,5 @@ interface AttendanceRepositoryInterface
     public function getAttendanceByDateRange(int $employeeId, string $startDate, string $endDate): array;
     public function getPendingApprovals(): array;
     public function bulkDelete(array $ids): bool;
+    public function getCountByStatus(): \Illuminate\Support\Collection;
 }

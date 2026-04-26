@@ -94,7 +94,7 @@ class TenantOwnerApiController extends Controller
         $tenant = Tenant::on('landlord')->find($tenantId);
 
         if (!$tenant || empty($tenant->database)) {
-            return $this->apiError('Tenant owner not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
 
         $originalTenantDatabase = config('database.connections.tenant.database');
@@ -104,7 +104,7 @@ class TenantOwnerApiController extends Controller
             DB::purge('tenant');
 
             if (!Schema::connection('tenant')->hasTable('users')) {
-                return $this->apiError('Tenant owner not found', 404);
+                return $this->apiError(translate('message.resource_not_found'), 404);
             }
 
             $user = DB::connection('tenant')
@@ -114,7 +114,7 @@ class TenantOwnerApiController extends Controller
                 ->first();
 
             if (!$user) {
-                return $this->apiError('Tenant owner not found', 404);
+                return $this->apiError(translate('message.resource_not_found'), 404);
             }
 
             return $this->apiSuccess([
@@ -158,14 +158,14 @@ class TenantOwnerApiController extends Controller
         $validated['status'] = $validated['status'] ?? 'active';
 
         $tenantOwner = $this->service->create($validated);
-        return $this->apiSuccess($tenantOwner->load(['tenant', 'user']), 'Tenant owner created successfully', 201);
+        return $this->apiSuccess($tenantOwner->load(['tenant', 'user']), translate('message.created_successfully'), 201);
     }
 
     public function update(Request $request, $id)
     {
         $tenantOwner = $this->service->getById($id);
         if (!$tenantOwner) {
-            return $this->apiError('Tenant owner not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
 
         $validated = $request->validate([
@@ -179,17 +179,17 @@ class TenantOwnerApiController extends Controller
         ]);
 
         $this->service->update($id, $validated);
-        return $this->apiSuccess($this->service->getById($id)->load(['tenant', 'user']), 'Tenant owner updated successfully');
+        return $this->apiSuccess($this->service->getById($id)->load(['tenant', 'user']), translate('message.updated_successfully'));
     }
 
     public function destroy($id)
     {
         $tenantOwner = $this->service->getById($id);
         if (!$tenantOwner) {
-            return $this->apiError('Tenant owner not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
         $this->service->delete($id);
-        return $this->apiSuccess(null, 'Tenant owner deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 
     private function decodeCompositeId($id): array

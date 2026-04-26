@@ -31,7 +31,7 @@ class PushNotificationStrategy implements NotificationStrategyInterface
 
         return [
             'success' => true,
-            'message' => 'Push notification queued',
+            'message' => translate('message.action_completed'),
             'channel' => 'push',
         ];
     }

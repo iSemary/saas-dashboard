@@ -41,7 +41,7 @@ class ActivityApiController extends ApiController implements HasMiddleware
             $perPage = (int) $request->get('per_page', 15);
             return $this->apiPaginated($this->activities->paginate($filters, $perPage));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to retrieve activities', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -50,9 +50,9 @@ class ActivityApiController extends ApiController implements HasMiddleware
         try {
             $request->validate(['subject' => 'required|string|max:255', 'type' => 'nullable|string']);
             $activity = $this->createActivity->execute($request->all(), auth()->id());
-            return $this->apiSuccess($activity->load(['assignedUser', 'creator']), 'Activity created', 201);
+            return $this->apiSuccess($activity->load(['assignedUser', 'creator']), translate('message.created_successfully'), 201);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to create activity', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -61,7 +61,7 @@ class ActivityApiController extends ApiController implements HasMiddleware
         try {
             return $this->apiSuccess($this->activities->findOrFail($id)->load(['assignedUser', 'related']));
         } catch (\Throwable $e) {
-            return $this->apiError('Activity not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
     }
 
@@ -69,9 +69,9 @@ class ActivityApiController extends ApiController implements HasMiddleware
     {
         try {
             $activity = $this->activities->update($id, $request->all());
-            return $this->apiSuccess($activity->load(['assignedUser']), 'Activity updated');
+            return $this->apiSuccess($activity->load(['assignedUser']), translate('message.updated_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to update activity', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -79,9 +79,9 @@ class ActivityApiController extends ApiController implements HasMiddleware
     {
         try {
             $this->activities->delete($id);
-            return $this->apiSuccess(null, 'Activity deleted');
+            return $this->apiSuccess(null, translate('message.deleted_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to delete activity', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -89,9 +89,9 @@ class ActivityApiController extends ApiController implements HasMiddleware
     {
         try {
             $activity = $this->completeActivity->execute($id, $request->input('outcome'), auth()->id());
-            return $this->apiSuccess($activity, 'Activity completed');
+            return $this->apiSuccess($activity, translate('message.action_completed'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to complete activity', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -100,7 +100,7 @@ class ActivityApiController extends ApiController implements HasMiddleware
         try {
             return $this->apiSuccess($this->activities->getUpcoming(7));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to get upcoming activities', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -109,7 +109,7 @@ class ActivityApiController extends ApiController implements HasMiddleware
         try {
             return $this->apiSuccess($this->activities->getOverdue());
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to get overdue activities', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

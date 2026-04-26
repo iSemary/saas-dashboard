@@ -18,7 +18,7 @@ class CalculatePayrollUseCase
         $payroll = $this->payrollRepository->findOrFail($payrollId);
         
         if ($payroll->status !== 'draft' && $payroll->status !== 'calculated') {
-            throw new \RuntimeException('Can only calculate draft or previously calculated payrolls');
+            throw new \RuntimeException(translate('message.operation_failed'));
         }
 
         // Use strategy to calculate

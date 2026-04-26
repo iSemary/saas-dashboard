@@ -31,7 +31,7 @@ class SmsNotificationStrategy implements NotificationStrategyInterface
 
         return [
             'success' => true,
-            'message' => 'SMS notification queued',
+            'message' => translate('message.action_completed'),
             'channel' => 'sms',
         ];
     }

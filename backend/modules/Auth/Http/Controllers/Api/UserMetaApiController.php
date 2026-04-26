@@ -57,7 +57,7 @@ class UserMetaApiController extends Controller
             ]
         );
 
-        return $this->apiSuccess($meta, 'Setting saved successfully');
+        return $this->apiSuccess($meta, translate('message.action_completed'));
     }
 
     public function destroy(Request $request, string $key)
@@ -68,6 +68,6 @@ class UserMetaApiController extends Controller
             ->where('meta_key', $key)
             ->delete();
         
-        return $this->apiSuccess(null, 'Setting removed successfully');
+        return $this->apiSuccess(null, translate('message.action_completed'));
     }
 }

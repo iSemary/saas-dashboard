@@ -28,19 +28,19 @@ class EmailSubscriberApiController extends Controller
     public function store(StoreEmailSubscriberRequest $request)
     {
         $data = CreateEmailSubscriberData::fromRequest($request);
-        return $this->apiSuccess($this->service->create($data), 'Subscriber created successfully', 201);
+        return $this->apiSuccess($this->service->create($data), translate('message.created_successfully'), 201);
     }
 
     public function update(UpdateEmailSubscriberRequest $request, $id)
     {
         $data = UpdateEmailSubscriberData::fromRequest($request);
         $this->service->update($id, $data);
-        return $this->apiSuccess($this->service->findOrFail($id), 'Subscriber updated successfully');
+        return $this->apiSuccess($this->service->findOrFail($id), translate('message.updated_successfully'));
     }
 
     public function destroy($id)
     {
         $this->service->delete($id);
-        return $this->apiSuccess(null, 'Subscriber deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 }

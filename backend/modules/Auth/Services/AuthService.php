@@ -164,14 +164,14 @@ class AuthService
         $user = $this->repository->findByEmail($email);
 
         if (!$user) {
-            return ['message' => 'If the email exists, a reset link has been sent.'];
+            return ['message' => translate('message.action_completed')];
         }
 
         $token = $this->repository->createResetToken($user->id);
         $tenantId = $subdomain ? Tenant::where('domain', $subdomain)->first()?->id : null;
         \Modules\Auth\Jobs\ForgetPasswordMailJob::dispatch($user, $token, $tenantId);
 
-        return ['message' => 'If the email exists, a reset link has been sent.'];
+        return ['message' => translate('message.action_completed')];
     }
 
     public function resetPassword(string $token, string $password, ?string $subdomain = null): array
@@ -196,7 +196,7 @@ class AuthService
         $this->repository->updatePassword($user->id, $password);
         $this->repository->deleteResetToken($token);
 
-        return ['message' => 'Password has been reset successfully.'];
+        return ['message' => translate('message.action_completed')];
     }
 
     public function updateProfile(User $user, array $validated): User
@@ -239,7 +239,7 @@ class AuthService
 
         $user->update(['password' => Hash::make($newPassword)]);
 
-        return ['message' => 'Password changed successfully'];
+        return ['message' => translate('message.action_completed')];
     }
 
     public function getSessions(User $user)
@@ -263,7 +263,7 @@ class AuthService
             return ['error' => 'Session not found', 'code' => 404];
         }
         $token->revoke();
-        return ['message' => 'Session revoked successfully'];
+        return ['message' => translate('message.action_completed')];
     }
 
     public function getApiKeys(User $user)
@@ -300,7 +300,7 @@ class AuthService
             return ['error' => 'API key not found', 'code' => 404];
         }
         $token->revoke();
-        return ['message' => 'API key revoked successfully'];
+        return ['message' => translate('message.action_completed')];
     }
 
     public function globalSearch(string $query, array $types = []): array

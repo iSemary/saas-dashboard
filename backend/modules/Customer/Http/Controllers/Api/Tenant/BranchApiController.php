@@ -26,7 +26,7 @@ class BranchApiController extends Controller
     public function store(StoreBranchRequest $request)
     {
         $data = CreateBranchData::fromRequest($request);
-        return $this->apiSuccess($this->branchService->create($data), 'Branch created successfully', 201);
+        return $this->apiSuccess($this->branchService->create($data), translate('message.created_successfully'), 201);
     }
 
     public function show($id) { return $this->apiSuccess($this->branchService->findOrFail($id)); }
@@ -35,12 +35,12 @@ class BranchApiController extends Controller
     {
         $data = UpdateBranchData::fromRequest($request);
         $this->branchService->update($id, $data);
-        return $this->apiSuccess($this->branchService->findOrFail($id), 'Branch updated successfully');
+        return $this->apiSuccess($this->branchService->findOrFail($id), translate('message.updated_successfully'));
     }
 
     public function destroy($id)
     {
         $this->branchService->delete($id);
-        return $this->apiSuccess(null, 'Branch deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 }

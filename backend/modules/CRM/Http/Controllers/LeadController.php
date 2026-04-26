@@ -74,13 +74,13 @@ class LeadController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Lead created successfully',
+                'message' => translate('message.created_successfully'),
                 'data' => $lead,
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create lead: ' . $e->getMessage(),
+                'message' => translate('message.operation_failed') . $e->getMessage(),
             ], 500);
         }
     }
@@ -96,7 +96,7 @@ class LeadController extends Controller
             if (request()->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Lead not found',
+                    'message' => translate('message.resource_not_found'),
                 ], 404);
             }
             abort(404, 'Lead not found');
@@ -151,18 +151,18 @@ class LeadController extends Controller
             if ($success) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Lead updated successfully',
+                    'message' => translate('message.updated_successfully'),
                 ]);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => 'Lead not found',
+                'message' => translate('message.resource_not_found'),
             ], 404);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update lead: ' . $e->getMessage(),
+                'message' => translate('message.operation_failed') . $e->getMessage(),
             ], 500);
         }
     }
@@ -178,18 +178,18 @@ class LeadController extends Controller
             if ($success) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Lead deleted successfully',
+                    'message' => translate('message.deleted_successfully'),
                 ]);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => 'Lead not found',
+                'message' => translate('message.resource_not_found'),
             ], 404);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete lead: ' . $e->getMessage(),
+                'message' => translate('message.operation_failed') . $e->getMessage(),
             ], 500);
         }
     }
@@ -210,13 +210,13 @@ class LeadController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Lead converted to opportunity successfully',
+                'message' => translate('message.action_completed'),
                 'data' => $opportunity,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to convert lead: ' . $e->getMessage(),
+                'message' => translate('message.operation_failed') . $e->getMessage(),
             ], 500);
         }
     }
@@ -236,18 +236,18 @@ class LeadController extends Controller
             if ($success) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Lead status updated successfully',
+                    'message' => translate('message.updated_successfully'),
                 ]);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => 'Lead not found',
+                'message' => translate('message.resource_not_found'),
             ], 404);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update lead status: ' . $e->getMessage(),
+                'message' => translate('message.operation_failed') . $e->getMessage(),
             ], 500);
         }
     }
@@ -267,18 +267,18 @@ class LeadController extends Controller
             if ($success) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Lead assigned successfully',
+                    'message' => translate('message.action_completed'),
                 ]);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => 'Lead not found',
+                'message' => translate('message.resource_not_found'),
             ], 404);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to assign lead: ' . $e->getMessage(),
+                'message' => translate('message.operation_failed') . $e->getMessage(),
             ], 500);
         }
     }
@@ -302,7 +302,7 @@ class LeadController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to search leads: ' . $e->getMessage(),
+                'message' => translate('message.operation_failed') . $e->getMessage(),
             ], 500);
         }
     }
@@ -322,7 +322,7 @@ class LeadController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to get statistics: ' . $e->getMessage(),
+                'message' => translate('message.operation_failed') . $e->getMessage(),
             ], 500);
         }
     }

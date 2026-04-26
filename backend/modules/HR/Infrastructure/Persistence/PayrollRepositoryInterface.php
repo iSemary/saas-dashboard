@@ -15,4 +15,5 @@ interface PayrollRepositoryInterface
     public function findByEmployeeAndPeriod(int $employeeId, string $periodStart, string $periodEnd): ?Payroll;
     public function generatePayrollNumber(): string;
     public function getByStatus(string $status): array;
+    public function getSummary(): array;
 }

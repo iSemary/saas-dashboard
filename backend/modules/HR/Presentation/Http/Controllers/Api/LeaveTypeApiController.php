@@ -30,7 +30,7 @@ class LeaveTypeApiController extends ApiController
     public function store(Request $request): JsonResponse
     {
         $leaveType = $this->repository->create($request->validated());
-        return $this->success(data: $leaveType, message: 'Leave type created successfully');
+        return $this->success(data: $leaveType, message: translate('message.action_completed'));
     }
 
     public function show(int $id): JsonResponse
@@ -42,13 +42,13 @@ class LeaveTypeApiController extends ApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $leaveType = $this->repository->update($id, $request->validated());
-        return $this->success(data: $leaveType, message: 'Leave type updated successfully');
+        return $this->success(data: $leaveType, message: translate('message.action_completed'));
     }
 
     public function destroy(int $id): JsonResponse
     {
         $this->repository->delete($id);
-        return $this->success(message: 'Leave type deleted successfully');
+        return $this->success(message: translate('message.action_completed'));
     }
 
     public function active(): JsonResponse

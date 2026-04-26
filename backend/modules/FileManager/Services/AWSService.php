@@ -42,7 +42,7 @@ class AWSService
         if (!$this->s3Client) {
             return [
                 'success' => false,
-                'message' => 'AWS S3 not configured',
+                'message' => translate('message.operation_failed'),
                 'path' => null,
                 'url' => null
             ];
@@ -72,7 +72,7 @@ class AWSService
                 'success' => true,
                 'path' => $filename,
                 'url' => $result['ObjectURL'],
-                'message' => 'File uploaded successfully'
+                'message' => translate('message.action_completed')
             ];
         } catch (AwsException $e) {
 
@@ -98,7 +98,7 @@ class AWSService
         if (!$this->s3Client) {
             return [
                 'success' => false,
-                'message' => 'AWS S3 not configured'
+                'message' => translate('message.operation_failed')
             ];
         }
 
@@ -110,7 +110,7 @@ class AWSService
 
             return [
                 'success' => true,
-                'message' => 'File deleted successfully'
+                'message' => translate('message.deleted_successfully')
             ];
         } catch (AwsException $e) {
             return [

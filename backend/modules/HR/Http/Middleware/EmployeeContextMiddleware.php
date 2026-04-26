@@ -17,7 +17,7 @@ class EmployeeContextMiddleware
         if (!$employee) {
             return response()->json([
                 'success' => false,
-                'message' => 'No employee profile is associated with the authenticated user.',
+                'message' => translate('message.operation_failed'),
             ], 403);
         }
 

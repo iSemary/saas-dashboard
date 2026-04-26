@@ -87,7 +87,7 @@ class BranchController extends Controller implements HasMiddleware
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to retrieve branches.',
+                    'message' => translate('message.operation_failed'),
                     'error' => $e->getMessage()
                 ], 500);
             }

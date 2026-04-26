@@ -16,7 +16,7 @@ class PayPalGateway extends AbstractPaymentGateway
 {
     protected string $name = 'paypal';
     protected string $version = 'v2';
-    
+
     protected array $supportedFeatures = [
         'payments',
         'refunds',
@@ -56,7 +56,7 @@ class PayPalGateway extends AbstractPaymentGateway
 
     protected function getBaseUrl(): string
     {
-        return $this->testMode 
+        return $this->testMode
             ? 'https://api-m.sandbox.paypal.com'
             : 'https://api-m.paypal.com';
     }
@@ -64,7 +64,7 @@ class PayPalGateway extends AbstractPaymentGateway
     protected function getAuthHeaders(): array
     {
         $this->ensureValidAccessToken();
-        
+
         return [
             'Authorization' => 'Bearer ' . $this->accessToken,
         ];
@@ -158,11 +158,11 @@ class PayPalGateway extends AbstractPaymentGateway
         // Extract payment details if available
         if (isset($response['purchase_units'][0]['payments'])) {
             $payments = $response['purchase_units'][0]['payments'];
-            
+
             if (isset($payments['captures'][0])) {
                 $capture = $payments['captures'][0];
                 $paymentResponse->setAuthorizationCode($capture['id']);
-                
+
                 if (isset($capture['seller_receivable_breakdown'])) {
                     $paymentResponse->setFees($this->extractPayPalFees($capture['seller_receivable_breakdown']));
                 }
@@ -251,7 +251,7 @@ class PayPalGateway extends AbstractPaymentGateway
     {
         // First create the order
         $orderResponse = parent::processPayment($request);
-        
+
         // If the order requires approval (redirect), return the response with redirect URL
         if ($orderResponse->getRedirectUrl()) {
             return $orderResponse;
@@ -326,7 +326,7 @@ class PayPalGateway extends AbstractPaymentGateway
     {
         try {
             $payload = $request->getParsedPayload();
-            
+
             if (!$payload) {
                 return new WebhookResponse(false, 400);
             }
@@ -432,7 +432,7 @@ class PayPalGateway extends AbstractPaymentGateway
         }
 
         $auth = base64_encode($clientId . ':' . $clientSecret);
-        
+
         $response = Http::withHeaders([
             'Authorization' => 'Basic ' . $auth,
             'Content-Type' => 'application/x-www-form-urlencoded',
@@ -452,7 +452,7 @@ class PayPalGateway extends AbstractPaymentGateway
     protected function buildPaymentSource(PaymentRequest $request): array
     {
         $paymentMethodData = $request->getPaymentMethodData();
-        
+
         if (!$paymentMethodData) {
             // Default to PayPal wallet
             return [
@@ -466,7 +466,7 @@ class PayPalGateway extends AbstractPaymentGateway
         }
 
         $type = $paymentMethodData['type'] ?? 'paypal';
-        
+
         switch ($type) {
             case 'card':
                 return [
@@ -477,7 +477,7 @@ class PayPalGateway extends AbstractPaymentGateway
                         'name' => $paymentMethodData['card']['name'] ?? null,
                     ],
                 ];
-            
+
             default:
                 return [
                     'paypal' => [
@@ -493,7 +493,7 @@ class PayPalGateway extends AbstractPaymentGateway
     protected function buildShippingInfo(PaymentRequest $request): ?array
     {
         $shippingAddress = $request->getShippingAddress();
-        
+
         if (!$shippingAddress) {
             return null;
         }
@@ -538,7 +538,7 @@ class PayPalGateway extends AbstractPaymentGateway
     protected function extractPayPalFees(array $breakdown): array
     {
         $fees = [];
-        
+
         if (isset($breakdown['paypal_fee'])) {
             $fees[] = [
                 'type' => 'paypal_fee',
@@ -549,5 +549,155 @@ class PayPalGateway extends AbstractPaymentGateway
         }
 
         return $fees;
+    }
+
+    /**
+     * Create a PayPal order for checkout.
+     */
+    public function createCheckoutSession(array $options): array
+    {
+        $data = [
+            'intent' => 'CAPTURE',
+            'purchase_units' => [
+                [
+                    'amount' => [
+                        'currency_code' => $options['currency'] ?? 'USD',
+                        'value' => number_format($options['amount'] ?? 0, 2, '.', ''),
+                    ],
+                    'description' => $options['description'] ?? 'Subscription Payment',
+                    'custom_id' => $options['metadata']['invoice_id'] ?? null,
+                ],
+            ],
+            'application_context' => [
+                'return_url' => $options['success_url'] ?? config('app.url') . '/billing/checkout/success',
+                'cancel_url' => $options['cancel_url'] ?? config('app.url') . '/billing/checkout/cancel',
+                'user_action' => 'PAY_NOW',
+                'landing_page' => 'BILLING',
+            ],
+        ];
+
+        return $this->makeHttpRequest('POST', 'v2/checkout/orders', $data);
+    }
+
+    /**
+     * Create a billing agreement/subscription in PayPal.
+     */
+    public function createSubscription(array $options): array
+    {
+        $data = [
+            'plan_id' => $options['plan_id'] ?? $this->createBillingPlan($options)['id'],
+            'start_time' => $options['start_time'] ?? now()->addMinutes(5)->toIso8601String(),
+            'quantity' => $options['quantity'] ?? 1,
+            'application_context' => [
+                'brand_name' => $this->config['brand_name'] ?? 'SaaS Dashboard',
+                'return_url' => $options['success_url'] ?? config('app.url') . '/billing/checkout/success',
+                'cancel_url' => $options['cancel_url'] ?? config('app.url') . '/billing/checkout/cancel',
+                'user_action' => 'SUBSCRIBE_NOW',
+            ],
+        ];
+
+        if (isset($options['subscriber'])) {
+            $data['subscriber'] = $options['subscriber'];
+        }
+
+        return $this->makeHttpRequest('POST', 'v1/billing/subscriptions', $data);
+    }
+
+    /**
+     * Cancel a PayPal subscription.
+     */
+    public function cancelSubscription(string $subscriptionId, string $reason = 'Requested by customer'): array
+    {
+        return $this->makeHttpRequest('POST', "v1/billing/subscriptions/{$subscriptionId}/cancel", [
+            'reason' => $reason,
+        ]);
+    }
+
+    /**
+     * Create a billing plan for subscriptions.
+     */
+    protected function createBillingPlan(array $options): array
+    {
+        $intervalUnit = match($options['interval'] ?? 'month') {
+            'day' => 'DAY',
+            'week' => 'WEEK',
+            'month' => 'MONTH',
+            'year' => 'YEAR',
+            default => 'MONTH',
+        };
+
+        $data = [
+            'product' => [
+                'name' => $options['product_name'] ?? 'Subscription',
+                'description' => $options['product_description'] ?? 'Recurring subscription',
+                'type' => 'DIGITAL',
+                'category' => 'SOFTWARE',
+            ],
+            'billing_cycles' => [
+                [
+                    'pricing_scheme' => [
+                        'fixed_price' => [
+                            'value' => number_format($options['amount'] ?? 0, 2, '.', ''),
+                            'currency_code' => $options['currency'] ?? 'USD',
+                        ],
+                    ],
+                    'frequency' => [
+                        'interval_unit' => $intervalUnit,
+                        'interval_count' => 1,
+                    ],
+                    'tenure_type' => 'REGULAR',
+                    'sequence' => 1,
+                    'total_cycles' => 0, // Infinite
+                ],
+            ],
+            'payment_preferences' => [
+                'auto_bill_outstanding' => true,
+                'setup_fee' => null,
+                'setup_fee_failure_action' => 'CONTINUE',
+            ],
+        ];
+
+        return $this->makeHttpRequest('POST', 'v1/billing/plans', $data);
+    }
+
+    /**
+     * Create a setup token for vaulting payment methods.
+     */
+    public function createSetupIntent(array $options): array
+    {
+        $data = [
+            'payment_source' => [
+                'token' => [
+                    'type' => 'SETUP_TOKEN',
+                    'usage_type' => 'MERCHANT',
+                    'customer_type' => 'CONSUMER',
+                ],
+            ],
+        ];
+
+        if (isset($options['customer_id'])) {
+            $data['customer'] = [
+                'id' => $options['customer_id'],
+            ];
+        }
+
+        return $this->makeHttpRequest('POST', 'v3/vault/setup-tokens', $data);
+    }
+
+    /**
+     * Retrieve payment method details.
+     */
+    public function getPaymentMethod(string $paymentMethodId): array
+    {
+        // PayPal doesn't store payment methods like Stripe
+        // Return vault token info if available
+        return [
+            'id' => $paymentMethodId,
+            'type' => 'paypal',
+            'last_four' => null,
+            'brand' => 'paypal',
+            'exp_month' => null,
+            'exp_year' => null,
+        ];
     }
 }

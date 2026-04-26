@@ -29,7 +29,7 @@ class TenantTicketApiController extends Controller
             'category_id' => 'nullable|integer',
             'assigned_to' => 'nullable|integer',
         ]);
-        return $this->apiSuccess($this->service->create($validated), 'Ticket created successfully', 201);
+        return $this->apiSuccess($this->service->create($validated), translate('message.created_successfully'), 201);
     }
 
     public function show($id) { return $this->apiSuccess($this->service->findOrFail($id)); }
@@ -45,13 +45,13 @@ class TenantTicketApiController extends Controller
             'assigned_to' => 'nullable|integer',
         ]);
         $this->service->update($id, $validated);
-        return $this->apiSuccess($this->service->findOrFail($id), 'Ticket updated successfully');
+        return $this->apiSuccess($this->service->findOrFail($id), translate('message.updated_successfully'));
     }
 
     public function destroy($id)
     {
         $this->service->delete($id);
-        return $this->apiSuccess(null, 'Ticket deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 
     public function kanbanData()
@@ -68,13 +68,13 @@ class TenantTicketApiController extends Controller
     {
         $validated = $request->validate(['status' => 'required|string|max:50']);
         $ticket = $this->service->updateStatus($id, $validated['status']);
-        return $this->apiSuccess($ticket, 'Status updated successfully');
+        return $this->apiSuccess($ticket, translate('message.updated_successfully'));
     }
 
     public function assign(Request $request, $id)
     {
         $validated = $request->validate(['assigned_to' => 'required|integer']);
         $ticket = $this->service->assign($id, $validated['assigned_to']);
-        return $this->apiSuccess($ticket, 'Ticket assigned successfully');
+        return $this->apiSuccess($ticket, translate('message.action_completed'));
     }
 }

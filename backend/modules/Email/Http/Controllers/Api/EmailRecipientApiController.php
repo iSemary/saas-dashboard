@@ -28,19 +28,19 @@ class EmailRecipientApiController extends Controller
     public function store(StoreEmailRecipientRequest $request)
     {
         $data = CreateEmailRecipientData::fromRequest($request);
-        return $this->apiSuccess($this->service->create($data), 'Recipient created successfully', 201);
+        return $this->apiSuccess($this->service->create($data), translate('message.created_successfully'), 201);
     }
 
     public function update(UpdateEmailRecipientRequest $request, $id)
     {
         $data = UpdateEmailRecipientData::fromRequest($request);
         $this->service->update($id, $data);
-        return $this->apiSuccess($this->service->findOrFail($id), 'Recipient updated successfully');
+        return $this->apiSuccess($this->service->findOrFail($id), translate('message.updated_successfully'));
     }
 
     public function destroy($id)
     {
         $this->service->delete($id);
-        return $this->apiSuccess(null, 'Recipient deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 }

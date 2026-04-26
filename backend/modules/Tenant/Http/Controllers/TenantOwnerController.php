@@ -33,7 +33,7 @@ class TenantOwnerController extends Controller
                 return response()->json([
                     'success' => true,
                     'data' => $tenantOwners,
-                    'message' => 'Tenant owners retrieved successfully'
+                    'message' => translate('message.action_completed')
                 ]);
             }
 
@@ -46,7 +46,7 @@ class TenantOwnerController extends Controller
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to retrieve tenant owners: ' . $e->getMessage()
+                    'message' => translate('message.operation_failed') . $e->getMessage()
                 ], 500);
             }
             
@@ -85,7 +85,7 @@ class TenantOwnerController extends Controller
                 return response()->json([
                     'success' => true,
                     'data' => $tenantOwner->load(['tenant', 'user', 'creator', 'updater']),
-                    'message' => 'Tenant owner created successfully'
+                    'message' => translate('message.created_successfully')
                 ], 201);
             }
             
@@ -94,7 +94,7 @@ class TenantOwnerController extends Controller
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to create tenant owner: ' . $e->getMessage()
+                    'message' => translate('message.operation_failed') . $e->getMessage()
                 ], 500);
             }
             
@@ -111,7 +111,7 @@ class TenantOwnerController extends Controller
                 if (request()->ajax()) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Tenant owner not found'
+                        'message' => translate('message.resource_not_found')
                     ], 404);
                 }
                 return redirect()->back()->with('error', 'Tenant owner not found');
@@ -122,7 +122,7 @@ class TenantOwnerController extends Controller
                 return response()->json([
                     'success' => true,
                     'data' => $tenantOwner,
-                    'message' => 'Tenant owner retrieved successfully'
+                    'message' => translate('message.action_completed')
                 ]);
             }
 
@@ -132,7 +132,7 @@ class TenantOwnerController extends Controller
             if (request()->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to retrieve tenant owner: ' . $e->getMessage()
+                    'message' => translate('message.operation_failed') . $e->getMessage()
                 ], 500);
             }
             
@@ -149,7 +149,7 @@ class TenantOwnerController extends Controller
                 if ($request->ajax()) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Tenant owner not found'
+                        'message' => translate('message.resource_not_found')
                     ], 404);
                 }
                 return redirect()->back()->with('error', 'Tenant owner not found');
@@ -164,7 +164,7 @@ class TenantOwnerController extends Controller
                     return response()->json([
                         'success' => true,
                         'data' => $tenantOwner,
-                        'message' => 'Tenant owner updated successfully'
+                        'message' => translate('message.updated_successfully')
                     ]);
                 }
                 
@@ -174,7 +174,7 @@ class TenantOwnerController extends Controller
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to update tenant owner'
+                    'message' => translate('message.operation_failed')
                 ], 500);
             }
             
@@ -183,7 +183,7 @@ class TenantOwnerController extends Controller
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to update tenant owner: ' . $e->getMessage()
+                    'message' => translate('message.operation_failed') . $e->getMessage()
                 ], 500);
             }
             
@@ -199,7 +199,7 @@ class TenantOwnerController extends Controller
             if (!$tenantOwner) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Tenant owner not found'
+                    'message' => translate('message.resource_not_found')
                 ], 404);
             }
 
@@ -208,18 +208,18 @@ class TenantOwnerController extends Controller
             if ($deleted) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Tenant owner deleted successfully'
+                    'message' => translate('message.deleted_successfully')
                 ]);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete tenant owner'
+                'message' => translate('message.operation_failed')
             ], 500);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete tenant owner: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . $e->getMessage()
             ], 500);
         }
     }
@@ -234,18 +234,18 @@ class TenantOwnerController extends Controller
                 return response()->json([
                     'success' => true,
                     'data' => $tenantOwner,
-                    'message' => 'Tenant owner restored successfully'
+                    'message' => translate('message.action_completed')
                 ]);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to restore tenant owner'
+                'message' => translate('message.operation_failed')
             ], 500);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to restore tenant owner: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . $e->getMessage()
             ], 500);
         }
     }
@@ -269,7 +269,7 @@ class TenantOwnerController extends Controller
                 return response()->json([
                     'success' => true,
                     'data' => $tenantOwners,
-                    'message' => 'Tenant owners retrieved successfully'
+                    'message' => translate('message.action_completed')
                 ]);
             }
 
@@ -282,7 +282,7 @@ class TenantOwnerController extends Controller
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to retrieve tenant owners: ' . $e->getMessage()
+                    'message' => translate('message.operation_failed') . $e->getMessage()
                 ], 500);
             }
             
@@ -298,12 +298,12 @@ class TenantOwnerController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $superAdmins,
-                'message' => 'Super admins retrieved successfully'
+                'message' => translate('message.action_completed')
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to retrieve super admins: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . $e->getMessage()
             ], 500);
         }
     }
@@ -316,7 +316,7 @@ class TenantOwnerController extends Controller
             if (empty($query)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Search query is required'
+                    'message' => translate('message.validation_failed')
                 ], 400);
             }
 
@@ -325,12 +325,12 @@ class TenantOwnerController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $tenantOwners,
-                'message' => 'Search results retrieved successfully'
+                'message' => translate('message.action_completed')
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to search tenant owners: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . $e->getMessage()
             ], 500);
         }
     }
@@ -343,12 +343,12 @@ class TenantOwnerController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $stats,
-                'message' => 'Statistics retrieved successfully'
+                'message' => translate('message.action_completed')
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to retrieve statistics: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . $e->getMessage()
             ], 500);
         }
     }
@@ -361,7 +361,7 @@ class TenantOwnerController extends Controller
             if (!$tenantOwner) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Tenant owner not found'
+                    'message' => translate('message.resource_not_found')
                 ], 404);
             }
 
@@ -372,18 +372,18 @@ class TenantOwnerController extends Controller
                 return response()->json([
                     'success' => true,
                     'data' => $tenantOwner,
-                    'message' => 'User promoted to super admin successfully'
+                    'message' => translate('message.action_completed')
                 ]);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to promote user to super admin'
+                'message' => translate('message.operation_failed')
             ], 500);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to promote user: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . $e->getMessage()
             ], 500);
         }
     }
@@ -396,7 +396,7 @@ class TenantOwnerController extends Controller
             if (!$tenantOwner) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Tenant owner not found'
+                    'message' => translate('message.resource_not_found')
                 ], 404);
             }
 
@@ -407,18 +407,18 @@ class TenantOwnerController extends Controller
                 return response()->json([
                     'success' => true,
                     'data' => $tenantOwner,
-                    'message' => 'User demoted from super admin successfully'
+                    'message' => translate('message.action_completed')
                 ]);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to demote user from super admin'
+                'message' => translate('message.operation_failed')
             ], 500);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to demote user: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . $e->getMessage()
             ], 500);
         }
     }
@@ -435,7 +435,7 @@ class TenantOwnerController extends Controller
             if (!$tenantOwner) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Tenant owner not found'
+                    'message' => translate('message.resource_not_found')
                 ], 404);
             }
 
@@ -446,24 +446,24 @@ class TenantOwnerController extends Controller
                 return response()->json([
                     'success' => true,
                     'data' => $tenantOwner,
-                    'message' => 'Status updated successfully'
+                    'message' => translate('message.updated_successfully')
                 ]);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update status'
+                'message' => translate('message.operation_failed')
             ], 500);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed',
+                'message' => translate('message.validation_failed'),
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update status: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . $e->getMessage()
             ], 500);
         }
     }
@@ -480,7 +480,7 @@ class TenantOwnerController extends Controller
             if (!$tenantOwner) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Tenant owner not found'
+                    'message' => translate('message.resource_not_found')
                 ], 404);
             }
 
@@ -491,24 +491,24 @@ class TenantOwnerController extends Controller
                 return response()->json([
                     'success' => true,
                     'data' => $tenantOwner,
-                    'message' => 'Permissions updated successfully'
+                    'message' => translate('message.updated_successfully')
                 ]);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update permissions'
+                'message' => translate('message.operation_failed')
             ], 500);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed',
+                'message' => translate('message.validation_failed'),
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update permissions: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . $e->getMessage()
             ], 500);
         }
     }

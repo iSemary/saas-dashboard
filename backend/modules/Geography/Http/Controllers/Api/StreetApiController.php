@@ -25,17 +25,17 @@ class StreetApiController extends Controller
     public function store(StoreStreetRequest $request)
     {
         $data = CreateStreetData::fromRequest($request);
-        return $this->apiSuccess($this->service->create($data), 'Street created successfully', 201);
+        return $this->apiSuccess($this->service->create($data), translate('message.created_successfully'), 201);
     }
 
     public function update(UpdateStreetRequest $request, $id)
     {
-        return $this->apiSuccess($this->service->update($id, $request->validated()), 'Street updated successfully');
+        return $this->apiSuccess($this->service->update($id, $request->validated()), translate('message.updated_successfully'));
     }
 
     public function destroy($id)
     {
         $this->service->delete($id);
-        return $this->apiSuccess(null, 'Street deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 }

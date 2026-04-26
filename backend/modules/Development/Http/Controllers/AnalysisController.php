@@ -119,12 +119,12 @@ class AnalysisController extends ApiController implements HasMiddleware
             
             return response()->json([
                 'success' => true,
-                'message' => 'Cache cleared successfully'
+                'message' => translate('message.action_completed')
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to clear cache: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . $e->getMessage()
             ], 500);
         }
     }
@@ -136,12 +136,12 @@ class AnalysisController extends ApiController implements HasMiddleware
             
             return response()->json([
                 'success' => true,
-                'message' => 'Queue restarted successfully'
+                'message' => translate('message.action_completed')
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to restart queue: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . $e->getMessage()
             ], 500);
         }
     }
@@ -155,18 +155,18 @@ class AnalysisController extends ApiController implements HasMiddleware
             if ($process->isSuccessful()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Supervisor restarted successfully'
+                    'message' => translate('message.action_completed')
                 ]);
             } else {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to restart supervisor: ' . $process->getErrorOutput()
+                    'message' => translate('message.operation_failed') . $process->getErrorOutput()
                 ], 500);
             }
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to restart supervisor: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . $e->getMessage()
             ], 500);
         }
     }
@@ -192,12 +192,12 @@ class AnalysisController extends ApiController implements HasMiddleware
             DB::connection()->getPdo();
             return [
                 'status' => 'success',
-                'message' => 'Database connection successful'
+                'message' => translate('message.action_completed')
             ];
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Database connection failed: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . ': ' . $e->getMessage()
             ];
         }
     }
@@ -211,18 +211,18 @@ class AnalysisController extends ApiController implements HasMiddleware
             if ($response->successful()) {
                 return [
                     'status' => 'success',
-                    'message' => 'Websocket server is running'
+                    'message' => translate('message.action_completed')
                 ];
             } else {
                 return [
                     'status' => 'error',
-                    'message' => 'Websocket server is not responding properly'
+                    'message' => translate('message.operation_failed')
                 ];
             }
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Websocket server connection failed: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . ': ' . $e->getMessage()
             ];
         }
     }
@@ -238,18 +238,18 @@ class AnalysisController extends ApiController implements HasMiddleware
             if (strpos($output, 'artisan queue:') !== false) {
                 return [
                     'status' => 'success',
-                    'message' => 'Queue listener is running'
+                    'message' => translate('message.action_completed')
                 ];
             } else {
                 return [
                     'status' => 'warning',
-                    'message' => 'Queue listener does not appear to be running'
+                    'message' => translate('message.operation_failed')
                 ];
             }
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Queue listener check failed: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . ': ' . $e->getMessage()
             ];
         }
     }
@@ -263,18 +263,18 @@ class AnalysisController extends ApiController implements HasMiddleware
             if ($pingResponse) {
                 return [
                     'status' => 'success',
-                    'message' => 'Redis connection successful'
+                    'message' => translate('message.action_completed')
                 ];
             } else {
                 return [
                     'status' => 'error',
-                    'message' => 'Redis ping failed'
+                    'message' => translate('message.operation_failed')
                 ];
             }
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Redis connection failed: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . ': ' . $e->getMessage()
             ];
         }
     }
@@ -288,18 +288,18 @@ class AnalysisController extends ApiController implements HasMiddleware
             if ($process->isSuccessful()) {
                 return [
                     'status' => 'success',
-                    'message' => 'Supervisor is running'
+                    'message' => translate('message.action_completed')
                 ];
             } else {
                 return [
                     'status' => 'error',
-                    'message' => 'Supervisor is not running'
+                    'message' => translate('message.operation_failed')
                 ];
             }
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Supervisor check failed: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . ': ' . $e->getMessage()
             ];
         }
     }
@@ -336,7 +336,7 @@ class AnalysisController extends ApiController implements HasMiddleware
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Failed to check disk space: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . $e->getMessage()
             ];
         }
     }
@@ -363,7 +363,7 @@ class AnalysisController extends ApiController implements HasMiddleware
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Failed to check memory usage: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . $e->getMessage()
             ];
         }
     }
@@ -379,7 +379,7 @@ class AnalysisController extends ApiController implements HasMiddleware
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Failed to check cache status: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . $e->getMessage()
             ];
         }
     }

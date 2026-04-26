@@ -31,7 +31,7 @@ class FileApiController extends Controller
             'file' => 'required|file|max:10240',
         ]);
         $path = $request->file('file')->store('uploads', 'public');
-        return $this->apiSuccess(['name' => basename($path), 'path' => $path], 'File uploaded successfully', 201);
+        return $this->apiSuccess(['name' => basename($path), 'path' => $path], translate('message.action_completed'), 201);
     }
 
     public function destroy($id)
@@ -42,9 +42,9 @@ class FileApiController extends Controller
         foreach ($allFiles as $f) {
             if (md5($f) === $id) {
                 $disk->delete($f);
-                return $this->apiSuccess(null, 'File deleted successfully');
+                return $this->apiSuccess(null, translate('message.deleted_successfully'));
             }
         }
-        return $this->apiError('File not found', 404);
+        return $this->apiError(translate('message.resource_not_found'), 404);
     }
 }

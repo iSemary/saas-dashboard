@@ -25,19 +25,19 @@ class FeatureFlagApiController extends Controller
     public function store(StoreFeatureFlagRequest $request)
     {
         $data = CreateFeatureFlagData::fromRequest($request);
-        return $this->apiSuccess($this->service->create($data), 'Feature flag created successfully', 201);
+        return $this->apiSuccess($this->service->create($data), translate('message.created_successfully'), 201);
     }
 
     public function update(UpdateFeatureFlagRequest $request, $id)
     {
         $data = UpdateFeatureFlagData::fromRequest($request);
-        return $this->apiSuccess($this->service->update($id, $data), 'Feature flag updated successfully');
+        return $this->apiSuccess($this->service->update($id, $data), translate('message.updated_successfully'));
     }
 
     public function destroy($id)
     {
         $this->service->delete($id);
-        return $this->apiSuccess(null, 'Feature flag deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 
     public function evaluate(Request $request)

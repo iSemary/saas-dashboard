@@ -27,12 +27,12 @@ class PaymentMethodApiController extends Controller
     public function store(StorePaymentMethodRequest $request)
     {
         $data = CreatePaymentMethodData::fromRequest($request);
-        return $this->apiSuccess($this->service->create($data), 'Payment method created successfully', 201);
+        return $this->apiSuccess($this->service->create($data), translate('message.created_successfully'), 201);
     }
 
     public function destroy($id)
     {
         $this->service->delete($id);
-        return $this->apiSuccess(null, 'Payment method deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 }

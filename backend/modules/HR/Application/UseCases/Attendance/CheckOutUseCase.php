@@ -18,11 +18,11 @@ class CheckOutUseCase
         $attendance = $this->attendanceRepository->findOrFail($data->attendanceId);
         
         if ($attendance->check_out) {
-            throw new \RuntimeException('Already checked out');
+            throw new \RuntimeException(translate('message.operation_failed'));
         }
 
         if (!$attendance->check_in) {
-            throw new \RuntimeException('Must check in before checking out');
+            throw new \RuntimeException(translate('message.operation_failed'));
         }
 
         $checkOut = Carbon::now();

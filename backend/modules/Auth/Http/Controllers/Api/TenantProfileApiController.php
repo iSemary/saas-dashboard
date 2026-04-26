@@ -25,13 +25,13 @@ class TenantProfileApiController extends Controller
     {
         $user = $request->user();
         $freshUser = $this->authService->updateProfile($user, $request->validated());
-        return $this->apiSuccess($freshUser, 'Profile updated successfully');
+        return $this->apiSuccess($freshUser, translate('message.updated_successfully'));
     }
 
     public function uploadAvatar(UploadAvatarRequest $request)
     {
         $result = $this->authService->uploadAvatar($request->user(), $request->file('avatar'));
-        return $this->apiSuccess($result, 'Avatar uploaded successfully');
+        return $this->apiSuccess($result, translate('message.action_completed'));
     }
 
     public function changePassword(ChangePasswordRequest $request)

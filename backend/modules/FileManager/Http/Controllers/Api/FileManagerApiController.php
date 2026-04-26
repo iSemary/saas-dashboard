@@ -21,7 +21,7 @@ class FileManagerApiController extends Controller
             $directories = $disk->directories($path);
             $files = $disk->files($path);
         } catch (UnableToListContents $e) {
-            return $this->apiError('Unable to list directory contents: ' . $e->getMessage(), 500);
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
 
         $result = [

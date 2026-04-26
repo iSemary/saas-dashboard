@@ -31,6 +31,7 @@ const config: SimpleCRUDConfig<SalesOrder> = {
   listFn: listSalesOrders as () => Promise<SalesOrder[]>,
   createFn: createSalesOrder,
   deleteFn: deleteSalesOrder as unknown as (id: number) => Promise<void>,
+  serverSide: true,
   moduleKey: "sales",
   dashboardHref: "/dashboard/modules/sales",
   columns: (t): Array<ColumnDef<SalesOrder>> => [

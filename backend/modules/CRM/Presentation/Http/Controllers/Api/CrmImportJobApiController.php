@@ -22,7 +22,7 @@ class CrmImportJobApiController extends Controller
         try {
             return $this->apiPaginated($this->importJobs->paginate([], (int) $request->get('per_page', 15)));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to retrieve import jobs', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -34,10 +34,10 @@ class CrmImportJobApiController extends Controller
                 'entity_type' => 'required|string|in:leads,contacts,companies',
                 'mapping' => 'required|array',
             ]);
-            
+
             $file = $request->file('file');
             $path = $file->store('crm/imports', 'private');
-            
+
             $data = [
                 'file_path' => $path,
                 'original_filename' => $file->getClientOriginalName(),
@@ -46,15 +46,15 @@ class CrmImportJobApiController extends Controller
                 'status' => 'pending',
                 'created_by' => auth()->id(),
             ];
-            
+
             $job = $this->importJobs->create($data);
-            
+
             // Dispatch the import job to queue
             \Modules\CRM\Infrastructure\Jobs\ProcessImportJob::dispatch($job);
-            
-            return $this->apiSuccess($job, 'Import job created and queued', 201);
+
+            return $this->apiSuccess($job, translate('message.action_completed'), 201);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to create import job', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -63,7 +63,7 @@ class CrmImportJobApiController extends Controller
         try {
             return $this->apiSuccess($this->importJobs->findOrFail($id));
         } catch (\Throwable $e) {
-            return $this->apiError('Import job not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
     }
 
@@ -75,9 +75,9 @@ class CrmImportJobApiController extends Controller
                 Storage::disk('private')->delete($job->file_path);
             }
             $this->importJobs->delete($id);
-            return $this->apiSuccess(null, 'Import job deleted');
+            return $this->apiSuccess(null, translate('message.deleted_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to delete import job', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -90,10 +90,10 @@ class CrmImportJobApiController extends Controller
                 'companies' => ['name', 'email', 'phone', 'website', 'industry', 'type'],
                 default => throw new \InvalidArgumentException('Invalid entity type'),
             };
-            
+
             return $this->apiSuccess(['headers' => $headers, 'sample' => array_fill(0, count($headers), 'sample_data')]);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to get template', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

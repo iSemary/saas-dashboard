@@ -81,7 +81,7 @@ class AuthApiController extends ApiController
         $user = $request->user('api');
 
         if (!$user) {
-            return $this->apiError('Unauthenticated', 401);
+            return $this->apiError(translate('auth.unauthenticated'), 401);
         }
 
         $userData = $this->authService->formatUserData($user);
@@ -102,7 +102,7 @@ class AuthApiController extends ApiController
             $request->user('api')->token()->revoke();
         }
 
-        return $this->apiSuccess(null, 'Logged out successfully');
+        return $this->apiSuccess(null, translate('message.action_completed'));
     }
 
     /**
@@ -113,7 +113,7 @@ class AuthApiController extends ApiController
         $user = $request->user('api');
 
         if (!$user) {
-            return $this->apiError('Unauthenticated', 401);
+            return $this->apiError(translate('auth.unauthenticated'), 401);
         }
 
         $result = $this->authService->setup2FA($user);
@@ -133,7 +133,7 @@ class AuthApiController extends ApiController
         $user = $request->user('api');
 
         if (!$user) {
-            return $this->apiError('Unauthenticated', 401);
+            return $this->apiError(translate('auth.unauthenticated'), 401);
         }
 
         $result = $this->authService->confirm2FA($user, $request->code, $request->secret);
@@ -153,7 +153,7 @@ class AuthApiController extends ApiController
         $user = $request->user('api');
 
         if (!$user) {
-            return $this->apiError('Unauthenticated', 401);
+            return $this->apiError(translate('auth.unauthenticated'), 401);
         }
 
         $this->authService->disable2FA($user);
@@ -169,7 +169,7 @@ class AuthApiController extends ApiController
         $user = $request->user('api');
 
         if (!$user) {
-            return response()->json(['message' => 'Unauthenticated'], 401);
+            return response()->json(['message' => translate('auth.unauthenticated')], 401);
         }
 
         return response()->json(['recovery_codes' => []], 200);
@@ -181,7 +181,7 @@ class AuthApiController extends ApiController
     public function register(Request $request): JsonResponse
     {
         return response()->json([
-            'message' => 'Registration not implemented via API',
+            'message' => translate('message.operation_failed'),
         ], 501);
     }
 
@@ -231,7 +231,7 @@ class AuthApiController extends ApiController
 
         return response()->json([
             'data' => $this->authService->formatUserData($freshUser),
-            'message' => 'Profile updated successfully'
+            'message' => translate('message.updated_successfully')
         ]);
     }
 
@@ -245,7 +245,7 @@ class AuthApiController extends ApiController
 
         return response()->json([
             'data' => $result,
-            'message' => 'Avatar uploaded successfully'
+            'message' => translate('message.action_completed')
         ]);
     }
 
@@ -257,7 +257,7 @@ class AuthApiController extends ApiController
         $user = $request->user('api');
         $this->authService->removeAvatar($user);
 
-        return response()->json(['message' => 'Avatar removed successfully']);
+        return response()->json(['message' => translate('message.action_completed')]);
     }
 
     /**
@@ -322,7 +322,7 @@ class AuthApiController extends ApiController
 
         return response()->json([
             'data' => $result,
-            'message' => 'API key created successfully. Please save the token as it will not be shown again.'
+            'message' => translate('message.action_completed')
         ], 201);
     }
 

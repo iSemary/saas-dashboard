@@ -17,7 +17,7 @@ class BackupApiController extends Controller
             return response()->json(['data' => $backupList]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to retrieve backups',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -30,12 +30,12 @@ class BackupApiController extends Controller
             $result = $this->backupService->create($type);
 
             return response()->json([
-                'message' => 'Backup created successfully',
+                'message' => translate('message.backup_created'),
                 'data' => $result
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to create backup',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -47,13 +47,13 @@ class BackupApiController extends Controller
             $path = $this->backupService->download($filename);
 
             if (!$path) {
-                return response()->json(['message' => 'Backup not found'], 404);
+                return response()->json(['message' => translate('message.backup_not_found')], 404);
             }
 
             return response()->download($path);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to download backup',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -69,15 +69,15 @@ class BackupApiController extends Controller
             $restored = $this->backupService->restore($filename);
 
             if (!$restored) {
-                return response()->json(['message' => 'Backup not found'], 404);
+                return response()->json(['message' => translate('message.backup_not_found')], 404);
             }
 
             return response()->json([
-                'message' => 'Backup restored successfully'
+                'message' => translate('message.backup_restored')
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to restore backup',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -89,11 +89,11 @@ class BackupApiController extends Controller
             $this->backupService->delete($filename);
 
             return response()->json([
-                'message' => 'Backup deleted successfully'
+                'message' => translate('message.deleted_successfully')
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to delete backup',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }

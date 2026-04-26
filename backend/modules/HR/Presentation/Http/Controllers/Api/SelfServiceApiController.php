@@ -6,21 +6,30 @@ use App\Http\Controllers\Api\ApiController;
 use App\Repositories\Traits\ApiResponseEnvelopeTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Modules\HR\Domain\Entities\AssetAssignment;
-use Modules\HR\Domain\Entities\Attendance;
-use Modules\HR\Domain\Entities\Employee;
-use Modules\HR\Domain\Entities\Goal;
-use Modules\HR\Domain\Entities\LeaveRequest;
-use Modules\HR\Domain\Entities\Payroll;
+use Modules\HR\Infrastructure\Persistence\EmployeeRepositoryInterface;
+use Modules\HR\Infrastructure\Persistence\LeaveRequestRepositoryInterface;
+use Modules\HR\Infrastructure\Persistence\AttendanceRepositoryInterface;
+use Modules\HR\Infrastructure\Persistence\PayrollRepositoryInterface;
+use Modules\HR\Infrastructure\Persistence\GoalRepositoryInterface;
+use Modules\HR\Infrastructure\Persistence\AssetAssignmentRepositoryInterface;
 
 class SelfServiceApiController extends ApiController
 {
     use ApiResponseEnvelopeTrait;
 
-    private function employee(Request $request): Employee
+    public function __construct(
+        protected EmployeeRepositoryInterface $employeeRepository,
+        protected LeaveRequestRepositoryInterface $leaveRepository,
+        protected AttendanceRepositoryInterface $attendanceRepository,
+        protected PayrollRepositoryInterface $payrollRepository,
+        protected GoalRepositoryInterface $goalRepository,
+        protected AssetAssignmentRepositoryInterface $assetRepository,
+    ) {}
+
+    private function employee(Request $request)
     {
         return $request->attributes->get('employee_context')
-            ?? Employee::query()->where('user_id', auth()->id())->firstOrFail();
+            ?? $this->employeeRepository->findByUserId(auth()->id());
     }
 
     public function me(Request $request): JsonResponse
@@ -31,30 +40,34 @@ class SelfServiceApiController extends ApiController
     public function leaves(Request $request): JsonResponse
     {
         $employee = $this->employee($request);
-        return $this->success(data: LeaveRequest::query()->where('employee_id', $employee->id)->latest()->paginate(15));
+        return $this->success(data: $this->leaveRepository->getRequestsByEmployee($employee->id));
     }
 
     public function attendance(Request $request): JsonResponse
     {
         $employee = $this->employee($request);
-        return $this->success(data: Attendance::query()->where('employee_id', $employee->id)->latest('date')->paginate(31));
+        return $this->success(data: $this->attendanceRepository->getAttendanceByDateRange(
+            $employee->id,
+            now()->subDays(31)->toDateString(),
+            now()->toDateString()
+        ));
     }
 
     public function payroll(Request $request): JsonResponse
     {
         $employee = $this->employee($request);
-        return $this->success(data: Payroll::query()->where('employee_id', $employee->id)->latest('pay_date')->paginate(12));
+        return $this->success(data: $this->payrollRepository->paginate(12, ['employee_id' => $employee->id]));
     }
 
     public function goals(Request $request): JsonResponse
     {
         $employee = $this->employee($request);
-        return $this->success(data: Goal::query()->where('employee_id', $employee->id)->latest()->paginate(20));
+        return $this->success(data: $this->goalRepository->paginate(20, ['employee_id' => $employee->id]));
     }
 
     public function assets(Request $request): JsonResponse
     {
         $employee = $this->employee($request);
-        return $this->success(data: AssetAssignment::query()->where('employee_id', $employee->id)->latest()->paginate(20));
+        return $this->success(data: $this->assetRepository->paginate(20, ['employee_id' => $employee->id]));
     }
 }

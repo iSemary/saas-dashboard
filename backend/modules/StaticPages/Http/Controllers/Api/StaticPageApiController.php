@@ -61,7 +61,7 @@ class StaticPageApiController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to fetch static pages',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -89,12 +89,12 @@ class StaticPageApiController extends Controller
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Page not found',
+                'message' => translate('message.resource_not_found'),
             ], 404);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to fetch page',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -132,7 +132,7 @@ class StaticPageApiController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to fetch pages by type',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -151,7 +151,7 @@ class StaticPageApiController extends Controller
             if (!$query) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Search query is required',
+                    'message' => translate('message.validation_failed'),
                 ], 400);
             }
 
@@ -179,7 +179,7 @@ class StaticPageApiController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to search pages',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -210,7 +210,7 @@ class StaticPageApiController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to fetch languages',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage(),
             ], 500);
         }

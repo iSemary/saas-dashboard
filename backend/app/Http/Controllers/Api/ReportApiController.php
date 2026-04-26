@@ -31,7 +31,7 @@ class ReportApiController extends Controller
             }
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to generate report',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }

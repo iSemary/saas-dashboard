@@ -26,7 +26,7 @@ class RequestLeaveUseCase
             $data->startDate,
             $data->endDate
         )) {
-            throw new \RuntimeException('Overlapping leave request exists');
+            throw new \RuntimeException(translate('message.operation_failed'));
         }
 
         $leaveType = $this->leaveTypeRepository->findOrFail($data->leaveTypeId);
@@ -46,7 +46,7 @@ class RequestLeaveUseCase
             );
 
             if (!$balance || $balance->remaining < $totalDays) {
-                throw new \RuntimeException('Insufficient leave balance');
+                throw new \RuntimeException(translate('message.operation_failed'));
             }
         }
 
@@ -69,7 +69,7 @@ class RequestLeaveUseCase
 
         // Check if half-day is allowed
         if ($data->isHalfDay && !$leaveType->allow_half_day) {
-            throw new \RuntimeException('Half-day leave is not allowed for this leave type');
+            throw new \RuntimeException(translate('message.operation_failed'));
         }
 
         $leaveRequestData = [

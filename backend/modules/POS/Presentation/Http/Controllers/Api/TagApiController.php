@@ -19,7 +19,7 @@ class TagApiController extends Controller
         try {
             return $this->apiSuccess($this->service->all($request->only(['type'])));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to retrieve tags', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -28,9 +28,9 @@ class TagApiController extends Controller
         try {
             $request->validate(['type' => 'required|string', 'value' => 'required|string|max:255']);
             $tag = $this->service->create($request->only(['type', 'value']), auth()->id());
-            return $this->apiSuccess($tag, 'Tag created successfully', 201);
+            return $this->apiSuccess($tag, translate('message.created_successfully'), 201);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to create tag', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -38,9 +38,9 @@ class TagApiController extends Controller
     {
         try {
             $this->service->delete($id);
-            return $this->apiSuccess(null, 'Tag deleted successfully');
+            return $this->apiSuccess(null, translate('message.deleted_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to delete tag', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

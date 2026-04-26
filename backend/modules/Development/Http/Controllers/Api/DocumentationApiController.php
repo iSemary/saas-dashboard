@@ -25,18 +25,18 @@ class DocumentationApiController extends Controller
     public function store(StoreDocumentationRequest $request)
     {
         $data = CreateDocumentationData::fromRequest($request);
-        return $this->apiSuccess($this->service->create($data), 'Documentation created successfully', 201);
+        return $this->apiSuccess($this->service->create($data), translate('message.created_successfully'), 201);
     }
 
     public function update(UpdateDocumentationRequest $request, $id)
     {
         $data = UpdateDocumentationData::fromRequest($request);
-        return $this->apiSuccess($this->service->update($id, $data), 'Documentation updated successfully');
+        return $this->apiSuccess($this->service->update($id, $data), translate('message.updated_successfully'));
     }
 
     public function destroy($id)
     {
         $this->service->delete($id);
-        return $this->apiSuccess(null, 'Documentation deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 }

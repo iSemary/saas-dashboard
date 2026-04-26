@@ -18,11 +18,11 @@ class AcceptOfferUseCase
         $offer = $this->offerRepository->findOrFail($offerId);
 
         if ($offer->status !== 'sent') {
-            throw new \RuntimeException('Only sent offers can be accepted');
+            throw new \RuntimeException(translate('message.operation_failed'));
         }
 
         if ($offer->isExpired()) {
-            throw new \RuntimeException('Offer has expired');
+            throw new \RuntimeException(translate('message.operation_failed'));
         }
 
         $offer->accept();

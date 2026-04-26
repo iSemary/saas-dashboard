@@ -34,7 +34,7 @@ class AnnouncementApiController extends ApiController
         $announcement = $this->publishAnnouncementUseCase->execute(
             $request->only(['title', 'body', 'audience', 'department_ids', 'starts_at', 'ends_at', 'requires_acknowledgment', 'attachments'])
         );
-        return $this->success(data: $announcement, message: 'Announcement created successfully');
+        return $this->success(data: $announcement, message: translate('message.action_completed'));
     }
 
     public function policies(Request $request): JsonResponse
@@ -47,6 +47,6 @@ class AnnouncementApiController extends ApiController
         $policy = $this->publishPolicyUseCase->execute(
             $request->only(['title', 'body', 'version', 'effective_from', 'requires_acknowledgment'])
         );
-        return $this->success(data: $policy, message: 'Policy created successfully');
+        return $this->success(data: $policy, message: translate('message.action_completed'));
     }
 }

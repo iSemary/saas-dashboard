@@ -22,7 +22,7 @@ class FolderApiController extends ApiController
             return response()->json(['data' => $folders]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to retrieve folders',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -36,11 +36,11 @@ class FolderApiController extends ApiController
 
             return response()->json([
                 'data' => $folder->load(['files', 'parent']),
-                'message' => 'Folder created successfully'
+                'message' => translate('message.created_successfully')
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to create folder',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -53,7 +53,7 @@ class FolderApiController extends ApiController
             return response()->json(['data' => $folder]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Folder not found',
+                'message' => translate('message.resource_not_found'),
                 'error' => $e->getMessage()
             ], 404);
         }
@@ -67,11 +67,11 @@ class FolderApiController extends ApiController
 
             return response()->json([
                 'data' => $folder,
-                'message' => 'Folder updated successfully'
+                'message' => translate('message.updated_successfully')
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to update folder',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -81,7 +81,7 @@ class FolderApiController extends ApiController
     {
         try {
             $this->service->delete($id);
-            return response()->json(['message' => 'Folder deleted successfully']);
+            return response()->json(['message' => translate('message.deleted_successfully')]);
         } catch (\Exception $e) {
             $status = str_contains($e->getMessage(), 'Cannot delete') ? 400 : 500;
             return response()->json([

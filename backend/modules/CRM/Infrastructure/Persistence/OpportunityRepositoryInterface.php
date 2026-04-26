@@ -21,4 +21,6 @@ interface OpportunityRepositoryInterface
     public function getAssignedTo(int $userId): Collection;
     public function getPipelineData(): array;
     public function getStatistics(): array;
+    public function countByMonth(int $year, int $month): int;
+    public function countClosedWonByMonth(int $year, int $month): int;
 }

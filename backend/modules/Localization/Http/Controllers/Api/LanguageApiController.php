@@ -28,19 +28,19 @@ class LanguageApiController extends Controller
     public function store(StoreLanguageRequest $request)
     {
         $data = CreateLanguageData::fromRequest($request);
-        return $this->apiSuccess($this->service->create($data), 'Language created successfully', 201);
+        return $this->apiSuccess($this->service->create($data), translate('message.created_successfully'), 201);
     }
 
     public function update(UpdateLanguageRequest $request, $id)
     {
         $data = UpdateLanguageData::fromRequest($request);
         $this->service->update($id, $data);
-        return $this->apiSuccess($this->service->findOrFail($id), 'Language updated successfully');
+        return $this->apiSuccess($this->service->findOrFail($id), translate('message.updated_successfully'));
     }
 
     public function destroy($id)
     {
         $this->service->delete($id);
-        return $this->apiSuccess(null, 'Language deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 }

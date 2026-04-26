@@ -95,14 +95,14 @@ class BrandApiController extends Controller
     public function store(StoreBrandRequest $request)
     {
         $data = CreateBrandData::fromRequest($request);
-        return $this->apiSuccess($this->brandService->create($data), 'Brand created successfully', 201);
+        return $this->apiSuccess($this->brandService->create($data), translate('message.created_successfully'), 201);
     }
 
     public function update(UpdateBrandRequest $request, $id)
     {
         [$tenant, $tenantRecordId] = $this->resolveTenantRecord($id);
         if (!$tenant) {
-            return $this->apiError('Brand not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
 
         $payload = array_filter([
@@ -127,7 +127,7 @@ class BrandApiController extends Controller
             DB::purge('tenant');
 
             if (!Schema::connection('tenant')->hasTable('brands')) {
-                return $this->apiError('Brand not found', 404);
+                return $this->apiError(translate('message.resource_not_found'), 404);
             }
 
             $columns = Schema::connection('tenant')->getColumnListing('brands');
@@ -139,10 +139,10 @@ class BrandApiController extends Controller
 
             $brand = DB::connection('tenant')->table('brands')->where('id', $tenantRecordId)->first();
             if (!$brand) {
-                return $this->apiError('Brand not found', 404);
+                return $this->apiError(translate('message.resource_not_found'), 404);
             }
 
-            return $this->apiSuccess($this->toLandlordBrandResponse($tenant, $brand), 'Brand updated successfully');
+            return $this->apiSuccess($this->toLandlordBrandResponse($tenant, $brand), translate('message.updated_successfully'));
         } finally {
             config(['database.connections.tenant.database' => $originalTenantDatabase]);
             DB::purge('tenant');
@@ -153,7 +153,7 @@ class BrandApiController extends Controller
     {
         [$tenant, $tenantRecordId] = $this->resolveTenantRecord($id);
         if (!$tenant) {
-            return $this->apiError('Brand not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
 
         $originalTenantDatabase = config('database.connections.tenant.database');
@@ -162,11 +162,11 @@ class BrandApiController extends Controller
             DB::purge('tenant');
 
             if (!Schema::connection('tenant')->hasTable('brands')) {
-                return $this->apiError('Brand not found', 404);
+                return $this->apiError(translate('message.resource_not_found'), 404);
             }
 
             DB::connection('tenant')->table('brands')->where('id', $tenantRecordId)->delete();
-            return $this->apiSuccess(null, 'Brand deleted successfully');
+            return $this->apiSuccess(null, translate('message.deleted_successfully'));
         } finally {
             config(['database.connections.tenant.database' => $originalTenantDatabase]);
             DB::purge('tenant');
@@ -177,7 +177,7 @@ class BrandApiController extends Controller
     {
         [$tenant, $tenantRecordId] = $this->resolveTenantRecord($id);
         if (!$tenant) {
-            return $this->apiError('Brand not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
 
         $originalTenantDatabase = config('database.connections.tenant.database');
@@ -186,12 +186,12 @@ class BrandApiController extends Controller
             DB::purge('tenant');
 
             if (!Schema::connection('tenant')->hasTable('brands')) {
-                return $this->apiError('Brand not found', 404);
+                return $this->apiError(translate('message.resource_not_found'), 404);
             }
 
             $brand = DB::connection('tenant')->table('brands')->where('id', $tenantRecordId)->first();
             if (!$brand) {
-                return $this->apiError('Brand not found', 404);
+                return $this->apiError(translate('message.resource_not_found'), 404);
             }
 
             return $this->apiSuccess($this->toLandlordBrandResponse($tenant, $brand));

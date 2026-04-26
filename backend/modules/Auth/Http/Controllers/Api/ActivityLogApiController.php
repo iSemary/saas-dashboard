@@ -101,7 +101,7 @@ class ActivityLogApiController extends ApiController
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Error retrieving activity logs: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . $e->getMessage()
             ], 500);
         }
     }
@@ -117,7 +117,7 @@ class ActivityLogApiController extends ApiController
             // Check if user has access to this log
             if ($log->user_id !== auth()->id() && !auth()->user()->hasPermissionTo('view-all-activity-logs')) {
                 return response()->json([
-                    'message' => 'Unauthorized'
+                    'message' => translate('auth.unauthorized')
                 ], 403);
             }
 
@@ -143,7 +143,7 @@ class ActivityLogApiController extends ApiController
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Error retrieving activity log: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . $e->getMessage()
             ], 500);
         }
     }
@@ -183,13 +183,13 @@ class ActivityLogApiController extends ApiController
 
             // For now, return the data - actual file generation would be implemented
             return response()->json([
-                'message' => 'Export functionality will be implemented',
+                'message' => translate('message.operation_failed'),
                 'format' => $format,
                 'count' => $logs->count(),
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Error exporting activity logs: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . $e->getMessage()
             ], 500);
         }
     }

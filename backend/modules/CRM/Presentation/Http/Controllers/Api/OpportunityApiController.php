@@ -48,7 +48,7 @@ class OpportunityApiController extends ApiController implements HasMiddleware
             $perPage = (int) $request->get('per_page', 15);
             return $this->apiPaginated($this->opportunities->paginate($filters, $perPage));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to retrieve opportunities', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -57,9 +57,9 @@ class OpportunityApiController extends ApiController implements HasMiddleware
         try {
             $request->validate(['name' => 'required|string|max:255', 'stage' => 'nullable|string']);
             $opp = $this->createOpportunity->execute($request->all(), auth()->id());
-            return $this->apiSuccess($opp->load(['assignedUser', 'lead', 'contact', 'company']), 'Opportunity created', 201);
+            return $this->apiSuccess($opp->load(['assignedUser', 'lead', 'contact', 'company']), translate('message.created_successfully'), 201);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to create opportunity', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -68,7 +68,7 @@ class OpportunityApiController extends ApiController implements HasMiddleware
         try {
             return $this->apiSuccess($this->opportunities->findOrFail($id)->load(['assignedUser', 'lead', 'contact', 'company', 'activities']));
         } catch (\Throwable $e) {
-            return $this->apiError('Opportunity not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
     }
 
@@ -76,9 +76,9 @@ class OpportunityApiController extends ApiController implements HasMiddleware
     {
         try {
             $opp = $this->updateOpportunity->execute($id, $request->all(), auth()->id());
-            return $this->apiSuccess($opp->load(['assignedUser', 'lead', 'contact']), 'Opportunity updated');
+            return $this->apiSuccess($opp->load(['assignedUser', 'lead', 'contact']), translate('message.updated_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to update opportunity', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -86,9 +86,9 @@ class OpportunityApiController extends ApiController implements HasMiddleware
     {
         try {
             $this->opportunities->delete($id);
-            return $this->apiSuccess(null, 'Opportunity deleted');
+            return $this->apiSuccess(null, translate('message.deleted_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to delete opportunity', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -97,7 +97,7 @@ class OpportunityApiController extends ApiController implements HasMiddleware
         try {
             return $this->apiSuccess($this->getPipeline->execute());
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to get pipeline data', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -106,9 +106,9 @@ class OpportunityApiController extends ApiController implements HasMiddleware
         try {
             $request->validate(['stage' => 'required|string']);
             $opp = $this->moveStage->execute($id, $request->input('stage'), auth()->id());
-            return $this->apiSuccess($opp, 'Stage updated');
+            return $this->apiSuccess($opp, translate('message.updated_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to move stage', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -116,9 +116,9 @@ class OpportunityApiController extends ApiController implements HasMiddleware
     {
         try {
             $opp = $this->closeWon->execute($id, auth()->id());
-            return $this->apiSuccess($opp, 'Opportunity closed as won');
+            return $this->apiSuccess($opp, translate('message.action_completed'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to close opportunity', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

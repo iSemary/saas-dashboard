@@ -65,19 +65,19 @@ class RecruitmentApiController extends ApiController
     public function storeJob(StoreJobOpeningRequest $request): JsonResponse
     {
         $job = $this->jobOpeningRepository->create($request->all());
-        return $this->success(data: $job, message: 'Job opening created successfully');
+        return $this->success(data: $job, message: translate('message.action_completed'));
     }
 
     public function updateJob(UpdateJobOpeningRequest $request, int $id): JsonResponse
     {
         $job = $this->jobOpeningRepository->update($id, $request->all());
-        return $this->success(data: $job, message: 'Job opening updated successfully');
+        return $this->success(data: $job, message: translate('message.action_completed'));
     }
 
     public function destroyJob(int $id): JsonResponse
     {
         $this->jobOpeningRepository->delete($id);
-        return $this->success(message: 'Job opening deleted successfully');
+        return $this->success(message: translate('message.action_completed'));
     }
 
     // ─── Candidates ───────────────────────────────────────────────
@@ -99,19 +99,19 @@ class RecruitmentApiController extends ApiController
     public function storeCandidate(StoreCandidateRequest $request): JsonResponse
     {
         $candidate = $this->candidateRepository->create($request->all());
-        return $this->success(data: $candidate, message: 'Candidate created successfully');
+        return $this->success(data: $candidate, message: translate('message.action_completed'));
     }
 
     public function updateCandidate(UpdateCandidateRequest $request, int $id): JsonResponse
     {
         $candidate = $this->candidateRepository->update($id, $request->all());
-        return $this->success(data: $candidate, message: 'Candidate updated successfully');
+        return $this->success(data: $candidate, message: translate('message.action_completed'));
     }
 
     public function destroyCandidate(int $id): JsonResponse
     {
         $this->candidateRepository->delete($id);
-        return $this->success(message: 'Candidate deleted successfully');
+        return $this->success(message: translate('message.action_completed'));
     }
 
     // ─── Applications ─────────────────────────────────────────────
@@ -133,13 +133,13 @@ class RecruitmentApiController extends ApiController
     public function apply(ApplyToJobRequest $request): JsonResponse
     {
         $application = $this->applyToJobUseCase->execute($request->all());
-        return $this->success(data: $application, message: 'Application submitted successfully');
+        return $this->success(data: $application, message: translate('message.action_completed'));
     }
 
     public function advance(int $id, AdvanceApplicationRequest $request): JsonResponse
     {
         $application = $this->advanceCandidateUseCase->execute($id, $request->input('pipeline_stage_id'));
-        return $this->success(data: $application, message: 'Application advanced successfully');
+        return $this->success(data: $application, message: translate('message.action_completed'));
     }
 
     public function reject(int $id, Request $request): JsonResponse
@@ -149,41 +149,41 @@ class RecruitmentApiController extends ApiController
             reason: $request->input('reason', ''),
             rejectedBy: auth()->id()
         );
-        return $this->success(data: $application, message: 'Application rejected');
+        return $this->success(data: $application, message: translate('message.action_completed'));
     }
 
     // ─── Interviews ──────────────────────────────────────────────
     public function scheduleInterview(int $applicationId, ScheduleInterviewRequest $request): JsonResponse
     {
         $interview = $this->scheduleInterviewUseCase->execute($applicationId, $request->all());
-        return $this->success(data: $interview, message: 'Interview scheduled successfully');
+        return $this->success(data: $interview, message: translate('message.action_completed'));
     }
 
     // ─── Offers ───────────────────────────────────────────────────
     public function makeOffer(int $applicationId, MakeOfferRequest $request): JsonResponse
     {
         $offer = $this->makeOfferUseCase->execute($applicationId, $request->all());
-        return $this->success(data: $offer, message: 'Offer created successfully');
+        return $this->success(data: $offer, message: translate('message.action_completed'));
     }
 
     public function sendOffer(int $id): JsonResponse
     {
         $offer = $this->offerRepository->findOrFail($id);
         $offer->send(auth()->id());
-        return $this->success(data: $offer, message: 'Offer sent successfully');
+        return $this->success(data: $offer, message: translate('message.action_completed'));
     }
 
     public function acceptOffer(int $id): JsonResponse
     {
         $offer = $this->acceptOfferUseCase->execute($id);
-        return $this->success(data: $offer, message: 'Offer accepted successfully');
+        return $this->success(data: $offer, message: translate('message.action_completed'));
     }
 
     public function rejectOffer(int $id, Request $request): JsonResponse
     {
         $offer = $this->offerRepository->findOrFail($id);
         $offer->reject($request->input('reason', ''));
-        return $this->success(data: $offer, message: 'Offer rejected');
+        return $this->success(data: $offer, message: translate('message.action_completed'));
     }
 
     public function listInterviews(Request $request): JsonResponse
@@ -216,18 +216,18 @@ class RecruitmentApiController extends ApiController
     public function storePipelineStage(Request $request): JsonResponse
     {
         $stage = $this->pipelineStageRepository->create($request->all());
-        return $this->success(data: $stage, message: 'Pipeline stage created successfully');
+        return $this->success(data: $stage, message: translate('message.action_completed'));
     }
 
     public function updatePipelineStage(Request $request, int $id): JsonResponse
     {
         $stage = $this->pipelineStageRepository->update($id, $request->all());
-        return $this->success(data: $stage, message: 'Pipeline stage updated successfully');
+        return $this->success(data: $stage, message: translate('message.action_completed'));
     }
 
     public function destroyPipelineStage(int $id): JsonResponse
     {
         $this->pipelineStageRepository->delete($id);
-        return $this->success(message: 'Pipeline stage deleted successfully');
+        return $this->success(message: translate('message.action_completed'));
     }
 }

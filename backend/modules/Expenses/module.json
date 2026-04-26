@@ -1,0 +1,10 @@
+{
+    "name": "Expenses",
+    "alias": "expenses",
+    "description": "Expense management module with approval workflows, reimbursements, and policy validation",
+    "keywords": ["expenses", "reimbursement", "approval", "receipts"],
+    "priority": 100,
+    "providers": [
+        "Modules\\Expenses\\Providers\\ExpensesServiceProvider"
+    ]
+}

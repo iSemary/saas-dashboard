@@ -27,7 +27,7 @@ class AnnouncementApiController extends Controller
             'type' => 'nullable|string|max:50',
             'is_active' => 'nullable|boolean',
         ]);
-        return $this->apiSuccess($this->service->create($validated), 'Announcement created successfully', 201);
+        return $this->apiSuccess($this->service->create($validated), translate('message.created_successfully'), 201);
     }
 
     public function show($id) { return $this->apiSuccess($this->service->findOrFail($id)); }
@@ -41,12 +41,12 @@ class AnnouncementApiController extends Controller
             'is_active' => 'nullable|boolean',
         ]);
         $announcement = $this->service->update($id, $validated);
-        return $this->apiSuccess($announcement, 'Announcement updated successfully');
+        return $this->apiSuccess($announcement, translate('message.updated_successfully'));
     }
 
     public function destroy($id)
     {
         $this->service->delete($id);
-        return $this->apiSuccess(null, 'Announcement deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 }

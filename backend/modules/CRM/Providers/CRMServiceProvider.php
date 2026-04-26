@@ -61,6 +61,7 @@ class CRMServiceProvider extends ServiceProvider
         $this->app->bind(\Modules\CRM\Infrastructure\Persistence\CrmAutomationRuleRepositoryInterface::class, \Modules\CRM\Infrastructure\Persistence\CrmAutomationRuleRepository::class);
         $this->app->bind(\Modules\CRM\Infrastructure\Persistence\CrmWebhookRepositoryInterface::class, \Modules\CRM\Infrastructure\Persistence\CrmWebhookRepository::class);
         $this->app->bind(\Modules\CRM\Infrastructure\Persistence\CrmImportJobRepositoryInterface::class, \Modules\CRM\Infrastructure\Persistence\CrmImportJobRepository::class);
+        $this->app->bind(\Modules\CRM\Infrastructure\Persistence\AuditRepositoryInterface::class, \Modules\CRM\Infrastructure\Persistence\EloquentAuditRepository::class);
     }
 
     /**

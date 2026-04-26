@@ -707,6 +707,275 @@ Follow `.skills/update-erd-on-db-change.md` to update ERD files after creating m
 | Frontend CRUD | `src/app/dashboard/modules/{module}/` | `SimpleCRUDPage` with config |
 | Frontend API | `src/lib/tenant-resources.ts` | `list{Entities}`, `create{Entity}`, etc. |
 
+## Repository Pattern Enforcement
+
+**ALL controllers MUST use the Repository Pattern. No direct Eloquent calls in controllers.**
+
+### Rules
+
+1. **Controllers MUST NOT** call static Eloquent methods (`::create`, `::find`, `::findOrFail`, `::where`, `::query`, `::all()`) directly
+2. **Controllers MUST** inject `RepositoryInterface` via constructor and delegate all data access to it
+3. **Every entity** that has a controller MUST have a corresponding `RepositoryInterface` + `EloquentRepository`
+4. **Dashboard/Report controllers** MUST use existing repositories for aggregation queries — add custom methods to the repo interface/impl as needed (e.g., `getHealthDistribution()`, `getWorkloadByAssignee()`)
+5. **Repository bindings** MUST be registered in the module's `ServiceProvider::registerRepositories()`
+6. **Cross-entity operations** (e.g., promote issue → task) MUST inject both repositories
+
+### Pattern
+
+```php
+// ✅ CORRECT — Controller uses repository
+class BoardColumnController extends Controller
+{
+    use ApiResponseEnvelope;
+
+    public function __construct(protected BoardColumnRepositoryInterface $repository) {}
+
+    public function index(Request $request, string $projectId): JsonResponse
+    {
+        return $this->apiSuccess($this->repository->getByProject($projectId));
+    }
+
+    public function store(Request $request, string $projectId): JsonResponse
+    {
+        $item = $this->repository->create(array_merge($request->all(), ['project_id' => $projectId]));
+        return $this->apiSuccess($item, 'Board column created', 201);
+    }
+}
+
+// ❌ WRONG — Controller calls Eloquent directly
+class BoardColumnController extends Controller
+{
+    public function index(Request $request, string $projectId): JsonResponse
+    {
+        return $this->apiSuccess(BoardColumn::where('project_id', $projectId)->get());
+    }
+
+    public function store(Request $request, string $projectId): JsonResponse
+    {
+        $item = BoardColumn::create(array_merge($request->all(), ['project_id' => $projectId]));
+        return $this->apiSuccess($item, 'Board column created', 201);
+    }
+}
+```
+
+### Audit Command
+
+To find controllers bypassing the repository pattern:
+
+```bash
+cd backend && comm -23 \
+  <(grep -rl "::create\|::find\|::findOrFail\|::where\|::query\|::all(" modules/ --include="*Controller.php" | sort) \
+  <(grep -rl "Repository" modules/ --include="*Controller.php" | sort)
+```
+
+---
+
+## Unit Test Coverage
+
+Every module MUST include both **backend** and **frontend** unit tests.
+
+### Backend Tests (`tests/Unit/` + `tests/Feature/`)
+
+#### Unit Tests — Domain Layer (no DB required)
+
+```php
+// tests/Unit/ValueObjects/{Entity}StatusTest.php
+namespace Modules\{Module}\Tests\Unit\ValueObjects;
+
+use Modules\{Module}\Domain\ValueObjects\{Entity}Status;
+use PHPUnit\Framework\TestCase;
+
+class {Entity}StatusTest extends TestCase
+{
+    public function test_can_transition_from_new_to_active(): void
+    {
+        $this->assertTrue({Entity}Status::canTransitionFrom('new', {Entity}Status::ACTIVE));
+    }
+
+    public function test_cannot_transition_from_inactive_to_active(): void
+    {
+        $this->assertFalse({Entity}Status::canTransitionFrom('inactive', {Entity}Status::ACTIVE));
+    }
+
+    public function test_label_returns_human_readable(): void
+    {
+        $this->assertEquals('Active', {Entity}Status::ACTIVE->label());
+    }
+}
+```
+
+```php
+// tests/Unit/DTOs/Create{Entity}DataTest.php
+namespace Modules\{Module}\Tests\Unit\DTOs;
+
+use Modules\{Module}\Application\DTOs\Create{Entity}Data;
+use PHPUnit\Framework\TestCase;
+
+class Create{Entity}DataTest extends TestCase
+{
+    public function test_to_array_excludes_nulls(): void
+    {
+        $dto = new Create{Entity}Data(name: 'Test', email: null, phone: null);
+        $array = $dto->toArray();
+        $this->assertArrayHasKey('name', $array);
+        $this->assertArrayHasKey('email', $array);
+        $this->assertNull($array['email']);
+    }
+}
+```
+
+```php
+// tests/Unit/Repositories/{Entity}RepositoryTest.php
+namespace Modules\{Module}\Tests\Unit\Repositories;
+
+use Modules\{Module}\Infrastructure\Persistence\{Entity}RepositoryInterface;
+use Modules\{Module}\Domain\Entities\{Entity};
+use Tests\TestCase;
+
+class {Entity}RepositoryTest extends TestCase
+{
+    protected {Entity}RepositoryInterface $repository;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->repository = app({Entity}RepositoryInterface::class);
+    }
+
+    public function test_repository_is_bound(): void
+    {
+        $this->assertInstanceOf(
+            {Entity}RepositoryInterface::class,
+            $this->repository
+        );
+    }
+
+    public function test_create_and_find(): void
+    {
+        $entity = $this->repository->create(['name' => 'Test', 'status' => 'new']);
+        $found = $this->repository->find($entity->id);
+        $this->assertEquals('Test', $found->name);
+    }
+
+    public function test_update_returns_fresh(): void
+    {
+        $entity = $this->repository->create(['name' => 'Old', 'status' => 'new']);
+        $updated = $this->repository->update($entity->id, ['name' => 'New']);
+        $this->assertEquals('New', $updated->name);
+    }
+
+    public function test_delete_removes_entity(): void
+    {
+        $entity = $this->repository->create(['name' => 'Delete Me', 'status' => 'new']);
+        $this->assertTrue($this->repository->delete($entity->id));
+        $this->assertNull($this->repository->find($entity->id));
+    }
+}
+```
+
+#### Feature Tests — API Endpoints (with DB)
+
+```php
+// tests/Feature/{Entity}ApiTest.php
+namespace Modules\{Module}\Tests\Feature;
+
+use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+class {Entity}ApiTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_index_returns_paginated_list(): void
+    {
+        $response = $this->actingAs($this->createUser(), 'api')
+            ->getJson('/tenant/{module}/{entity}');
+        $response->assertOk()->assertJsonStructure(['data' => []]);
+    }
+
+    public function test_store_creates_entity(): void
+    {
+        $response = $this->actingAs($this->createUser(), 'api')
+            ->postJson('/tenant/{module}/{entity}', ['name' => 'Test']);
+        $response->assertCreated();
+    }
+
+    public function test_show_returns_entity(): void
+    {
+        $entity = $this->createEntity();
+        $response = $this->actingAs($this->createUser(), 'api')
+            ->getJson("/tenant/{module}/{entity}/{$entity->id}");
+        $response->assertOk();
+    }
+
+    public function test_update_modifies_entity(): void
+    {
+        $entity = $this->createEntity();
+        $response = $this->actingAs($this->createUser(), 'api')
+            ->putJson("/tenant/{module}/{entity}/{$entity->id}", ['name' => 'Updated']);
+        $response->assertOk();
+    }
+
+    public function test_destroy_deletes_entity(): void
+    {
+        $entity = $this->createEntity();
+        $response = $this->actingAs($this->createUser(), 'api')
+            ->deleteJson("/tenant/{module}/{entity}/{$entity->id}");
+        $response->assertOk();
+    }
+}
+```
+
+### Frontend Tests (`tenant-frontend/src/__tests__/`)
+
+```typescript
+// __tests__/api-{module}.test.ts
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { list{Entities}, create{Entity}, update{Entity}, delete{Entity} } from "@/lib/tenant-resources";
+
+vi.mock("@/lib/tenant-resources", async () => {
+  const { createAxiosMock } = await import("@/lib/__tests__/test-utils");
+  return createAxiosMock("tenant/{module}/{entity}");
+});
+
+describe("{Module} API", () => {
+  it("lists {entities}", async () => {
+    const result = await list{Entities}();
+    expect(result).toBeDefined();
+  });
+
+  it("creates {entity}", async () => {
+    const result = await create{Entity}({ name: "Test" });
+    expect(result).toBeDefined();
+  });
+
+  it("updates {entity}", async () => {
+    const result = await update{Entity}(1, { name: "Updated" });
+    expect(result).toBeDefined();
+  });
+
+  it("deletes {entity}", async () => {
+    const result = await delete{Entity}(1);
+    expect(result).toBeDefined();
+  });
+});
+```
+
+### Test Commands
+
+```bash
+# Backend unit tests
+cd backend && php artisan test --filter="{Module}"
+
+# Backend specific test
+cd backend && php artisan test modules/{Module}/tests/Unit/ValueObjects/{Entity}StatusTest.php
+
+# Frontend tests
+cd tenant-frontend && npx vitest run --reporter=verbose src/__tests__/api-{module}
+```
+
+---
+
 ## Checklist (per entity)
 
 - [ ] Value Object enum with transition rules
@@ -720,13 +989,15 @@ Follow `.skills/update-erd-on-db-change.md` to update ERD files after creating m
 - [ ] DTOs (Create, Update)
 - [ ] UseCases (Create, Update, Delete + custom actions)
 - [ ] Form Requests (Store, Update)
-- [ ] API Controller (thin, calls UseCases)
+- [ ] API Controller (thin, calls UseCases or Repositories — **NEVER direct Eloquent**)
 - [ ] Routes in `Routes/api.php`
 - [ ] ServiceProvider bindings (repos + strategies)
 - [ ] Frontend API functions in `tenant-resources.ts`
 - [ ] Frontend CRUD page (SimpleCRUDPage or custom)
 - [ ] Navigation entry
 - [ ] RBAC permissions seeder
-- [ ] Unit + Feature tests
+- [ ] Backend unit tests (ValueObjects, DTOs, Repositories)
+- [ ] Backend feature tests (API endpoints)
+- [ ] Frontend API tests (vitest)
 - [ ] Postman collection update
 - [ ] ERD update

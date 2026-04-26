@@ -23,7 +23,7 @@ class WarehouseApiController extends Controller
             $filters = $request->only(['search', 'is_active']);
             return $this->apiPaginated($this->service->listWarehouses($filters, (int) $request->get('per_page', 15)));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to retrieve warehouses', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -38,9 +38,9 @@ class WarehouseApiController extends Controller
                 'manager_id' => 'nullable|integer',
             ]);
             $warehouse = $this->service->createWarehouse($request->all(), auth()->id());
-            return $this->apiSuccess($warehouse, 'Warehouse created successfully', 201);
+            return $this->apiSuccess($warehouse, translate('message.created_successfully'), 201);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to create warehouse', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -49,7 +49,7 @@ class WarehouseApiController extends Controller
         try {
             return $this->apiSuccess($this->service->findWarehouse($id));
         } catch (\Throwable $e) {
-            return $this->apiError('Warehouse not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
     }
 
@@ -63,9 +63,9 @@ class WarehouseApiController extends Controller
                 'manager_id' => 'nullable|integer',
             ]);
             $warehouse = $this->service->updateWarehouse($id, $request->all());
-            return $this->apiSuccess($warehouse, 'Warehouse updated successfully');
+            return $this->apiSuccess($warehouse, translate('message.updated_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to update warehouse', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -73,11 +73,11 @@ class WarehouseApiController extends Controller
     {
         try {
             $this->service->deleteWarehouse($id);
-            return $this->apiSuccess(null, 'Warehouse deleted successfully');
+            return $this->apiSuccess(null, translate('message.deleted_successfully'));
         } catch (\DomainException $e) {
             return $this->apiError($e->getMessage(), 422);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to delete warehouse', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -87,7 +87,7 @@ class WarehouseApiController extends Controller
             $summary = $this->service->getStockSummary($id, $request->get('product_id'));
             return $this->apiSuccess($summary);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to get stock summary', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

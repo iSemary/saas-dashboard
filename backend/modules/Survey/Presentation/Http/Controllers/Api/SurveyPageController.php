@@ -45,6 +45,6 @@ class SurveyPageController extends ApiController
     public function reorder(Request $request, int $surveyId): JsonResponse
     {
         $this->repository->reorder($surveyId, $request->get('ordered_ids', []));
-        return $this->respondWithArray(['message' => 'Pages reordered']);
+        return $this->respondWithArray(['message' => translate('message.action_completed')]);
     }
 }

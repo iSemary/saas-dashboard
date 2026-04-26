@@ -19,4 +19,5 @@ interface EmployeeRepositoryInterface
     public function getSubordinates(int $managerId): array;
     public function getByDepartment(int $departmentId): array;
     public function getOrgChart(): array;
+    public function count(array $filters = []): int;
 }

@@ -25,12 +25,12 @@ class TagApiController extends Controller
             'name' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255',
         ]);
-        return $this->apiSuccess($this->service->create($validated), 'Tag created successfully', 201);
+        return $this->apiSuccess($this->service->create($validated), translate('message.created_successfully'), 201);
     }
 
     public function destroy($id)
     {
         $this->service->delete($id);
-        return $this->apiSuccess(null, 'Tag deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 }

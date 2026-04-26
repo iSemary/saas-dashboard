@@ -25,7 +25,7 @@ class TypeApiController extends Controller
             'name' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255',
         ]);
-        return $this->apiSuccess($this->service->create($validated), 'Type created successfully', 201);
+        return $this->apiSuccess($this->service->create($validated), translate('message.created_successfully'), 201);
     }
 
     public function update(Request $request, $id)
@@ -34,12 +34,12 @@ class TypeApiController extends Controller
             'name' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255',
         ]);
-        return $this->apiSuccess($this->service->update($id, $validated), 'Type updated successfully');
+        return $this->apiSuccess($this->service->update($id, $validated), translate('message.updated_successfully'));
     }
 
     public function destroy($id)
     {
         $this->service->delete($id);
-        return $this->apiSuccess(null, 'Type deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 }

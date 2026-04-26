@@ -62,7 +62,7 @@ class TicketCreatedNotification extends Notification implements ShouldQueue
             'status' => $this->ticket->status,
             'created_by' => $this->ticket->creator->name,
             'created_by_id' => $this->ticket->created_by,
-            'message' => 'New ticket created: ' . $this->ticket->ticket_number,
+            'message' => translate('message.action_completed'),
             'action_url' => url('/landlord/tickets/' . $this->ticket->id),
             'type' => 'ticket_created',
             'icon' => 'fas fa-ticket-alt',

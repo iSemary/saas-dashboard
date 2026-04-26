@@ -20,7 +20,7 @@ class StockMoveApiController extends Controller
             $filters = $request->only(['warehouse_id', 'product_id', 'move_type', 'state', 'date_from', 'date_to']);
             return $this->apiPaginated($this->service->listStockMoves($filters, (int) $request->get('per_page', 15)));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to retrieve stock moves', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -38,9 +38,9 @@ class StockMoveApiController extends Controller
                 'description'  => 'nullable|string',
             ]);
             $move = $this->service->createStockMove($request->all(), auth()->id());
-            return $this->apiSuccess($move->load('warehouse'), 'Stock move created successfully', 201);
+            return $this->apiSuccess($move->load('warehouse'), translate('message.created_successfully'), 201);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to create stock move', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -49,7 +49,7 @@ class StockMoveApiController extends Controller
         try {
             return $this->apiSuccess($this->service->findStockMove($id));
         } catch (\Throwable $e) {
-            return $this->apiError('Stock move not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
     }
 
@@ -57,11 +57,11 @@ class StockMoveApiController extends Controller
     {
         try {
             $move = $this->service->confirmStockMove($id);
-            return $this->apiSuccess($move, 'Stock move confirmed');
+            return $this->apiSuccess($move, translate('message.action_completed'));
         } catch (\DomainException $e) {
             return $this->apiError($e->getMessage(), 422);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to confirm stock move', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -69,11 +69,11 @@ class StockMoveApiController extends Controller
     {
         try {
             $move = $this->service->completeStockMove($id);
-            return $this->apiSuccess($move, 'Stock move completed');
+            return $this->apiSuccess($move, translate('message.action_completed'));
         } catch (\DomainException $e) {
             return $this->apiError($e->getMessage(), 422);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to complete stock move', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -81,11 +81,11 @@ class StockMoveApiController extends Controller
     {
         try {
             $move = $this->service->cancelStockMove($id);
-            return $this->apiSuccess($move, 'Stock move cancelled');
+            return $this->apiSuccess($move, translate('message.action_completed'));
         } catch (\DomainException $e) {
             return $this->apiError($e->getMessage(), 422);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to cancel stock move', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -93,9 +93,9 @@ class StockMoveApiController extends Controller
     {
         try {
             $this->service->deleteStockMove($id);
-            return $this->apiSuccess(null, 'Stock move deleted');
+            return $this->apiSuccess(null, translate('message.deleted_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to delete stock move', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

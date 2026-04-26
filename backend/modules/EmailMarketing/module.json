@@ -1,0 +1,11 @@
+{
+    "name": "EmailMarketing",
+    "alias": "email_marketing",
+    "description": "Tenant-level Email Marketing module with campaigns, templates, contact lists, automation, A/B testing, and analytics",
+    "keywords": ["email", "marketing", "campaigns", "newsletters", "automation"],
+    "priority": 1,
+    "providers": [
+        "Modules\\EmailMarketing\\Providers\\EmailMarketingServiceProvider"
+    ],
+    "files": []
+}

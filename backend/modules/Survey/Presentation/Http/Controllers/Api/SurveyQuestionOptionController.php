@@ -55,6 +55,6 @@ class SurveyQuestionOptionController extends ApiController
     public function reorder(Request $request, int $questionId): JsonResponse
     {
         $this->repository->reorder($questionId, $request->get('ordered_ids', []));
-        return $this->respondWithArray(['message' => 'Options reordered']);
+        return $this->respondWithArray(['message' => translate('message.action_completed')]);
     }
 }

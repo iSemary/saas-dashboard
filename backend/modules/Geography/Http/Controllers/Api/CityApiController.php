@@ -24,7 +24,7 @@ class CityApiController extends Controller
     public function store(StoreCityRequest $request)
     {
         $data = CreateCityData::fromRequest($request);
-        return $this->apiSuccess($this->service->create($data), 'City created successfully', 201);
+        return $this->apiSuccess($this->service->create($data), translate('message.created_successfully'), 201);
     }
 
     public function update(StoreCityRequest $request, $id)
@@ -34,12 +34,12 @@ class CityApiController extends Controller
             'name' => $data->name,
             'province_id' => $data->province_id,
         ]);
-        return $this->apiSuccess($city, 'City updated successfully');
+        return $this->apiSuccess($city, translate('message.updated_successfully'));
     }
 
     public function destroy($id)
     {
         $this->service->delete($id);
-        return $this->apiSuccess(null, 'City deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 }

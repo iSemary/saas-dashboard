@@ -30,7 +30,7 @@ class ShiftApiController extends ApiController
     public function store(Request $request): JsonResponse
     {
         $shift = $this->repository->create($request->validated());
-        return $this->success(data: $shift, message: 'Shift created successfully');
+        return $this->success(data: $shift, message: translate('message.action_completed'));
     }
 
     public function show(int $id): JsonResponse
@@ -42,13 +42,13 @@ class ShiftApiController extends ApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $shift = $this->repository->update($id, $request->validated());
-        return $this->success(data: $shift, message: 'Shift updated successfully');
+        return $this->success(data: $shift, message: translate('message.action_completed'));
     }
 
     public function destroy(int $id): JsonResponse
     {
         $this->repository->delete($id);
-        return $this->success(message: 'Shift deleted successfully');
+        return $this->success(message: translate('message.action_completed'));
     }
 
     public function active(): JsonResponse

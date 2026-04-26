@@ -117,4 +117,19 @@ class OpportunityRepository implements OpportunityRepositoryInterface
             'weighted_value' => $this->model->get()->sum(fn ($o) => $o->weightedRevenue()),
         ];
     }
+
+    public function countByMonth(int $year, int $month): int
+    {
+        return $this->model->whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->count();
+    }
+
+    public function countClosedWonByMonth(int $year, int $month): int
+    {
+        return $this->model->where('stage', 'closed_won')
+            ->whereYear('actual_close_date', $year)
+            ->whereMonth('actual_close_date', $month)
+            ->count();
+    }
 }

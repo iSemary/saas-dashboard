@@ -19,7 +19,7 @@ class ScheduleInterviewUseCase
         $application = $this->applicationRepository->findOrFail($applicationId);
 
         if ($application->status === 'hired' || $application->status === 'rejected') {
-            throw new \RuntimeException('Cannot schedule interview for a closed application');
+            throw new \RuntimeException(translate('message.operation_failed'));
         }
 
         $interview = $this->interviewRepository->create([

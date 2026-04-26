@@ -32,9 +32,9 @@ class ComposeEmailApiController extends Controller
 
         try {
             $result = $this->emailService->send($validated);
-            return $this->apiSuccess($result, 'Email sent successfully');
+            return $this->apiSuccess($result, translate('message.email_sent'));
         } catch (\Exception $e) {
-            return $this->apiError('Failed to send email: ' . $e->getMessage(), 500);
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

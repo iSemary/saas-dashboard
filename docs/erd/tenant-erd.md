@@ -476,6 +476,176 @@ This document contains the tenant database schema for the SaaS Dashboard applica
 
 ---
 
+### Email Marketing Module
+
+#### em_campaigns
+- **PK**: id
+- **Columns**: name, subject, template_id (nullable), credential_id (nullable), from_name, from_email, body_html (nullable), body_text (nullable), status, scheduled_at (nullable), sent_at (nullable), total_recipients, delivered_count, opened_count, clicked_count, bounced_count, unsubscribed_count, created_by, custom_fields
+- **FK**: template_id → em_templates, credential_id → em_credentials, created_by → users
+- **Indexes**: [status, scheduled_at], [credential_id, status], created_by
+- **Soft Deletes**: Yes
+
+#### em_templates
+- **PK**: id
+- **Columns**: name, subject, body_html, body_text (nullable), status, created_by, custom_fields
+- **FK**: created_by → users
+- **Indexes**: status, created_by
+- **Soft Deletes**: Yes
+
+#### em_contacts
+- **PK**: id
+- **Columns**: email (unique), first_name, last_name, phone (nullable), company (nullable), status, unsubscribed_at (nullable), created_by, custom_fields
+- **FK**: created_by → users
+- **Indexes**: email, status, [status, created_at]
+- **Soft Deletes**: Yes
+
+#### em_contact_lists
+- **PK**: id
+- **Columns**: name, description (nullable), contacts_count, status, created_by, custom_fields
+- **FK**: created_by → users
+- **Indexes**: status, created_by
+- **Soft Deletes**: Yes
+
+#### em_contact_list_items
+- **PK**: id
+- **Columns**: contact_list_id, contact_id
+- **FK**: contact_list_id → em_contact_lists (cascade delete), contact_id → em_contacts (cascade delete)
+- **Indexes**: [contact_list_id, contact_id] (unique), contact_list_id, contact_id
+
+#### em_credentials
+- **PK**: id
+- **Columns**: name, provider, account_sid (nullable), auth_token (nullable), from_email, from_name, is_default, status, created_by, custom_fields
+- **FK**: created_by → users
+- **Indexes**: [provider, status], is_default, created_by
+- **Soft Deletes**: Yes
+
+#### em_automation_rules
+- **PK**: id
+- **Columns**: name, trigger_type, trigger_config (nullable), action_type, action_config (nullable), is_active, last_triggered_at (nullable), created_by, custom_fields
+- **FK**: created_by → users
+- **Indexes**: [trigger_type, is_active], is_active, created_by
+- **Soft Deletes**: Yes
+
+#### em_webhooks
+- **PK**: id
+- **Columns**: name, url, secret, events, is_active, last_triggered_at (nullable), created_by, custom_fields
+- **FK**: created_by → users
+- **Indexes**: is_active, created_by
+- **Soft Deletes**: Yes
+
+#### em_ab_tests
+- **PK**: id
+- **Columns**: campaign_id, variant_name, subject (nullable), body_html (nullable), body_text (nullable), percentage, sent_count, opened_count, clicked_count, is_winner, created_by, custom_fields
+- **FK**: campaign_id → em_campaigns (cascade delete), created_by → users
+- **Indexes**: campaign_id, is_winner, [campaign_id, variant_name]
+- **Soft Deletes**: Yes
+
+#### em_import_jobs
+- **PK**: id
+- **Columns**: contact_list_id, file_path, status, total_rows, processed_rows, failed_rows, error_log (nullable), started_at (nullable), completed_at (nullable), created_by, custom_fields
+- **FK**: contact_list_id → em_contact_lists, created_by → users
+- **Indexes**: [status, created_at], contact_list_id, created_by
+- **Soft Deletes**: Yes
+
+#### em_sending_logs
+- **PK**: id
+- **Columns**: campaign_id, contact_id, status, provider_message_id (nullable), sent_at, delivered_at (nullable), opened_at (nullable), clicked_at (nullable), failed_reason (nullable), cost (nullable), created_by, custom_fields
+- **FK**: campaign_id → em_campaigns, contact_id → em_contacts, created_by → users
+- **Indexes**: [campaign_id, status], [contact_id, status], [status, sent_at], provider_message_id
+
+#### em_unsubscribes
+- **PK**: id
+- **Columns**: contact_id, campaign_id (nullable), reason (nullable), ip_address (nullable), created_by
+- **FK**: contact_id → em_contacts, campaign_id → em_campaigns, created_by → users
+- **Indexes**: contact_id, [contact_id, campaign_id] (unique)
+
+---
+
+### SMS Marketing Module
+
+#### sm_campaigns
+- **PK**: id
+- **Columns**: name, body, template_id (nullable), credential_id (nullable), status, scheduled_at (nullable), sent_at (nullable), total_recipients, delivered_count, failed_count, cost, created_by, custom_fields
+- **FK**: template_id → sm_templates, credential_id → sm_credentials, created_by → users
+- **Indexes**: [status, scheduled_at], [credential_id, status], created_by
+- **Soft Deletes**: Yes
+
+#### sm_templates
+- **PK**: id
+- **Columns**: name, body, status, created_by, custom_fields
+- **FK**: created_by → users
+- **Indexes**: status, created_by
+- **Soft Deletes**: Yes
+
+#### sm_contacts
+- **PK**: id
+- **Columns**: phone (unique), first_name (nullable), last_name (nullable), email (nullable), status, opted_out_at (nullable), created_by, custom_fields
+- **FK**: created_by → users
+- **Indexes**: phone, status, [status, created_at]
+- **Soft Deletes**: Yes
+
+#### sm_contact_lists
+- **PK**: id
+- **Columns**: name, description (nullable), contacts_count, status, created_by, custom_fields
+- **FK**: created_by → users
+- **Indexes**: status, created_by
+- **Soft Deletes**: Yes
+
+#### sm_contact_list_items
+- **PK**: id
+- **Columns**: contact_list_id, contact_id
+- **FK**: contact_list_id → sm_contact_lists (cascade delete), contact_id → sm_contacts (cascade delete)
+- **Indexes**: [contact_list_id, contact_id] (unique), contact_list_id, contact_id
+
+#### sm_credentials
+- **PK**: id
+- **Columns**: name, provider, account_sid (nullable), auth_token (nullable), from_number (nullable), is_default, status, created_by, custom_fields
+- **FK**: created_by → users
+- **Indexes**: [provider, status], is_default, created_by
+- **Soft Deletes**: Yes
+
+#### sm_automation_rules
+- **PK**: id
+- **Columns**: name, trigger_type, trigger_config (nullable), action_type, action_config (nullable), is_active, last_triggered_at (nullable), created_by, custom_fields
+- **FK**: created_by → users
+- **Indexes**: [trigger_type, is_active], is_active, created_by
+- **Soft Deletes**: Yes
+
+#### sm_webhooks
+- **PK**: id
+- **Columns**: name, url, secret, events, is_active, last_triggered_at (nullable), created_by, custom_fields
+- **FK**: created_by → users
+- **Indexes**: is_active, created_by
+- **Soft Deletes**: Yes
+
+#### sm_ab_tests
+- **PK**: id
+- **Columns**: campaign_id, variant_name, body (nullable), percentage, sent_count, opened_count, is_winner, created_by, custom_fields
+- **FK**: campaign_id → sm_campaigns (cascade delete), created_by → users
+- **Indexes**: campaign_id, is_winner, [campaign_id, variant_name]
+- **Soft Deletes**: Yes
+
+#### sm_import_jobs
+- **PK**: id
+- **Columns**: contact_list_id, file_path, status, total_rows, processed_rows, failed_rows, error_log (nullable), started_at (nullable), completed_at (nullable), created_by, custom_fields
+- **FK**: contact_list_id → sm_contact_lists, created_by → users
+- **Indexes**: [status, created_at], contact_list_id, created_by
+- **Soft Deletes**: Yes
+
+#### sm_sending_logs
+- **PK**: id
+- **Columns**: campaign_id, contact_id, status, provider_message_id (nullable), sent_at, delivered_at (nullable), failed_reason (nullable), cost (nullable), created_by, custom_fields
+- **FK**: campaign_id → sm_campaigns, contact_id → sm_contacts, created_by → users
+- **Indexes**: [campaign_id, status], [contact_id, status], [status, sent_at], provider_message_id
+
+#### sm_opt_outs
+- **PK**: id
+- **Columns**: contact_id, campaign_id (nullable), reason (nullable), created_by
+- **FK**: contact_id → sm_contacts, campaign_id → sm_campaigns, created_by → users
+- **Indexes**: contact_id, [contact_id, campaign_id] (unique)
+
+---
+
 ## Database Migration Paths
 
 ### Tenant Migrations

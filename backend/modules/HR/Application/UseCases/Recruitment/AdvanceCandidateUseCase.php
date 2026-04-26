@@ -24,7 +24,7 @@ class AdvanceCandidateUseCase
         $fromStage = $application->pipelineStage;
 
         if ($fromStage && !$this->pipelineStrategy->canAdvance($application, $fromStage, $toStage)) {
-            throw new \RuntimeException('Cannot advance application to this stage');
+            throw new \RuntimeException(translate('message.operation_failed'));
         }
 
         $application->advanceToStage($toStage);

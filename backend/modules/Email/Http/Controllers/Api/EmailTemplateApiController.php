@@ -40,7 +40,7 @@ class EmailTemplateApiController extends ApiController
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to retrieve email templates',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -54,11 +54,11 @@ class EmailTemplateApiController extends ApiController
 
             return response()->json([
                 'data' => $template,
-                'message' => 'Email template created successfully'
+                'message' => translate('message.created_successfully')
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to create email template',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -71,7 +71,7 @@ class EmailTemplateApiController extends ApiController
             return response()->json(['data' => $template]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Email template not found',
+                'message' => translate('message.resource_not_found'),
                 'error' => $e->getMessage()
             ], 404);
         }
@@ -85,11 +85,11 @@ class EmailTemplateApiController extends ApiController
 
             return response()->json([
                 'data' => $template,
-                'message' => 'Email template updated successfully'
+                'message' => translate('message.updated_successfully')
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to update email template',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -99,10 +99,10 @@ class EmailTemplateApiController extends ApiController
     {
         try {
             $this->templateService->delete($id);
-            return response()->json(['message' => 'Email template deleted successfully']);
+            return response()->json(['message' => translate('message.deleted_successfully')]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to delete email template',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -113,10 +113,10 @@ class EmailTemplateApiController extends ApiController
         try {
             $request->validate(['email' => 'required|email']);
             $this->emailService->sendTemplate($id, $request->email, []);
-            return response()->json(['message' => 'Test email sent successfully']);
+            return response()->json(['message' => translate('message.action_completed')]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to send test email',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }

@@ -32,7 +32,7 @@ class TrainingApiController extends ApiController
     public function storeCourse(Request $request): JsonResponse
     {
         $course = $this->courseRepository->create($request->only(['title', 'description', 'instructor', 'duration_hours', 'content_url', 'status']) + ['created_by' => auth()->id()]);
-        return $this->success(data: $course, message: 'Course created successfully');
+        return $this->success(data: $course, message: translate('message.action_completed'));
     }
 
     public function enrollments(Request $request): JsonResponse
@@ -43,7 +43,7 @@ class TrainingApiController extends ApiController
     public function storeEnrollment(Request $request): JsonResponse
     {
         $enrollment = $this->enrollEmployeeUseCase->execute($request->only(['course_id', 'employee_id', 'status', 'score']));
-        return $this->success(data: $enrollment, message: 'Enrollment created successfully');
+        return $this->success(data: $enrollment, message: translate('message.action_completed'));
     }
 
     public function certifications(Request $request): JsonResponse

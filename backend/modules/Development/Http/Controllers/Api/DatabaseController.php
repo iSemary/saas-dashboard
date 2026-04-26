@@ -33,6 +33,6 @@ class DatabaseController extends ApiController
 
         $this->service->syncFlow($validated['nodes']);
 
-        return response()->json(['success' => true, 'message' => 'Flow saved successfully.']);
+        return response()->json(['success' => true, 'message' => translate('message.action_completed')]);
     }
 }

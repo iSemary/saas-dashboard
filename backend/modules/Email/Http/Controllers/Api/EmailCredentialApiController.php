@@ -21,7 +21,7 @@ class EmailCredentialApiController extends ApiController
             return response()->json(['data' => $credentials]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to retrieve SMTP configurations',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -35,11 +35,11 @@ class EmailCredentialApiController extends ApiController
 
             return response()->json([
                 'data' => $credential,
-                'message' => 'SMTP configuration created successfully'
+                'message' => translate('message.created_successfully')
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to create SMTP configuration',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -53,7 +53,7 @@ class EmailCredentialApiController extends ApiController
             return response()->json(['data' => $credential]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'SMTP configuration not found',
+                'message' => translate('message.resource_not_found'),
                 'error' => $e->getMessage()
             ], 404);
         }
@@ -73,11 +73,11 @@ class EmailCredentialApiController extends ApiController
 
             return response()->json([
                 'data' => $credential,
-                'message' => 'SMTP configuration updated successfully'
+                'message' => translate('message.updated_successfully')
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to update SMTP configuration',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -87,10 +87,10 @@ class EmailCredentialApiController extends ApiController
     {
         try {
             $this->service->delete($id);
-            return response()->json(['message' => 'SMTP configuration deleted successfully']);
+            return response()->json(['message' => translate('message.deleted_successfully')]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to delete SMTP configuration',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -101,10 +101,10 @@ class EmailCredentialApiController extends ApiController
         try {
             $request->validate(['test_email' => 'required|email']);
             $this->service->testConnection($id, $request->test_email);
-            return response()->json(['message' => 'Test email sent successfully']);
+            return response()->json(['message' => translate('message.action_completed')]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to send test email',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }

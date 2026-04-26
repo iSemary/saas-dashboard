@@ -33,7 +33,7 @@ class TenantTwoFactorApiService
         }
 
         $this->repository->enableTwoFactor($userId);
-        return ['message' => '2FA enabled successfully'];
+        return ['message' => translate('message.action_completed')];
     }
 
     public function disable(int $userId): void

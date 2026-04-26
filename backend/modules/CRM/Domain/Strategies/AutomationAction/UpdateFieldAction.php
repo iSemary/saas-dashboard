@@ -20,7 +20,7 @@ class UpdateFieldAction implements AutomationActionStrategyInterface
     public function execute(array $actionConfig, object $model, array $context): void
     {
         if (!$model instanceof Model) {
-            throw new AutomationExecutionException('Model must be an Eloquent instance');
+            throw new AutomationExecutionException(translate('message.operation_failed'));
         }
 
         $field = $actionConfig['field'] ?? null;

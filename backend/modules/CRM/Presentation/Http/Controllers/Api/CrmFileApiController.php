@@ -27,7 +27,7 @@ class CrmFileApiController extends Controller
             }
             return $this->apiPaginated($this->files->paginate($filters, (int) $request->get('per_page', 15)));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to retrieve files', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -56,9 +56,9 @@ class CrmFileApiController extends Controller
             ];
             
             $crmFile = $this->files->create($data);
-            return $this->apiSuccess($crmFile, 'File uploaded', 201);
+            return $this->apiSuccess($crmFile, translate('message.action_completed'), 201);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to upload file', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -67,7 +67,7 @@ class CrmFileApiController extends Controller
         try {
             return $this->apiSuccess($this->files->findOrFail($id));
         } catch (\Throwable $e) {
-            return $this->apiError('File not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
     }
 
@@ -75,9 +75,9 @@ class CrmFileApiController extends Controller
     {
         try {
             $this->files->delete($id);
-            return $this->apiSuccess(null, 'File deleted');
+            return $this->apiSuccess(null, translate('message.deleted_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to delete file', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -87,7 +87,7 @@ class CrmFileApiController extends Controller
             $file = $this->files->findOrFail($id);
             return Storage::disk($file->disk)->download($file->path, $file->file_name);
         } catch (\Throwable $e) {
-            return response()->json(['message' => 'Failed to download file'], 500);
+            return response()->json(['message' => translate('message.operation_failed')], 500);
         }
     }
 
@@ -96,7 +96,7 @@ class CrmFileApiController extends Controller
         try {
             return $this->apiSuccess($this->files->getForRelated($type, $id));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to get files', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

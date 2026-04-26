@@ -8,11 +8,13 @@ use App\Http\Controllers\ApiResponseEnvelope;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use OwenIt\Auditing\Models\Audit;
+use Modules\CRM\Infrastructure\Persistence\AuditRepositoryInterface;
 
 class CrmAuditApiController extends Controller
 {
     use ApiResponseEnvelope;
+
+    public function __construct(protected AuditRepositoryInterface $repository) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -24,15 +26,15 @@ class CrmAuditApiController extends Controller
 
             $perPage = (int) $request->get('per_page', 20);
 
-            $audits = Audit::where('auditable_type', $request->input('auditable_type'))
-                ->where('auditable_id', $request->input('auditable_id'))
-                ->with('user')
-                ->orderBy('created_at', 'desc')
-                ->paginate($perPage);
+            $audits = $this->repository->paginateByAuditable(
+                $request->input('auditable_type'),
+                (int) $request->input('auditable_id'),
+                $perPage
+            );
 
             return $this->apiPaginated($audits);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to retrieve audit log', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

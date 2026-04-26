@@ -16,4 +16,5 @@ interface LeaveRequestRepositoryInterface
     public function getRequestsByEmployee(int $employeeId, ?string $status = null): array;
     public function hasOverlappingLeave(int $employeeId, string $startDate, string $endDate, ?int $excludeId = null): bool;
     public function getPendingCountForApprover(int $approverId): int;
+    public function getCountByStatus(): \Illuminate\Support\Collection;
 }

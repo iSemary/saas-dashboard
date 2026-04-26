@@ -39,7 +39,7 @@ class PasswordController extends ApiController
         $user = User::where('email', $forgetPasswordRequest->email)->first();
 
         if (!$user) {
-            return response()->json(['message' => 'User not found.'], 404);
+            return response()->json(['message' => translate('message.resource_not_found')], 404);
         }
 
         // Save token in password resets table
@@ -48,7 +48,7 @@ class PasswordController extends ApiController
         // Dispatch job to send reset link email
         ForgetPasswordMailJob::dispatch($user, $token, $tenant->id);
 
-        return response()->json(['message' => 'Password reset link sent successfully.']);
+        return response()->json(['message' => translate('message.action_completed')]);
     }
 
     public function showResetForm(string $token, Request $request)

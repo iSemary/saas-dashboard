@@ -150,7 +150,7 @@ class PaymentApiController extends Controller
                 'success' => false,
                 'error' => [
                     'code' => 'INTERNAL_ERROR',
-                    'message' => 'An unexpected error occurred while processing the payment',
+                    'message' => translate('message.operation_failed'),
                 ],
             ], 500);
         }
@@ -211,7 +211,7 @@ class PaymentApiController extends Controller
                 'success' => false,
                 'error' => [
                     'code' => 'INTERNAL_ERROR',
-                    'message' => 'An unexpected error occurred while capturing the payment',
+                    'message' => translate('message.operation_failed'),
                 ],
             ], 500);
         }
@@ -257,7 +257,7 @@ class PaymentApiController extends Controller
                 'success' => false,
                 'error' => [
                     'code' => 'INTERNAL_ERROR',
-                    'message' => 'An unexpected error occurred while voiding the payment',
+                    'message' => translate('message.operation_failed'),
                 ],
             ], 500);
         }
@@ -326,7 +326,7 @@ class PaymentApiController extends Controller
                 'success' => false,
                 'error' => [
                     'code' => 'INTERNAL_ERROR',
-                    'message' => 'An unexpected error occurred while processing the refund',
+                    'message' => translate('message.operation_failed'),
                 ],
             ], 500);
         }
@@ -348,7 +348,7 @@ class PaymentApiController extends Controller
                     'success' => false,
                     'error' => [
                         'code' => 'TRANSACTION_NOT_FOUND',
-                        'message' => 'Transaction not found',
+                        'message' => translate('message.resource_not_found'),
                     ],
                 ], 404);
             }
@@ -380,7 +380,7 @@ class PaymentApiController extends Controller
                 'success' => false,
                 'error' => [
                     'code' => 'INTERNAL_ERROR',
-                    'message' => 'An unexpected error occurred while retrieving the transaction',
+                    'message' => translate('message.operation_failed'),
                 ],
             ], 500);
         }
@@ -431,7 +431,7 @@ class PaymentApiController extends Controller
                 'success' => false,
                 'error' => [
                     'code' => 'INTERNAL_ERROR',
-                    'message' => 'An unexpected error occurred while retrieving payment methods',
+                    'message' => translate('message.operation_failed'),
                 ],
             ], 500);
         }
@@ -454,7 +454,7 @@ class PaymentApiController extends Controller
                     'success' => false,
                     'error' => [
                         'code' => 'PAYMENT_METHOD_NOT_FOUND',
-                        'message' => 'Payment method not found',
+                        'message' => translate('message.resource_not_found'),
                     ],
                 ], 404);
             }
@@ -482,7 +482,7 @@ class PaymentApiController extends Controller
                 'success' => false,
                 'error' => [
                     'code' => 'INTERNAL_ERROR',
-                    'message' => 'An unexpected error occurred while testing the payment method',
+                    'message' => translate('message.operation_failed'),
                 ],
             ], 500);
         }

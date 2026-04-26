@@ -33,7 +33,7 @@ class TenantModuleApiController extends Controller
         $data = $this->moduleService->getSubscribedModule($moduleKey);
 
         if (!$data) {
-            return $this->apiError('Module not found or not subscribed', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
 
         return $this->apiSuccess($data);

@@ -24,6 +24,8 @@ import {
   ShoppingCart,
   ShoppingBag,
   Warehouse,
+  CreditCard,
+  LockOpen,
 } from "lucide-react";
 import { toast } from "sonner";
 import { APP_NAME } from "@/lib/app-config";
@@ -119,6 +121,18 @@ const navSections: NavSectionDef[] = [
     items: [
       { href: "/dashboard/profile", labelKey: "dashboard.nav.my_profile", fallback: "My Profile", icon: User },
       { href: "/dashboard/settings", labelKey: "dashboard.nav.settings", fallback: "General Settings", icon: Settings2 },
+      { href: "/dashboard/two-factor-auth", labelKey: "dashboard.nav.two_factor", fallback: "Two-Factor Auth", icon: LockOpen },
+    ],
+  },
+  {
+    titleKey: "dashboard.nav.section_billing",
+    titleFallback: "Billing",
+    items: [
+      { href: "/dashboard/billing", labelKey: "dashboard.nav.billing_overview", fallback: "Overview", icon: CreditCard },
+      { href: "/dashboard/billing/invoices", labelKey: "dashboard.nav.invoices", fallback: "Invoices", icon: ShoppingCart },
+      { href: "/dashboard/billing/payments", labelKey: "dashboard.nav.payments", fallback: "Payments", icon: CreditCard },
+      { href: "/dashboard/billing/payment-methods", labelKey: "dashboard.nav.payment_methods", fallback: "Payment Methods", icon: CreditCard },
+      { href: "/dashboard/billing/modules", labelKey: "dashboard.nav.billing_modules", fallback: "Modules & Add-ons", icon: ShoppingBag },
     ],
   },
   {

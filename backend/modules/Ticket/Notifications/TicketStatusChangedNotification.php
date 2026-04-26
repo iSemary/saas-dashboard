@@ -78,7 +78,7 @@ class TicketStatusChangedNotification extends Notification implements ShouldQueu
             'changed_by' => $this->changedBy->name,
             'changed_by_id' => $this->changedBy->id,
             'comment' => $this->comment,
-            'message' => 'Ticket status changed from ' . ucfirst(str_replace('_', ' ', $this->oldStatus)) . ' to ' . ucfirst(str_replace('_', ' ', $this->newStatus)),
+            'message' => translate('exception.cannot_transition_status', ['from' => ucfirst(str_replace('_', ' ', $this->oldStatus)), 'to' => ucfirst(str_replace('_', ' ', $this->newStatus))]),
             'action_url' => url('/landlord/tickets/' . $this->ticket->id),
             'type' => 'ticket_status_changed',
             'icon' => $this->getStatusIcon($this->newStatus),

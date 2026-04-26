@@ -70,7 +70,7 @@ class PayrollRepository implements PayrollRepositoryInterface
         $last = Payroll::where('payroll_number', 'like', $prefix . '%')
             ->orderBy('id', 'desc')
             ->first();
-        
+
         $sequence = $last ? (int) substr($last->payroll_number, -4) + 1 : 1;
         return $prefix . str_pad((string) $sequence, 4, '0', STR_PAD_LEFT);
     }
@@ -82,5 +82,14 @@ class PayrollRepository implements PayrollRepositoryInterface
             ->orderBy('pay_period_end', 'desc')
             ->get()
             ->toArray();
+    }
+
+    public function getSummary(): array
+    {
+        return [
+            'count' => Payroll::count(),
+            'gross_total' => (float) Payroll::sum('gross_pay'),
+            'net_total' => (float) Payroll::sum('net_pay'),
+        ];
     }
 }

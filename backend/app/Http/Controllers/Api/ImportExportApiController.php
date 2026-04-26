@@ -25,7 +25,7 @@ class ImportExportApiController extends Controller
             }
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to export data',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -46,12 +46,12 @@ class ImportExportApiController extends Controller
             $imported = $this->importExportService->import($type, $file, $userId);
 
             return response()->json([
-                'message' => "Successfully imported {$imported} records",
+                'message' => translate('message.import_success'),
                 'data' => ['imported' => $imported]
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to import data',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -64,7 +64,7 @@ class ImportExportApiController extends Controller
             return response()->json(['data' => $history]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to retrieve import history',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }

@@ -53,31 +53,31 @@ class PayrollApiController extends ApiController
         );
         
         $payroll = $this->generatePayrollUseCase->execute($data);
-        return $this->success(data: $payroll, message: 'Payroll generated successfully');
+        return $this->success(data: $payroll, message: translate('message.action_completed'));
     }
 
     public function calculate(int $id): JsonResponse
     {
         $payroll = $this->calculatePayrollUseCase->execute($id);
-        return $this->success(data: $payroll, message: 'Payroll calculated successfully');
+        return $this->success(data: $payroll, message: translate('message.action_completed'));
     }
 
     public function approve(Request $request, int $id): JsonResponse
     {
         $payroll = $this->approvePayrollUseCase->execute($id, $request->input('notes'));
-        return $this->success(data: $payroll, message: 'Payroll approved successfully');
+        return $this->success(data: $payroll, message: translate('message.action_completed'));
     }
 
     public function markPaid(int $id): JsonResponse
     {
         $payroll = $this->markPaidUseCase->execute($id);
-        return $this->success(data: $payroll, message: 'Payroll marked as paid successfully');
+        return $this->success(data: $payroll, message: translate('message.action_completed'));
     }
 
     public function destroy(int $id): JsonResponse
     {
         $this->repository->delete($id);
-        return $this->success(message: 'Payroll deleted successfully');
+        return $this->success(message: translate('message.action_completed'));
     }
 
     public function byEmployee(int $employeeId): JsonResponse

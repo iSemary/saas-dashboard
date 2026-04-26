@@ -22,7 +22,7 @@ class DocumentationController extends Controller
     public function index()
     {
         $files = $this->getMarkdownFiles();
-        
+
         return view('landlord.documentation.index', compact('files'));
     }
 
@@ -32,14 +32,14 @@ class DocumentationController extends Controller
     public function show($file)
     {
         $filePath = $this->documentationPath . '/' . $file;
-        
+
         if (!File::exists($filePath) || !str_ends_with($file, '.md')) {
-            abort(404, 'Documentation file not found');
+            abort(404, translate('message.file_not_found'));
         }
 
         $content = File::get($filePath);
         $files = $this->getMarkdownFiles();
-        
+
         return view('landlord.documentation.show', compact('content', 'file', 'files'));
     }
 
@@ -50,16 +50,16 @@ class DocumentationController extends Controller
     {
         $file = $request->input('file');
         $filePath = $this->documentationPath . '/' . $file;
-        
+
         if (!File::exists($filePath) || !str_ends_with($file, '.md')) {
             return response()->json([
                 'success' => false,
-                'message' => 'File not found'
+                'message' => translate('message.file_not_found')
             ], 404);
         }
 
         $content = File::get($filePath);
-        
+
         return response()->json([
             'success' => true,
             'content' => $content,
@@ -73,10 +73,10 @@ class DocumentationController extends Controller
     public function getMarkdownFiles()
     {
         $files = [];
-        
+
         if (File::exists($this->documentationPath)) {
             $allFiles = File::allFiles($this->documentationPath);
-            
+
             foreach ($allFiles as $file) {
                 if ($file->getExtension() === 'md') {
                     $relativePath = str_replace($this->documentationPath . '/', '', $file->getPathname());
@@ -90,7 +90,7 @@ class DocumentationController extends Controller
                     ];
                 }
             }
-            
+
             // Sort files by directory and name
             usort($files, function($a, $b) {
                 if ($a['directory'] === $b['directory']) {
@@ -99,7 +99,7 @@ class DocumentationController extends Controller
                 return strcmp($a['directory'], $b['directory']);
             });
         }
-        
+
         return $files;
     }
 
@@ -120,7 +120,7 @@ class DocumentationController extends Controller
     {
         $files = $this->getMarkdownFiles();
         $tree = [];
-        
+
         foreach ($files as $file) {
             if (empty($file['directory'])) {
                 $tree['root'][] = $file;
@@ -128,7 +128,7 @@ class DocumentationController extends Controller
                 $tree[$file['directory']][] = $file;
             }
         }
-        
+
         return response()->json([
             'success' => true,
             'tree' => $tree
@@ -142,30 +142,30 @@ class DocumentationController extends Controller
     {
         // Simple markdown parser for basic formatting
         $content = htmlspecialchars($content);
-        
+
         // Headers
         $content = preg_replace('/^### (.*$)/m', '<h3>$1</h3>', $content);
         $content = preg_replace('/^## (.*$)/m', '<h2>$1</h2>', $content);
         $content = preg_replace('/^# (.*$)/m', '<h1>$1</h1>', $content);
-        
+
         // Bold and italic
         $content = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $content);
         $content = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $content);
-        
+
         // Code blocks
         $content = preg_replace('/```([^`]+)```/s', '<pre><code>$1</code></pre>', $content);
         $content = preg_replace('/`([^`]+)`/', '<code>$1</code>', $content);
-        
+
         // Links
         $content = preg_replace('/\[([^\]]+)\]\(([^)]+)\)/', '<a href="$2">$1</a>', $content);
-        
+
         // Lists
         $content = preg_replace('/^\- (.*$)/m', '<li>$1</li>', $content);
         $content = preg_replace('/(<li>.*<\/li>)/s', '<ul>$1</ul>', $content);
-        
+
         // Line breaks
         $content = nl2br($content);
-        
+
         return $content;
     }
 }

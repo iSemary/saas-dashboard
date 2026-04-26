@@ -1,0 +1,11 @@
+{
+    "name": "ProjectManagement",
+    "alias": "project-management",
+    "description": "Full-featured Project Management module with Kanban boards, timelines, dependencies, risks, issues, templates, and delivery analytics",
+    "keywords": ["project", "task", "kanban", "board", "milestone", "sprint", "dependency", "risk", "issue", "template", "gantt"],
+    "priority": 1,
+    "providers": [
+        "Modules\\ProjectManagement\\Providers\\ProjectManagementServiceProvider"
+    ],
+    "files": []
+}

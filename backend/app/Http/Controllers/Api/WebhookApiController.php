@@ -17,7 +17,7 @@ class WebhookApiController extends Controller
             return response()->json(['data' => $webhooks]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to retrieve webhooks',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -43,16 +43,16 @@ class WebhookApiController extends Controller
 
             return response()->json([
                 'data' => $webhook->load('creator'),
-                'message' => 'Webhook created successfully'
+                'message' => translate('message.webhook_created')
             ], 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
-                'message' => 'Validation failed',
+                'message' => translate('message.validation_failed'),
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to create webhook',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -65,7 +65,7 @@ class WebhookApiController extends Controller
             return response()->json(['data' => $webhook]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Webhook not found',
+                'message' => translate('message.resource_not_found'),
                 'error' => $e->getMessage()
             ], 404);
         }
@@ -75,7 +75,7 @@ class WebhookApiController extends Controller
     {
         try {
             if (!$this->webhookService->isOwner($id, $request->user('api')->id)) {
-                return response()->json(['message' => 'Unauthorized'], 403);
+                return response()->json(['message' => translate('auth.unauthorized')], 403);
             }
 
             $validated = $request->validate([
@@ -93,11 +93,11 @@ class WebhookApiController extends Controller
 
             return response()->json([
                 'data' => $webhook->load('creator'),
-                'message' => 'Webhook updated successfully'
+                'message' => translate('message.webhook_updated')
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to update webhook',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -107,17 +107,17 @@ class WebhookApiController extends Controller
     {
         try {
             if (!$this->webhookService->isOwner($id, request()->user('api')->id)) {
-                return response()->json(['message' => 'Unauthorized'], 403);
+                return response()->json(['message' => translate('auth.unauthorized')], 403);
             }
 
             $this->webhookService->delete($id);
 
             return response()->json([
-                'message' => 'Webhook deleted successfully'
+                'message' => translate('message.webhook_deleted')
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to delete webhook',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -138,11 +138,11 @@ class WebhookApiController extends Controller
 
             return response()->json([
                 'data' => $response,
-                'message' => 'Test webhook sent'
+                'message' => translate('message.webhook_test_sent')
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to send test webhook',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -152,7 +152,7 @@ class WebhookApiController extends Controller
     {
         try {
             if (!$this->webhookService->isOwner($id, $request->user('api')->id)) {
-                return response()->json(['message' => 'Unauthorized'], 403);
+                return response()->json(['message' => translate('auth.unauthorized')], 403);
             }
 
             $perPage = $request->get('per_page', 20);
@@ -167,7 +167,7 @@ class WebhookApiController extends Controller
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to retrieve webhook logs',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }

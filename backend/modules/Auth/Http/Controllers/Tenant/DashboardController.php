@@ -86,7 +86,7 @@ class DashboardController extends Controller
             return response()->json([
                 'status' => 500,
                 'success' => false,
-                'message' => 'Error retrieving dashboard statistics: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . $e->getMessage()
             ], 500);
         }
     }
@@ -104,7 +104,7 @@ class DashboardController extends Controller
             return response()->json([
                 'status' => 500,
                 'success' => false,
-                'message' => 'Error retrieving analytics: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . $e->getMessage()
             ], 500);
         }
     }
@@ -122,7 +122,7 @@ class DashboardController extends Controller
             return response()->json([
                 'status' => 500,
                 'success' => false,
-                'message' => 'Error retrieving KPIs: ' . $e->getMessage()
+                'message' => translate('message.operation_failed') . $e->getMessage()
             ], 500);
         }
     }
@@ -157,7 +157,7 @@ class DashboardController extends Controller
             [
                 'id' => 1,
                 'type' => 'user_login',
-                'message' => 'New user logged in',
+                'message' => translate('message.action_completed'),
                 'user' => $userName,
                 'time' => now()->subMinutes(5)->diffForHumans(),
                 'icon' => 'fas fa-sign-in-alt',
@@ -166,7 +166,7 @@ class DashboardController extends Controller
             [
                 'id' => 2,
                 'type' => 'project_created',
-                'message' => 'New project created',
+                'message' => translate('message.action_completed'),
                 'user' => $userName,
                 'time' => now()->subHours(2)->diffForHumans(),
                 'icon' => 'fas fa-folder-plus',
@@ -175,7 +175,7 @@ class DashboardController extends Controller
             [
                 'id' => 3,
                 'type' => 'task_completed',
-                'message' => 'Task marked as completed',
+                'message' => translate('message.action_completed'),
                 'user' => $userName,
                 'time' => now()->subDays(1)->diffForHumans(),
                 'icon' => 'fas fa-check-circle',
@@ -230,7 +230,7 @@ class DashboardController extends Controller
             [
                 'id' => 1,
                 'title' => 'Welcome to your dashboard!',
-                'message' => 'Get started by exploring the features and customizing your workspace.',
+                'message' => translate('message.action_completed'),
                 'type' => 'info',
                 'read' => false,
                 'time' => now()->subHours(1)->diffForHumans()
@@ -238,7 +238,7 @@ class DashboardController extends Controller
             [
                 'id' => 2,
                 'title' => 'System Update',
-                'message' => 'New features have been added to improve your experience.',
+                'message' => translate('message.action_completed'),
                 'type' => 'success',
                 'read' => false,
                 'time' => now()->subDays(1)->diffForHumans()

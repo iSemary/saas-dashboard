@@ -35,7 +35,7 @@ class EmployeeApiController extends ApiController
 
     public function store(Request $request): JsonResponse
     {
-        return $this->success(message: 'Employee created');
+        return $this->success(message: translate('message.created_successfully'));
     }
 
     public function show(int $id): JsonResponse
@@ -50,47 +50,47 @@ class EmployeeApiController extends ApiController
 
     public function update(Request $request, int $id): JsonResponse
     {
-        return $this->success(message: 'Employee updated');
+        return $this->success(message: translate('message.updated_successfully'));
     }
 
     public function destroy(int $id): JsonResponse
     {
-        return $this->success(message: 'Employee deleted');
+        return $this->success(message: translate('message.deleted_successfully'));
     }
 
     public function bulkDelete(Request $request): JsonResponse
     {
-        return $this->success(message: 'Bulk delete');
+        return $this->success(message: translate('message.deleted_successfully'));
     }
 
     public function transfer(Request $request, int $id): JsonResponse
     {
-        return $this->success(message: 'Employee transferred');
+        return $this->success(message: translate('message.action_completed'));
     }
 
     public function promote(Request $request, int $id): JsonResponse
     {
-        return $this->success(message: 'Employee promoted');
+        return $this->success(message: translate('message.action_completed'));
     }
 
     public function terminate(Request $request, int $id): JsonResponse
     {
-        return $this->success(message: 'Employee terminated');
+        return $this->success(message: translate('message.action_completed'));
     }
 
     public function reactivate(Request $request, int $id): JsonResponse
     {
-        return $this->success(message: 'Employee reactivated');
+        return $this->success(message: translate('message.action_completed'));
     }
 
     public function uploadAvatar(Request $request, int $id): JsonResponse
     {
-        return $this->success(message: 'Avatar uploaded');
+        return $this->success(message: translate('message.action_completed'));
     }
 
     public function removeAvatar(int $id): JsonResponse
     {
-        return $this->success(message: 'Avatar removed');
+        return $this->success(message: translate('message.action_completed'));
     }
 
     public function documents(int $id): JsonResponse
@@ -100,12 +100,12 @@ class EmployeeApiController extends ApiController
 
     public function storeDocument(Request $request, int $id): JsonResponse
     {
-        return $this->success(message: 'Document uploaded');
+        return $this->success(message: translate('message.action_completed'));
     }
 
     public function destroyDocument(int $id, int $documentId): JsonResponse
     {
-        return $this->success(message: 'Document deleted');
+        return $this->success(message: translate('message.deleted_successfully'));
     }
 
     public function contracts(int $id): JsonResponse
@@ -115,12 +115,12 @@ class EmployeeApiController extends ApiController
 
     public function storeContract(Request $request, int $id): JsonResponse
     {
-        return $this->success(message: 'Contract created');
+        return $this->success(message: translate('message.created_successfully'));
     }
 
     public function destroyContract(int $id, int $contractId): JsonResponse
     {
-        return $this->success(message: 'Contract deleted');
+        return $this->success(message: translate('message.deleted_successfully'));
     }
 
     public function history(int $id): JsonResponse
@@ -130,6 +130,6 @@ class EmployeeApiController extends ApiController
 
     public function import(Request $request): JsonResponse
     {
-        return $this->success(message: 'Import started');
+        return $this->success(message: translate('message.action_completed'));
     }
 }

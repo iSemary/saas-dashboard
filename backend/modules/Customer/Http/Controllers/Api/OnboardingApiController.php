@@ -21,6 +21,6 @@ class OnboardingApiController extends Controller
             'domain' => 'nullable|string|max:255',
         ]);
         $brand = $this->brandService->create($validated);
-        return $this->apiSuccess($brand, 'Brand created successfully', 201);
+        return $this->apiSuccess($brand, translate('message.created_successfully'), 201);
     }
 }

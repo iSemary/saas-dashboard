@@ -358,9 +358,9 @@ class TenantRepository implements TenantInterface
             // Re-run all migrations
             $this->migrateTenant($tenantId);
 
-            return ['success' => true, 'message' => 'Database re-migrated successfully'];
+            return ['success' => true, 'message' => translate('message.action_completed')];
         } catch (\Exception $e) {
-            return ['success' => false, 'message' => 'Migration failed: ' . $e->getMessage()];
+            return ['success' => false, 'message' => translate('message.operation_failed') . ': ' . $e->getMessage()];
         }
     }
 
@@ -371,9 +371,9 @@ class TenantRepository implements TenantInterface
     {
         try {
             $this->seedTenantDatabase($tenantId);
-            return ['success' => true, 'message' => 'Database seeded successfully'];
+            return ['success' => true, 'message' => translate('message.action_completed')];
         } catch (\Exception $e) {
-            return ['success' => false, 'message' => 'Seeding failed: ' . $e->getMessage()];
+            return ['success' => false, 'message' => translate('message.operation_failed') . ': ' . $e->getMessage()];
         }
     }
 
@@ -387,9 +387,9 @@ class TenantRepository implements TenantInterface
             $command = "tenants:artisan 'migrate:fresh --seed --database=tenant' --tenant={$tenantId}";
             Artisan::call($command);
 
-            return ['success' => true, 'message' => 'Database re-seeded successfully'];
+            return ['success' => true, 'message' => translate('message.action_completed')];
         } catch (\Exception $e) {
-            return ['success' => false, 'message' => 'Re-seeding failed: ' . $e->getMessage()];
+            return ['success' => false, 'message' => translate('message.operation_failed') . ': ' . $e->getMessage()];
         }
     }
 

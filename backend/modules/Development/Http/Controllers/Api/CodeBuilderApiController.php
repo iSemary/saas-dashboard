@@ -17,6 +17,6 @@ class CodeBuilderApiController extends Controller
             'module_type' => 'nullable|string|in:landlord,tenant',
         ]);
         // Placeholder — actual code generation logic would go here
-        return $this->apiSuccess($validated, 'Module built successfully');
+        return $this->apiSuccess($validated, translate('message.action_completed'));
     }
 }

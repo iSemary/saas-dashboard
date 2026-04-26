@@ -27,24 +27,24 @@ class TenantUserApiController extends Controller
     public function store(StoreUserRequest $request)
     {
         $user = $this->userService->create($request->validated());
-        return $this->apiSuccess($user, 'User created successfully', 201);
+        return $this->apiSuccess($user, translate('message.created_successfully'), 201);
     }
 
     public function update(UpdateUserRequest $request, $id)
     {
         $user = $this->userService->update($id, $request->validated());
-        return $this->apiSuccess($user, 'User updated successfully');
+        return $this->apiSuccess($user, translate('message.updated_successfully'));
     }
 
     public function destroy($id)
     {
         $this->userService->delete($id);
-        return $this->apiSuccess(null, 'User deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 
     public function assignRoles(AssignRolesRequest $request, $id)
     {
         $user = $this->userService->assignRoles($id, $request->role_ids);
-        return $this->apiSuccess($user, 'Roles assigned successfully');
+        return $this->apiSuccess($user, translate('message.action_completed'));
     }
 }

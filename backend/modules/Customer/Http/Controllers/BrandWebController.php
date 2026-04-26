@@ -90,13 +90,13 @@ class BrandWebController extends ApiController implements HasMiddleware
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed.',
+                'message' => translate('message.validation_failed'),
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create brand.',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -142,7 +142,7 @@ class BrandWebController extends ApiController implements HasMiddleware
             if (!$updated) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Brand not found.'
+                    'message' => translate('exception.brand_not_found')
                 ], 404);
             }
 
@@ -150,13 +150,13 @@ class BrandWebController extends ApiController implements HasMiddleware
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed.',
+                'message' => translate('message.validation_failed'),
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update brand.',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -173,7 +173,7 @@ class BrandWebController extends ApiController implements HasMiddleware
             if (!$deleted) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Brand not found.'
+                    'message' => translate('exception.brand_not_found')
                 ], 404);
             }
 
@@ -181,7 +181,7 @@ class BrandWebController extends ApiController implements HasMiddleware
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete brand.',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -198,7 +198,7 @@ class BrandWebController extends ApiController implements HasMiddleware
             if (!$restored) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Brand not found.'
+                    'message' => translate('exception.brand_not_found')
                 ], 404);
             }
 
@@ -206,7 +206,7 @@ class BrandWebController extends ApiController implements HasMiddleware
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to restore brand.',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }

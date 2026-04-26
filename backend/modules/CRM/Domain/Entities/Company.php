@@ -152,7 +152,7 @@ class Company extends Model
     {
         // Prevent circular reference
         if ($parentId === $this->id) {
-            throw new \InvalidArgumentException('Company cannot be its own parent');
+            throw new \InvalidArgumentException(translate('message.operation_failed'));
         }
 
         $this->update(['parent_id' => $parentId]);

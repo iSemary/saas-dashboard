@@ -18,7 +18,7 @@ class PosDashboardApiController extends Controller
         try {
             return $this->apiSuccess($this->service->getDashboardData());
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to retrieve dashboard data', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

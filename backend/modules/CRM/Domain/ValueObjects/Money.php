@@ -13,7 +13,7 @@ final readonly class Money
         private string $currency = 'USD'
     ) {
         if ($amount < 0) {
-            throw new InvalidArgumentException('Amount cannot be negative');
+            throw new InvalidArgumentException(translate('exception.money_negative'));
         }
     }
 
@@ -64,7 +64,7 @@ final readonly class Money
 
         $newAmount = $this->amount - $other->amount;
         if ($newAmount < 0) {
-            throw new InvalidArgumentException('Result cannot be negative');
+            throw new InvalidArgumentException(translate('exception.money_negative'));
         }
 
         return new self($newAmount, $this->currency);
@@ -73,7 +73,7 @@ final readonly class Money
     public function multiply(float $factor): self
     {
         if ($factor < 0) {
-            throw new InvalidArgumentException('Factor cannot be negative');
+            throw new InvalidArgumentException(translate('exception.money_negative'));
         }
 
         return new self($this->amount * $factor, $this->currency);

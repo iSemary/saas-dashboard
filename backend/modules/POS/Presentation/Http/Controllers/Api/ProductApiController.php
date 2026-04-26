@@ -27,7 +27,7 @@ class ProductApiController extends Controller
             $perPage = (int) $request->get('per_page', 15);
             return $this->apiPaginated($this->service->list($filters, $perPage));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to retrieve products', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -36,9 +36,9 @@ class ProductApiController extends Controller
         try {
             $data = CreateProductData::fromRequest($request);
             $product = $this->service->create($data, auth()->id());
-            return $this->apiSuccess($product->load(['category', 'subCategory', 'barcodes', 'tags']), 'Product created successfully', 201);
+            return $this->apiSuccess($product->load(['category', 'subCategory', 'barcodes', 'tags']), translate('message.created_successfully'), 201);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to create product', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -47,7 +47,7 @@ class ProductApiController extends Controller
         try {
             return $this->apiSuccess($this->service->findOrFail($id));
         } catch (\Throwable $e) {
-            return $this->apiError('Product not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
     }
 
@@ -56,9 +56,9 @@ class ProductApiController extends Controller
         try {
             $data = UpdateProductData::fromRequest($request);
             $product = $this->service->update($id, $data, auth()->id());
-            return $this->apiSuccess($product, 'Product updated successfully');
+            return $this->apiSuccess($product, translate('message.updated_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to update product', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -66,9 +66,9 @@ class ProductApiController extends Controller
     {
         try {
             $this->service->delete($id);
-            return $this->apiSuccess(null, 'Product deleted successfully');
+            return $this->apiSuccess(null, translate('message.deleted_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to delete product', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -84,11 +84,11 @@ class ProductApiController extends Controller
                 userId:    auth()->id(),
             );
             $stock = $this->service->getAvailableStock($id, $request->validated('branch_id'));
-            return $this->apiSuccess(['available_stock' => $stock], 'Stock updated successfully');
+            return $this->apiSuccess(['available_stock' => $stock], translate('message.updated_successfully'));
         } catch (\DomainException $e) {
             return $this->apiError($e->getMessage(), 422);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to update stock', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -99,7 +99,7 @@ class ProductApiController extends Controller
             $count = $this->service->bulkDelete($request->ids);
             return $this->apiSuccess(null, "{$count} products deleted successfully");
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to delete products', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -107,10 +107,10 @@ class ProductApiController extends Controller
     {
         try {
             $product = $this->service->findByBarcode($barcode);
-            if (!$product) return $this->apiError('Product not found for this barcode', 404);
+            if (!$product) return $this->apiError(translate('message.resource_not_found'), 404);
             return $this->apiSuccess($product->load(['category', 'barcodes']));
         } catch (\Throwable $e) {
-            return $this->apiError('Barcode search failed', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

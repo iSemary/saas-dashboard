@@ -36,7 +36,7 @@ class CrmEmailApiController extends Controller
                 $this->activities->paginate($filters, (int) $request->get('per_page', 15))
             );
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to retrieve emails', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -60,9 +60,9 @@ class CrmEmailApiController extends Controller
 
             $activity = $this->activities->create($data);
 
-            return $this->apiSuccess($activity->load(['creator', 'assignedUser']), 'Email logged', 201);
+            return $this->apiSuccess($activity->load(['creator', 'assignedUser']), translate('message.action_completed'), 201);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to log email', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -99,7 +99,7 @@ class CrmEmailApiController extends Controller
                 'activity' => $logged,
             ], 'Email sent and logged');
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to send email', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

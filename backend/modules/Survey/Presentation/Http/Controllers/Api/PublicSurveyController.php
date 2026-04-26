@@ -30,7 +30,7 @@ class PublicSurveyController extends ApiController
     {
         $share = $this->shareRepository->findByToken($token);
         if (!$share) {
-            return $this->respondNotFound('Survey not found');
+            return $this->respondNotFound(translate('message.resource_not_found'));
         }
 
         try {
@@ -41,7 +41,7 @@ class PublicSurveyController extends ApiController
 
         $survey = $share->survey;
         if (!$survey->isActive()) {
-            return $this->respondError('Survey is not active', 403);
+            return $this->respondError(translate('message.operation_failed'), 403);
         }
 
         return $this->respondWithArray([
@@ -54,7 +54,7 @@ class PublicSurveyController extends ApiController
     {
         $share = $this->shareRepository->findByToken($token);
         if (!$share) {
-            return $this->respondNotFound('Survey not found');
+            return $this->respondNotFound(translate('message.resource_not_found'));
         }
 
         $data = SubmitResponseData::fromArray([
@@ -97,11 +97,11 @@ class PublicSurveyController extends ApiController
     {
         $response = $this->responseRepository->findByToken($resumeToken);
         if (!$response || $response->survey->shares()->where('token', $token)->doesntExist()) {
-            return $this->respondNotFound('Response not found');
+            return $this->respondNotFound(translate('message.resource_not_found'));
         }
 
         if (!$response->canResume()) {
-            return $this->respondError('Response cannot be resumed', 403);
+            return $this->respondError(translate('message.operation_failed'), 403);
         }
 
         return $this->respondWithArray([

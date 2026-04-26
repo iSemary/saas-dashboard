@@ -58,7 +58,7 @@ class ContactApiController extends ApiController implements HasMiddleware
             $contact = $this->service->findOrFail($id);
             return $this->respondWithArray($contact->toArray());
         } catch (\Exception $e) {
-            return $this->respondNotFound('Contact not found');
+            return $this->respondNotFound(translate('message.resource_not_found'));
         }
     }
 
@@ -80,11 +80,11 @@ class ContactApiController extends ApiController implements HasMiddleware
             $this->service->delete($id);
 
             return response()->json([
-                'message' => 'Contact deleted successfully'
+                'message' => translate('message.deleted_successfully')
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to delete contact',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -106,7 +106,7 @@ class ContactApiController extends ApiController implements HasMiddleware
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to retrieve activity',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -127,7 +127,7 @@ class ContactApiController extends ApiController implements HasMiddleware
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to delete contacts',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }

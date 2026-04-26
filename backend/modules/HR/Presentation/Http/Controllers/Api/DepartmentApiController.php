@@ -49,7 +49,7 @@ class DepartmentApiController extends ApiController
             $data = CreateDepartmentData::fromRequest($request);
             $department = $this->createUseCase->execute($data);
             return $this->success(
-                message: 'Department created successfully',
+                message: translate('message.action_completed'),
                 data: $department->fresh(['parent', 'manager'])
             );
         } catch (\Exception $e) {
@@ -73,7 +73,7 @@ class DepartmentApiController extends ApiController
             $data = UpdateDepartmentData::fromRequest($request);
             $department = $this->updateUseCase->execute($id, $data);
             return $this->success(
-                message: 'Department updated successfully',
+                message: translate('message.action_completed'),
                 data: $department->fresh(['parent', 'manager'])
             );
         } catch (\Exception $e) {
@@ -85,7 +85,7 @@ class DepartmentApiController extends ApiController
     {
         try {
             $this->deleteUseCase->execute($id);
-            return $this->success(message: 'Department deleted successfully');
+            return $this->success(message: translate('message.action_completed'));
         } catch (\Exception $e) {
             return $this->error(message: $e->getMessage(), code: 422);
         }

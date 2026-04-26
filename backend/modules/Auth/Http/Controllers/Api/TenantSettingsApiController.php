@@ -22,6 +22,6 @@ class TenantSettingsApiController extends Controller
     public function update(UpdateTenantSettingsRequest $request)
     {
         $this->settingsService->update($request->settings);
-        return $this->apiSuccess(null, 'Settings updated successfully');
+        return $this->apiSuccess(null, translate('message.updated_successfully'));
     }
 }

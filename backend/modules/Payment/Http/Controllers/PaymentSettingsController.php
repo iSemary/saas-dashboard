@@ -22,6 +22,6 @@ class PaymentSettingsController extends Controller
     public function testWebhook(Request $request)
     {
         // Implementation for testing webhook
-        return response()->json(['success' => true, 'message' => 'Webhook test successful']);
+        return response()->json(['success' => true, 'message' => translate('message.action_completed')]);
     }
 }

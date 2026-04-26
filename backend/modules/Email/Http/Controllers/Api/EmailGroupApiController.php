@@ -28,19 +28,19 @@ class EmailGroupApiController extends Controller
     public function store(StoreEmailGroupRequest $request)
     {
         $data = CreateEmailGroupData::fromRequest($request);
-        return $this->apiSuccess($this->service->create($data), 'Group created successfully', 201);
+        return $this->apiSuccess($this->service->create($data), translate('message.created_successfully'), 201);
     }
 
     public function update(UpdateEmailGroupRequest $request, $id)
     {
         $data = UpdateEmailGroupData::fromRequest($request);
         $this->service->update($id, $data);
-        return $this->apiSuccess($this->service->findOrFail($id), 'Group updated successfully');
+        return $this->apiSuccess($this->service->findOrFail($id), translate('message.updated_successfully'));
     }
 
     public function destroy($id)
     {
         $this->service->delete($id);
-        return $this->apiSuccess(null, 'Group deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 }

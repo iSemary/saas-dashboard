@@ -21,7 +21,7 @@ class CrmPipelineStageApiController extends Controller
         try {
             return $this->apiSuccess($this->stages->getOrdered());
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to retrieve stages', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -38,9 +38,9 @@ class CrmPipelineStageApiController extends Controller
             $data = $request->all();
             $data['is_default'] = $request->boolean('is_default', false);
             $stage = $this->stages->create($data);
-            return $this->apiSuccess($stage, 'Stage created', 201);
+            return $this->apiSuccess($stage, translate('message.created_successfully'), 201);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to create stage', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -49,7 +49,7 @@ class CrmPipelineStageApiController extends Controller
         try {
             return $this->apiSuccess($this->stages->findOrFail($id));
         } catch (\Throwable $e) {
-            return $this->apiError('Stage not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
     }
 
@@ -57,9 +57,9 @@ class CrmPipelineStageApiController extends Controller
     {
         try {
             $stage = $this->stages->update($id, $request->all());
-            return $this->apiSuccess($stage, 'Stage updated');
+            return $this->apiSuccess($stage, translate('message.updated_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to update stage', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -67,9 +67,9 @@ class CrmPipelineStageApiController extends Controller
     {
         try {
             $this->stages->delete($id);
-            return $this->apiSuccess(null, 'Stage deleted');
+            return $this->apiSuccess(null, translate('message.deleted_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to delete stage', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -80,9 +80,9 @@ class CrmPipelineStageApiController extends Controller
             foreach ($request->input('stages') as $stageData) {
                 $this->stages->update($stageData['id'], ['order' => $stageData['order']]);
             }
-            return $this->apiSuccess(null, 'Stages reordered');
+            return $this->apiSuccess(null, translate('message.action_completed'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to reorder stages', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

@@ -26,7 +26,7 @@ class CrmNoteApiController extends Controller
             }
             return $this->apiPaginated($this->notes->paginate($filters, (int) $request->get('per_page', 15)));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to retrieve notes', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -41,9 +41,9 @@ class CrmNoteApiController extends Controller
             $data = $request->all();
             $data['created_by'] = auth()->id();
             $note = $this->notes->create($data);
-            return $this->apiSuccess($note->load('creator'), 'Note created', 201);
+            return $this->apiSuccess($note->load('creator'), translate('message.created_successfully'), 201);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to create note', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -52,7 +52,7 @@ class CrmNoteApiController extends Controller
         try {
             return $this->apiSuccess($this->notes->findOrFail($id)->load(['creator', 'related']));
         } catch (\Throwable $e) {
-            return $this->apiError('Note not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
     }
 
@@ -61,9 +61,9 @@ class CrmNoteApiController extends Controller
         try {
             $request->validate(['content' => 'required|string']);
             $note = $this->notes->update($id, $request->only(['content']));
-            return $this->apiSuccess($note->load('creator'), 'Note updated');
+            return $this->apiSuccess($note->load('creator'), translate('message.updated_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to update note', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -71,9 +71,9 @@ class CrmNoteApiController extends Controller
     {
         try {
             $this->notes->delete($id);
-            return $this->apiSuccess(null, 'Note deleted');
+            return $this->apiSuccess(null, translate('message.deleted_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to delete note', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -82,7 +82,7 @@ class CrmNoteApiController extends Controller
         try {
             return $this->apiSuccess($this->notes->getForRelated($type, $id));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to get notes', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

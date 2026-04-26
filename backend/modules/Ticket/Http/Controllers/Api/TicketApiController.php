@@ -28,19 +28,19 @@ class TicketApiController extends Controller
     public function store(StoreTicketRequest $request)
     {
         $data = CreateTicketData::fromRequest($request);
-        return $this->apiSuccess($this->service->create($data), 'Ticket created successfully', 201);
+        return $this->apiSuccess($this->service->create($data), translate('message.created_successfully'), 201);
     }
 
     public function update(UpdateTicketRequest $request, $id)
     {
         $data = UpdateTicketData::fromRequest($request);
         $this->service->update($id, $data);
-        return $this->apiSuccess($this->service->findOrFail($id), 'Ticket updated successfully');
+        return $this->apiSuccess($this->service->findOrFail($id), translate('message.updated_successfully'));
     }
 
     public function destroy($id)
     {
         $this->service->delete($id);
-        return $this->apiSuccess(null, 'Ticket deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 }

@@ -21,7 +21,7 @@ class ApproveLeaveUseCase
         $leaveRequest = $this->leaveRequestRepository->findOrFail($data->leaveRequestId);
 
         if ($leaveRequest->status !== LeaveStatus::PENDING->value) {
-            throw new \RuntimeException('Only pending leave requests can be approved');
+            throw new \RuntimeException(translate('message.operation_failed'));
         }
 
         // Deduct from balance

@@ -32,7 +32,7 @@ class AssetApiController extends ApiController
     public function storeCategory(Request $request): JsonResponse
     {
         $category = $this->categoryRepository->create($request->only(['name']));
-        return $this->success(data: $category, message: 'Asset category created successfully');
+        return $this->success(data: $category, message: translate('message.action_completed'));
     }
 
     public function assets(Request $request): JsonResponse
@@ -43,7 +43,7 @@ class AssetApiController extends ApiController
     public function storeAsset(Request $request): JsonResponse
     {
         $asset = $this->assetRepository->create($request->only(['asset_tag', 'category_id', 'name', 'brand', 'model', 'serial_number', 'purchase_date', 'purchase_cost', 'status']));
-        return $this->success(data: $asset, message: 'Asset created successfully');
+        return $this->success(data: $asset, message: translate('message.action_completed'));
     }
 
     public function assignments(Request $request): JsonResponse
@@ -54,6 +54,6 @@ class AssetApiController extends ApiController
     public function storeAssignment(Request $request): JsonResponse
     {
         $assignment = $this->assignAssetUseCase->execute($request->only(['asset_id', 'employee_id', 'assigned_at', 'notes']));
-        return $this->success(data: $assignment, message: 'Asset assignment created successfully');
+        return $this->success(data: $assignment, message: translate('message.action_completed'));
     }
 }

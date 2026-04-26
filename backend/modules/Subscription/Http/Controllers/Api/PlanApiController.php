@@ -28,19 +28,19 @@ class PlanApiController extends Controller
     public function store(StorePlanRequest $request)
     {
         $data = CreatePlanData::fromRequest($request);
-        return $this->apiSuccess($this->service->create($data), 'Plan created successfully', 201);
+        return $this->apiSuccess($this->service->create($data), translate('message.created_successfully'), 201);
     }
 
     public function update(UpdatePlanRequest $request, $id)
     {
         $data = UpdatePlanData::fromRequest($request);
         $this->service->update($id, $data);
-        return $this->apiSuccess($this->service->findOrFail($id), 'Plan updated successfully');
+        return $this->apiSuccess($this->service->findOrFail($id), translate('message.updated_successfully'));
     }
 
     public function destroy($id)
     {
         $this->service->delete($id);
-        return $this->apiSuccess(null, 'Plan deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 }

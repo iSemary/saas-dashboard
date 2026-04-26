@@ -30,7 +30,7 @@ class WorkScheduleApiController extends ApiController
     public function store(Request $request): JsonResponse
     {
         $schedule = $this->repository->create($request->validated());
-        return $this->success(data: $schedule, message: 'Work schedule created successfully');
+        return $this->success(data: $schedule, message: translate('message.action_completed'));
     }
 
     public function show(int $id): JsonResponse
@@ -42,13 +42,13 @@ class WorkScheduleApiController extends ApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $schedule = $this->repository->update($id, $request->validated());
-        return $this->success(data: $schedule, message: 'Work schedule updated successfully');
+        return $this->success(data: $schedule, message: translate('message.action_completed'));
     }
 
     public function destroy(int $id): JsonResponse
     {
         $this->repository->delete($id);
-        return $this->success(message: 'Work schedule deleted successfully');
+        return $this->success(message: translate('message.action_completed'));
     }
 
     public function current(int $employeeId): JsonResponse

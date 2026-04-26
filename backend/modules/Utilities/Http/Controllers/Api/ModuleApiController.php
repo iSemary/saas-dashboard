@@ -46,7 +46,7 @@ class ModuleApiController extends Controller
             'status' => 'nullable|in:active,inactive',
         ]);
 
-        return $this->apiSuccess($this->service->create($data), 'Module created successfully');
+        return $this->apiSuccess($this->service->create($data), translate('message.created_successfully'));
     }
 
     public function update(Request $request, int $id)
@@ -66,7 +66,7 @@ class ModuleApiController extends Controller
             'status' => 'nullable|in:active,inactive',
         ]);
 
-        return $this->apiSuccess($this->service->update($id, $data), 'Module updated successfully');
+        return $this->apiSuccess($this->service->update($id, $data), translate('message.updated_successfully'));
     }
 
     public function toggle(Request $request, $id)
@@ -74,6 +74,6 @@ class ModuleApiController extends Controller
         $module = $this->service->findOrFail($id);
         $module->status = $module->status === 'active' ? 'inactive' : 'active';
         $module->save();
-        return $this->apiSuccess($module, 'Module toggled successfully');
+        return $this->apiSuccess($module, translate('message.action_completed'));
     }
 }

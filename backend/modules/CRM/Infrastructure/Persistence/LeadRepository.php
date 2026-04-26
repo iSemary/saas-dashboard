@@ -134,4 +134,11 @@ class LeadRepository implements LeadRepositoryInterface
             'this_week' => $this->model->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count(),
         ];
     }
+
+    public function countByMonth(int $year, int $month): int
+    {
+        return $this->model->whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->count();
+    }
 }

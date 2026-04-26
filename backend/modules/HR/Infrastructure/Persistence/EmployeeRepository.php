@@ -135,4 +135,11 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         }
         return $tree;
     }
+
+    public function count(array $filters = []): int
+    {
+        return $this->model->query()
+            ->when(!empty($filters['employment_status']), fn($q) => $q->where('employment_status', $filters['employment_status']))
+            ->count();
+    }
 }

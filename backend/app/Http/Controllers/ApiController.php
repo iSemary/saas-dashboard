@@ -61,7 +61,7 @@ class ApiController extends Controller {
      * @return JsonResponse A JsonResponse object is being returned.
      */
     public function returnUnAuthenticated(): JsonResponse {
-        return $this->return(403, "Unauthenticated");
+        return $this->return(403, translate('auth.unauthenticated'));
     }
 
     /**
@@ -70,7 +70,7 @@ class ApiController extends Controller {
      * @return JsonResponse A JsonResponse object is being returned.
      */
     public function returnUnAuthorized(): JsonResponse {
-        return $this->return(401, "Unauthorized");
+        return $this->return(401, translate('auth.unauthorized'));
     }
 
     /**
@@ -83,7 +83,10 @@ class ApiController extends Controller {
     /**
      * Return a 201 created response
      */
-    public function respondCreated(array $data, string $message = 'Created successfully'): JsonResponse {
+    public function respondCreated(array $data, string $message = ''): JsonResponse {
+        if ($message === '') {
+            $message = translate('message.created_successfully');
+        }
         return $this->return(201, $message, $data);
     }
 
@@ -97,7 +100,10 @@ class ApiController extends Controller {
     /**
      * Return a 404 not found response
      */
-    public function respondNotFound(string $message = 'Resource not found'): JsonResponse {
+    public function respondNotFound(string $message = ''): JsonResponse {
+        if ($message === '') {
+            $message = translate('message.resource_not_found');
+        }
         return $this->return(404, $message);
     }
 

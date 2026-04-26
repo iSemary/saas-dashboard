@@ -16,7 +16,7 @@ class StripeGateway extends AbstractPaymentGateway
 {
     protected string $name = 'stripe';
     protected string $version = '2023-10-16';
-    
+
     protected array $supportedFeatures = [
         'payments',
         'refunds',
@@ -63,7 +63,7 @@ class StripeGateway extends AbstractPaymentGateway
 
     protected function getAuthHeaders(): array
     {
-        $apiKey = $this->testMode 
+        $apiKey = $this->testMode
             ? $this->config['test_secret_key'] ?? ''
             : $this->config['live_secret_key'] ?? '';
 
@@ -160,7 +160,7 @@ class StripeGateway extends AbstractPaymentGateway
         if (isset($response['charges']['data'][0])) {
             $charge = $response['charges']['data'][0];
             $paymentResponse->setAuthorizationCode($charge['authorization_code'] ?? null);
-            
+
             if (isset($charge['outcome'])) {
                 $paymentResponse->setAvsResult($charge['outcome']['seller_message'] ?? null)
                                ->setCvvResult($charge['outcome']['type'] ?? null);
@@ -425,7 +425,7 @@ class StripeGateway extends AbstractPaymentGateway
     {
         try {
             $payload = $request->getParsedPayload();
-            
+
             if (!$payload) {
                 return new WebhookResponse(false, 400);
             }
@@ -489,6 +489,130 @@ class StripeGateway extends AbstractPaymentGateway
         return $this->makeHttpRequest('GET', "payment_intents/{$transactionId}");
     }
 
+    /**
+     * Create a SetupIntent for adding a payment method.
+     */
+    public function createSetupIntent(array $options): array
+    {
+        $data = [
+            'usage' => 'off_session',
+        ];
+
+        if (isset($options['customer_id'])) {
+            $data['customer'] = $options['customer_id'];
+        }
+
+        if (isset($options['metadata'])) {
+            $data['metadata'] = $options['metadata'];
+        }
+
+        return $this->makeHttpRequest('POST', 'setup_intents', $data);
+    }
+
+    /**
+     * Create a Checkout Session for subscription payment.
+     */
+    public function createCheckoutSession(array $options): array
+    {
+        $data = [
+            'mode' => 'subscription',
+            'success_url' => $options['success_url'] ?? config('app.url') . '/billing/checkout/success?session_id={CHECKOUT_SESSION_ID}',
+            'cancel_url' => $options['cancel_url'] ?? config('app.url') . '/billing/checkout/cancel',
+            'line_items' => [
+                [
+                    'price_data' => [
+                        'currency' => strtolower($options['currency'] ?? 'usd'),
+                        'product_data' => [
+                            'name' => $options['description'] ?? 'Subscription',
+                        ],
+                        'unit_amount' => $this->convertAmountToMinorUnits($options['amount'] ?? 0, $options['currency'] ?? 'usd'),
+                        'recurring' => [
+                            'interval' => $options['interval'] ?? 'month',
+                        ],
+                    ],
+                    'quantity' => 1,
+                ],
+            ],
+        ];
+
+        if (isset($options['customer_id'])) {
+            $data['customer'] = $options['customer_id'];
+        } else {
+            $data['customer_email'] = $options['email'] ?? null;
+        }
+
+        if (isset($options['metadata'])) {
+            $data['metadata'] = $options['metadata'];
+        }
+
+        if (isset($options['subscription_data'])) {
+            $data['subscription_data'] = $options['subscription_data'];
+        }
+
+        return $this->makeHttpRequest('POST', 'checkout/sessions', $data);
+    }
+
+    /**
+     * Create a subscription in Stripe.
+     */
+    public function createSubscription(array $options): array
+    {
+        $data = [
+            'customer' => $options['customer_id'],
+            'items' => [
+                [
+                    'price' => $options['price_id'],
+                    'quantity' => $options['quantity'] ?? 1,
+                ],
+            ],
+        ];
+
+        if (isset($options['trial_end'])) {
+            $data['trial_end'] = $options['trial_end'];
+        }
+
+        if (isset($options['default_payment_method'])) {
+            $data['default_payment_method'] = $options['default_payment_method'];
+        }
+
+        if (isset($options['metadata'])) {
+            $data['metadata'] = $options['metadata'];
+        }
+
+        return $this->makeHttpRequest('POST', 'subscriptions', $data);
+    }
+
+    /**
+     * Cancel a subscription in Stripe.
+     */
+    public function cancelSubscription(string $subscriptionId, bool $atPeriodEnd = true): array
+    {
+        if ($atPeriodEnd) {
+            return $this->makeHttpRequest('POST', "subscriptions/{$subscriptionId}", [
+                'cancel_at_period_end' => true,
+            ]);
+        }
+
+        return $this->makeHttpRequest('DELETE', "subscriptions/{$subscriptionId}");
+    }
+
+    /**
+     * Retrieve a payment method from Stripe.
+     */
+    public function getPaymentMethod(string $paymentMethodId): array
+    {
+        $response = $this->makeHttpRequest('GET', "payment_methods/{$paymentMethodId}");
+
+        return [
+            'id' => $response['id'],
+            'type' => $response['type'],
+            'last_four' => $response['card']['last4'] ?? null,
+            'brand' => $response['card']['brand'] ?? null,
+            'exp_month' => $response['card']['exp_month'] ?? null,
+            'exp_year' => $response['card']['exp_year'] ?? null,
+        ];
+    }
+
     public function getConfigurationRequirements(): array
     {
         return [
@@ -528,22 +652,22 @@ class StripeGateway extends AbstractPaymentGateway
     protected function convertAmountToMinorUnits(float $amount, string $currency): int
     {
         $zeroDecimalCurrencies = ['BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'UGX', 'VND', 'VUV', 'XAF', 'XOF', 'XPF'];
-        
+
         if (in_array(strtoupper($currency), $zeroDecimalCurrencies)) {
             return (int) $amount;
         }
-        
+
         return (int) ($amount * 100);
     }
 
     protected function convertAmountFromMinorUnits(int $amount, string $currency): float
     {
         $zeroDecimalCurrencies = ['BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'UGX', 'VND', 'VUV', 'XAF', 'XOF', 'XPF'];
-        
+
         if (in_array(strtoupper($currency), $zeroDecimalCurrencies)) {
             return (float) $amount;
         }
-        
+
         return $amount / 100;
     }
 
@@ -612,7 +736,7 @@ class StripeGateway extends AbstractPaymentGateway
     {
         try {
             $bt = $this->makeHttpRequest('GET', "balance_transactions/{$balanceTransactionId}");
-            
+
             $fees = [];
             foreach ($bt['fee_details'] ?? [] as $fee) {
                 $fees[] = [
@@ -622,7 +746,7 @@ class StripeGateway extends AbstractPaymentGateway
                     'description' => $fee['description'] ?? null,
                 ];
             }
-            
+
             return $fees;
         } catch (\Exception $e) {
             return [];

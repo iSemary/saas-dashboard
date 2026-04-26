@@ -90,4 +90,12 @@ class AttendanceRepository implements AttendanceRepositoryInterface
     {
         return Attendance::whereIn('id', $ids)->delete() > 0;
     }
+
+    public function getCountByStatus(): \Illuminate\Support\Collection
+    {
+        return Attendance::query()
+            ->selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->get();
+    }
 }

@@ -24,7 +24,7 @@ class ApplyToJobUseCase
         $jobOpening = $this->jobOpeningRepository->findOrFail($data['job_opening_id']);
         
         if (!$jobOpening->isPublished()) {
-            throw new \RuntimeException('Job opening is not available');
+            throw new \RuntimeException(translate('message.operation_failed'));
         }
 
         // Create or find candidate
@@ -50,7 +50,7 @@ class ApplyToJobUseCase
             ->findByCandidateAndJobOpening($candidate->id, $jobOpening->id);
         
         if ($existingApplication) {
-            throw new \RuntimeException('You have already applied for this position');
+            throw new \RuntimeException(translate('message.operation_failed'));
         }
 
         // Get default pipeline stage

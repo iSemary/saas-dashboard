@@ -21,7 +21,7 @@ class OfferPriceApiController extends Controller
             $filters = $request->only(['product_id', 'branch_id']);
             return $this->apiPaginated($this->service->list($filters, (int) $request->get('per_page', 15)));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to retrieve offer prices', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -29,9 +29,9 @@ class OfferPriceApiController extends Controller
     {
         try {
             $offer = $this->service->create($request->validated(), auth()->id());
-            return $this->apiSuccess($offer->load('product'), 'Offer price created successfully', 201);
+            return $this->apiSuccess($offer->load('product'), translate('message.created_successfully'), 201);
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to create offer price', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -40,7 +40,7 @@ class OfferPriceApiController extends Controller
         try {
             return $this->apiSuccess($this->service->findOrFail($id));
         } catch (\Throwable $e) {
-            return $this->apiError('Offer price not found', 404);
+            return $this->apiError(translate('message.resource_not_found'), 404);
         }
     }
 
@@ -53,9 +53,9 @@ class OfferPriceApiController extends Controller
                 'reduce_stock'=> 'boolean',
             ]);
             $offer = $this->service->update($id, $request->validated());
-            return $this->apiSuccess($offer, 'Offer price updated successfully');
+            return $this->apiSuccess($offer, translate('message.updated_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to update offer price', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 
@@ -63,9 +63,9 @@ class OfferPriceApiController extends Controller
     {
         try {
             $this->service->delete($id);
-            return $this->apiSuccess(null, 'Offer price deleted successfully');
+            return $this->apiSuccess(null, translate('message.deleted_successfully'));
         } catch (\Throwable $e) {
-            return $this->apiError('Failed to delete offer price', 500, $e->getMessage());
+            return $this->apiError(translate('message.operation_failed'), 500, $e->getMessage());
         }
     }
 }

@@ -42,7 +42,7 @@ class BrandController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to retrieve brands.',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -68,19 +68,19 @@ class BrandController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Brand created successfully.',
+                'message' => translate('message.action_completed'),
                 'data' => $brand
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed.',
+                'message' => translate('message.validation_failed'),
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create brand.',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -97,7 +97,7 @@ class BrandController extends Controller
             if (!$brand) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Brand not found.'
+                    'message' => translate('exception.brand_not_found')
                 ], 404);
             }
 
@@ -108,7 +108,7 @@ class BrandController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to retrieve brand.',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -125,7 +125,7 @@ class BrandController extends Controller
             if (!$brand) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Brand not found.'
+                    'message' => translate('exception.brand_not_found')
                 ], 404);
             }
 
@@ -136,7 +136,7 @@ class BrandController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to retrieve brand.',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -167,7 +167,7 @@ class BrandController extends Controller
             if (!$updated) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Brand not found.'
+                    'message' => translate('exception.brand_not_found')
                 ], 404);
             }
 
@@ -175,19 +175,19 @@ class BrandController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Brand updated successfully.',
+                'message' => translate('message.action_completed'),
                 'data' => $brand
             ]);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed.',
+                'message' => translate('message.validation_failed'),
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update brand.',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -204,18 +204,18 @@ class BrandController extends Controller
             if (!$deleted) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Brand not found.'
+                    'message' => translate('exception.brand_not_found')
                 ], 404);
             }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Brand deleted successfully.'
+                'message' => translate('message.action_completed')
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete brand.',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -232,18 +232,18 @@ class BrandController extends Controller
             if (!$restored) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Brand not found.'
+                    'message' => translate('exception.brand_not_found')
                 ], 404);
             }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Brand restored successfully.'
+                'message' => translate('message.action_completed')
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to restore brand.',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -273,7 +273,7 @@ class BrandController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to retrieve tenant brands.',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -290,7 +290,7 @@ class BrandController extends Controller
             if (empty($query)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Search query is required.'
+                    'message' => translate('message.validation_failed')
                 ], 400);
             }
 
@@ -303,7 +303,7 @@ class BrandController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to search brands.',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -324,7 +324,7 @@ class BrandController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to retrieve brand statistics.',
+                'message' => translate('message.operation_failed'),
                 'error' => $e->getMessage()
             ], 500);
         }

@@ -24,7 +24,7 @@ class CheckInUseCase
         // Check if already checked in today
         $existing = $this->attendanceRepository->getTodayAttendance($data->employeeId);
         if ($existing && $existing->check_in) {
-            throw new \RuntimeException('Already checked in for today');
+            throw new \RuntimeException(translate('message.operation_failed'));
         }
 
         // Get employee's current schedule

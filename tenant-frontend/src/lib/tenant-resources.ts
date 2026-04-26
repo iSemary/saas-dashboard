@@ -263,3 +263,175 @@ export const getDashboardStats = () => api.get(`${T}/dashboard/stats`).then((r) 
 export const setup2fa = () => api.post(`${T}/2fa/setup`).then((r) => r.data?.data ?? r.data);
 export const confirm2fa = (code: string, secret: string) => api.post(`${T}/2fa/confirm`, { code, secret });
 export const disable2fa = () => api.post(`${T}/2fa/disable`);
+
+// ─── Project Management Module ──────────────────────────────────────────────
+const PM = `${T}/project-management`;
+
+export const getProjectManagementData = () => api.get(`${T}/modules/project-management`).then((r) => r.data?.data ?? r.data);
+export const getPmDashboard = () => api.get(`${PM}/dashboard`).then((r) => r.data?.data ?? r.data);
+
+export const listPmWorkspaces = (params?: TableParams) => api.get(`${PM}/workspaces${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const createPmWorkspace = (p: Record<string, unknown>) => api.post(`${PM}/workspaces`, p);
+export const getPmWorkspace = (id: string) => api.get(`${PM}/workspaces/${id}`).then((r) => r.data?.data ?? r.data);
+export const updatePmWorkspace = (id: string, p: Record<string, unknown>) => api.put(`${PM}/workspaces/${id}`, p);
+export const deletePmWorkspace = (id: string) => api.delete(`${PM}/workspaces/${id}`);
+
+export const listPmProjects = (params?: TableParams) => api.get(`${PM}/projects${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const getPmProject = (id: string) => api.get(`${PM}/projects/${id}`).then((r) => r.data?.data ?? r.data);
+export const createPmProject = (p: Record<string, unknown>) => api.post(`${PM}/projects`, p);
+export const updatePmProject = (id: string, p: Record<string, unknown>) => api.put(`${PM}/projects/${id}`, p);
+export const deletePmProject = (id: string) => api.delete(`${PM}/projects/${id}`);
+export const archivePmProject = (id: string) => api.post(`${PM}/projects/${id}/archive`);
+export const pausePmProject = (id: string) => api.post(`${PM}/projects/${id}/pause`);
+export const completePmProject = (id: string) => api.post(`${PM}/projects/${id}/complete`);
+export const recalculatePmProjectHealth = (id: string) => api.post(`${PM}/projects/${id}/health`);
+export const createPmProjectFromTemplate = (id: string, p?: Record<string, unknown>) => api.post(`${PM}/projects/${id}/create-from-template`, p ?? {});
+
+export const listPmMilestones = (projectId: string, params?: TableParams) => api.get(`${PM}/projects/${projectId}/milestones${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const createPmMilestone = (projectId: string, p: Record<string, unknown>) => api.post(`${PM}/projects/${projectId}/milestones`, p);
+export const getPmMilestone = (id: string) => api.get(`${PM}/milestones/${id}`).then((r) => r.data?.data ?? r.data);
+export const updatePmMilestone = (id: string, p: Record<string, unknown>) => api.put(`${PM}/milestones/${id}`, p);
+export const deletePmMilestone = (id: string) => api.delete(`${PM}/milestones/${id}`);
+
+export const listPmTasks = (projectId: string, params?: TableParams) => api.get(`${PM}/projects/${projectId}/tasks${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const getPmTask = (id: string) => api.get(`${PM}/tasks/${id}`).then((r) => r.data?.data ?? r.data);
+export const createPmTask = (projectId: string, p: Record<string, unknown>) => api.post(`${PM}/projects/${projectId}/tasks`, p);
+export const updatePmTask = (id: string, p: Record<string, unknown>) => api.put(`${PM}/tasks/${id}`, p);
+export const deletePmTask = (id: string) => api.delete(`${PM}/tasks/${id}`);
+export const movePmTask = (id: string, p: { board_column_id: string; position?: number }) => api.post(`${PM}/tasks/${id}/move`, p);
+export const reorderPmTask = (id: string, p: { position: number }) => api.post(`${PM}/tasks/${id}/reorder`, p);
+export const attachPmTaskLabels = (id: string, labelIds: string[]) => api.post(`${PM}/tasks/${id}/labels`, { label_ids: labelIds });
+export const detachPmTaskLabels = (id: string, labelIds: string[]) => api.delete(`${PM}/tasks/${id}/labels`, { data: { label_ids: labelIds } });
+
+export const getPmBoard = (projectId: string) => api.get(`${PM}/projects/${projectId}/board`).then((r) => r.data?.data ?? r.data);
+export const configurePmBoard = (projectId: string, p: Record<string, unknown>) => api.put(`${PM}/projects/${projectId}/board/configure`, p);
+
+export const listPmBoardColumns = (projectId: string) => api.get(`${PM}/projects/${projectId}/board-columns`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const createPmBoardColumn = (projectId: string, p: Record<string, unknown>) => api.post(`${PM}/projects/${projectId}/board-columns`, p);
+export const updatePmBoardColumn = (id: string, p: Record<string, unknown>) => api.put(`${PM}/board-columns/${id}`, p);
+export const deletePmBoardColumn = (id: string) => api.delete(`${PM}/board-columns/${id}`);
+export const reorderPmBoardColumns = (projectId: string, columns: { id: string; position: number }[]) => api.post(`${PM}/projects/${projectId}/board-columns/reorder`, { columns });
+
+export const listPmBoardSwimlanes = (projectId: string) => api.get(`${PM}/projects/${projectId}/board-swimlanes`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const createPmBoardSwimlane = (projectId: string, p: Record<string, unknown>) => api.post(`${PM}/projects/${projectId}/board-swimlanes`, p);
+export const updatePmBoardSwimlane = (id: string, p: Record<string, unknown>) => api.put(`${PM}/board-swimlanes/${id}`, p);
+export const deletePmBoardSwimlane = (id: string) => api.delete(`${PM}/board-swimlanes/${id}`);
+export const reorderPmBoardSwimlanes = (projectId: string, swimlanes: { id: string; position: number }[]) => api.post(`${PM}/projects/${projectId}/board-swimlanes/reorder`, { swimlanes });
+
+export const listPmLabels = (projectId: string) => api.get(`${PM}/projects/${projectId}/labels`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const createPmLabel = (projectId: string, p: Record<string, unknown>) => api.post(`${PM}/projects/${projectId}/labels`, p);
+export const updatePmLabel = (id: string, p: Record<string, unknown>) => api.put(`${PM}/labels/${id}`, p);
+export const deletePmLabel = (id: string) => api.delete(`${PM}/labels/${id}`);
+
+export const listPmSprintCycles = (projectId: string, params?: TableParams) => api.get(`${PM}/projects/${projectId}/sprint-cycles${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const createPmSprintCycle = (projectId: string, p: Record<string, unknown>) => api.post(`${PM}/projects/${projectId}/sprint-cycles`, p);
+
+export const listPmProjectMembers = (projectId: string) => api.get(`${PM}/projects/${projectId}/members`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const addPmProjectMember = (projectId: string, p: Record<string, unknown>) => api.post(`${PM}/projects/${projectId}/members`, p);
+export const removePmProjectMember = (id: string) => api.delete(`${PM}/members/${id}`);
+
+export const listPmTemplates = (params?: TableParams) => api.get(`${PM}/templates${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const getPmTemplate = (id: string) => api.get(`${PM}/templates/${id}`).then((r) => r.data?.data ?? r.data);
+export const createPmTemplate = (p: Record<string, unknown>) => api.post(`${PM}/templates`, p);
+export const updatePmTemplate = (id: string, p: Record<string, unknown>) => api.put(`${PM}/templates/${id}`, p);
+export const deletePmTemplate = (id: string) => api.delete(`${PM}/templates/${id}`);
+
+export const listPmRisks = (projectId: string, params?: TableParams) => api.get(`${PM}/projects/${projectId}/risks${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const createPmRisk = (projectId: string, p: Record<string, unknown>) => api.post(`${PM}/projects/${projectId}/risks`, p);
+
+export const listPmIssues = (projectId: string, params?: TableParams) => api.get(`${PM}/projects/${projectId}/issues${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const createPmIssue = (projectId: string, p: Record<string, unknown>) => api.post(`${PM}/projects/${projectId}/issues`, p);
+export const promotePmIssueToTask = (id: string) => api.post(`${PM}/issues/${id}/promote-to-task`);
+
+export const listPmWebhooks = (projectId: string) => api.get(`${PM}/projects/${projectId}/webhooks`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const createPmWebhook = (projectId: string, p: Record<string, unknown>) => api.post(`${PM}/projects/${projectId}/webhooks`, p);
+export const togglePmWebhook = (id: string) => api.post(`${PM}/webhooks/${id}/toggle`);
+export const regeneratePmWebhookSecret = (id: string) => api.post(`${PM}/webhooks/${id}/regenerate-secret`).then((r) => r.data);
+
+export const getPmReportThroughput = (params?: Record<string, unknown>) => api.get(`${PM}/reports/throughput`, { params }).then((r) => r.data?.data ?? r.data);
+export const getPmReportOverdue = (params?: Record<string, unknown>) => api.get(`${PM}/reports/overdue`, { params }).then((r) => r.data?.data ?? r.data);
+export const getPmReportWorkload = () => api.get(`${PM}/reports/workload`).then((r) => r.data?.data ?? r.data);
+export const getPmReportHealth = () => api.get(`${PM}/reports/health`).then((r) => r.data?.data ?? r.data);
+
+// ─── Time Management Module ──────────────────────────────────────────────────
+const TM = `${T}/time-management`;
+
+export const getTimeManagementData = () => api.get(`${T}/modules/time-management`).then((r) => r.data?.data ?? r.data);
+export const getTmDashboard = () => api.get(`${TM}/dashboard`).then((r) => r.data?.data ?? r.data);
+
+export const listTmWorkCalendars = (params?: TableParams) => api.get(`${TM}/work-calendars${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const createTmWorkCalendar = (p: Record<string, unknown>) => api.post(`${TM}/work-calendars`, p);
+export const getTmWorkCalendar = (id: string) => api.get(`${TM}/work-calendars/${id}`).then((r) => r.data?.data ?? r.data);
+export const updateTmWorkCalendar = (id: string, p: Record<string, unknown>) => api.put(`${TM}/work-calendars/${id}`, p);
+export const deleteTmWorkCalendar = (id: string) => api.delete(`${TM}/work-calendars/${id}`);
+
+export const listTmShiftTemplates = (params?: TableParams) => api.get(`${TM}/shift-templates${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const createTmShiftTemplate = (p: Record<string, unknown>) => api.post(`${TM}/shift-templates`, p);
+export const updateTmShiftTemplate = (id: string, p: Record<string, unknown>) => api.put(`${TM}/shift-templates/${id}`, p);
+export const deleteTmShiftTemplate = (id: string) => api.delete(`${TM}/shift-templates/${id}`);
+
+export const listTmWorkSchedules = (params?: TableParams) => api.get(`${TM}/work-schedules${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const createTmWorkSchedule = (p: Record<string, unknown>) => api.post(`${TM}/work-schedules`, p);
+export const updateTmWorkSchedule = (id: string, p: Record<string, unknown>) => api.put(`${TM}/work-schedules/${id}`, p);
+export const deleteTmWorkSchedule = (id: string) => api.delete(`${TM}/work-schedules/${id}`);
+
+export const listTmTimeEntries = (params?: TableParams) => api.get(`${TM}/time-entries${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const createTmTimeEntry = (p: Record<string, unknown>) => api.post(`${TM}/time-entries`, p);
+export const getTmTimeEntry = (id: string) => api.get(`${TM}/time-entries/${id}`).then((r) => r.data?.data ?? r.data);
+export const updateTmTimeEntry = (id: string, p: Record<string, unknown>) => api.put(`${TM}/time-entries/${id}`, p);
+export const deleteTmTimeEntry = (id: string) => api.delete(`${TM}/time-entries/${id}`);
+export const splitTmTimeEntry = (id: string, p: { split_at: string }) => api.post(`${TM}/time-entries/${id}/split`, p);
+
+export const getTmActiveSession = () => api.get(`${TM}/sessions/active`).then((r) => r.data?.data ?? r.data);
+export const startTmSession = (p: Record<string, unknown>) => api.post(`${TM}/sessions/start`, p);
+export const stopTmSession = (id: string, p?: Record<string, unknown>) => api.post(`${TM}/sessions/${id}/stop`, p ?? {});
+
+export const listTmTimesheets = (params?: TableParams) => api.get(`${TM}/timesheets${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const getTmTimesheet = (id: string) => api.get(`${TM}/timesheets/${id}`).then((r) => r.data?.data ?? r.data);
+export const createTmTimesheet = (p: Record<string, unknown>) => api.post(`${TM}/timesheets`, p);
+export const submitTmTimesheet = (id: string) => api.post(`${TM}/timesheets/${id}/submit`);
+export const approveTmTimesheet = (id: string, p?: Record<string, unknown>) => api.post(`${TM}/timesheets/${id}/approve`, p ?? {});
+export const rejectTmTimesheet = (id: string, p: Record<string, unknown>) => api.post(`${TM}/timesheets/${id}/reject`, p);
+export const autoGenerateTmTimesheet = (p?: Record<string, unknown>) => api.post(`${TM}/timesheets/auto-generate`, p ?? {});
+
+export const clockInTm = (p?: Record<string, unknown>) => api.post(`${TM}/attendance/clock-in`, p ?? {});
+export const clockOutTm = (p?: Record<string, unknown>) => api.post(`${TM}/attendance/clock-out`, p ?? {});
+
+export const listTmOvertimeRequests = (params?: TableParams) => api.get(`${TM}/overtime-requests${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const createTmOvertimeRequest = (p: Record<string, unknown>) => api.post(`${TM}/overtime-requests`, p);
+export const approveTmOvertimeRequest = (id: string) => api.post(`${TM}/overtime-requests/${id}/approve`);
+export const rejectTmOvertimeRequest = (id: string, p: Record<string, unknown>) => api.post(`${TM}/overtime-requests/${id}/reject`, p);
+
+export const listTmPolicies = (params?: TableParams) => api.get(`${TM}/policies${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const createTmPolicy = (p: Record<string, unknown>) => api.post(`${TM}/policies`, p);
+export const updateTmPolicy = (id: string, p: Record<string, unknown>) => api.put(`${TM}/policies/${id}`, p);
+export const deleteTmPolicy = (id: string) => api.delete(`${TM}/policies/${id}`);
+
+export const listTmCalendarEvents = (params?: TableParams) => api.get(`${TM}/calendar-events${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const getTmCalendarEvent = (id: string) => api.get(`${TM}/calendar-events/${id}`).then((r) => r.data?.data ?? r.data);
+export const createTmCalendarEvent = (p: Record<string, unknown>) => api.post(`${TM}/calendar-events`, p);
+export const updateTmCalendarEvent = (id: string, p: Record<string, unknown>) => api.put(`${TM}/calendar-events/${id}`, p);
+export const deleteTmCalendarEvent = (id: string) => api.delete(`${TM}/calendar-events/${id}`);
+export const generateTmMeetingLink = (id: string, p?: Record<string, unknown>) => api.post(`${TM}/calendar-events/${id}/generate-meeting-link`, p ?? {});
+export const checkTmCalendarConflicts = (p: Record<string, unknown>) => api.post(`${TM}/calendar-events/check-conflicts`, p);
+
+export const connectTmCalendarProvider = (provider: 'google' | 'outlook') => api.get(`${TM}/calendar/connect/${provider}`);
+export const callbackTmCalendarProvider = (provider: 'google' | 'outlook') => api.get(`${TM}/calendar/callback/${provider}`);
+export const disconnectTmCalendarProvider = (provider: 'google' | 'outlook') => api.post(`${TM}/calendar/disconnect/${provider}`);
+export const getTmCalendarSyncStatus = () => api.get(`${TM}/calendar/sync-status`).then((r) => r.data?.data ?? r.data);
+export const triggerTmCalendarSync = (p?: Record<string, unknown>) => api.post(`${TM}/calendar/trigger-sync`, p ?? {});
+export const resolveTmCalendarConflict = (p: Record<string, unknown>) => api.post(`${TM}/calendar/resolve-conflict`, p);
+
+export const listTmMeetingLinks = (params?: TableParams) => api.get(`${TM}/meeting-links${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const regenerateTmMeetingLink = (id: string) => api.post(`${TM}/meeting-links/${id}/regenerate`);
+
+export const listTmWebhooks = (params?: TableParams) => api.get(`${TM}/webhooks${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const createTmWebhook = (p: Record<string, unknown>) => api.post(`${TM}/webhooks`, p);
+export const toggleTmWebhook = (id: string) => api.post(`${TM}/webhooks/${id}/toggle`);
+export const regenerateTmWebhookSecret = (id: string) => api.post(`${TM}/webhooks/${id}/regenerate-secret`).then((r) => r.data);
+
+export const getTmReportUtilization = (params?: Record<string, unknown>) => api.get(`${TM}/reports/utilization`, { params }).then((r) => r.data?.data ?? r.data);
+export const getTmReportSubmittedHours = (params?: Record<string, unknown>) => api.get(`${TM}/reports/submitted-hours`, { params }).then((r) => r.data?.data ?? r.data);
+export const getTmReportAnomalies = () => api.get(`${TM}/reports/anomalies`).then((r) => r.data?.data ?? r.data);
+export const getTmReportOvertime = (params?: Record<string, unknown>) => api.get(`${TM}/reports/overtime`, { params }).then((r) => r.data?.data ?? r.data);
+export const getTmReportBillableRatio = (params?: Record<string, unknown>) => api.get(`${TM}/reports/billable-ratio`, { params }).then((r) => r.data?.data ?? r.data);

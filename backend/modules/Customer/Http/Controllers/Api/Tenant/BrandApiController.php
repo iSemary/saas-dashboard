@@ -53,7 +53,7 @@ class BrandApiController extends Controller
             $this->moduleService->subscribeToModules($brand->id, $validated['modules']);
         }
 
-        return $this->apiSuccess($brand, 'Brand created successfully', 201);
+        return $this->apiSuccess($brand, translate('message.created_successfully'), 201);
     }
 
     public function update(Request $request, $id)
@@ -74,7 +74,7 @@ class BrandApiController extends Controller
             $this->brandService->syncBrandModules($id, $validated['modules']);
         }
 
-        return $this->apiSuccess($this->brandService->findOrFail($id), 'Brand updated successfully');
+        return $this->apiSuccess($this->brandService->findOrFail($id), translate('message.updated_successfully'));
     }
 
     /**
@@ -92,7 +92,7 @@ class BrandApiController extends Controller
     public function destroy($id)
     {
         $this->brandService->delete($id);
-        return $this->apiSuccess(null, 'Brand deleted successfully');
+        return $this->apiSuccess(null, translate('message.deleted_successfully'));
     }
 
     /**

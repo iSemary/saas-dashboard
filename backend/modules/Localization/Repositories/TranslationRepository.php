@@ -266,7 +266,7 @@ class TranslationRepository implements TranslationInterface
                 $file = $path . "/$locale.json";
                 file_put_contents($file, json_encode($translation, JSON_PRETTY_PRINT));
             }
-            return ['success' => true, 'message' => 'JSON files generated successfully.'];
+            return ['success' => true, 'message' => translate('message.action_completed')];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
@@ -422,7 +422,7 @@ class TranslationRepository implements TranslationInterface
     public function syncJsonFiles()
     {
         GenerateTranslationJsonJob::dispatch();
-        return ['success' => true, 'message' => 'JSON sync job dispatched successfully.'];
+        return ['success' => true, 'message' => translate('message.action_completed')];
     }
     
 }

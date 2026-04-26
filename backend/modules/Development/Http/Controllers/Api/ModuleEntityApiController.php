@@ -29,6 +29,6 @@ class ModuleEntityApiController extends Controller
             'entities' => 'required|array',
         ]);
         $this->service->sync($validated['entities']);
-        return $this->apiSuccess(null, 'Entities synced successfully');
+        return $this->apiSuccess(null, translate('message.action_completed'));
     }
 }
