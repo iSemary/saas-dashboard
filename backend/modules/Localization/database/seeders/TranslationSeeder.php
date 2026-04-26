@@ -9,6 +9,65 @@ use Modules\Localization\Entities\Language;
 class TranslationSeeder extends Seeder
 {
     /**
+     * Load translations from per-module JSON files.
+     *
+     * @param \Illuminate\Support\Collection $languages
+     * @return array
+     */
+    protected function loadModuleTranslations($languages): array
+    {
+        $translations = [];
+        $modulesPath = base_path('modules');
+
+        if (!is_dir($modulesPath)) {
+            return $translations;
+        }
+
+        // Get all module directories
+        $moduleDirs = glob($modulesPath . '/*', GLOB_ONLYDIR);
+
+        foreach ($moduleDirs as $moduleDir) {
+            $moduleName = basename($moduleDir);
+            $langDir = $moduleDir . '/resources/lang';
+
+            if (!is_dir($langDir)) {
+                continue;
+            }
+
+            // Load JSON files for each locale
+            foreach ($languages as $language) {
+                $jsonFile = $langDir . '/' . $language->locale . '.json';
+
+                if (file_exists($jsonFile)) {
+                    $jsonTranslations = json_decode(file_get_contents($jsonFile), true);
+
+                    if (is_array($jsonTranslations)) {
+                        foreach ($jsonTranslations as $key => $value) {
+                            // Skip if already added from another locale
+                            $existingKey = array_search($key, array_column($translations, 'translation_key'));
+
+                            if ($existingKey !== false) {
+                                // Add translation for this locale to existing entry
+                                $translations[$existingKey]['translations'][$language->locale] = $value;
+                            } else {
+                                // Create new translation entry
+                                $translations[] = [
+                                    'translation_key' => $key,
+                                    'translations' => [$language->locale => $value],
+                                    'translation_context' => 'module',
+                                    'is_shareable' => true,
+                                ];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $translations;
+    }
+
+    /**
      * Run the database seeds.
      */
     public function run(): void
@@ -20,7 +79,11 @@ class TranslationSeeder extends Seeder
             return;
         }
 
-        $translations = [
+        // First, load translations from per-module JSON files
+        $moduleTranslations = $this->loadModuleTranslations($languages);
+
+        // Then, merge with hardcoded translations (hardcoded take precedence for conflicts)
+        $hardcodedTranslations = [
             // Common UI elements
             [
                 'translation_key' => 'common.save',
@@ -460,9 +523,174 @@ class TranslationSeeder extends Seeder
                 'translation_context' => 'dashboard',
                 'is_shareable' => true,
             ],
+
+            // Additional message keys
+            [
+                'translation_key' => 'message.operation_failed',
+                'translations' => ['en' => 'Operation failed', 'ar' => 'فشلت العملية', 'de' => 'Vorgang fehlgeschlagen'],
+                'translation_context' => 'messages',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'message.validation_failed',
+                'translations' => ['en' => 'Validation failed', 'ar' => 'فشل التحقق', 'de' => 'Validierung fehlgeschlagen'],
+                'translation_context' => 'messages',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'message.resource_not_found',
+                'translations' => ['en' => 'Resource not found', 'ar' => 'المورد غير موجود', 'de' => 'Ressource nicht gefunden'],
+                'translation_context' => 'messages',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'message.action_completed',
+                'translations' => ['en' => 'Action completed successfully', 'ar' => 'تمت العملية بنجاح', 'de' => 'Aktion erfolgreich abgeschlossen'],
+                'translation_context' => 'messages',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'message.webhook_created',
+                'translations' => ['en' => 'Webhook created successfully', 'ar' => 'تم إنشاء الويب هوك بنجاح', 'de' => 'Webhook erfolgreich erstellt'],
+                'translation_context' => 'messages',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'message.webhook_updated',
+                'translations' => ['en' => 'Webhook updated successfully', 'ar' => 'تم تحديث الويب هوك بنجاح', 'de' => 'Webhook erfolgreich aktualisiert'],
+                'translation_context' => 'messages',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'message.webhook_deleted',
+                'translations' => ['en' => 'Webhook deleted successfully', 'ar' => 'تم حذف الويب هوك بنجاح', 'de' => 'Webhook erfolgreich gelöscht'],
+                'translation_context' => 'messages',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'message.webhook_test_sent',
+                'translations' => ['en' => 'Test webhook sent', 'ar' => 'تم إرسال ويب هوك الاختبار', 'de' => 'Test-Webhook gesendet'],
+                'translation_context' => 'messages',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'message.backup_created',
+                'translations' => ['en' => 'Backup created successfully', 'ar' => 'تم إنشاء النسخة الاحتياطية بنجاح', 'de' => 'Backup erfolgreich erstellt'],
+                'translation_context' => 'messages',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'message.backup_not_found',
+                'translations' => ['en' => 'Backup not found', 'ar' => 'النسخة الاحتياطية غير موجودة', 'de' => 'Backup nicht gefunden'],
+                'translation_context' => 'messages',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'message.backup_restored',
+                'translations' => ['en' => 'Backup restored successfully', 'ar' => 'تم استعادة النسخة الاحتياطية بنجاح', 'de' => 'Backup erfolgreich wiederhergestellt'],
+                'translation_context' => 'messages',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'message.import_success',
+                'translations' => ['en' => 'Import completed successfully', 'ar' => 'تم الاستيراد بنجاح', 'de' => 'Import erfolgreich abgeschlossen'],
+                'translation_context' => 'messages',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'message.file_not_found',
+                'translations' => ['en' => 'File not found', 'ar' => 'الملف غير موجود', 'de' => 'Datei nicht gefunden'],
+                'translation_context' => 'messages',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'message.email_sent',
+                'translations' => ['en' => 'Email sent successfully', 'ar' => 'تم إرسال البريد الإلكتروني بنجاح', 'de' => 'E-Mail erfolgreich gesendet'],
+                'translation_context' => 'messages',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'message.restored_successfully',
+                'translations' => ['en' => 'Restored successfully', 'ar' => 'تمت الاستعادة بنجاح', 'de' => 'Erfolgreich wiederhergestellt'],
+                'translation_context' => 'messages',
+                'is_shareable' => true,
+            ],
+
+            // Authentication
+            [
+                'translation_key' => 'auth.unauthenticated',
+                'translations' => ['en' => 'Unauthenticated', 'ar' => 'غير مصادق', 'de' => 'Nicht authentifiziert'],
+                'translation_context' => 'authentication',
+                'is_shareable' => true,
+            ],
+
+            // Exceptions
+            [
+                'translation_key' => 'exception.failed_store_file',
+                'translations' => ['en' => 'Failed to store the file', 'ar' => 'فشل تخزين الملف', 'de' => 'Datei konnte nicht gespeichert werden'],
+                'translation_context' => 'exceptions',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'exception.cannot_transition_status',
+                'translations' => ['en' => 'Cannot transition status from :from to :to', 'ar' => 'لا يمكن تغيير الحالة من :from إلى :to', 'de' => 'Status kann nicht von :from zu :to geändert werden'],
+                'translation_context' => 'exceptions',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'exception.money_negative',
+                'translations' => ['en' => 'Amount cannot be negative', 'ar' => 'لا يمكن أن يكون المبلغ سالباً', 'de' => 'Betrag darf nicht negativ sein'],
+                'translation_context' => 'exceptions',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'exception.cannot_delete_with_associated',
+                'translations' => ['en' => 'Cannot delete item with associated records', 'ar' => 'لا يمكن حذف العنصر مع السجلات المرتبطة', 'de' => 'Element mit zugehörigen Datensätzen kann nicht gelöscht werden'],
+                'translation_context' => 'exceptions',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'exception.brand_not_found',
+                'translations' => ['en' => 'Brand not found', 'ar' => 'العلامة التجارية غير موجودة', 'de' => 'Marke nicht gefunden'],
+                'translation_context' => 'exceptions',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'exception.already_done',
+                'translations' => ['en' => 'This action has already been completed', 'ar' => 'تم إجراء هذه العملية بالفعل', 'de' => 'Diese Aktion wurde bereits ausgeführt'],
+                'translation_context' => 'exceptions',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'exception.not_available_as_addon',
+                'translations' => ['en' => 'This module is not available as an add-on', 'ar' => 'هذه الوحدة غير متاحة كإضافة', 'de' => 'Dieses Modul ist nicht als Add-on verfügbar'],
+                'translation_context' => 'exceptions',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'exception.no_active_subscription',
+                'translations' => ['en' => 'No active subscription found', 'ar' => 'لم يتم العثور على اشتراك نشط', 'de' => 'Kein aktives Abonnement gefunden'],
+                'translation_context' => 'exceptions',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'exception.question_required',
+                'translations' => ['en' => 'This question is required', 'ar' => 'هذا السؤال مطلوب', 'de' => 'Diese Frage ist erforderlich'],
+                'translation_context' => 'exceptions',
+                'is_shareable' => true,
+            ],
+            [
+                'translation_key' => 'exception.answer_pattern_mismatch',
+                'translations' => ['en' => 'Answer does not match the required pattern', 'ar' => 'الإجابة لا تتطابق مع النمط المطلوب', 'de' => 'Antwort entspricht nicht dem erforderlichen Muster'],
+                'translation_context' => 'exceptions',
+                'is_shareable' => true,
+            ],
         ];
 
-        foreach ($translations as $translationData) {
+        // Merge module translations with hardcoded ones (hardcoded take precedence)
+        $allTranslations = array_merge($moduleTranslations, $hardcodedTranslations);
+
+        foreach ($allTranslations as $translationData) {
             foreach ($translationData['translations'] as $locale => $value) {
                 $language = $languages->where('locale', $locale)->first();
                 if ($language) {

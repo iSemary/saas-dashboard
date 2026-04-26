@@ -86,7 +86,7 @@ class UserManagementService
             $user = $this->userManagementRepository->findUser($userId);
             if (!$user) 
             {
-                throw new \Exception('User not found');
+                throw new \Exception(translate('message.resource_not_found'));
             }
 
             // Hash password if provided and not empty
@@ -147,7 +147,7 @@ class UserManagementService
         $user = $this->userManagementRepository->findUser($userId);
         if (!$user) 
         {
-            throw new \Exception('User not found');
+            throw new \Exception(translate('message.resource_not_found'));
         }
 
         $user->assignRole($roleIds);
@@ -163,7 +163,7 @@ class UserManagementService
         $user = $this->userManagementRepository->findUser($userId);
         if (!$user) 
         {
-            throw new \Exception('User not found');
+            throw new \Exception(translate('message.resource_not_found'));
         }
 
         $user->removeRole($roleIds);
@@ -179,7 +179,7 @@ class UserManagementService
         $user = $this->userManagementRepository->findUser($userId);
         if (!$user) 
         {
-            throw new \Exception('User not found');
+            throw new \Exception(translate('message.resource_not_found'));
         }
 
         $user->givePermissionTo($permissionIds);
@@ -281,7 +281,7 @@ class UserManagementService
         $user = $this->userManagementRepository->findUser($userId);
         if (!$user) 
         {
-            throw new \Exception('User not found');
+            throw new \Exception(translate('message.resource_not_found'));
         }
 
         $currentStatus = $user->status ?? 'active';

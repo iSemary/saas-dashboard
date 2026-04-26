@@ -27,7 +27,7 @@ class UpdateFieldAction implements AutomationActionStrategyInterface
         $value = $actionConfig['value'] ?? null;
 
         if ($field === null) {
-            throw new AutomationExecutionException('Field name is required for update_field action');
+            throw new AutomationExecutionException(translate('message.validation_failed'));
         }
 
         if (!in_array($field, $model->getFillable(), true)) {

@@ -245,7 +245,7 @@ class MediaService
 
         // Fallback
         if ($sizeBytes > max($maxPhoto, $maxVideo)) {
-            throw new \InvalidArgumentException('File is too large.');
+            throw new \InvalidArgumentException(translate('message.operation_failed'));
         }
     }
 
@@ -257,7 +257,7 @@ class MediaService
         if ($host === 'aws') {
             $result = $this->awsService->upload($file, dirname($storageKey), $accessLevel);
             if (!$result['success']) {
-                throw new \RuntimeException('Failed to upload file to AWS: ' . $result['message']);
+                throw new \RuntimeException(translate('message.operation_failed') . ': ' . $result['message']);
             }
             return $result['url'];
         }
@@ -268,7 +268,7 @@ class MediaService
         $filePath = $file->storeAs($directory, $filename, 'public');
 
         if (!$filePath) {
-            throw new \RuntimeException('Failed to store the file.');
+            throw new \RuntimeException(translate('exception.failed_store_file'));
         }
 
         return Storage::disk('public')->url($filePath);

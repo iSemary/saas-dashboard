@@ -88,7 +88,7 @@ class CrmImportJobApiController extends Controller
                 'leads' => ['name', 'email', 'phone', 'company', 'title', 'status', 'source'],
                 'contacts' => ['first_name', 'last_name', 'email', 'phone', 'company_id', 'title'],
                 'companies' => ['name', 'email', 'phone', 'website', 'industry', 'type'],
-                default => throw new \InvalidArgumentException('Invalid entity type'),
+                default => throw new \InvalidArgumentException(translate('message.validation_failed')),
             };
 
             return $this->apiSuccess(['headers' => $headers, 'sample' => array_fill(0, count($headers), 'sample_data')]);

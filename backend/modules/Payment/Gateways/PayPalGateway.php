@@ -309,7 +309,7 @@ class PayPalGateway extends AbstractPaymentGateway
     public function createPaymentMethod(string $customerId, array $paymentMethodData): array
     {
         // PayPal doesn't support stored payment methods in the same way
-        throw new PaymentGatewayException("PayPal doesn't support stored payment methods");
+        throw new PaymentGatewayException(translate('message.operation_failed'));
     }
 
     public function getPaymentMethods(string $customerId): array

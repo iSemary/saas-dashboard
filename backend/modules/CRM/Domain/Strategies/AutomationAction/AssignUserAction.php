@@ -31,7 +31,7 @@ class AssignUserAction implements AutomationActionStrategyInterface
         }
 
         if ($userId === null) {
-            throw new AutomationExecutionException('No user_id provided for assign_user action');
+            throw new AutomationExecutionException(translate('message.validation_failed'));
         }
 
         // Validate user exists

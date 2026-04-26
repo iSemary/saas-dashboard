@@ -29,7 +29,7 @@ class ProcessImportJob implements ShouldQueue
             $handle = fopen($filePath, 'r');
             
             if (!$handle) {
-                throw new \RuntimeException('Could not open import file');
+                throw new \RuntimeException(translate('message.operation_failed'));
             }
             
             $headers = fgetcsv($handle);
@@ -41,7 +41,7 @@ class ProcessImportJob implements ShouldQueue
             $strategy = match($this->importJob->entity_type) {
                 'leads' => app(LeadImportStrategy::class),
                 'contacts' => app(ContactImportStrategy::class),
-                default => throw new \InvalidArgumentException('Unsupported entity type'),
+                default => throw new \InvalidArgumentException(translate('message.validation_failed')),
             };
             
             while (($row = fgetcsv($handle)) !== false) {

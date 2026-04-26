@@ -45,7 +45,7 @@ class EmCampaignUseCase
         $campaign = $this->repository->findOrFail($id);
 
         if (! $campaign->isEditable()) {
-            throw new \RuntimeException('Cannot update a campaign that is sending, sent, or cancelled');
+            throw new \RuntimeException(translate('message.operation_failed'));
         }
 
         $this->repository->update($id, $dto->toArray());
@@ -62,7 +62,7 @@ class EmCampaignUseCase
         $campaign = $this->repository->findOrFail($id);
 
         if (! $campaign->isEditable()) {
-            throw new \RuntimeException('Cannot delete a campaign that is sending or sent');
+            throw new \RuntimeException(translate('message.operation_failed'));
         }
 
         return $this->repository->delete($id);

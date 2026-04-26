@@ -54,12 +54,12 @@ class PushSubscriptionService
     {
         $user = User::find($userId);
         if (!$user) {
-            throw new \Exception('User not found');
+            throw new \Exception(translate('message.resource_not_found'));
         }
 
         $subscription = $this->getSubscription($userId);
         if (!$subscription) {
-            throw new \Exception('No active push subscription found');
+            throw new \Exception(translate('message.operation_failed'));
         }
 
         // Create a test notification

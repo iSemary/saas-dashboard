@@ -104,7 +104,7 @@ class CommentService
     {
         $parent = $this->repository->find($parentId);
         if (!$parent) {
-            throw new \Exception('Parent comment not found');
+            throw new \Exception(translate('message.resource_not_found'));
         }
 
         $data['parent_id'] = $parentId;

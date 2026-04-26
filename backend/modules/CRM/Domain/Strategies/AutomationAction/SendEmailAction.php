@@ -25,14 +25,14 @@ class SendEmailAction implements AutomationActionStrategyInterface
         $to = $actionConfig['to'] ?? null;
 
         if (!$templateId && (!$subject || !$body)) {
-            throw new AutomationExecutionException('Either template_id or subject+body is required for send_email action');
+            throw new AutomationExecutionException(translate('message.validation_failed'));
         }
 
         // Resolve recipient email
         $recipientEmail = $this->resolveRecipient($to, $model);
 
         if (!$recipientEmail) {
-            throw new AutomationExecutionException('Could not resolve recipient email');
+            throw new AutomationExecutionException(translate('message.operation_failed'));
         }
 
         // Use Email module to send

@@ -136,7 +136,7 @@ class DefaultQuestionTypeStrategy implements QuestionTypeStrategyInterface
         }
 
         if (isset($validation['pattern']) && !preg_match('/' . $validation['pattern'] . '/', $value)) {
-            throw new InvalidAnswerException($title, 'Answer does not match the required pattern');
+            throw new InvalidAnswerException($title, translate('exception.answer_pattern_mismatch'));
         }
     }
 

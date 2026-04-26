@@ -67,7 +67,7 @@ class LeadService
         $lead = $this->getLeadById($leadId);
         
         if (!$lead) {
-            throw new \Exception('Lead not found');
+            throw new \Exception(translate('message.resource_not_found'));
         }
 
         return $lead->convertToOpportunity($opportunityData);

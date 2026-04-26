@@ -150,7 +150,7 @@ class StaticPageService
         
         // Check if page has children
         if ($page->children()->count() > 0) {
-            throw new \Exception('Cannot delete page with child pages. Please delete child pages first.');
+            throw new \Exception(translate('exception.cannot_delete_with_associated'));
         }
 
         $page->delete();

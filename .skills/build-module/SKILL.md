@@ -689,6 +689,37 @@ After all APIs are built, update `/home/abdelrahman/me/personal-projects/saas/po
 
 Follow `.skills/update-erd-on-db-change.md` to update ERD files after creating migrations.
 
+#### 6.5 Translations
+
+All user-facing messages must use the `translate()` helper instead of hardcoded strings. Follow `.skills/write-translations/SKILL.md` for detailed guidance.
+
+**Quick Steps:**
+1. Create `modules/{Module}/resources/lang/{locale}.json` for each locale (en, ar, de)
+2. Add translation keys following the convention: `{context}.{key}` (e.g., `message.created_successfully`, `crm.lead_created`)
+3. Replace hardcoded messages in controllers with `translate()` calls:
+   ```php
+   // Before
+   return $this->apiSuccess($lead, 'Lead created successfully', 201);
+   // After
+   return $this->apiSuccess($lead, translate('crm.lead_created'), 201);
+   ```
+4. For dynamic messages, use attribute substitution:
+   ```php
+   translate('exception.cannot_transition_status', ['from' => $from, 'to' => $to])
+   ```
+5. Add common translation keys to `modules/Localization/database/seeders/TranslationSeeder.php` if needed
+6. Run the seeder: `php artisan db:seed --class=Modules\\Localization\\Database\\Seeders\\TranslationSeeder`
+
+**Common Keys to Use:**
+- `message.created_successfully` - Generic creation success
+- `message.updated_successfully` - Generic update success
+- `message.deleted_successfully` - Generic deletion success
+- `message.operation_failed` - Generic operation failure
+- `message.validation_failed` - Validation error
+- `message.resource_not_found` - Resource not found
+- `auth.unauthorized` - Permission denied
+- `auth.unauthenticated` - Not logged in
+
 ---
 
 ## Key Patterns Reference

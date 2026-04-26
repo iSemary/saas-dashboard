@@ -77,7 +77,7 @@ class RolePermissionService
         try {
             $role = Role::find($roleId);
             if (!$role) {
-                throw new \Exception('Role not found');
+                throw new \Exception(translate('message.resource_not_found'));
             }
 
             $role->update([
@@ -108,7 +108,7 @@ class RolePermissionService
         try {
             $role = Role::find($roleId);
             if (!$role) {
-                throw new \Exception('Role not found');
+                throw new \Exception(translate('message.resource_not_found'));
             }
 
             // Check if role has users assigned
@@ -134,7 +134,7 @@ class RolePermissionService
     {
         $role = Role::find($roleId);
         if (!$role) {
-            throw new \Exception('Role not found');
+            throw new \Exception(translate('message.resource_not_found'));
         }
 
         $role->permissions()->sync($permissionIds);
@@ -188,7 +188,7 @@ class RolePermissionService
     {
         $permission = Permission::find($permissionId);
         if (!$permission) {
-            throw new \Exception('Permission not found');
+            throw new \Exception(translate('message.resource_not_found'));
         }
 
         $permission->update([
@@ -206,7 +206,7 @@ class RolePermissionService
     {
         $permission = Permission::find($permissionId);
         if (!$permission) {
-            throw new \Exception('Permission not found');
+            throw new \Exception(translate('message.resource_not_found'));
         }
 
         return $permission->delete();

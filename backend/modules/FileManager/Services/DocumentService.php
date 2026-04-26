@@ -99,7 +99,7 @@ class DocumentService
         $user = auth()->user();
         if ($file->access_level === 'private' && $file->metadata && isset($file->metadata['uploaded_by'])) {
             if ($file->metadata['uploaded_by'] != $user->id) {
-                throw new \Exception('You do not have permission to download this file');
+                throw new \Exception(translate('auth.unauthorized'));
             }
         }
 
@@ -107,7 +107,7 @@ class DocumentService
         $filePath = "{$folderPath}/{$file->hash_name}";
 
         if (!Storage::disk('public')->exists($filePath)) {
-            throw new \Exception('File not found in storage');
+            throw new \Exception(translate('message.file_not_found'));
         }
 
         return Storage::disk('public')->path($filePath);

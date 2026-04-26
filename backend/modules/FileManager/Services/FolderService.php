@@ -56,7 +56,7 @@ class FolderService
         $folder = Folder::findOrFail($id);
 
         if ($folder->files()->count() > 0) {
-            throw new \Exception('Cannot delete folder with files');
+            throw new \Exception(translate('exception.cannot_delete_with_associated'));
         }
 
         if (Folder::where('parent_id', $id)->count() > 0) {

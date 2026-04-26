@@ -139,7 +139,7 @@ class PaymentValidationService
         ]);
 
         if ($validator->fails()) {
-            throw new PaymentGatewayException("Invalid card data: " . implode(', ', $validator->errors()->all()));
+            throw new PaymentGatewayException(translate('message.validation_failed') . ': ' . implode(', ', $validator->errors()->all()));
         }
 
         // Additional card validation
@@ -168,7 +168,7 @@ class PaymentValidationService
         ]);
 
         if ($validator->fails()) {
-            throw new PaymentGatewayException("Invalid bank account data: " . implode(', ', $validator->errors()->all()));
+            throw new PaymentGatewayException(translate('message.validation_failed') . ': ' . implode(', ', $validator->errors()->all()));
         }
     }
 
@@ -187,7 +187,7 @@ class PaymentValidationService
         ]);
 
         if ($validator->fails()) {
-            throw new PaymentGatewayException("Invalid wallet data: " . implode(', ', $validator->errors()->all()));
+            throw new PaymentGatewayException(translate('message.validation_failed') . ': ' . implode(', ', $validator->errors()->all()));
         }
     }
 
