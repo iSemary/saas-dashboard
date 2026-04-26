@@ -6,7 +6,7 @@ use Modules\Survey\Presentation\Http\Controllers\Api;
 // ==========================================
 // Authenticated Routes (Tenant API)
 // ==========================================
-Route::middleware(['auth:api', 'tenant'])
+Route::middleware(['auth:api', 'tenant_roles'])
     ->prefix('tenant/survey')
     ->name('tenant.survey.')
     ->group(function () {

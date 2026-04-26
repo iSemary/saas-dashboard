@@ -17,7 +17,7 @@ class StoreFeatureFlagRequest extends FormRequest
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:feature_flags,slug',
             'description' => 'nullable|string',
-            'is_enabled' => 'nullable|boolean',
+            'is_active' => 'nullable|boolean',
         ];
     }
 }

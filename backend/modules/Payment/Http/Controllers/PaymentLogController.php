@@ -23,17 +23,7 @@ class PaymentLogController extends ApiController implements HasMiddleware
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            return $this->getDataTables($request);
-        }
-
-        $title = translate('payment_logs');
-        $breadcrumbs = [
-            ['text' => translate('home'), 'link' => route('home')],
-            ['text' => translate('payment_logs')],
-        ];
-
-        return view('landlord.payment.payment-logs.index', compact('breadcrumbs', 'title'));
+        return $this->getDataTables($request);
     }
 
     /**
@@ -48,17 +38,10 @@ class PaymentLogController extends ApiController implements HasMiddleware
         }
 
         if (!$log) {
-            return abort(404);
+            return response()->json(['error' => 'Payment log not found'], 404);
         }
 
-        $title = translate('payment_log_details');
-        $breadcrumbs = [
-            ['text' => translate('home'), 'link' => route('home')],
-            ['text' => translate('payment_logs'), 'link' => route('landlord.payment-logs.index')],
-            ['text' => translate('details')],
-        ];
-
-        return view('landlord.payment.payment-logs.show', compact('log', 'breadcrumbs', 'title'));
+        return response()->json(['data' => $log]);
     }
 
     /**
@@ -104,7 +87,6 @@ class PaymentLogController extends ApiController implements HasMiddleware
                     'user' => $log->user ? $log->user->name : 'System',
                     'ip_address' => $log->ip_address,
                     'created_at' => $log->created_at->format('Y-m-d H:i:s'),
-                    'actions' => view('landlord.payment.payment-logs.actions', compact('log'))->render(),
                 ];
             } else {
                 return [
@@ -115,7 +97,6 @@ class PaymentLogController extends ApiController implements HasMiddleware
                     'http_status' => $log->http_status,
                     'processing_time' => $log->processing_time_ms ? $log->processing_time_ms . 'ms' : 'N/A',
                     'created_at' => $log->created_at->format('Y-m-d H:i:s'),
-                    'actions' => view('landlord.payment.payment-logs.actions', compact('log'))->render(),
                 ];
             }
         });

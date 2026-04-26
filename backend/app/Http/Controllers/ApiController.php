@@ -23,12 +23,32 @@ class ApiController extends Controller {
      *
      * @return JsonResponse a JsonResponse object.
      */
-    public function return(int $status, string $message = '', array $data = [], array $errors = [], mixed $debug = []): JsonResponse {
+    public function return(int $status, string $message = '', mixed $data = [], array $errors = [], mixed $debug = []): JsonResponse {
         $response = new stdClass();
-        $response->status = $status;
-        $response->success = $status == 200 ? true : false;
+        $response->status = $status >= 200 && $status < 300 ? 'success' : 'error';
+        $response->code = $status;
+        $response->success = $status >= 200 && $status < 300;
         $response->message = $message;
-        $response->data = $data;
+
+        // Flatten data if it's wrapped in ['data' => ...] to avoid double nesting
+        if (is_array($data) && count($data) === 1 && isset($data['data'])) {
+            $data = $data['data'];
+        }
+
+        if ($data instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) {
+            $response->data = $data->items();
+            $response->meta = [
+                'current_page' => $data->currentPage(),
+                'last_page' => $data->lastPage(),
+                'per_page' => $data->perPage(),
+                'total' => $data->total(),
+                'from' => $data->firstItem(),
+                'to' => $data->lastItem(),
+            ];
+        } else {
+            $response->data = $data;
+        }
+
         $response->errors = $errors;
         $response->timestamp = time();
         if (env("APP_DEBUG")) $response->debug = $debug;

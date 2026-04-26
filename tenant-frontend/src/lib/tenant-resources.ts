@@ -137,13 +137,39 @@ export const deleteCrmCompany = (id: number): Promise<void> => api.delete(`${CRM
 
 export const listCrmNotes = (params?: TableParams) => api.get(`${CRM}/notes${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
 export const createCrmNote = (p: Record<string, unknown>) => api.post(`${CRM}/notes`, p);
+export const updateCrmNote = (id: number, p: Record<string, unknown>) => api.put(`${CRM}/notes/${id}`, p);
 export const deleteCrmNote = (id: number) => api.delete(`${CRM}/notes/${id}`);
+export const getCrmNotesForRelated = (type: string, id: number) => api.get(`${CRM}/notes/related/${type}/${id}`).then((r) => r.data?.data ?? r.data);
+
+export const listCrmFiles = (params?: TableParams) => api.get(`${CRM}/files${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const createCrmFile = (p: Record<string, unknown>) => api.post(`${CRM}/files`, p);
+export const deleteCrmFile = (id: number) => api.delete(`${CRM}/files/${id}`);
+export const downloadCrmFile = (id: number) => api.get(`${CRM}/files/${id}/download`);
+export const getCrmFilesForRelated = (type: string, id: number) => api.get(`${CRM}/files/related/${type}/${id}`).then((r) => r.data?.data ?? r.data);
 
 export const listCrmPipelineStages = () => api.get(`${CRM}/pipeline-stages`).then((r) => r.data?.data ?? r.data as unknown[]);
 export const createCrmPipelineStage = (p: Record<string, unknown>) => api.post(`${CRM}/pipeline-stages`, p);
 export const updateCrmPipelineStage = (id: number, p: Record<string, unknown>) => api.put(`${CRM}/pipeline-stages/${id}`, p);
 export const deleteCrmPipelineStage = (id: number) => api.delete(`${CRM}/pipeline-stages/${id}`);
 export const reorderCrmPipelineStages = (stages: { id: number; order: number }[]) => api.post(`${CRM}/pipeline-stages/reorder`, { stages });
+
+export const listCrmAutomationRules = (params?: TableParams) => api.get(`${CRM}/automation-rules${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const createCrmAutomationRule = (p: Record<string, unknown>) => api.post(`${CRM}/automation-rules`, p);
+export const updateCrmAutomationRule = (id: number, p: Record<string, unknown>) => api.put(`${CRM}/automation-rules/${id}`, p);
+export const deleteCrmAutomationRule = (id: number) => api.delete(`${CRM}/automation-rules/${id}`);
+export const toggleCrmAutomationRule = (id: number) => api.post(`${CRM}/automation-rules/${id}/toggle`);
+
+export const listCrmWebhooks = (params?: TableParams) => api.get(`${CRM}/webhooks${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const createCrmWebhook = (p: Record<string, unknown>) => api.post(`${CRM}/webhooks`, p);
+export const updateCrmWebhook = (id: number, p: Record<string, unknown>) => api.put(`${CRM}/webhooks/${id}`, p);
+export const deleteCrmWebhook = (id: number) => api.delete(`${CRM}/webhooks/${id}`);
+export const toggleCrmWebhook = (id: number) => api.post(`${CRM}/webhooks/${id}/toggle`);
+export const regenerateCrmWebhookSecret = (id: number) => api.post(`${CRM}/webhooks/${id}/regenerate-secret`).then((r) => r.data);
+
+export const listCrmImportJobs = (params?: TableParams) => api.get(`${CRM}/import-jobs${buildTableQuery(params)}`).then((r) => r.data?.data ?? r.data as unknown[]);
+export const createCrmImportJob = (p: Record<string, unknown>) => api.post(`${CRM}/import-jobs`, p);
+export const deleteCrmImportJob = (id: number) => api.delete(`${CRM}/import-jobs/${id}`);
+export const downloadCrmImportTemplate = (entityType: string) => api.get(`${CRM}/import-jobs/template/${entityType}`).then((r) => r.data);
 
 export const getCrmReportOverview = () => api.get(`${CRM}/reports/overview`).then((r) => r.data?.data ?? r.data);
 export const getCrmReportPipeline = () => api.get(`${CRM}/reports/pipeline`).then((r) => r.data?.data ?? r.data);

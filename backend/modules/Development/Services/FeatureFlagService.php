@@ -19,7 +19,7 @@ class FeatureFlagService
             'name' => $data->name,
             'slug' => $data->slug,
             'description' => $data->description,
-            'is_enabled' => $data->is_enabled,
+            'is_enabled' => $data->is_active,
             'created_at' => now(),
             'updated_at' => now(),
         ];
@@ -44,11 +44,11 @@ class FeatureFlagService
         $results = [];
         $flags = DB::table('feature_flags')
             ->whereIn('slug', $slugs)
-            ->get(['slug', 'is_enabled']);
+            ->get(['slug', 'is_enabled as is_active']);
 
         foreach ($slugs as $slug) {
             $flag = $flags->firstWhere('slug', $slug);
-            $results[$slug] = $flag ? (bool) $flag->is_enabled : false;
+            $results[$slug] = $flag ? (bool) $flag->is_active : false;
         }
 
         return $results;

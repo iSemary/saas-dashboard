@@ -26,7 +26,8 @@ import type { TableParams } from "@/lib/tenant-resources";
 import { cn } from "@/lib/utils";
 
 type Brand = { id: number; name: string; slug?: string; domain?: string; is_active?: boolean };
-type Module = { id: number; module_key: string; name: string; description?: string; icon?: string };
+type ModuleTheme = { primary_color?: string; secondary_color?: string };
+type Module = { id: number; module_key: string; name: string; description?: string; icon?: string; theme?: ModuleTheme };
 
 const MODULE_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   crm: Users,
@@ -35,15 +36,6 @@ const MODULE_ICONS: Record<string, React.ComponentType<{ className?: string }>> 
   sales: ShoppingCart,
   inventory: Package,
   reporting: BarChart3,
-};
-
-const MODULE_COLORS: Record<string, string> = {
-  crm: "bg-blue-500/10 text-blue-600 border-blue-200",
-  hr: "bg-green-500/10 text-green-600 border-green-200",
-  accounting: "bg-indigo-500/10 text-indigo-600 border-indigo-200",
-  sales: "bg-orange-500/10 text-orange-600 border-orange-200",
-  inventory: "bg-purple-500/10 text-purple-600 border-purple-200",
-  reporting: "bg-pink-500/10 text-pink-600 border-pink-200",
 };
 
 export default function BrandsPage() {
@@ -326,20 +318,53 @@ export default function BrandsPage() {
                   {modules.map((module, index) => {
                     const IconComponent = MODULE_ICONS[module.module_key] || Package;
                     const isSelected = form.selectedModules.includes(module.module_key);
-                    const colorClass = MODULE_COLORS[module.module_key] || MODULE_COLORS.inventory;
-                    
+                    const primaryColor = module.theme?.primary_color;
+                    const hasTheme = !!primaryColor;
+
+                    // Dynamic styles based on module theme
+                    const cardStyle: React.CSSProperties = isSelected && hasTheme
+                      ? {
+                          borderColor: primaryColor,
+                          backgroundColor: `${primaryColor}15`, // 10% opacity
+                        }
+                      : {};
+
+                    const titleStyle: React.CSSProperties = isSelected && hasTheme
+                      ? { color: primaryColor }
+                      : {};
+
+                    const iconBgStyle: React.CSSProperties = isSelected && hasTheme
+                      ? { backgroundColor: `${primaryColor}25` } // 15% opacity
+                      : {};
+
+                    const iconStyle: React.CSSProperties = isSelected && hasTheme
+                      ? { color: primaryColor }
+                      : {};
+
+                    const descStyle: React.CSSProperties = isSelected && hasTheme
+                      ? { color: primaryColor, opacity: 0.8 }
+                      : {};
+
                     return (
                       <Blur key={module.id} inView inViewOnce delay={150 + index * 50}>
                         <div
                           onClick={() => toggleModule(module.module_key)}
+                          style={cardStyle}
                           className={cn(
                             "group relative cursor-pointer rounded-lg border-2 p-4 transition-all duration-200 hover:scale-[1.02] hover:shadow-md",
-                            isSelected ? colorClass : "border-border bg-background hover:border-muted-foreground/30"
+                            isSelected
+                              ? hasTheme
+                                ? "border-current"
+                                : "bg-blue-500/10 border-blue-200"
+                              : "border-border bg-background hover:border-muted-foreground/30"
                           )}
                         >
                           <div className="flex flex-col items-center text-center gap-3">
                             <div className="flex items-center justify-between w-full">
-                              <h4 className={cn("font-medium text-sm", isSelected ? "text-current" : "text-foreground")}>
+                              <h4
+                                style={titleStyle}
+                                className={cn("font-medium text-sm", isSelected && !hasTheme && "text-blue-600")}
+                              >
                                 {module.name}
                               </h4>
                               <Checkbox
@@ -348,14 +373,24 @@ export default function BrandsPage() {
                                 className="pointer-events-none"
                               />
                             </div>
-                            <div className={cn(
-                              "flex size-12 items-center justify-center rounded-xl transition-colors",
-                              isSelected ? "bg-current/20" : "bg-muted group-hover:bg-muted/80"
-                            )}>
-                              <IconComponent className={cn("size-6", isSelected ? "text-current" : "text-muted-foreground")} />
+                            <div
+                              style={iconBgStyle}
+                              className={cn(
+                                "flex size-12 items-center justify-center rounded-xl transition-colors",
+                                isSelected && !hasTheme ? "bg-blue-500/20" : "bg-muted group-hover:bg-muted/80"
+                              )}
+                            >
+                              <span style={iconStyle}>
+                                <IconComponent
+                                  className={cn("size-6", isSelected && !hasTheme ? "text-blue-600" : "text-muted-foreground")}
+                                />
+                              </span>
                             </div>
                             {module.description && (
-                              <p className={cn("text-xs line-clamp-2", isSelected ? "text-current/80" : "text-muted-foreground")}>
+                              <p
+                                style={descStyle}
+                                className={cn("text-xs line-clamp-2", isSelected && !hasTheme ? "text-blue-600/80" : "text-muted-foreground")}
+                              >
                                 {module.description}
                               </p>
                             )}

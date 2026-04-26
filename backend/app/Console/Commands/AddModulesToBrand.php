@@ -93,11 +93,15 @@ class AddModulesToBrand extends Command
                 $status = $existing->status ?? 'N/A';
                 $this->warn("Module {$module->module_key} is already subscribed (status: {$status})");
 
-                if ($existing->status !== 'active') {
+                if ($existing->status !== 'active' || (isset($existing->deleted_at) && $existing->deleted_at !== null)) {
+                    $updateData = ['status' => 'active'];
+                    if (isset($existing->deleted_at)) {
+                        $updateData['deleted_at'] = null;
+                    }
                     DB::connection('tenant_dynamic')->table('brand_modules')
                         ->where('id', $existing->id)
-                        ->update(['status' => 'active']);
-                    $this->info("✅ Activated module {$module->module_key}");
+                        ->update($updateData);
+                    $this->info("✅ Activated and restored module {$module->module_key}");
                 }
                 continue;
             }

@@ -16,8 +16,11 @@ trait ApiResponseEnvelopeTrait
 
         return response()->json([
             'status' => 'success',
+            'code' => $httpCode,
+            'success' => true,
             'data' => $data,
             'message' => $message,
+            'timestamp' => time(),
         ], $httpCode);
     }
 
@@ -28,9 +31,12 @@ trait ApiResponseEnvelopeTrait
     {
         return response()->json([
             'status' => 'error',
+            'code' => $httpCode,
+            'success' => false,
             'data' => null,
             'message' => $message,
             'errors' => $errors,
+            'timestamp' => time(),
         ], $httpCode);
     }
 
@@ -41,6 +47,8 @@ trait ApiResponseEnvelopeTrait
     {
         return response()->json([
             'status' => 'success',
+            'code' => 200,
+            'success' => true,
             'data' => $paginator->items(),
             'message' => $message,
             'meta' => [
@@ -48,7 +56,10 @@ trait ApiResponseEnvelopeTrait
                 'last_page' => $paginator->lastPage(),
                 'per_page' => $paginator->perPage(),
                 'total' => $paginator->total(),
+                'from' => $paginator->firstItem(),
+                'to' => $paginator->lastItem(),
             ],
+            'timestamp' => time(),
         ]);
     }
 }

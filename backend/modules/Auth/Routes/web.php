@@ -78,7 +78,6 @@ Route::middleware('auth')->group(function () {
             // Tenant Permissions Management Routes
             Route::resource('permissions', TenantPermissionController::class)->except(['show'])->names('permissions');
             Route::get('permissions/{id}', [TenantPermissionController::class, 'show'])->name('permissions.show');
-            Route::get('permissions/bulk/create-form', [TenantPermissionController::class, 'bulkCreateForm'])->name('permissions.bulk-create');
             Route::post('permissions/bulk/create', [TenantPermissionController::class, 'bulkCreate'])->name('permissions.bulk-store');
             Route::get('permissions/grouped/list', [TenantPermissionController::class, 'grouped'])->name('permissions.grouped');
             Route::get('permissions/statistics/data', [TenantPermissionController::class, 'statistics'])->name('permissions.statistics');

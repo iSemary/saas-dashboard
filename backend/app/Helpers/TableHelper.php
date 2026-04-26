@@ -73,13 +73,50 @@ class TableHelper
         }
 
         // Activity Logs button
-        if ($showActivityLogs) {
+        if ($showActivityLogs && is_object($showActivityLogs)) {
             $objectType = CryptHelper::encrypt(get_class($showActivityLogs));
             $btn .= '<button type="button" data-modal-title="' . translate($titleType) . " " . translate("activity_log") . '" data-modal-link="' . route('activity-logs.row', $row->id) . '?object_type=' . $objectType . '" class="btn-teal mx-1 btn-sm open-details-btn">';
             $btn .= $showIconsOnly ? '<i class="fas fa-history"></i>' : '<i class="fas fa-history fa-fw"></i> ' . translate('activity_log');
             $btn .= '</button>';
         }
 
+        return $btn;
+    }
+
+    public static function editButton($id, $route = null, $showIconsOnly = true)
+    {
+        $url = $route ? route($route, $id) : 'javascript:void(0)';
+        $btn = '<button type="button" data-id="' . $id . '" data-url="' . $url . '" class="btn btn-sm btn-primary edit-btn mx-1" title="' . translate('edit') . '">';
+        $btn .= $showIconsOnly ? '<i class="fas fa-edit"></i>' : '<i class="fas fa-edit fa-fw"></i> ' . translate('edit');
+        $btn .= '</button>';
+        return $btn;
+    }
+
+    public static function deleteButton($id, $route = null, $showIconsOnly = true)
+    {
+        $url = $route ? route($route, $id) : 'javascript:void(0)';
+        $btn = '<button type="button" data-id="' . $id . '" data-url="' . $url . '" class="btn btn-sm btn-danger delete-btn mx-1" title="' . translate('delete') . '">';
+        $btn .= $showIconsOnly ? '<i class="fas fa-trash"></i>' : '<i class="fas fa-trash fa-fw"></i> ' . translate('delete');
+        $btn .= '</button>';
+        return $btn;
+    }
+
+    public static function restoreButton($id, $route = null, $showIconsOnly = true)
+    {
+        $url = $route ? route($route, $id) : 'javascript:void(0)';
+        $btn = '<button type="button" data-id="' . $id . '" data-url="' . $url . '" class="btn btn-sm btn-warning restore-btn mx-1" title="' . translate('restore') . '">';
+        $btn .= $showIconsOnly ? '<i class="fas fa-undo"></i>' : '<i class="fas fa-undo fa-fw"></i> ' . translate('restore');
+        $btn .= '</button>';
+        return $btn;
+    }
+
+    public static function switchButton($id, $isActive, $route = null)
+    {
+        $checked = $isActive ? 'checked' : '';
+        $btn = '<div class="custom-control custom-switch d-inline-block mx-1">';
+        $btn .= '<input type="checkbox" class="custom-control-input switch-btn" id="switch-' . $id . '" data-id="' . $id . '" ' . $checked . '>';
+        $btn .= '<label class="custom-control-label" for="switch-' . $id . '"></label>';
+        $btn .= '</div>';
         return $btn;
     }
 

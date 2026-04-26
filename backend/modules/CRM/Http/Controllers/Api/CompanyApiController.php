@@ -34,20 +34,9 @@ class CompanyApiController extends ApiController implements HasMiddleware
 
             $companies = $this->service->list($filters, $perPage);
 
-            return response()->json([
-                'data' => $companies->items(),
-                'current_page' => $companies->currentPage(),
-                'last_page' => $companies->lastPage(),
-                'per_page' => $companies->perPage(),
-                'total' => $companies->total(),
-                'from' => $companies->firstItem(),
-                'to' => $companies->lastItem(),
-            ]);
+            return $this->return(200, '', $companies);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Failed to retrieve companies',
-                'error' => $e->getMessage()
-            ], 500);
+            return $this->return(500, 'Failed to retrieve companies', [], ['error' => $e->getMessage()]);
         }
     }
 
@@ -57,15 +46,9 @@ class CompanyApiController extends ApiController implements HasMiddleware
             $data = CreateCompanyData::fromRequest($request);
             $company = $this->service->create($data);
 
-            return response()->json([
-                'data' => $company->load(['assignedUser', 'creator']),
-                'message' => 'Company created successfully'
-            ], 201);
+            return $this->respondCreated($company->load(['assignedUser', 'creator'])->toArray());
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Failed to create company',
-                'error' => $e->getMessage()
-            ], 500);
+            return $this->return(500, 'Failed to create company', [], ['error' => $e->getMessage()]);
         }
     }
 
@@ -73,12 +56,9 @@ class CompanyApiController extends ApiController implements HasMiddleware
     {
         try {
             $company = $this->service->findOrFail($id);
-            return response()->json(['data' => $company]);
+            return $this->respondWithArray($company->toArray());
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Company not found',
-                'error' => $e->getMessage()
-            ], 404);
+            return $this->respondNotFound('Company not found');
         }
     }
 
@@ -88,15 +68,9 @@ class CompanyApiController extends ApiController implements HasMiddleware
             $data = UpdateCompanyData::fromRequest($request);
             $company = $this->service->update($id, $data);
 
-            return response()->json([
-                'data' => $company,
-                'message' => 'Company updated successfully'
-            ]);
+            return $this->respondWithArray($company->toArray(), 'Company updated successfully');
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Failed to update company',
-                'error' => $e->getMessage()
-            ], 500);
+            return $this->return(500, 'Failed to update company', [], ['error' => $e->getMessage()]);
         }
     }
 

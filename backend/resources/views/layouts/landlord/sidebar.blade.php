@@ -364,12 +364,6 @@
                                     'route' => 'landlord.payment-methods.index',
                                     'single' => true,
                                 ],
-                                'payment_logs' => [
-                                    'icon' => 'fas fa-file-invoice-dollar',
-                                    'permission' => 'read.payment_logs',
-                                    'route' => 'landlord.payment-logs.index',
-                                    'single' => true,
-                                ],
                             ],
                         ],
                         'subscriptions' => [

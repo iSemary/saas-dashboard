@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Loader2, Users, Shield, Ticket, Building2 } from "lucide-react";
 import { useI18n } from "@/context/i18n-context";
 import { useAnimation } from "@/context/animation-context";
-import { useModule } from "@/context/module-context";
+import { useModule, type SubscribedModule } from "@/context/module-context";
 import { getDashboardStats } from "@/lib/tenant-resources";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CountingNumber } from "@/components/animate-ui/primitives/texts/counting-number";
@@ -48,10 +48,6 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border bg-muted/40 p-4">
-        <h1 className="text-xl font-semibold">{t("dashboard.nav.overview", "Dashboard")}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{t("dashboard.subtitle", "Overview of your tenant.")}</p>
-      </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {animationsEnabled ? (
           <Fades holdDelay={100}>
@@ -95,18 +91,30 @@ export default function DashboardPage() {
           </div>
         ) : subscribedModules.length > 0 ? (
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-            {subscribedModules.map((mod) => (
+            {Object.values(
+              subscribedModules.reduce((acc, mod) => {
+                if (!acc[mod.module_key]) {
+                  acc[mod.module_key] = {
+                    ...mod,
+                    brand_names: [],
+                  };
+                }
+                if (mod.brand_name && !acc[mod.module_key].brand_names.includes(mod.brand_name)) {
+                  acc[mod.module_key].brand_names.push(mod.brand_name);
+                }
+                return acc;
+              }, {} as Record<string, SubscribedModule & { brand_names: string[]}>)
+            ).map((mod) => (
               <Link
-                key={`${mod.brand_id}-${mod.module_key}`}
+                key={mod.module_key}
                 href={mod.route ?? `/dashboard/modules/${mod.module_key}`}
                 className="rounded-xl border bg-background p-4 transition-colors hover:bg-muted/50"
               >
                 <div className="text-sm font-medium">{mod.name}</div>
-                <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-                  {mod.description || t("dashboard.subtitle", "Overview of your tenant.")}
-                </p>
                 <div className="mt-2 text-xs text-muted-foreground">
-                  {mod.brand_name ? `${t("dashboard.nav.brands", "Brands")}: ${mod.brand_name}` : ""}
+                  {mod.brand_names.length > 0
+                    ? `${t("dashboard.nav.brands", "Brands")}: ${mod.brand_names.join(", ")}`
+                    : ""}
                 </div>
               </Link>
             ))}

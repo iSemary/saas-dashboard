@@ -10,7 +10,7 @@ readonly class UpdateFeatureFlagData
         public ?string $name = null,
         public ?string $slug = null,
         public ?string $description = null,
-        public ?bool $is_enabled = null,
+        public ?bool $is_active = null,
     ) {}
 
     public static function fromRequest(UpdateFeatureFlagRequest $request): self
@@ -24,7 +24,7 @@ readonly class UpdateFeatureFlagData
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
-            'is_enabled' => $this->is_enabled,
+            'is_enabled' => $this->is_active,
         ], fn ($value) => $value !== null);
     }
 }

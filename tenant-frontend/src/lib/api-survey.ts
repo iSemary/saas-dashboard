@@ -230,6 +230,74 @@ export const deleteSurveyShare = (id: number): Promise<void> =>
 export const getSurveyDashboard = (): Promise<any> =>
   api.get('/tenant/survey/dashboard').then(res => res.data.data);
 
+// Automation Rules
+export interface SurveyAutomationRule {
+  id: number;
+  survey_id: number;
+  name: string;
+  trigger_type: 'response_completed' | 'response_partial' | 'question_answered' | 'score_reached';
+  conditions: Record<string, any>;
+  action_type: 'send_email' | 'send_notification' | 'webhook' | 'update_field';
+  action_config: Record<string, any>;
+  is_active: boolean;
+  created_by: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export const getSurveyAutomationRules = (surveyId: number): Promise<SurveyAutomationRule[]> =>
+  api.get(`/tenant/survey/surveys/${surveyId}/automation-rules`).then(res => res.data.data);
+
+export const getSurveyAutomationRule = (id: number): Promise<SurveyAutomationRule> =>
+  api.get(`/tenant/survey/automation-rules/${id}`).then(res => res.data.data);
+
+export const createSurveyAutomationRule = (surveyId: number, data: Partial<SurveyAutomationRule>): Promise<SurveyAutomationRule> =>
+  api.post(`/tenant/survey/surveys/${surveyId}/automation-rules`, data).then(res => res.data.data);
+
+export const updateSurveyAutomationRule = (id: number, data: Partial<SurveyAutomationRule>): Promise<SurveyAutomationRule> =>
+  api.put(`/tenant/survey/automation-rules/${id}`, data).then(res => res.data.data);
+
+export const deleteSurveyAutomationRule = (id: number): Promise<void> =>
+  api.delete(`/tenant/survey/automation-rules/${id}`).then(res => res.data);
+
+export const toggleSurveyAutomationRule = (id: number): Promise<SurveyAutomationRule> =>
+  api.post(`/tenant/survey/automation-rules/${id}/toggle`).then(res => res.data.data);
+
+// Webhooks
+export interface SurveyWebhook {
+  id: number;
+  survey_id: number;
+  name: string;
+  url: string;
+  events: string[];
+  secret: string;
+  is_active: boolean;
+  created_by: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export const getSurveyWebhooks = (surveyId: number): Promise<SurveyWebhook[]> =>
+  api.get(`/tenant/survey/surveys/${surveyId}/webhooks`).then(res => res.data.data);
+
+export const getSurveyWebhook = (id: number): Promise<SurveyWebhook> =>
+  api.get(`/tenant/survey/webhooks/${id}`).then(res => res.data.data);
+
+export const createSurveyWebhook = (surveyId: number, data: Partial<SurveyWebhook>): Promise<SurveyWebhook & { secret: string }> =>
+  api.post(`/tenant/survey/surveys/${surveyId}/webhooks`, data).then(res => res.data.data);
+
+export const updateSurveyWebhook = (id: number, data: Partial<SurveyWebhook>): Promise<SurveyWebhook> =>
+  api.put(`/tenant/survey/webhooks/${id}`, data).then(res => res.data.data);
+
+export const deleteSurveyWebhook = (id: number): Promise<void> =>
+  api.delete(`/tenant/survey/webhooks/${id}`).then(res => res.data);
+
+export const toggleSurveyWebhook = (id: number): Promise<SurveyWebhook> =>
+  api.post(`/tenant/survey/webhooks/${id}/toggle`).then(res => res.data.data);
+
+export const regenerateSurveyWebhookSecret = (id: number): Promise<SurveyWebhook & { secret: string }> =>
+  api.post(`/tenant/survey/webhooks/${id}/regenerate-secret`).then(res => res.data.data);
+
 // Public Survey
 export const getPublicSurvey = (token: string): Promise<{ survey: Survey; share: SurveyShare }> =>
   api.get(`/public/survey/${token}`).then(res => res.data);

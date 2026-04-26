@@ -6,6 +6,7 @@ use App\Http\Controllers\ApiResponseEnvelope;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
+use League\Flysystem\UnableToListContents;
 
 class FileManagerApiController extends Controller
 {
@@ -15,8 +16,13 @@ class FileManagerApiController extends Controller
     {
         $path = $request->get('path', '/');
         $disk = Storage::disk('public');
-        $directories = $disk->directories($path);
-        $files = $disk->files($path);
+
+        try {
+            $directories = $disk->directories($path);
+            $files = $disk->files($path);
+        } catch (UnableToListContents $e) {
+            return $this->apiError('Unable to list directory contents: ' . $e->getMessage(), 500);
+        }
 
         $result = [
             'path' => $path,

@@ -10,7 +10,7 @@ readonly class CreateFeatureFlagData
         public string $name,
         public string $slug,
         public ?string $description,
-        public ?bool $is_enabled,
+        public ?bool $is_active,
     ) {}
 
     public static function fromRequest(StoreFeatureFlagRequest $request): self

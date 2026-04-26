@@ -19,6 +19,7 @@ export type ModuleNavItem = {
   label: string;
   route: string;
   icon: string;
+  section?: string;
 };
 
 export type SubscribedModule = {

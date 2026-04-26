@@ -8,9 +8,9 @@ readonly class CreateBranchData
 {
     public function __construct(
         public string $name,
-        public ?string $slug,
-        public ?int $brand_id,
-        public ?bool $is_active,
+        public ?string $slug = null,
+        public ?int $brand_id = null,
+        public ?bool $is_active = null,
     ) {}
 
     public static function fromRequest(StoreBranchRequest $request): self

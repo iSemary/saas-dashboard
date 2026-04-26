@@ -19,7 +19,7 @@ class UpdateFeatureFlagRequest extends FormRequest
             'name' => 'sometimes|required|string|max:255',
             'slug' => "sometimes|required|string|max:255|unique:feature_flags,slug,{$id}",
             'description' => 'nullable|string',
-            'is_enabled' => 'nullable|boolean',
+            'is_active' => 'nullable|boolean',
         ];
     }
 }

@@ -20,6 +20,7 @@ import {
   UserCog,
   UsersRound,
   Briefcase,
+  ChevronLeft,
   ShoppingCart,
   ShoppingBag,
   Warehouse,
@@ -257,7 +258,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </SidebarMenu>
           </SidebarHeader>
           <SidebarContent>
-            {/* Active module sub-navigation */}
+            {/* Navigation Content */}
             {(() => {
               const activeModuleKey = pathname.startsWith("/dashboard/modules/")
                 ? pathname.split("/")[3] ?? null
@@ -265,99 +266,143 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               const activeMod = activeModuleKey
                 ? (subscribedModules as SubscribedModule[]).find((m) => m.module_key === activeModuleKey)
                 : null;
-              if (activeMod?.navigation?.length) {
+              
+              // If we are within a module, show the module's sub-sidebar and a back button
+              if (activeMod) {
                 return (
-                  <SidebarGroup>
-                    <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      {activeMod.name}
-                    </SidebarGroupLabel>
-                    <SidebarGroupContent>
-                      <SidebarMenu>
-                        {activeMod.navigation.map((nav) => {
-                          const NavIcon = resolveIcon(nav.icon);
-                          return (
-                            <SidebarMenuItem key={nav.key}>
-                              <SidebarMenuButton
-                                isActive={pathname === nav.route}
-                                tooltip={nav.label}
-                                render={<Link href={nav.route} />}
-                              >
-                                <NavIcon />
-                                <span>{nav.label}</span>
-                              </SidebarMenuButton>
-                            </SidebarMenuItem>
-                          );
-                        })}
-                      </SidebarMenu>
-                    </SidebarGroupContent>
-                  </SidebarGroup>
-                );
-              }
-              return null;
-            })()}
-            {animationsEnabled ? (
-              <Fades holdDelay={75}>
-                {visibleSections.map((section, si) => (
-                  <SidebarGroup key={si}>
-                    {section.titleKey ? (
-                      <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                        {t(section.titleKey, section.titleFallback ?? "")}
-                      </SidebarGroupLabel>
-                    ) : null}
-                    <SidebarGroupContent>
-                      <SidebarMenu>
-                        {section.items.map((item) => {
-                          const Icon = item.icon;
-                          const label = t(item.labelKey, item.fallback);
-                          return (
-                            <SidebarMenuItem key={item.href}>
-                              <SidebarMenuButton
-                                isActive={pathname === item.href}
-                                tooltip={label}
-                                render={<Link href={item.href} />}
-                              >
-                                <Icon />
-                                <span>{label}</span>
-                              </SidebarMenuButton>
-                            </SidebarMenuItem>
-                          );
-                        })}
-                      </SidebarMenu>
-                    </SidebarGroupContent>
-                  </SidebarGroup>
-                ))}
-              </Fades>
-            ) : (
-              visibleSections.map((section, si) => (
-                <SidebarGroup key={si}>
-                  {section.titleKey ? (
-                    <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      {t(section.titleKey, section.titleFallback ?? "")}
-                    </SidebarGroupLabel>
-                  ) : null}
-                  <SidebarGroupContent>
-                    <SidebarMenu>
-                      {section.items.map((item) => {
-                        const Icon = item.icon;
-                        const label = t(item.labelKey, item.fallback);
-                        return (
-                          <SidebarMenuItem key={item.href}>
+                  <>
+                    <SidebarGroup>
+                      <SidebarGroupContent>
+                        <SidebarMenu>
+                          <SidebarMenuItem>
                             <SidebarMenuButton
-                              isActive={pathname === item.href}
-                              tooltip={label}
-                              render={<Link href={item.href} />}
+                              tooltip={t("dashboard.nav.back_to_main", "Back to Main Menu")}
+                              render={<Link href="/dashboard" />}
+                              className="text-muted-foreground hover:bg-sidebar-accent/50 mb-2"
                             >
-                              <Icon />
-                              <span>{label}</span>
+                              <ChevronLeft className="size-4" />
+                              <span className="font-medium">{t("dashboard.nav.back_to_main", "Back to Main Menu")}</span>
                             </SidebarMenuButton>
                           </SidebarMenuItem>
-                        );
-                      })}
-                    </SidebarMenu>
-                  </SidebarGroupContent>
-                </SidebarGroup>
-              ))
-            )}
+                        </SidebarMenu>
+                      </SidebarGroupContent>
+                    </SidebarGroup>
+                    
+                    {(() => {
+                      if (!activeMod.navigation?.length) return null;
+
+                      // Group by section
+                      const groupedNav = activeMod.navigation.reduce((acc, nav) => {
+                        const section = nav.section || activeMod.name;
+                        if (!acc[section]) acc[section] = [];
+                        acc[section].push(nav);
+                        return acc;
+                      }, {} as Record<string, typeof activeMod.navigation>);
+
+                      return (
+                        <>
+                          {Object.entries(groupedNav).map(([sectionTitle, items]) => (
+                            <SidebarGroup key={sectionTitle}>
+                              <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                {sectionTitle}
+                              </SidebarGroupLabel>
+                              <SidebarGroupContent>
+                                <SidebarMenu>
+                                  {items.map((nav) => {
+                                    const NavIcon = resolveIcon(nav.icon);
+                                    return (
+                                      <SidebarMenuItem key={nav.key}>
+                                        <SidebarMenuButton
+                                          isActive={pathname === nav.route}
+                                          tooltip={nav.label}
+                                          render={<Link href={nav.route} />}
+                                        >
+                                          <NavIcon />
+                                          <span>{nav.label}</span>
+                                        </SidebarMenuButton>
+                                      </SidebarMenuItem>
+                                    );
+                                  })}
+                                </SidebarMenu>
+                              </SidebarGroupContent>
+                            </SidebarGroup>
+                          ))}
+                        </>
+                      );
+                    })()}
+                  </>
+                );
+              }
+
+              // Otherwise, show the normal dashboard navigation
+              return (
+                <>
+                  {animationsEnabled ? (
+                    <Fades holdDelay={75}>
+                      {visibleSections.map((section, si) => (
+                        <SidebarGroup key={si}>
+                          {section.titleKey ? (
+                            <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                              {t(section.titleKey, section.titleFallback ?? "")}
+                            </SidebarGroupLabel>
+                          ) : null}
+                          <SidebarGroupContent>
+                            <SidebarMenu>
+                              {section.items.map((item) => {
+                                const Icon = item.icon;
+                                const label = t(item.labelKey, item.fallback);
+                                return (
+                                  <SidebarMenuItem key={item.href}>
+                                    <SidebarMenuButton
+                                      isActive={pathname === item.href}
+                                      tooltip={label}
+                                      render={<Link href={item.href} />}
+                                    >
+                                      <Icon />
+                                      <span>{label}</span>
+                                    </SidebarMenuButton>
+                                  </SidebarMenuItem>
+                                );
+                              })}
+                            </SidebarMenu>
+                          </SidebarGroupContent>
+                        </SidebarGroup>
+                      ))}
+                    </Fades>
+                  ) : (
+                    visibleSections.map((section, si) => (
+                      <SidebarGroup key={si}>
+                        {section.titleKey ? (
+                          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                            {t(section.titleKey, section.titleFallback ?? "")}
+                          </SidebarGroupLabel>
+                        ) : null}
+                        <SidebarGroupContent>
+                          <SidebarMenu>
+                            {section.items.map((item) => {
+                              const Icon = item.icon;
+                              const label = t(item.labelKey, item.fallback);
+                              return (
+                                <SidebarMenuItem key={item.href}>
+                                  <SidebarMenuButton
+                                    isActive={pathname === item.href}
+                                    tooltip={label}
+                                    render={<Link href={item.href} />}
+                                  >
+                                    <Icon />
+                                    <span>{label}</span>
+                                  </SidebarMenuButton>
+                                </SidebarMenuItem>
+                              );
+                            })}
+                          </SidebarMenu>
+                        </SidebarGroupContent>
+                      </SidebarGroup>
+                    ))
+                  )}
+                </>
+              );
+            })()}
           </SidebarContent>
           <SidebarFooter className="border-t border-sidebar-border p-2 group-data-[collapsible=icon]:gap-1.5">
             <UserNavMenu displayName={user?.name} onLogout={() => void handleLogout()} variant="sidebar" />

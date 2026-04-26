@@ -33,7 +33,7 @@ class BrandController extends ApiController implements HasMiddleware
      */
     public function index()
     {
-        if (request()->ajax()) 
+        if (request()->ajax())
         {
             return $this->service->getDataTables();
         }
@@ -82,14 +82,10 @@ class BrandController extends ApiController implements HasMiddleware
     public function show($id)
     {
         $brand = $this->service->get($id);
-        $title = translate('brand_details');
-        $breadcrumbs = [
-            ['text' => translate('home'), 'link' => route('home')],
-            ['text' => translate('brands'), 'link' => route('tenant.brands.index')],
-            ['text' => $brand->name],
-        ];
-
-        return view('tenant.customer.brands.show', compact('brand', 'title', 'breadcrumbs'));
+        if (!$brand) {
+            return $this->return(404, translate('brand_not_found'));
+        }
+        return $this->return(200, translate('brand_retrieved_successfully'), $brand);
     }
 
     /**
@@ -135,13 +131,13 @@ class BrandController extends ApiController implements HasMiddleware
      */
     public function getModules(int $id)
     {
-        try 
+        try
         {
             $modules = $this->service->getBrandModules($id);
-            
+
             return $this->return(200, translate('modules_retrieved_successfully'), $modules);
-        } 
-        catch (\Exception $e) 
+        }
+        catch (\Exception $e)
         {
             return $this->return(500, translate('something_went_wrong'), debug: $e->getMessage());
         }
@@ -152,13 +148,13 @@ class BrandController extends ApiController implements HasMiddleware
      */
     public function getBrandsForDashboard()
     {
-        try 
+        try
         {
             $brands = $this->service->getBrandsForDashboard();
-            
+
             return $this->return(200, translate('brands_retrieved_successfully'), $brands->toArray());
-        } 
-        catch (\Exception $e) 
+        }
+        catch (\Exception $e)
         {
             return $this->return(500, translate('something_went_wrong'), debug: $e->getMessage());
         }
@@ -169,7 +165,7 @@ class BrandController extends ApiController implements HasMiddleware
      */
     public function assignModules(Request $request, int $id)
     {
-        try 
+        try
         {
             $request->validate([
                 'module_ids' => 'required|array',
@@ -179,8 +175,8 @@ class BrandController extends ApiController implements HasMiddleware
             $this->service->assignModules($id, $request->module_ids);
 
             return $this->return(200, translate('modules_assigned_successfully'));
-        } 
-        catch (\Exception $e) 
+        }
+        catch (\Exception $e)
         {
             return $this->return(500, translate('something_went_wrong'), debug: $e->getMessage());
         }

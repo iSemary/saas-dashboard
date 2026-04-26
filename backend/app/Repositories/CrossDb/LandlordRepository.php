@@ -25,7 +25,7 @@ class LandlordRepository implements LandlordRepositoryInterface
             $query->where('module_key', $filters['module_key']);
         }
 
-        return $query->select(['id', 'module_key', 'name', 'description', 'status'])
+        return $query->select(['id', 'module_key', 'name', 'description', 'theme', 'status'])
                      ->orderBy('name')
                      ->get()
                      ->map(function ($module) {
@@ -34,6 +34,7 @@ class LandlordRepository implements LandlordRepositoryInterface
                              'module_key' => $module->module_key,
                              'name' => $module->name,
                              'description' => $module->description,
+                             'theme' => $module->theme,
                              'status' => $module->status,
                          ];
                      });

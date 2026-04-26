@@ -9,9 +9,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 
-export default function PublicSurveyPageClient() {
+export default function PublicSurveyPageClient({ token: tokenProp }: { token?: string } = {}) {
   const searchParams = useSearchParams();
-  const token = searchParams.get('token') ?? '';
+  const token = tokenProp ?? searchParams.get('token') ?? '';
 
   const [survey, setSurvey] = useState<Survey | null>(null);
   const [share, setShare] = useState<SurveyShare | null>(null);

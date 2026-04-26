@@ -58,11 +58,6 @@ class TenantPermissionController extends Controller
                     'class' => 'btn btn-primary',
                     'link' => route('tenant.permissions.create')
                 ],
-                [
-                    'text' => translate('bulk_create'),
-                    'class' => 'btn btn-secondary',
-                    'link' => route('tenant.permissions.bulk-create')
-                ],
             ];
 
             return view('tenant.auth.permissions.index', compact('breadcrumbs', 'title', 'actionButtons'));
@@ -259,28 +254,6 @@ class TenantPermissionController extends Controller
                 'success' => false,
                 'message' => $e->getMessage()
             ], 500);
-        }
-    }
-
-    /**
-     * Show bulk create form
-     */
-    public function bulkCreateForm()
-    {
-        try
-        {
-            $title = translate('bulk_create') . ' ' . translate('permissions');
-            $breadcrumbs = [
-                ['text' => translate('home'), 'link' => route('home')],
-                ['text' => translate('permissions'), 'link' => route('tenant.permissions.index')],
-                ['text' => translate('bulk_create')],
-            ];
-
-            return view('tenant.auth.permissions.bulk-create', compact('breadcrumbs', 'title'));
-        }
-        catch (\Exception $e)
-        {
-            return back()->with('error', $e->getMessage());
         }
     }
 

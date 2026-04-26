@@ -34,20 +34,9 @@ class ContactApiController extends ApiController implements HasMiddleware
 
             $contacts = $this->service->list($filters, $perPage);
 
-            return response()->json([
-                'data' => $contacts->items(),
-                'current_page' => $contacts->currentPage(),
-                'last_page' => $contacts->lastPage(),
-                'per_page' => $contacts->perPage(),
-                'total' => $contacts->total(),
-                'from' => $contacts->firstItem(),
-                'to' => $contacts->lastItem(),
-            ]);
+            return $this->return(200, '', $contacts);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Failed to retrieve contacts',
-                'error' => $e->getMessage()
-            ], 500);
+            return $this->return(500, 'Failed to retrieve contacts', [], ['error' => $e->getMessage()]);
         }
     }
 
@@ -57,15 +46,9 @@ class ContactApiController extends ApiController implements HasMiddleware
             $data = CreateContactData::fromRequest($request);
             $contact = $this->service->create($data);
 
-            return response()->json([
-                'data' => $contact->load(['company', 'assignedUser', 'creator']),
-                'message' => 'Contact created successfully'
-            ], 201);
+            return $this->respondCreated($contact->load(['company', 'assignedUser', 'creator'])->toArray());
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Failed to create contact',
-                'error' => $e->getMessage()
-            ], 500);
+            return $this->return(500, 'Failed to create contact', [], ['error' => $e->getMessage()]);
         }
     }
 
@@ -73,12 +56,9 @@ class ContactApiController extends ApiController implements HasMiddleware
     {
         try {
             $contact = $this->service->findOrFail($id);
-            return response()->json(['data' => $contact]);
+            return $this->respondWithArray($contact->toArray());
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Contact not found',
-                'error' => $e->getMessage()
-            ], 404);
+            return $this->respondNotFound('Contact not found');
         }
     }
 
@@ -88,15 +68,9 @@ class ContactApiController extends ApiController implements HasMiddleware
             $data = UpdateContactData::fromRequest($request);
             $contact = $this->service->update($id, $data);
 
-            return response()->json([
-                'data' => $contact,
-                'message' => 'Contact updated successfully'
-            ]);
+            return $this->respondWithArray($contact->toArray(), 'Contact updated successfully');
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Failed to update contact',
-                'error' => $e->getMessage()
-            ], 500);
+            return $this->return(500, 'Failed to update contact', [], ['error' => $e->getMessage()]);
         }
     }
 

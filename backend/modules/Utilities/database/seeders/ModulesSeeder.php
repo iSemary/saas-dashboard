@@ -22,10 +22,19 @@ class ModulesSeeder extends Seeder
                 'icon' => 'crm.png',
                 'slogan' => 'One call, one deal',
                 'navigation' => [
-                    ['key' => 'dashboard', 'label' => 'Dashboard', 'route' => '/dashboard/modules/crm', 'icon' => 'LayoutDashboard'],
-                    ['key' => 'companies', 'label' => 'Companies', 'route' => '/dashboard/modules/crm/companies', 'icon' => 'Building2'],
-                    ['key' => 'contacts', 'label' => 'Contacts', 'route' => '/dashboard/modules/crm/contacts', 'icon' => 'Users'],
-                    ['key' => 'deals', 'label' => 'Deals', 'route' => '/dashboard/modules/crm/deals', 'icon' => 'Handshake'],
+                    ['key' => 'dashboard', 'label' => 'Dashboard', 'route' => '/dashboard/modules/crm', 'icon' => 'LayoutDashboard', 'section' => 'Main'],
+                    ['key' => 'companies', 'label' => 'Companies', 'route' => '/dashboard/modules/crm/companies', 'icon' => 'Building2', 'section' => 'Contacts & Accounts'],
+                    ['key' => 'contacts', 'label' => 'Contacts', 'route' => '/dashboard/modules/crm/contacts', 'icon' => 'Users', 'section' => 'Contacts & Accounts'],
+                    ['key' => 'leads', 'label' => 'Leads', 'route' => '/dashboard/modules/crm/leads', 'icon' => 'Target', 'section' => 'Sales'],
+                    ['key' => 'opportunities', 'label' => 'Opportunities', 'route' => '/dashboard/modules/crm/opportunities', 'icon' => 'TrendingUp', 'section' => 'Sales'],
+                    ['key' => 'deals', 'label' => 'Deals', 'route' => '/dashboard/modules/crm/deals', 'icon' => 'Handshake', 'section' => 'Sales'],
+                    ['key' => 'activities', 'label' => 'Activities', 'route' => '/dashboard/modules/crm/activities', 'icon' => 'CalendarClock', 'section' => 'Sales'],
+                    ['key' => 'notes', 'label' => 'Notes', 'route' => '/dashboard/modules/crm/notes', 'icon' => 'StickyNote', 'section' => 'Data'],
+                    ['key' => 'files', 'label' => 'Files', 'route' => '/dashboard/modules/crm/files', 'icon' => 'FileText', 'section' => 'Data'],
+                    ['key' => 'pipeline-stages', 'label' => 'Pipeline Stages', 'route' => '/dashboard/modules/crm/pipeline-stages', 'icon' => 'GitBranch', 'section' => 'Settings'],
+                    ['key' => 'automation', 'label' => 'Automation', 'route' => '/dashboard/modules/crm/automation', 'icon' => 'Zap', 'section' => 'Settings'],
+                    ['key' => 'webhooks', 'label' => 'Webhooks', 'route' => '/dashboard/modules/crm/webhooks', 'icon' => 'Webhook', 'section' => 'Settings'],
+                    ['key' => 'import', 'label' => 'Import', 'route' => '/dashboard/modules/crm/import', 'icon' => 'Upload', 'section' => 'Settings'],
                 ],
                 'theme' => [
                     'primary_color' => '#3B82F6',
@@ -37,18 +46,18 @@ class ModulesSeeder extends Seeder
                 'module_key' => 'survey',
                 'name' => 'Survey',
                 'description' => 'Create surveys, collect responses, and analyze results with advanced branching logic and real-time analytics',
-                'route' => '/survey/',
+                'route' => '/dashboard/modules/survey/',
                 'icon' => 'FileText',
                 'slogan' => 'Collect insights that drive decisions',
                 'navigation' => [
-                    ['key' => 'dashboard', 'label' => 'Dashboard', 'route' => '/dashboard/modules/survey', 'icon' => 'LayoutDashboard'],
-                    ['key' => 'surveys', 'label' => 'Surveys', 'route' => '/dashboard/modules/survey/surveys', 'icon' => 'FileText'],
-                    ['key' => 'templates', 'label' => 'Templates', 'route' => '/dashboard/modules/survey/templates', 'icon' => 'Copy'],
-                    ['key' => 'themes', 'label' => 'Themes', 'route' => '/dashboard/modules/survey/themes', 'icon' => 'Palette'],
-                    ['key' => 'responses', 'label' => 'Responses', 'route' => '/dashboard/modules/survey/responses', 'icon' => 'MessageSquare'],
-                    ['key' => 'analytics', 'label' => 'Analytics', 'route' => '/dashboard/modules/survey/analytics', 'icon' => 'BarChart3'],
-                    ['key' => 'automation', 'label' => 'Automation', 'route' => '/dashboard/modules/survey/automation', 'icon' => 'Zap'],
-                    ['key' => 'webhooks', 'label' => 'Webhooks', 'route' => '/dashboard/modules/survey/webhooks', 'icon' => 'Webhook'],
+                    ['key' => 'dashboard', 'label' => 'Dashboard', 'route' => '/dashboard/modules/survey', 'icon' => 'LayoutDashboard', 'section' => 'Main'],
+                    ['key' => 'surveys', 'label' => 'Surveys', 'route' => '/dashboard/modules/survey/surveys', 'icon' => 'FileText', 'section' => 'Management'],
+                    ['key' => 'templates', 'label' => 'Templates', 'route' => '/dashboard/modules/survey/templates', 'icon' => 'Copy', 'section' => 'Management'],
+                    ['key' => 'themes', 'label' => 'Themes', 'route' => '/dashboard/modules/survey/themes', 'icon' => 'Palette', 'section' => 'Management'],
+                    ['key' => 'responses', 'label' => 'Responses', 'route' => '/dashboard/modules/survey/responses', 'icon' => 'MessageSquare', 'section' => 'Data & Insights'],
+                    ['key' => 'analytics', 'label' => 'Analytics', 'route' => '/dashboard/modules/survey/analytics', 'icon' => 'BarChart3', 'section' => 'Data & Insights'],
+                    ['key' => 'automation', 'label' => 'Automation', 'route' => '/dashboard/modules/survey/automation', 'icon' => 'Zap', 'section' => 'Integrations'],
+                    ['key' => 'webhooks', 'label' => 'Webhooks', 'route' => '/dashboard/modules/survey/webhooks', 'icon' => 'Webhook', 'section' => 'Integrations'],
                 ],
                 'theme' => [
                     'primary_color' => '#8B5CF6',
@@ -64,9 +73,15 @@ class ModulesSeeder extends Seeder
                 'icon' => 'pos.png',
                 'slogan' => 'Sales made easy',
                 'navigation' => [
-                    ['key' => 'dashboard', 'label' => 'Dashboard', 'route' => '/dashboard/modules/pos', 'icon' => 'LayoutDashboard'],
-                    ['key' => 'products', 'label' => 'Products', 'route' => '/dashboard/modules/pos/products', 'icon' => 'Package'],
-                    ['key' => 'orders', 'label' => 'Orders', 'route' => '/dashboard/modules/pos/orders', 'icon' => 'Receipt'],
+                    ['key' => 'dashboard', 'label' => 'Dashboard', 'route' => '/dashboard/modules/pos', 'icon' => 'LayoutDashboard', 'section' => 'Main'],
+                    ['key' => 'products', 'label' => 'Products', 'route' => '/dashboard/modules/pos/products', 'icon' => 'Package', 'section' => 'Catalog'],
+                    ['key' => 'categories', 'label' => 'Categories', 'route' => '/dashboard/modules/pos/categories', 'icon' => 'Folder', 'section' => 'Catalog'],
+                    ['key' => 'sub-categories', 'label' => 'Sub-Categories', 'route' => '/dashboard/modules/pos/sub-categories', 'icon' => 'Folders', 'section' => 'Catalog'],
+                    ['key' => 'tags', 'label' => 'Tags', 'route' => '/dashboard/modules/pos/tags', 'icon' => 'Tags', 'section' => 'Catalog'],
+                    ['key' => 'barcodes', 'label' => 'Barcodes', 'route' => '/dashboard/modules/pos/barcodes', 'icon' => 'Barcode', 'section' => 'Catalog'],
+                    ['key' => 'offer-prices', 'label' => 'Offer Prices', 'route' => '/dashboard/modules/pos/offer-prices', 'icon' => 'Tag', 'section' => 'Pricing'],
+                    ['key' => 'damaged', 'label' => 'Damaged', 'route' => '/dashboard/modules/pos/damaged', 'icon' => 'AlertTriangle', 'section' => 'Inventory'],
+                    ['key' => 'orders', 'label' => 'Orders', 'route' => '/dashboard/modules/pos/orders', 'icon' => 'Receipt', 'section' => 'Sales'],
                 ],
                 'theme' => [
                     'primary_color' => '#10B981',
@@ -82,27 +97,27 @@ class ModulesSeeder extends Seeder
                 'icon' => 'hr.png',
                 'slogan' => 'Managing human resources',
                 'navigation' => [
-                    ['key' => 'dashboard', 'label' => 'Dashboard', 'route' => '/dashboard/modules/hr', 'icon' => 'LayoutDashboard'],
-                    ['key' => 'departments', 'label' => 'Departments', 'route' => '/dashboard/modules/hr/departments', 'icon' => 'Building2'],
-                    ['key' => 'employees', 'label' => 'Employees', 'route' => '/dashboard/modules/hr/employees', 'icon' => 'Users'],
-                    ['key' => 'positions', 'label' => 'Positions', 'route' => '/dashboard/modules/hr/positions', 'icon' => 'Briefcase'],
-                    ['key' => 'shifts', 'label' => 'Shifts', 'route' => '/dashboard/modules/hr/shifts', 'icon' => 'Clock3'],
-                    ['key' => 'leave_types', 'label' => 'Leave Types', 'route' => '/dashboard/modules/hr/leave-types', 'icon' => 'CalendarRange'],
-                    ['key' => 'leave_requests', 'label' => 'Leave Requests', 'route' => '/dashboard/modules/hr/leave-requests', 'icon' => 'FileText'],
-                    ['key' => 'holidays', 'label' => 'Holidays', 'route' => '/dashboard/modules/hr/holidays', 'icon' => 'CalendarDays'],
-                    ['key' => 'payrolls', 'label' => 'Payroll', 'route' => '/dashboard/modules/hr/payrolls', 'icon' => 'Wallet'],
-                    ['key' => 'performance_cycles', 'label' => 'Performance', 'route' => '/dashboard/modules/hr/performance-cycles', 'icon' => 'LineChart'],
-                    ['key' => 'recruitment', 'label' => 'Recruitment', 'route' => '/dashboard/modules/hr/recruitment', 'icon' => 'Briefcase'],
-                    ['key' => 'candidates', 'label' => 'Candidates', 'route' => '/dashboard/modules/hr/candidates', 'icon' => 'UsersRound'],
-                    ['key' => 'applications', 'label' => 'Applications', 'route' => '/dashboard/modules/hr/applications', 'icon' => 'KanbanSquare'],
-                    ['key' => 'interviews', 'label' => 'Interviews', 'route' => '/dashboard/modules/hr/interviews', 'icon' => 'CalendarClock'],
-                    ['key' => 'offers', 'label' => 'Offers', 'route' => '/dashboard/modules/hr/offers', 'icon' => 'BadgeDollarSign'],
-                    ['key' => 'onboarding', 'label' => 'Onboarding', 'route' => '/dashboard/modules/hr/onboarding', 'icon' => 'ClipboardCheck'],
-                    ['key' => 'training', 'label' => 'Training', 'route' => '/dashboard/modules/hr/training', 'icon' => 'GraduationCap'],
-                    ['key' => 'assets', 'label' => 'Assets', 'route' => '/dashboard/modules/hr/assets', 'icon' => 'Package'],
-                    ['key' => 'expenses', 'label' => 'Expenses', 'route' => '/dashboard/modules/hr/expenses', 'icon' => 'Receipt'],
-                    ['key' => 'announcements', 'label' => 'Announcements', 'route' => '/dashboard/modules/hr/announcements', 'icon' => 'Megaphone'],
-                    ['key' => 'reports', 'label' => 'Reports', 'route' => '/dashboard/modules/hr/reports', 'icon' => 'BarChart3'],
+                    ['key' => 'dashboard', 'label' => 'Dashboard', 'route' => '/dashboard/modules/hr', 'icon' => 'LayoutDashboard', 'section' => 'Main'],
+                    ['key' => 'departments', 'label' => 'Departments', 'route' => '/dashboard/modules/hr/departments', 'icon' => 'Building2', 'section' => 'Organization'],
+                    ['key' => 'employees', 'label' => 'Employees', 'route' => '/dashboard/modules/hr/employees', 'icon' => 'Users', 'section' => 'Organization'],
+                    ['key' => 'positions', 'label' => 'Positions', 'route' => '/dashboard/modules/hr/positions', 'icon' => 'Briefcase', 'section' => 'Organization'],
+                    ['key' => 'shifts', 'label' => 'Shifts', 'route' => '/dashboard/modules/hr/shifts', 'icon' => 'Clock3', 'section' => 'Organization'],
+                    ['key' => 'leave_types', 'label' => 'Leave Types', 'route' => '/dashboard/modules/hr/leave-types', 'icon' => 'CalendarRange', 'section' => 'Time & Attendance'],
+                    ['key' => 'leave_requests', 'label' => 'Leave Requests', 'route' => '/dashboard/modules/hr/leave-requests', 'icon' => 'FileText', 'section' => 'Time & Attendance'],
+                    ['key' => 'holidays', 'label' => 'Holidays', 'route' => '/dashboard/modules/hr/holidays', 'icon' => 'CalendarDays', 'section' => 'Time & Attendance'],
+                    ['key' => 'payrolls', 'label' => 'Payroll', 'route' => '/dashboard/modules/hr/payrolls', 'icon' => 'Wallet', 'section' => 'Payroll & Performance'],
+                    ['key' => 'performance_cycles', 'label' => 'Performance', 'route' => '/dashboard/modules/hr/performance-cycles', 'icon' => 'LineChart', 'section' => 'Payroll & Performance'],
+                    ['key' => 'recruitment', 'label' => 'Recruitment', 'route' => '/dashboard/modules/hr/recruitment', 'icon' => 'Briefcase', 'section' => 'Recruitment'],
+                    ['key' => 'candidates', 'label' => 'Candidates', 'route' => '/dashboard/modules/hr/candidates', 'icon' => 'UsersRound', 'section' => 'Recruitment'],
+                    ['key' => 'applications', 'label' => 'Applications', 'route' => '/dashboard/modules/hr/applications', 'icon' => 'KanbanSquare', 'section' => 'Recruitment'],
+                    ['key' => 'interviews', 'label' => 'Interviews', 'route' => '/dashboard/modules/hr/interviews', 'icon' => 'CalendarClock', 'section' => 'Recruitment'],
+                    ['key' => 'offers', 'label' => 'Offers', 'route' => '/dashboard/modules/hr/offers', 'icon' => 'BadgeDollarSign', 'section' => 'Recruitment'],
+                    ['key' => 'onboarding', 'label' => 'Onboarding', 'route' => '/dashboard/modules/hr/onboarding', 'icon' => 'ClipboardCheck', 'section' => 'Recruitment'],
+                    ['key' => 'training', 'label' => 'Training', 'route' => '/dashboard/modules/hr/training', 'icon' => 'GraduationCap', 'section' => 'Development'],
+                    ['key' => 'assets', 'label' => 'Assets', 'route' => '/dashboard/modules/hr/assets', 'icon' => 'Package', 'section' => 'Assets & Finance'],
+                    ['key' => 'expenses', 'label' => 'Expenses', 'route' => '/dashboard/modules/hr/expenses', 'icon' => 'Receipt', 'section' => 'Assets & Finance'],
+                    ['key' => 'announcements', 'label' => 'Announcements', 'route' => '/dashboard/modules/hr/announcements', 'icon' => 'Megaphone', 'section' => 'Others'],
+                    ['key' => 'reports', 'label' => 'Reports', 'route' => '/dashboard/modules/hr/reports', 'icon' => 'BarChart3', 'section' => 'Others'],
                 ],
                 'theme' => [
                     'primary_color' => '#F59E0B',
@@ -282,10 +297,12 @@ class ModulesSeeder extends Seeder
         ];
 
         foreach ($modules as $module) {
-            Module::firstOrCreate(
-                ['module_key' => $module['module_key']], // Check for an existing module with this key
-                $module // If not found, create a new record with this data
-            );
+            $existingModule = Module::where('module_key', $module['module_key'])->first();
+            if ($existingModule) {
+                $existingModule->update($module);
+            } else {
+                Module::create($module);
+            }
         }
     }
 }

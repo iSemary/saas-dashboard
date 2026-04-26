@@ -42,11 +42,17 @@ class AddMissingModulesToBrandSeeder extends Seeder
 
         // Add each module to the brand if not already subscribed
         foreach ($modules as $module) {
-            $existing = BrandModule::where('brand_id', $brand->id)
-                ->where('module_id', $module->id)
+            $existing = BrandModule::withTrashed()
+                ->where('brand_id', $brand->id)
+                ->where('module_key', $module->module_key)
                 ->first();
 
             if ($existing) {
+                if ($existing->trashed()) {
+                    $existing->restore();
+                    $this->command->info("Restored soft-deleted module {$module->module_key}");
+                }
+
                 $this->command->warn("Module {$module->module_key} is already subscribed to this brand (status: {$existing->status})");
 
                 // If it exists but is not active, activate it
