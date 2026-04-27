@@ -1,27 +1,11 @@
-# SaaS Platform - Complete Ecosystem
+# SaaS Dashboard
 
-A comprehensive multi-tenant SaaS platform providing a complete business solution with web, desktop, and mobile applications. This platform enables businesses to manage tenants, subscriptions, payments, and customer relationships through a unified ecosystem.
+Monorepo for the SaaS Dashboard application, containing the backend API and two frontend clients.
 
-## Default Users
+## Structure
 
-## Landlord (Superadmin)
+- **[`backend/`](./backend)** — Backend API server
+- **[`landlord-frontend/`](./landlord-frontend)** — Landlord dashboard frontend
+- **[`tenant-frontend/`](./tenant-frontend)** — Tenant dashboard frontend
 
-URL: http://landlord.saas.test
-Email: admin@landlord.saas.test
-Username: landlord
-Password: password123
-
-
-## Tenant #1 (Customer 1)
-
-URL: http://customer1.saas.test
-Email: admin@customer1.saas.test
-Password: password123
-
-## Tenant #2 (Customer 2)
-
-URL: http://customer2.saas.test
-Email: admin@customer2.saas.test
-Password: password123
-
-
+Run `./autorun.sh` to set up and start the entire project in one go. Pass `--help` for available options.

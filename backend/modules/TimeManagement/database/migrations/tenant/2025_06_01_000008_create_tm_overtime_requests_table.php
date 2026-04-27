@@ -12,14 +12,14 @@ return new class extends Migration
     {
         Schema::create('tm_overtime_requests', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
-            $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
+            $table->uuid('tenant_id');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->date('date');
             $table->unsignedInteger('requested_minutes');
             $table->unsignedInteger('approved_minutes')->default(0);
             $table->string('reason');
             $table->string('status')->default('pending'); // pending, approved, rejected
-            $table->foreignUuid('approved_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('approved_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamp('approved_at')->nullable();
             $table->text('rejection_reason')->nullable();
             $table->timestamps();

@@ -17,6 +17,7 @@ return new class extends Migration
 
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('tenant_id');
             $table->string('name');
             $table->string('logo')->nullable();
             $table->text('description')->nullable();
@@ -31,7 +32,7 @@ return new class extends Migration
             $table->timestamps();
 
             // Indexes for performance
-            $table->index(['status', 'name']);
+            $table->index(['tenant_id', 'status', 'name']);
             $table->index('created_by');
         });
     }

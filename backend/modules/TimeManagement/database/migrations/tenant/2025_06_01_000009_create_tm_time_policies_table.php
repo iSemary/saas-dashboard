@@ -12,12 +12,12 @@ return new class extends Migration
     {
         Schema::create('tm_time_policies', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->uuid('tenant_id');
             $table->string('name');
             $table->text('description')->nullable();
             $table->json('rules'); // flexible policy rules
             $table->boolean('is_active')->default(true);
-            $table->foreignUuid('created_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
 
             $table->index(['tenant_id', 'is_active']);

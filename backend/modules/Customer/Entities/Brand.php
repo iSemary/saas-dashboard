@@ -15,6 +15,8 @@ class Brand extends Model implements Auditable
 {
     use HasFactory, SoftDeletes, Translatable, \OwenIt\Auditing\Auditable;
 
+    protected $connection = 'landlord';
+
     protected $fillable = [
         'logo',
         'name',

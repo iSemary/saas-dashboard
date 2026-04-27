@@ -12,8 +12,8 @@ return new class extends Migration
     {
         Schema::create('tm_time_entries', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
-            $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
+            $table->uuid('tenant_id');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignUuid('project_id')->nullable(); // cross-link to pm_projects
             $table->foreignUuid('task_id')->nullable(); // cross-link to pm_tasks
             $table->date('date');
@@ -24,8 +24,8 @@ return new class extends Migration
             $table->boolean('is_billable')->default(true);
             $table->text('description')->nullable();
             $table->string('status')->default('draft'); // draft, submitted, approved, rejected
-            $table->foreignUuid('timesheet_id')->nullable()->constrained('tm_timesheets')->onDelete('set null');
-            $table->foreignUuid('time_session_id')->nullable()->constrained('tm_time_sessions')->onDelete('set null');
+            $table->uuid('timesheet_id')->nullable();
+            $table->uuid('time_session_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

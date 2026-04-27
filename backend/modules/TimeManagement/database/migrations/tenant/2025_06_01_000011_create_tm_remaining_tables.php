@@ -13,8 +13,8 @@ return new class extends Migration
         // Calendar OAuth tokens
         Schema::create('tm_calendar_tokens', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
-            $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
+            $table->uuid('tenant_id');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('provider'); // google, outlook
             $table->text('access_token');
             $table->text('refresh_token')->nullable();
@@ -28,13 +28,13 @@ return new class extends Migration
         // Webhooks
         Schema::create('tm_webhooks', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->uuid('tenant_id');
             $table->string('name');
             $table->string('url');
             $table->json('events');
             $table->boolean('is_active')->default(true);
             $table->string('secret')->nullable();
-            $table->foreignUuid('created_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
 
             $table->index(['tenant_id', 'is_active']);

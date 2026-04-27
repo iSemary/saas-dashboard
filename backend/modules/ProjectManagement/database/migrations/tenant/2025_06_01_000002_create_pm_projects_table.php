@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('pm_projects', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->uuid('tenant_id');
             $table->foreignUuid('workspace_id')->nullable()->constrained('pm_workspaces')->onDelete('set null');
             $table->string('name');
             $table->text('description')->nullable();
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->decimal('budget', 15, 2)->nullable();
             $table->decimal('spent', 15, 2)->default(0);
             $table->json('settings')->nullable();
-            $table->foreignUuid('created_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
             $table->softDeletes();
 

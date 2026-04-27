@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('pm_tasks', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->uuid('tenant_id');
             $table->foreignUuid('project_id')->constrained('pm_projects')->onDelete('cascade');
             $table->foreignUuid('milestone_id')->nullable()->constrained('pm_milestones')->onDelete('set null');
             $table->foreignUuid('board_column_id')->nullable()->constrained('pm_board_columns')->onDelete('set null');
@@ -26,8 +26,8 @@ return new class extends Migration
             $table->date('due_date')->nullable();
             $table->decimal('estimated_hours', 8, 2)->nullable();
             $table->decimal('actual_hours', 8, 2)->default(0);
-            $table->foreignUuid('assignee_id')->nullable()->constrained('users')->onDelete('set null');
-            $table->foreignUuid('created_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('assignee_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
             $table->softDeletes();
 

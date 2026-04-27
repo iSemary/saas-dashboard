@@ -12,8 +12,8 @@ return new class extends Migration
     {
         Schema::create('tm_work_schedules', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
-            $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
+            $table->uuid('tenant_id');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignUuid('work_calendar_id')->constrained('tm_work_calendars')->onDelete('cascade');
             $table->foreignUuid('shift_template_id')->nullable()->constrained('tm_shift_templates')->onDelete('set null');
             $table->date('effective_from');

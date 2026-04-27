@@ -11,6 +11,8 @@ class TranslationObject extends Model implements Auditable
 {
     use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable;
 
+    protected $connection = 'landlord';
+
     protected $fillable = ['object_type', 'object_id', 'translation_id'];
 
     public function translation()

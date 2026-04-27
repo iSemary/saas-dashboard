@@ -10,11 +10,11 @@ return new class extends Migration
     {
         Schema::create('pm_workspaces', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->uuid('tenant_id');
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('status')->default('active');
-            $table->foreignUuid('created_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
             $table->softDeletes();
 

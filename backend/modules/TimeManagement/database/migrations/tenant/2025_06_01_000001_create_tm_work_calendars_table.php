@@ -12,7 +12,7 @@ return new class extends Migration
     {
         Schema::create('tm_work_calendars', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->uuid('tenant_id');
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('timezone')->default('UTC');
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->time('default_end_time')->default('17:00:00');
             $table->unsignedInteger('default_break_minutes')->default(60);
             $table->boolean('is_default')->default(false);
-            $table->foreignUuid('created_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
             $table->softDeletes();
 

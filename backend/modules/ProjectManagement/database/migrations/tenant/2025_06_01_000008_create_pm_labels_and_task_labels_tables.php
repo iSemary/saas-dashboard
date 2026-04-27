@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('pm_labels', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->uuid('tenant_id');
             $table->foreignUuid('project_id')->constrained('pm_projects')->onDelete('cascade');
             $table->string('name');
             $table->string('color')->default('#6B7280');
