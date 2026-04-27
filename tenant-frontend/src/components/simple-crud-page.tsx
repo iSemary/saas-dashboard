@@ -47,6 +47,18 @@ export type FieldDef = {
   parentLabelKey?: string;
 };
 
+export type ActionButton = {
+  labelKey: string;
+  labelFallback: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  variant?: "default" | "outline" | "destructive" | "secondary" | "ghost" | "link";
+  onClick?: () => void | Promise<void>;
+  href?: string;
+  className?: string;
+  disabled?: boolean;
+  iconClassName?: string;
+};
+
 type CreateFn = {
   bivarianceHack(payload: Record<string, unknown>): Promise<unknown>;
 }["bivarianceHack"];
@@ -81,6 +93,8 @@ export type SimpleCRUDConfig<T extends { id: number }> = {
   moduleKey?: string;
   /** Dashboard href for "Open Dashboard" button */
   dashboardHref?: string;
+  /** Custom action buttons to display in the header */
+  actionButtons?: ActionButton[];
 };
 
 function AnimatedSheetContent({ children, enabled }: { children: React.ReactNode; enabled: boolean }) {

@@ -70,29 +70,35 @@ export default function DashboardPage() {
     { key: "brands", label: t("dashboard.stats.brands", "Brands"), value: stats?.brands_count ?? 0, icon: Building2 },
   ], [stats, t]);
 
-  const groupedModules = useMemo(() => {
+  const groupedBrands = useMemo(() => {
     return Object.values(
       subscribedModules.reduce((acc, mod) => {
-        if (!acc[mod.module_key]) {
-          acc[mod.module_key] = { ...mod, brands: [] };
-        }
-        if (mod.brand_id && !acc[mod.module_key].brands.find((b: { id: number }) => b.id === mod.brand_id)) {
-          acc[mod.module_key].brands.push({
+        if (!mod.brand_id) return acc;
+        if (!acc[mod.brand_id]) {
+          acc[mod.brand_id] = {
             id: mod.brand_id,
             name: mod.brand_name,
             slug: mod.brand_slug,
+            modules: [],
+          };
+        }
+        if (!acc[mod.brand_id].modules.find((m: { module_key: string }) => m.module_key === mod.module_key)) {
+          acc[mod.brand_id].modules.push({
+            module_key: mod.module_key,
+            name: mod.name,
+            route: mod.route,
           });
         }
         return acc;
-      }, {} as Record<string, SubscribedModule & { brands: { id: number; name: string | null; slug: string | null }[] }>)
+      }, {} as Record<number, { id: number; name: string | null; slug: string | null; modules: { module_key: string; name: string; route: string | null }[] }>)
     );
   }, [subscribedModules]);
 
-  const moduleKeys = useMemo(() => groupedModules.map((m) => `module:${m.module_key}`), [groupedModules]);
+  const brandKeys = useMemo(() => groupedBrands.map((b) => `brand:${b.id}`), [groupedBrands]);
 
   const defaultLayouts = useMemo<ResponsiveLayouts>(
-    () => buildDefaultLayouts([...STAT_CARD_KEYS], moduleKeys),
-    [moduleKeys]
+    () => buildDefaultLayouts([...STAT_CARD_KEYS], brandKeys),
+    [brandKeys]
   );
 
   if (loading) {
@@ -134,32 +140,32 @@ export default function DashboardPage() {
     return <div key={c.key} className="h-full">{cardContent}</div>;
   });
 
-  const moduleCardElements = modulesLoading
+  const brandCardElements = modulesLoading
     ? []
-    : groupedModules.map((mod) => (
+    : groupedBrands.map((brand) => (
         <div
-          key={`module:${mod.module_key}`}
+          key={`brand:${brand.id}`}
           className="h-full rounded-xl border bg-background p-4 transition-colors hover:bg-muted/50"
         >
           <Link
-            href={mod.route ?? `/dashboard/modules/${mod.module_key}`}
+            href={brand.slug ? `/dashboard/brands/${brand.slug}` : `/dashboard/brands`}
             className="text-sm font-medium hover:underline"
           >
-            {mod.name}
+            {brand.name}
           </Link>
           <div className="mt-2 flex flex-wrap gap-1 items-center">
-            {mod.brands.length > 0 && (
+            {brand.modules.length > 0 && (
               <span className="text-xs text-muted-foreground mr-1">
-                {t("dashboard.nav.brands", "Brands")}:
+                {t("dashboard.nav.modules", "Modules")}:
               </span>
             )}
-            {mod.brands.map((brand) => (
+            {brand.modules.map((mod) => (
               <Link
-                key={`${mod.module_key}-${brand.id}`}
-                href={brand.slug ? `/dashboard/modules/${mod.module_key}/${brand.slug}` : `/dashboard/modules/${mod.module_key}`}
+                key={`${brand.id}-${mod.module_key}`}
+                href={mod.route ? `${mod.route}/${brand.slug}` : `/dashboard/modules/${mod.module_key}/${brand.slug}`}
                 className="inline-flex items-center rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary hover:bg-primary/20 transition-colors"
               >
-                {brand.name}
+                {mod.name}
               </Link>
             ))}
           </div>
@@ -169,12 +175,12 @@ export default function DashboardPage() {
   const allItems = animationsEnabled
     ? (
         <DraggableDashboardGrid storageKey={STORAGE_KEY} defaultLayouts={defaultLayouts}>
-          {[...statCardElements, ...moduleCardElements]}
+          {[...statCardElements, ...brandCardElements]}
         </DraggableDashboardGrid>
       )
     : (
         <DraggableDashboardGrid storageKey={STORAGE_KEY} defaultLayouts={defaultLayouts}>
-          {[...statCardElements, ...moduleCardElements]}
+          {[...statCardElements, ...brandCardElements]}
         </DraggableDashboardGrid>
       );
 
@@ -186,9 +192,9 @@ export default function DashboardPage() {
         </div>
       )}
       {!modulesLoading && allItems}
-      {!modulesLoading && subscribedModules.length === 0 && statCardElements.length > 0 && (
+      {!modulesLoading && groupedBrands.length === 0 && statCardElements.length > 0 && (
         <p className="text-sm text-muted-foreground">
-          {t("dashboard.modules.empty", "No subscribed modules were found for your tenant brands.")}
+          {t("dashboard.brands.empty", "No brands with subscribed modules were found.")}
         </p>
       )}
     </div>

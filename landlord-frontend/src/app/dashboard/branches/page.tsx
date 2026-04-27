@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { Loader2, Plus, Pencil, Trash2 } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, Upload, Download } from "lucide-react";
+import Link from "next/link";
 import { toast } from "sonner";
 import { DataTable } from "@/components/data-table";
 import { Button } from "@/components/ui/button";
@@ -185,11 +186,20 @@ export default function BranchesPage() {
       <DataTable
         columns={columns}
         data={rows}
+        enableExport={true}
         toolbarActions={(
-          <Button type="button" size="sm" className="h-9 gap-1" onClick={openCreate}>
-            <Plus className="size-4" />
-            {t("dashboard.branches.create", "Create Branch")}
-          </Button>
+          <>
+            <Link href="/dashboard/import/branches">
+              <Button type="button" variant="outline" size="sm" className="h-9 gap-1">
+                <Upload className="size-4" />
+                {t("dashboard.import", "Import")}
+              </Button>
+            </Link>
+            <Button type="button" size="sm" className="h-9 gap-1" onClick={openCreate}>
+              <Plus className="size-4" />
+              {t("dashboard.branches.create", "Create Branch")}
+            </Button>
+          </>
         )}
       />
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>

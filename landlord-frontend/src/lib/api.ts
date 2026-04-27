@@ -1,6 +1,21 @@
 import axios, { type AxiosResponse, type InternalAxiosRequestConfig } from "axios";
 import { redirectToLoginSPA } from "@/lib/auth-navigation";
 
+// Track if we're currently handling an error that should NOT trigger login redirect
+let skipLoginRedirect = false;
+
+/** Tell the API interceptor to skip the next 401 redirect (used by error boundaries) */
+export function skipNextLoginRedirect(): void {
+  skipLoginRedirect = true;
+}
+
+/** Check and consume the skip flag */
+function shouldSkipLoginRedirect(): boolean {
+  const shouldSkip = skipLoginRedirect;
+  skipLoginRedirect = false;
+  return shouldSkip;
+}
+
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api/landlord",
 });
@@ -84,6 +99,10 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401 && typeof window !== "undefined") {
       if (isCredentialFlowRequest(error.config)) {
+        return Promise.reject(error);
+      }
+      // Skip redirect if we're explicitly handling an error (error boundary active)
+      if (shouldSkipLoginRedirect()) {
         return Promise.reject(error);
       }
       const sentToken = bearerFromConfig(error.config);

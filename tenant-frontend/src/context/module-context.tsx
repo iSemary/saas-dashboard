@@ -12,7 +12,7 @@ import {
 import { useAuth } from "@/context/auth-context";
 import { applyDashboardThemeColors, clearDashboardThemeColors } from "@/lib/dashboard-theme";
 import { type ModulePalette, resolveModulePalette } from "@/lib/module-palette";
-import { getSubscribedModules } from "@/lib/tenant-resources";
+import { getSubscribedModules, getModule } from "@/lib/tenant-resources";
 
 export type ModuleNavItem = {
   key: string;
@@ -55,6 +55,7 @@ type ModuleContextValue = {
   subscribedModules: SubscribedModule[];
   modulesLoading: boolean;
   getModuleByKey: (key: string) => SubscribedModule | undefined;
+  fetchModuleDetail: (key: string) => Promise<SubscribedModule | null>;
 };
 
 const ModuleContext = createContext<ModuleContextValue | null>(null);
@@ -98,6 +99,30 @@ export function ModuleProvider({ children }: { children: ReactNode }) {
     [subscribedModules],
   );
 
+  const fetchModuleDetail = useCallback(async (key: string): Promise<SubscribedModule | null> => {
+    try {
+      const data = await getModule(key);
+      if (data && typeof data === 'object' && 'module_key' in data) {
+        const moduleData = data as SubscribedModule;
+        const normalizedInputKey = key.replace(/-/g, '_');
+        // Update the module in subscribedModules with fresh data including navigation
+        // Match by either original or normalized key (handles pos matching pos, or project-management matching project_management)
+        setSubscribedModules((prev) =>
+          prev.map((m) => {
+            const normalizedModuleKey = m.module_key.replace(/-/g, '_');
+            return (m.module_key === key || normalizedModuleKey === normalizedInputKey)
+              ? { ...m, ...moduleData }
+              : m;
+          })
+        );
+        return moduleData;
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }, []);
+
   const setModule = useCallback((mod: ActiveModule) => {
     setActiveModule(mod);
     if (mod) {
@@ -115,8 +140,8 @@ export function ModuleProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ activeModule, setModule, clearModule, subscribedModules, modulesLoading, getModuleByKey }),
-    [activeModule, setModule, clearModule, subscribedModules, modulesLoading, getModuleByKey],
+    () => ({ activeModule, setModule, clearModule, subscribedModules, modulesLoading, getModuleByKey, fetchModuleDetail }),
+    [activeModule, setModule, clearModule, subscribedModules, modulesLoading, getModuleByKey, fetchModuleDetail],
   );
 
   return <ModuleContext.Provider value={value}>{children}</ModuleContext.Provider>;
@@ -125,7 +150,7 @@ export function ModuleProvider({ children }: { children: ReactNode }) {
 export function useModule(): ModuleContextValue {
   const ctx = useContext(ModuleContext);
   if (!ctx) {
-    return { activeModule: null, setModule: () => {}, clearModule: () => {}, subscribedModules: [], modulesLoading: false, getModuleByKey: () => undefined };
+    return { activeModule: null, setModule: () => {}, clearModule: () => {}, subscribedModules: [], modulesLoading: false, getModuleByKey: () => undefined, fetchModuleDetail: async () => null };
   }
   return ctx;
 }

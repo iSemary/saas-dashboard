@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useModule } from "@/context/module-context";
 
 export type BrandFilter = {
@@ -32,19 +32,32 @@ const BrandFilterContext = createContext<BrandFilterContextValue | null>(null);
 export function BrandFilterProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const params = useParams();
+  const pathname = usePathname();
   const { subscribedModules } = useModule();
   const [brandError, setBrandError] = useState<string | null>(null);
 
+  // Extract brand slug and module key from URL
+  // First try dynamic route params, then fall back to parsing pathname
+  // Expected path: /dashboard/modules/[module]/[brand]/... or /dashboard/modules/[module]/...
+  const pathParts = pathname?.split('/').filter(Boolean) ?? [];
+  const moduleKeyFromPath = pathParts[2] === 'modules' ? pathParts[3] : undefined;
+  const potentialBrandSlug = pathParts[2] === 'modules' ? pathParts[4] : undefined;
+
+  // Reserved slugs that cannot be brand names (sub-page names)
+  const reservedSlugs = ['new', 'create', 'edit', 'show', 'crm', 'hr', 'pos', 'survey', 'inventory', 'sales', 'accounting', 'email-marketing', 'expenses', 'project-management', 'sms-marketing', 'time-management'];
+  const isBrandSlug = potentialBrandSlug && !reservedSlugs.includes(potentialBrandSlug);
+  const brandSlugFromPath = isBrandSlug ? potentialBrandSlug : undefined;
+
   // Extract brand slug from URL params (e.g., /dashboard/modules/crm/acme-corp)
-  const brandSlugFromUrl = params?.brand as string | undefined;
-  const moduleKeyFromUrl = params?.module as string | undefined;
+  const brandSlugFromUrl = (params?.brand as string | undefined) ?? brandSlugFromPath;
+  const moduleKeyFromUrl = (params?.module as string | undefined) ?? moduleKeyFromPath;
 
   // Resolve brand details from subscribed modules
   const brandFilter: BrandFilter = useMemo(() => {
     if (!brandSlugFromUrl || !moduleKeyFromUrl) return null;
 
     // Skip reserved path segments that are not brand slugs
-    const reservedSlugs = ['new', 'create', 'edit', 'show', 'crm', 'hr', 'pos', 'survey', 'inventory', 'sales'];
+    const reservedSlugs = ['new', 'create', 'edit', 'show', 'crm', 'hr', 'pos', 'survey', 'inventory', 'sales', 'accounting', 'email-marketing', 'expenses', 'project-management', 'sms-marketing', 'time-management'];
     if (reservedSlugs.includes(brandSlugFromUrl)) return null;
 
     const matchingModule = subscribedModules.find(
@@ -69,7 +82,7 @@ export function BrandFilterProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const reservedSlugs = ['new', 'create', 'edit', 'show', 'crm', 'hr', 'pos', 'survey', 'inventory', 'sales'];
+    const reservedSlugs = ['new', 'create', 'edit', 'show', 'crm', 'hr', 'pos', 'survey', 'inventory', 'sales', 'accounting', 'email-marketing', 'expenses', 'project-management', 'sms-marketing', 'time-management'];
     if (reservedSlugs.includes(brandSlugFromUrl)) {
       setBrandError(`"${brandSlugFromUrl}" is a reserved path segment and cannot be used as a brand slug. Please rename your brand to use a different slug.`);
       return;

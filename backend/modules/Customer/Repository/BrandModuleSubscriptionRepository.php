@@ -6,7 +6,6 @@ use Modules\Customer\Entities\BrandModuleSubscription;
 use Modules\Customer\Repository\BrandModuleSubscriptionRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
-use App\Helpers\TableHelper;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 
@@ -16,26 +15,26 @@ class BrandModuleSubscriptionRepository implements BrandModuleSubscriptionReposi
     {
         $query = BrandModuleSubscription::with(['brand', 'creator', 'updater']);
 
-        if (isset($filters['brand_id'])) 
+        if (isset($filters['brand_id']))
         {
             $query->where('brand_id', $filters['brand_id']);
         }
 
-        if (isset($filters['module_key'])) 
+        if (isset($filters['module_key']))
         {
             $query->where('module_key', $filters['module_key']);
         }
 
-        if (isset($filters['status'])) 
+        if (isset($filters['status']))
         {
             $query->where('status', $filters['status']);
         }
 
-        if (isset($filters['search'])) 
+        if (isset($filters['search']))
         {
-            $query->where(function ($q) use ($filters) 
+            $query->where(function ($q) use ($filters)
             {
-                $q->whereHas('brand', function ($brandQuery) use ($filters) 
+                $q->whereHas('brand', function ($brandQuery) use ($filters)
                 {
                     $brandQuery->where('name', 'like', '%' . $filters['search'] . '%');
                 })
@@ -43,12 +42,12 @@ class BrandModuleSubscriptionRepository implements BrandModuleSubscriptionReposi
             });
         }
 
-        if (isset($filters['date_from'])) 
+        if (isset($filters['date_from']))
         {
             $query->where('created_at', '>=', $filters['date_from']);
         }
 
-        if (isset($filters['date_to'])) 
+        if (isset($filters['date_to']))
         {
             $query->where('created_at', '<=', $filters['date_to']);
         }
@@ -77,7 +76,7 @@ class BrandModuleSubscriptionRepository implements BrandModuleSubscriptionReposi
     public function update(int $id, array $data): bool
     {
         $subscription = $this->getById($id);
-        if (!$subscription) 
+        if (!$subscription)
         {
             return false;
         }
@@ -88,7 +87,7 @@ class BrandModuleSubscriptionRepository implements BrandModuleSubscriptionReposi
     public function delete(int $id): bool
     {
         $subscription = $this->getById($id);
-        if (!$subscription) 
+        if (!$subscription)
         {
             return false;
         }
@@ -99,7 +98,7 @@ class BrandModuleSubscriptionRepository implements BrandModuleSubscriptionReposi
     public function restore(int $id): bool
     {
         $subscription = BrandModuleSubscription::withTrashed()->find($id);
-        if (!$subscription) 
+        if (!$subscription)
         {
             return false;
         }
@@ -132,13 +131,13 @@ class BrandModuleSubscriptionRepository implements BrandModuleSubscriptionReposi
     public function toggleSubscriptionStatus(int $id): bool
     {
         $subscription = $this->getById($id);
-        if (!$subscription) 
+        if (!$subscription)
         {
             return false;
         }
 
         $newStatus = $subscription->status === 'active' ? 'inactive' : 'active';
-        
+
         return $subscription->update(['status' => $newStatus]);
     }
 
@@ -173,11 +172,11 @@ class BrandModuleSubscriptionRepository implements BrandModuleSubscriptionReposi
         $subscriptions = BrandModuleSubscription::query()->with(['brand', 'creator', 'updater']);
 
         return DataTables::of($subscriptions)
-            ->addColumn('brand_name', function ($row) 
+            ->addColumn('brand_name', function ($row)
             {
                 return $row->brand ? $row->brand->name : '-';
             })
-            ->addColumn('module_icon', function ($row) 
+            ->addColumn('module_icon', function ($row)
             {
                 $icons = [
                     'crm' => 'fas fa-handshake',
@@ -189,45 +188,46 @@ class BrandModuleSubscriptionRepository implements BrandModuleSubscriptionReposi
                     'email' => 'fas fa-envelope',
                     'notification' => 'fas fa-bell',
                 ];
-                
+
                 return '<i class="' . ($icons[$row->module_key] ?? 'fas fa-cube') . '"></i>';
             })
-            ->addColumn('status_badge', function ($row) 
+            ->addColumn('status_badge', function ($row)
             {
-                return '<span class="badge ' . $row->getStatusBadgeClass() . '">' . 
-                       ucfirst($row->status) . 
+                return '<span class="badge ' . $row->getStatusBadgeClass() . '">' .
+                       ucfirst($row->status) .
                        '</span>';
             })
-            ->addColumn('valid_subscription', function ($row) 
+            ->addColumn('valid_subscription', function ($row)
             {
-                return $row->isValidSubscription() ? 
-                    '<span class="text-success"><i class="fas fa-check-circle"></i></span>' : 
+                return $row->isValidSubscription() ?
+                    '<span class="text-success"><i class="fas fa-check-circle"></i></span>' :
                     '<span class="text-danger"><i class="fas fa-times-circle"></i></span>';
             })
-            ->addColumn('created_by_name', function ($row) 
+            ->addColumn('created_by_name', function ($row)
             {
                 return $row->creator ? $row->creator->name : '-';
             })
-            ->addColumn('updated_by_name', function ($row) 
+            ->addColumn('updated_by_name', function ($row)
             {
                 return $row->updater ? $row->updater->name : '-';
             })
-            ->addColumn('actions', function ($row) 
-            {
+            ->addColumn('actions', function ($row) {
                 $actions = '';
-                
-                $actions .= TableHelper::editButton($row->id);
-                $actions .= TableHelper::switchButton($row->id, $row->status === 'active');
-                
-                if ($row->trashed()) 
-                {
-                    $actions .= TableHelper::restoreButton($row->id);
-                } 
-                else 
-                {
-                    $actions .= TableHelper::deleteButton($row->id);
+
+                // Edit button
+                $actions .= '<button type="button" data-id="' . $row->id . '" data-url="javascript:void(0)" class="btn btn-sm btn-primary edit-btn mx-1" title="' . translate('edit') . '"><i class="fas fa-edit"></i></button>';
+
+                // Switch button
+                $checked = $row->status === 'active' ? 'checked' : '';
+                $actions .= '<div class="custom-control custom-switch d-inline-block mx-1"><input type="checkbox" class="custom-control-input switch-btn" id="switch-' . $row->id . '" data-id="' . $row->id . '" ' . $checked . '><label class="custom-control-label" for="switch-' . $row->id . '"></label></div>';
+
+                // Restore/Delete button
+                if ($row->trashed()) {
+                    $actions .= '<button type="button" data-id="' . $row->id . '" data-url="javascript:void(0)" class="btn btn-sm btn-warning restore-btn mx-1" title="' . translate('restore') . '"><i class="fas fa-undo"></i></button>';
+                } else {
+                    $actions .= '<button type="button" data-id="' . $row->id . '" data-url="javascript:void(0)" class="btn btn-sm btn-danger delete-btn mx-1" title="' . translate('delete') . '"><i class="fas fa-trash"></i></button>';
                 }
-                
+
                 return $actions;
             })
             ->rawColumns(['module_icon', 'status_badge', 'valid_subscription', 'actions'])

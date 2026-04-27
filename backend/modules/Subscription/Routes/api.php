@@ -19,7 +19,7 @@ Route::prefix('landlord')->name('landlord.')->middleware(['auth:api', 'landlord_
 });
 
 // ─── Tenant Billing & Subscription ─────────────────────────────────
-Route::prefix('tenant/billing')->name('tenant.billing.')->middleware(['auth:api', 'tenant', 'permission:read.billing', 'throttle:60,1'])->group(function () {
+Route::prefix('tenant/billing')->name('tenant.billing.')->middleware(['auth:api', 'tenant-api', 'permission:read.billing', 'throttle:60,1'])->group(function () {
     // Overview
     Route::get('/overview', [TenantBillingApiController::class, 'overview'])->name('overview');
     Route::get('/upcoming-invoice', [TenantBillingApiController::class, 'upcomingInvoice'])->name('upcoming-invoice');

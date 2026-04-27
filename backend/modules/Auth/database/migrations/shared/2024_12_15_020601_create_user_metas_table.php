@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('user_id');
             $table->string('meta_key');
-            $table->string('meta_value');
+            $table->text('meta_value');
             $table->softDeletes();
             $table->timestamps();
         });

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ErrorDetails, ErrorActions } from "@/components/error/error-details";
+import { ErrorBoundaryWrapper } from "@/components/error/error-boundary-wrapper";
 import { shouldShowErrorDetails, getAppEnv } from "@/lib/env";
 
 interface ModuleErrorProps {
@@ -33,79 +34,83 @@ export default function ModuleError({ error, reset }: ModuleErrorProps) {
 
   if (isModuleAccessError) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center p-4">
-        <Card className="w-full max-w-lg">
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-destructive/10">
-              <Lock className="size-8 text-destructive" />
-            </div>
-            <CardTitle className="text-2xl">Module Access Error</CardTitle>
-            {showDetails && (
-              <div className="flex justify-center mt-2">
-                <Badge variant="outline" className="text-xs">
-                  {appEnv}
-                </Badge>
+      <ErrorBoundaryWrapper>
+        <div className="flex min-h-[400px] items-center justify-center p-4">
+          <Card className="w-full max-w-lg">
+            <CardHeader className="text-center">
+              <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-destructive/10">
+                <Lock className="size-8 text-destructive" />
               </div>
-            )}
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <p className="text-center text-muted-foreground">
-              You do not have access to this module. Please contact your administrator
-              or subscribe to access this feature.
-            </p>
+              <CardTitle className="text-2xl">Module Access Error</CardTitle>
+              {showDetails && (
+                <div className="flex justify-center mt-2">
+                  <Badge variant="outline" className="text-xs">
+                    {appEnv}
+                  </Badge>
+                </div>
+              )}
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <p className="text-center text-muted-foreground">
+                You do not have access to this module. Please contact your administrator
+                or subscribe to access this feature.
+              </p>
 
-            {showDetails && pathname && (
-              <div className="rounded-lg border border-border bg-muted/50 p-4">
-                <Badge variant="outline" className="mb-2 text-xs">
-                  Requested Path
-                </Badge>
-                <code className="block text-sm break-all font-mono text-muted-foreground">
-                  {pathname}
-                </code>
+              {showDetails && pathname && (
+                <div className="rounded-lg border border-border bg-muted/50 p-4">
+                  <Badge variant="outline" className="mb-2 text-xs">
+                    Requested Path
+                  </Badge>
+                  <code className="block text-sm break-all font-mono text-muted-foreground">
+                    {pathname}
+                  </code>
+                </div>
+              )}
+
+              {showDetails && error?.message && (
+                <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-4">
+                  <Badge variant="destructive" className="mb-2 text-xs">
+                    Error Details
+                  </Badge>
+                  <p className="text-sm text-destructive">{error.message}</p>
+                </div>
+              )}
+
+              <div className="flex justify-center gap-3">
+                <Link href="/dashboard">
+                  <Button variant="outline">
+                    <ArrowLeft className="mr-2 size-4" />
+                    Back
+                  </Button>
+                </Link>
+                <Link href="/dashboard">
+                  <Button>
+                    <Home className="mr-2 size-4" />
+                    Dashboard
+                  </Button>
+                </Link>
               </div>
-            )}
-
-            {showDetails && error?.message && (
-              <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-4">
-                <Badge variant="destructive" className="mb-2 text-xs">
-                  Error Details
-                </Badge>
-                <p className="text-sm text-destructive">{error.message}</p>
-              </div>
-            )}
-
-            <div className="flex justify-center gap-3">
-              <Link href="/dashboard">
-                <Button variant="outline">
-                  <ArrowLeft className="mr-2 size-4" />
-                  Back
-                </Button>
-              </Link>
-              <Link href="/dashboard">
-                <Button>
-                  <Home className="mr-2 size-4" />
-                  Dashboard
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
+        </div>
+      </ErrorBoundaryWrapper>
     );
   }
 
   // Generic error fallback
   return (
-    <div className="flex min-h-[400px] items-center justify-center p-4">
-      <div className="w-full max-w-2xl">
-        <ErrorDetails
-          error={error}
-          reset={reset}
-          title="Module Error"
-          description="An error occurred while loading the module. Please try again."
-        />
-        <ErrorActions reset={reset} backHref="/dashboard" />
+    <ErrorBoundaryWrapper>
+      <div className="flex min-h-[400px] items-center justify-center p-4">
+        <div className="w-full max-w-2xl">
+          <ErrorDetails
+            error={error}
+            reset={reset}
+            title="Module Error"
+            description="An error occurred while loading the module. Please try again."
+          />
+          <ErrorActions reset={reset} backHref="/dashboard" />
+        </div>
       </div>
-    </div>
+    </ErrorBoundaryWrapper>
   );
 }

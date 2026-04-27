@@ -78,13 +78,15 @@ class RolePermissionSeeder extends Seeder
 
     private function seedPermissions()
     {
-        $actions = ['view', 'create', 'update', 'delete'];
+        $defaultActions = ['view', 'create', 'update', 'delete'];
+
+        // Flatten resources and extract resource names with their actions
+        $flattenedResources = $this->flattenResources($this->resources);
 
         // Seed API permissions
-        foreach ($this->resources as $resource) {
-            // Handle both string and array resources
-            $resourceName = is_array($resource) ? $resource['name'] ?? $resource['resource'] ?? 'unknown' : $resource;
-            
+        foreach ($flattenedResources as $resourceName => $actions) {
+            $actions = !empty($actions) ? $actions : $defaultActions;
+
             foreach ($actions as $action) {
                 Permission::updateOrCreate(
                     ['name' => "$action.$resourceName", 'guard_name' => 'api'],
@@ -94,12 +96,15 @@ class RolePermissionSeeder extends Seeder
         }
 
         // Seed Web permissions for tenant dashboard
-        $webResources = array_merge($this->resources, ['roles', 'permissions', 'users']);
-        
-        foreach ($webResources as $resource) {
-            // Handle both string and array resources
-            $resourceName = is_array($resource) ? $resource['name'] ?? $resource['resource'] ?? 'unknown' : $resource;
-            
+        $webResources = array_merge($flattenedResources, [
+            'roles' => $defaultActions,
+            'permissions' => $defaultActions,
+            'users' => $defaultActions,
+        ]);
+
+        foreach ($webResources as $resourceName => $actions) {
+            $actions = !empty($actions) ? $actions : $defaultActions;
+
             foreach ($actions as $action) {
                 Permission::updateOrCreate(
                     ['name' => "$action.$resourceName", 'guard_name' => 'web'],
@@ -126,6 +131,29 @@ class RolePermissionSeeder extends Seeder
                 ['name' => $permission, 'guard_name' => 'web']
             );
         }
+    }
+
+    private function flattenResources(array $resources): array
+    {
+        $flattened = [];
+
+        foreach ($resources as $key => $value) {
+            if (is_string($key) && is_array($value)) {
+                // Check if this is a module with nested resources
+                $firstKey = array_key_first($value);
+                if (is_string($firstKey) && is_array($value[$firstKey])) {
+                    // This is a module with nested resources (e.g., 'crm' => ['leads' => [...]])
+                    foreach ($value as $resourceName => $actions) {
+                        $flattened[$resourceName] = is_array($actions) ? $actions : [];
+                    }
+                } else {
+                    // This is a flat resource with actions (e.g., 'users' => ['read', ...])
+                    $flattened[$key] = $value;
+                }
+            }
+        }
+
+        return $flattened;
     }
 
     private function seedPermissionsToRoles()

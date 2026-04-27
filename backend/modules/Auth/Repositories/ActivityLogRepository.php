@@ -2,8 +2,6 @@
 
 namespace Modules\Auth\Repositories;
 
-use App\Helpers\IconHelper;
-use App\Helpers\TableHelper;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
@@ -45,7 +43,7 @@ class ActivityLogRepository implements ActivityLogInterface
                 return translate($row->ip_address);
             })
             ->editColumn('user_agent', function ($row) {
-                return IconHelper::formatAgentIcons($row->user_agent);
+                return $this->formatAgentIcons($row->user_agent);
             })
             ->rawColumns([
                 'event',
@@ -83,7 +81,7 @@ class ActivityLogRepository implements ActivityLogInterface
                 return translate($row->ip_address);
             })
             ->editColumn('user_agent', function ($row) {
-                return IconHelper::formatAgentIcons($row->user_agent);
+                return $this->formatAgentIcons($row->user_agent);
             })
             ->rawColumns([
                 'event',
@@ -101,18 +99,18 @@ class ActivityLogRepository implements ActivityLogInterface
     {
         // Calculate offset
         $offset = ($page - 1) * $this->perPage;
-    
+
         // Modify query based on type
         $query = $this->model->where('user_id', $userId);
-    
+
         if ($type === 'deleted') {
             $query->where('event', 'deleted'); // Filter events where event = 'deleted'
         }
-    
-    
+
+
         // Get total count for pagination
         $total = $query->count();
-        
+
         // Get paginated activities
         $activities = $query
             ->orderBy('created_at', 'desc')
@@ -125,8 +123,8 @@ class ActivityLogRepository implements ActivityLogInterface
             ->map(function($dayActivities) {
                 return $dayActivities->groupBy('auditable_type');
             });
-    
-    
+
+
         // Create paginator instance
         $paginator = new LengthAwarePaginator(
             $activities,
@@ -135,13 +133,13 @@ class ActivityLogRepository implements ActivityLogInterface
             $page,
             ['path' => request()->url(), 'query' => request()->query()]
         );
-    
+
         return [
             'activities' => $activities,
             'pagination' => $paginator
         ];
     }
-    
+
 
 
 
@@ -151,7 +149,7 @@ class ActivityLogRepository implements ActivityLogInterface
         if (empty($values) || is_null($values)) {
             return '-';
         }
-    
+
         // If values is an array, format it
         if (is_array($values)) {
             $formatted = '';
@@ -160,23 +158,55 @@ class ActivityLogRepository implements ActivityLogInterface
             }
             return $formatted;
         }
-    
+
         // Return the values as-is if not an array
         return $values;
     }
-    
+
 
     private function formatEventColumn($event)
     {
-        $statusClasses = [
-            'created' => 'text-success font-weight-bold',
-            'updated' => 'text-primary font-weight-bold',
-            'deleted' => 'text-danger font-weight-bold',
-            'restored' => 'text-orange font-weight-bold',
+        $icons = [
+            'created' => '<i class="fas fa-plus-circle text-success"></i>',
+            'updated' => '<i class="fas fa-edit text-primary"></i>',
+            'deleted' => '<i class="fas fa-trash text-danger"></i>',
+            'restored' => '<i class="fas fa-history text-warning"></i>'
         ];
+        $icon = $icons[$event] ?? '<i class="fas fa-info-circle"></i>';
+        return $icon . ' <span class="ml-1">' . ucfirst($event) . '</span>';
+    }
 
-        $class = $statusClasses[$event] ?? 'text-secondary font-weight-bold';
-        return "<span class='{$class}'>" . ucfirst($event) . "</span>";
+    private function formatAgentIcons($agent)
+    {
+        $icons = '';
+
+        // OS Detection
+        if (stripos($agent, 'Linux') !== false) {
+            $icons .= '<i class="fab fa-linux" title="Linux"></i> ';
+        } elseif (stripos($agent, 'Windows') !== false) {
+            $icons .= '<i class="fab fa-windows" title="Windows"></i> ';
+        } elseif (stripos($agent, 'Mac') !== false) {
+            $icons .= '<i class="fab fa-apple" title="MacOS"></i> ';
+        } elseif (stripos($agent, 'Android') !== false) {
+            $icons .= '<i class="fab fa-android" title="Android"></i> ';
+        } elseif (stripos($agent, 'iPhone') !== false || stripos($agent, 'iPad') !== false) {
+            $icons .= '<i class="fab fa-apple" title="iOS"></i> ';
+        }
+
+        // Browser Detection
+        if (stripos($agent, 'Chrome') !== false) {
+            $icons .= '<i class="fab fa-chrome" title="Chrome"></i>';
+        } elseif (stripos($agent, 'Firefox') !== false) {
+            $icons .= '<i class="fab fa-firefox-browser" title="Firefox"></i>';
+        } elseif (stripos($agent, 'Safari') !== false) {
+            $icons .= '<i class="fab fa-safari" title="Safari"></i>';
+        } elseif (stripos($agent, 'Edge') !== false) {
+            $icons .= '<i class="fab fa-edge" title="Edge"></i>';
+        } elseif (stripos($agent, 'Opera') !== false) {
+            $icons .= '<i class="fab fa-opera" title="Opera"></i>';
+        }
+
+        return $icons ?: '<span><i class="fa-solid fa-globe" title="' . $agent . '"></i><span>' . translate("unknown_browser") . '</span>';
     }
 
     public function getById() {}

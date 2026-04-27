@@ -11,7 +11,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\DataTables;
-use App\Helpers\TableHelper;
+use Illuminate\Support\Facades\Gate;
 
 class TenantUserManagementRepository implements TenantUserManagementRepositoryInterface
 {
@@ -22,7 +22,7 @@ class TenantUserManagementRepository implements TenantUserManagementRepositoryIn
             ->with('roles')
             ->where(function ($q) {
                 if (request()->from_date && request()->to_date) {
-                    TableHelper::loopOverDates(5, $q, 'users', [request()->from_date, request()->to_date]);
+                    $q->whereBetween('users.created_at', [request()->from_date, request()->to_date]);
                 }
             });
 
@@ -33,19 +33,24 @@ class TenantUserManagementRepository implements TenantUserManagementRepositoryIn
                 })->implode(' ');
             })
             ->editColumn('status', function ($row) {
-                return $row->deleted_at 
-                    ? '<span class="badge badge-danger">Inactive</span>' 
+                return $row->deleted_at
+                    ? '<span class="badge badge-danger">Inactive</span>'
                     : '<span class="badge badge-success">Active</span>';
             })
             ->addColumn('actions', function ($row) {
-                return TableHelper::actionButtons(
-                    row: $row,
-                    editRoute: 'tenant.users.edit',
-                    deleteRoute: 'tenant.users.destroy',
-                    type: 'users',
-                    titleType: 'user',
-                    showIconsOnly: true
-                );
+                $btn = '';
+                $type = 'users';
+                $titleType = 'user';
+
+                if (!isset($row->deleted_at) && !$row->deleted_at && Gate::allows('update.' . $type)) {
+                    $btn .= '<button type="button" data-modal-title="' . translate("edit") . " " . translate($titleType) . '" data-modal-link="' . route('tenant.users.edit', $row->id) . '" class="btn-primary mx-1 btn-sm open-edit-modal"><i class="far fa-edit"></i></button>';
+                }
+
+                if (!isset($row->deleted_at) && !$row->deleted_at && Gate::allows('delete.' . $type)) {
+                    $btn .= '<button type="button" data-delete-type="' . translate($titleType) . '" data-url="' . route('tenant.users.destroy', $row->id) . '" class="btn-danger mx-1 btn-sm delete-btn"><i class="fa fa-trash"></i></button>';
+                }
+
+                return $btn;
             })
             ->rawColumns(['roles', 'status', 'actions'])
             ->make(true);
@@ -257,7 +262,7 @@ class TenantUserManagementRepository implements TenantUserManagementRepositoryIn
     public function assignRolesToUser(int $userId, array $roleIds): bool
     {
         $user = User::findOrFail($userId);
-        
+
         foreach ($roleIds as $roleId) {
             $role = Role::findOrFail($roleId);
             if (!$user->hasRole($role)) {
@@ -271,7 +276,7 @@ class TenantUserManagementRepository implements TenantUserManagementRepositoryIn
     public function removeRolesFromUser(int $userId, array $roleIds): bool
     {
         $user = User::findOrFail($userId);
-        
+
         foreach ($roleIds as $roleId) {
             $role = Role::findOrFail($roleId);
             if ($user->hasRole($role)) {
@@ -286,14 +291,14 @@ class TenantUserManagementRepository implements TenantUserManagementRepositoryIn
     {
         $user = User::findOrFail($userId);
         $user->syncRoles($roleIds);
-        
+
         return true;
     }
 
     public function assignPermissionsToUser(int $userId, array $permissionIds): bool
     {
         $user = User::findOrFail($userId);
-        
+
         foreach ($permissionIds as $permissionId) {
             $permission = Permission::findOrFail($permissionId);
             if (!$user->hasPermissionTo($permission)) {
@@ -307,7 +312,7 @@ class TenantUserManagementRepository implements TenantUserManagementRepositoryIn
     public function removePermissionsFromUser(int $userId, array $permissionIds): bool
     {
         $user = User::findOrFail($userId);
-        
+
         foreach ($permissionIds as $permissionId) {
             $permission = Permission::findOrFail($permissionId);
             if ($user->hasPermissionTo($permission)) {
@@ -322,7 +327,7 @@ class TenantUserManagementRepository implements TenantUserManagementRepositoryIn
     {
         $user = User::findOrFail($userId);
         $user->syncPermissions($permissionIds);
-        
+
         return true;
     }
 

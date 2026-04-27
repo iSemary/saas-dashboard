@@ -3,6 +3,7 @@
 namespace Database\Seeders\tenant;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Modules\Auth\Entities\User;
 use Modules\Auth\Entities\Permission;
 use Modules\Auth\Entities\Role;
@@ -13,11 +14,30 @@ class AssignAllPermissionsToSuperAdminSeeder extends Seeder
     {
         $this->command->info('🔐 Assigning ALL permissions to super admin user...');
 
+        // Switch to tenant database if running from CLI
+        $this->switchToTenantDatabase();
+
         $user = User::where('email', 'superadmin@customer1.local')->first();
 
+        // Create user if not exists (for tenant DB with customer_id)
         if (!$user) {
-            $this->command->error('❌ Super admin user not found');
-            return;
+            $this->command->info('Creating super admin user...');
+            $user = new User();
+            $user->fill([
+                'name' => 'Super Admin',
+                'email' => 'superadmin@customer1.local',
+                'username' => 'superadmin',
+                'password' => Hash::make('password123'),
+                'email_verified_at' => now(),
+            ]);
+
+            // Only set customer_id if column exists (tenant DB)
+            if ($this->hasCustomerIdColumn()) {
+                $user->customer_id = 1;
+            }
+
+            $user->save();
+            $this->command->info('✅ Created super admin user');
         }
 
         // Define all possible permissions for the system
@@ -188,6 +208,22 @@ class AssignAllPermissionsToSuperAdminSeeder extends Seeder
             'update.dashboards',
             'delete.dashboards',
             'restore.dashboards',
+
+            // Billing & Subscription permissions
+            'read.billing',
+            'subscribe.plans',
+            'cancel.plans',
+            'subscribe.modules',
+            'unsubscribe.modules',
+            'pay.invoices',
+            'retry.payments',
+            'create.payment_methods',
+            'update.payment_methods',
+            'delete.payment_methods',
+
+            // Security permissions (for activity logs and login attempts)
+            'view.login_attempts',
+            'view.activity_logs',
         ];
 
         // Create all permissions if they don't exist
@@ -216,7 +252,7 @@ class AssignAllPermissionsToSuperAdminSeeder extends Seeder
         }
 
         // Test a few key abilities
-        $testAbilities = ['read.brands', 'read.branches', 'read.tickets', 'read.users'];
+        $testAbilities = ['read.brands', 'read.branches', 'read.tickets', 'read.users', 'read.billing', 'view.activity_logs'];
         $this->command->info("\n🔍 Testing key abilities:");
         foreach ($testAbilities as $ability) {
             if ($user->can($ability)) {
@@ -225,6 +261,39 @@ class AssignAllPermissionsToSuperAdminSeeder extends Seeder
                 $this->command->error("   ❌ User cannot: {$ability}");
             }
         }
+    }
+
+    /**
+     * Switch to tenant database if running from CLI (not HTTP request)
+     */
+    private function switchToTenantDatabase(): void
+    {
+        // If already on tenant connection, skip
+        if (config('database.default') === 'tenant') {
+            return;
+        }
+
+        // Try to find customer1 tenant and switch to it
+        $tenant = \Modules\Tenant\Entities\Tenant::on('landlord')
+            ->where('domain', 'customer1')
+            ->first();
+
+        if ($tenant) {
+            config(['database.default' => 'tenant']);
+            config(['database.connections.tenant.database' => $tenant->database]);
+            $tenant->makeCurrent();
+            $this->command->info("🔄 Switched to tenant database: {$tenant->database}");
+        } else {
+            $this->command->warn("⚠️ Could not find customer1 tenant, using current database");
+        }
+    }
+
+    /**
+     * Check if users table has customer_id column
+     */
+    private function hasCustomerIdColumn(): bool
+    {
+        return \Illuminate\Support\Facades\Schema::hasColumn('users', 'customer_id');
     }
 }
 

@@ -8,7 +8,6 @@ use Modules\Customer\Repository\BrandRepositoryInterface;
 use App\Repositories\Traits\TableListTrait;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
-use App\Helpers\TableHelper;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 
@@ -64,7 +63,7 @@ class BrandRepository implements BrandRepositoryInterface
             ->where(
                 function ($q) {
                     if (request()->from_date && request()->to_date) {
-                        TableHelper::loopOverDates(5, $q, 'brands', [request()->from_date, request()->to_date]);
+                        $q->whereBetween('brands.created_at', [request()->from_date, request()->to_date]);
                     }
                 }
             );

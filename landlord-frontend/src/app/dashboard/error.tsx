@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { ErrorDetails, ErrorActions } from "@/components/error/error-details";
+import { ErrorBoundaryWrapper } from "@/components/error/error-boundary-wrapper";
 
 interface DashboardErrorProps {
   error: Error & { digest?: string };
@@ -15,16 +16,18 @@ export default function DashboardError({ error, reset }: DashboardErrorProps) {
   }, [error]);
 
   return (
-    <div className="flex min-h-[400px] items-center justify-center p-4">
-      <div className="w-full max-w-2xl">
-        <ErrorDetails
-          error={error}
-          reset={reset}
-          title="Dashboard Error"
-          description="An error occurred while loading the dashboard content. Please try again."
-        />
-        <ErrorActions reset={reset} backHref="/dashboard" />
+    <ErrorBoundaryWrapper>
+      <div className="flex min-h-[400px] items-center justify-center p-4">
+        <div className="w-full max-w-2xl">
+          <ErrorDetails
+            error={error}
+            reset={reset}
+            title="Dashboard Error"
+            description="An error occurred while loading the dashboard content. Please try again."
+          />
+          <ErrorActions reset={reset} backHref="/dashboard" />
+        </div>
       </div>
-    </div>
+    </ErrorBoundaryWrapper>
   );
 }

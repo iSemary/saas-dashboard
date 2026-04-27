@@ -5,6 +5,7 @@ return [
     App\Providers\AppServiceProvider::class,
     App\Providers\CustomBroadcastServiceProvider::class,
     App\Providers\HorizonServiceProvider::class,
+    App\Providers\ImportBulkActionServiceProvider::class,
     App\Providers\ModuleServiceProvider::class,
     App\Providers\TelescopeServiceProvider::class,
     App\Providers\ViewServiceProvider::class,

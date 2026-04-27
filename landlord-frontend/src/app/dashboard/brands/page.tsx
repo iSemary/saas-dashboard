@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { Loader2, Plus, Pencil, Trash2 } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, Upload } from "lucide-react";
+import Link from "next/link";
 import { toast } from "sonner";
 import { DataTable } from "@/components/data-table";
 import { Button } from "@/components/ui/button";
@@ -182,16 +183,26 @@ export default function BrandsPage() {
       <DataTable
         columns={columns}
         data={rows}
-        toolbarActions={(
-          <Button type="button" size="sm" className="h-9 gap-1" onClick={openCreate}>
-            <Plus className="size-4" />
-            {t("dashboard.brands.create", "Create Brand")}
-          </Button>
-        )}
+        enableRowSelection={true}
+        enableExport={true}
+        toolbarActions={
+          <>
+            <Link href="/dashboard/import/brands">
+              <Button type="button" variant="outline" size="sm" className="h-9 gap-1">
+                <Upload className="size-4" />
+                {t("dashboard.import", "Import")}
+              </Button>
+            </Link>
+            <Button type="button" size="sm" className="h-9 gap-1" onClick={openCreate}>
+              <Plus className="size-4" />
+              {t("dashboard.brands.create", "Create Brand")}
+            </Button>
+          </>
+        }
       />
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent 
-          className="flex w-full max-w-lg flex-col gap-0 sm:max-w-[50vw] max-h-[90vh]"
+          className="flex w-full max-w-lg flex-col gap-0 sm:max-w-[50vw] max-h-screen"
           resizable={true}
           defaultWidth={typeof window !== 'undefined' ? window.innerWidth * 0.5 : 600}
           minWidth={320}

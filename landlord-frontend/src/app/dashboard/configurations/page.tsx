@@ -8,6 +8,8 @@ import { DataTable } from "@/components/data-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Sheet,
   SheetContent,
@@ -101,6 +103,173 @@ export default function ConfigurationsPage() {
     }
   };
 
+  // Function to render different input types based on selected input_type
+  const renderValueInput = (inputType: string, value: string, onChange: (val: string) => void) => {
+    switch (inputType) {
+      case "string":
+        return (
+          <Input
+            id="cfg-value"
+            type="text"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        );
+      case "integer":
+        return (
+          <Input
+            id="cfg-value"
+            type="number"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        );
+      case "boolean":
+        return (
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="cfg-value"
+              checked={value === "1" || value === "true"}
+              onCheckedChange={(checked) => onChange(checked ? "1" : "0")}
+            />
+            <Label htmlFor="cfg-value" className="font-normal">
+              {t("active", "Active")}
+            </Label>
+          </div>
+        );
+      case "html":
+        return (
+          <Textarea
+            id="cfg-value"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            rows={5}
+          />
+        );
+      case "file":
+        return (
+          <Input
+            id="cfg-value"
+            type="file"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) onChange(file.name);
+            }}
+          />
+        );
+      case "array":
+      case "object":
+        return (
+          <Textarea
+            id="cfg-value"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            rows={5}
+            placeholder={inputType === "array" ? "[\n  \"item1\",\n  \"item2\"\n]" : "{\n  \"key\": \"value\"\n}"}
+          />
+        );
+      case "email":
+        return (
+          <Input
+            id="cfg-value"
+            type="email"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        );
+      case "url":
+        return (
+          <Input
+            id="cfg-value"
+            type="url"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        );
+      case "password":
+        return (
+          <Input
+            id="cfg-value"
+            type="password"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={value ? "••••••" : ""}
+          />
+        );
+      case "phone":
+        return (
+          <Input
+            id="cfg-value"
+            type="tel"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        );
+      case "date":
+        return (
+          <Input
+            id="cfg-value"
+            type="date"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        );
+      case "time":
+        return (
+          <Input
+            id="cfg-value"
+            type="time"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        );
+      case "datetime":
+        return (
+          <Input
+            id="cfg-value"
+            type="datetime-local"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        );
+      case "color":
+        return (
+          <div className="flex items-center gap-2">
+            <Input
+              id="cfg-value"
+              type="color"
+              value={value || "#000000"}
+              onChange={(e) => onChange(e.target.value)}
+              className="h-9 w-16 p-1"
+            />
+            <span className="text-sm text-muted-foreground">{value || "#000000"}</span>
+          </div>
+        );
+      case "range":
+        return (
+          <div className="flex items-center gap-2">
+            <Input
+              id="cfg-value"
+              type="range"
+              value={value || "50"}
+              onChange={(e) => onChange(e.target.value)}
+              className="flex-1"
+            />
+            <span className="text-sm text-muted-foreground w-10 text-right">{value || "50"}</span>
+          </div>
+        );
+      default:
+        return (
+          <Input
+            id="cfg-value"
+            type="text"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        );
+    }
+  };
+
   const columns: Array<ColumnDef<ConfigurationRow>> = useMemo(
     () => [
       { accessorKey: "id", header: t("dashboard.users.col_id", "ID") },
@@ -173,22 +342,33 @@ export default function ConfigurationsPage() {
               <Input id="cfg-key" value={form.key} onChange={(e) => setForm((f) => ({ ...f, key: e.target.value }))} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="cfg-value">{t("dashboard.configurations.value", "Value")}</Label>
-              <Input id="cfg-value" value={form.value} onChange={(e) => setForm((f) => ({ ...f, value: e.target.value }))} />
-            </div>
-            <div className="space-y-2">
               <Label htmlFor="cfg-desc">{t("dashboard.configurations.description", "Description")}</Label>
               <Input id="cfg-desc" value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="cfg-type">{t("dashboard.configurations.input_type", "Input Type")}</Label>
               <select id="cfg-type" className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm" value={form.input_type} onChange={(e) => setForm((f) => ({ ...f, input_type: e.target.value }))}>
-                <option value="text">Text</option>
-                <option value="number">Number</option>
+                <option value="string">String</option>
+                <option value="integer">Integer</option>
                 <option value="boolean">Boolean</option>
-                <option value="select">Select</option>
-                <option value="textarea">Textarea</option>
+                <option value="html">HTML</option>
+                <option value="file">File</option>
+                <option value="array">Array</option>
+                <option value="object">Object</option>
+                <option value="email">Email</option>
+                <option value="url">URL</option>
+                <option value="password">Password</option>
+                <option value="phone">Phone</option>
+                <option value="date">Date</option>
+                <option value="time">Time</option>
+                <option value="datetime">DateTime</option>
+                <option value="color">Color</option>
+                <option value="range">Range</option>
               </select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="cfg-value">{t("dashboard.configurations.value", "Value")}</Label>
+              {renderValueInput(form.input_type, form.value, (val) => setForm((f) => ({ ...f, value: val })))}
             </div>
           </div>
           <SheetFooter className="border-t border-border/80 px-4 py-3">

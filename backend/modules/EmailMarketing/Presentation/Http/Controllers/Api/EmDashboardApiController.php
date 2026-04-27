@@ -23,7 +23,7 @@ class EmDashboardApiController extends ApiController
         protected EmContactListRepositoryInterface $contactListRepository,
         protected EmTemplateRepositoryInterface $templateRepository,
         protected EmSendingLogRepositoryInterface $sendingLogRepository,
-    ) { parent::__construct(); }
+    ) {}
 
     public function stats(): JsonResponse
     {

@@ -19,12 +19,10 @@ return new class extends Migration
             $table->string('failure_code', 50)->nullable()->after('gateway_payload');
             $table->text('failure_message')->nullable()->after('failure_code');
             $table->datetime('paid_at')->nullable()->after('failure_message');
-            $table->datetime('refunded_at')->nullable()->after('paid_at');
-            $table->decimal('refund_amount', 12, 2)->nullable()->after('refunded_at');
-            
+            $table->decimal('refund_amount', 12, 2)->nullable()->after('paid_at');
+
             // Index for gateway lookups
             $table->index(['gateway', 'gateway_payment_id']);
-            $table->index(['subscription_id', 'status']);
         });
     }
 
@@ -35,7 +33,6 @@ return new class extends Migration
     {
         Schema::table('subscription_payments', function (Blueprint $table) {
             $table->dropIndex(['gateway', 'gateway_payment_id']);
-            $table->dropIndex(['subscription_id', 'status']);
             $table->dropColumn([
                 'gateway',
                 'gateway_payment_id',
@@ -44,7 +41,6 @@ return new class extends Migration
                 'failure_code',
                 'failure_message',
                 'paid_at',
-                'refunded_at',
                 'refund_amount',
             ]);
         });

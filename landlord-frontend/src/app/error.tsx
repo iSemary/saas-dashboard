@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { ErrorDetails, ErrorActions } from "@/components/error/error-details";
+import { ErrorBoundaryWrapper } from "@/components/error/error-boundary-wrapper";
 
 interface GlobalErrorProps {
   error: Error & { digest?: string };
@@ -17,15 +18,17 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
   return (
     <html>
       <body className="min-h-screen flex items-center justify-center p-4 bg-background">
-        <div className="w-full max-w-2xl">
-          <ErrorDetails
-            error={error}
-            reset={reset}
-            title="Application Error"
-            description="A critical error occurred in the application. Please try again or contact support if the problem persists."
-          />
-          <ErrorActions reset={reset} backHref="/dashboard" />
-        </div>
+        <ErrorBoundaryWrapper>
+          <div className="w-full max-w-2xl">
+            <ErrorDetails
+              error={error}
+              reset={reset}
+              title="Application Error"
+              description="A critical error occurred in the application. Please try again or contact support if the problem persists."
+            />
+            <ErrorActions reset={reset} backHref="/dashboard" />
+          </div>
+        </ErrorBoundaryWrapper>
       </body>
     </html>
   );

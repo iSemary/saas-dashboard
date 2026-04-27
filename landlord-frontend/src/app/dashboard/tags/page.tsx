@@ -1,6 +1,7 @@
 "use client";
 
 import { SimpleCRUDPage, type SimpleCRUDConfig } from "@/components/simple-crud-page";
+import { Upload } from "lucide-react";
 import { listTags, createTag, deleteTag, type TagRow } from "@/lib/resources";
 
 const config: SimpleCRUDConfig<TagRow> = {
@@ -10,6 +11,15 @@ const config: SimpleCRUDConfig<TagRow> = {
   subtitleFallback: "Manage tags for content classification.",
   createLabelKey: "dashboard.tags.create",
   createLabelFallback: "Add Tag",
+  actionButtons: [
+    {
+      labelKey: "dashboard.import",
+      labelFallback: "Import",
+      icon: Upload,
+      variant: "outline",
+      href: "/dashboard/import/tags",
+    },
+  ],
   fields: [
     { name: "name", label: "Name", required: true },
     { name: "slug", label: "Slug", type: "slug", sourceField: "name" },

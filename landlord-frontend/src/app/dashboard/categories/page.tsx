@@ -1,6 +1,7 @@
 "use client";
 
 import { SimpleCRUDPage, type SimpleCRUDConfig } from "@/components/simple-crud-page";
+import { Upload } from "lucide-react";
 import { listCategories, createCategory, updateCategory, deleteCategory, type CategoryRow } from "@/lib/resources";
 
 const config: SimpleCRUDConfig<CategoryRow> = {
@@ -10,6 +11,15 @@ const config: SimpleCRUDConfig<CategoryRow> = {
   subtitleFallback: "Manage content categories.",
   createLabelKey: "dashboard.categories.create",
   createLabelFallback: "Add Category",
+  actionButtons: [
+    {
+      labelKey: "dashboard.import",
+      labelFallback: "Import",
+      icon: Upload,
+      variant: "outline",
+      href: "/dashboard/import/categories",
+    },
+  ],
   fields: [
     { name: "name", label: "Name", required: true },
     { name: "slug", label: "Slug" },

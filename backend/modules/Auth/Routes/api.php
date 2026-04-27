@@ -146,7 +146,7 @@ Route::middleware(['auth:api', 'throttle:60,1'])->group(function () {
 });
 
 // ─── Tenant Protected Routes ──────────────────────────────────────
-Route::prefix('tenant')->name('tenant.')->middleware(['auth:api', 'tenant_roles', 'throttle:60,1'])->group(function () {
+Route::prefix('tenant')->name('tenant.')->middleware(['auth:api', 'tenant-api', 'throttle:60,1'])->group(function () {
     // Roles
     Route::apiResource('roles', TenantRoleApiController::class);
 

@@ -48,22 +48,6 @@ if (!function_exists('convertToEnglishNumbers')) {
     }
 }
 
-if (!function_exists('isRunningViteDevServer')) {
-    function isRunningViteDevServer()
-    {
-        $url = env('VITE_DEV_SERVER_URL', 'http://localhost:5173');
-        $curl = curl_init($url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_TIMEOUT, 1); // Short timeout to avoid delays
-        $response = curl_exec($curl);
-        $error = curl_errno($curl);
-        curl_close($curl);
-
-        // Check if the server responded without errors
-        return !$error && $response !== false;
-    }
-}
-
 if (!function_exists('render_number')) {
     function render_number($number)
     {

@@ -1,6 +1,7 @@
 "use client";
 
 import { SimpleCRUDPage, type SimpleCRUDConfig } from "@/components/simple-crud-page";
+import { Upload } from "lucide-react";
 import { listProvinces, createProvince, updateProvince, deleteProvince, listCountries, type ProvinceRow } from "@/lib/resources";
 
 const config: SimpleCRUDConfig<ProvinceRow> = {
@@ -10,6 +11,15 @@ const config: SimpleCRUDConfig<ProvinceRow> = {
   subtitleFallback: "Manage provinces/states within countries.",
   createLabelKey: "dashboard.provinces.create",
   createLabelFallback: "Add Province",
+  actionButtons: [
+    {
+      labelKey: "dashboard.import",
+      labelFallback: "Import",
+      icon: Upload,
+      variant: "outline",
+      href: "/dashboard/import/provinces",
+    },
+  ],
   fields: [
     { name: "name", label: "Name", required: true },
     { name: "code", label: "Code" },

@@ -87,6 +87,8 @@ class TenantModuleService
                 continue;
             }
 
+            $navigation = $landlordModule->navigation ?? $this->generateDefaultNavigation($landlordModule);
+
             $result[] = [
                 'id' => $brandModule->id,
                 'module_id' => $landlordModule->id,
@@ -96,7 +98,7 @@ class TenantModuleService
                 'icon' => $landlordModule->icon,
                 'route' => $landlordModule->route,
                 'slogan' => $landlordModule->slogan,
-                'navigation' => $landlordModule->navigation,
+                'navigation' => $navigation,
                 'status' => $brandModule->status,
                 'brand_id' => $brandModule->brand_id,
                 'brand_name' => $brandModule->brand?->name,
@@ -112,13 +114,33 @@ class TenantModuleService
     }
 
     /**
+     * Generate default navigation for a module when no navigation is defined.
+     */
+    private function generateDefaultNavigation($landlordModule): array
+    {
+        $baseRoute = $landlordModule->route ?? '/dashboard/modules/' . str_replace('_', '-', $landlordModule->module_key);
+
+        return [
+            [
+                'key' => 'dashboard',
+                'label' => 'Dashboard',
+                'route' => $baseRoute,
+                'icon' => 'LayoutDashboard',
+                'section' => 'Main',
+            ],
+        ];
+    }
+
+    /**
      * Get a single subscribed module by module_key.
+     * Normalizes hyphens to underscores to match database format.
      */
     public function getSubscribedModule(string $moduleKey): ?array
     {
         $modules = $this->getSubscribedModules();
+        $normalizedKey = str_replace('-', '_', $moduleKey);
         foreach ($modules as $module) {
-            if ($module['module_key'] === $moduleKey) {
+            if ($module['module_key'] === $moduleKey || $module['module_key'] === $normalizedKey) {
                 return $module;
             }
         }
@@ -229,6 +251,8 @@ class TenantModuleService
                 continue;
             }
 
+            $navigation = $landlordModule->navigation ?? $this->generateDefaultNavigation($landlordModule);
+
             $result[] = [
                 'id' => $row->id,
                 'module_id' => $landlordModule->id,
@@ -238,7 +262,7 @@ class TenantModuleService
                 'icon' => $landlordModule->icon,
                 'route' => $landlordModule->route,
                 'slogan' => $landlordModule->slogan,
-                'navigation' => $landlordModule->navigation,
+                'navigation' => $navigation,
                 'status' => 'active',
                 'brand_id' => $row->brand_id,
                 'brand_name' => $brandData[$row->brand_id]?->name ?? null,

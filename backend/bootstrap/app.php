@@ -45,6 +45,11 @@ return Application::configure(basePath: dirname(__DIR__))
             \Spatie\Multitenancy\Http\Middleware\NeedsTenant::class,
             \Spatie\Multitenancy\Http\Middleware\EnsureValidTenantSession::class,
         ]);
+
+        $middleware->group('tenant-api', [
+            'set-db-connection',
+            \Spatie\Multitenancy\Http\Middleware\NeedsTenant::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {})
     ->withProviders([])

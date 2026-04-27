@@ -1,13 +1,40 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Loader2, Briefcase } from "lucide-react";
+import type { ResponsiveLayouts } from "react-grid-layout";
 import { ModulePageHeader } from "@/components/module-page-header";
 import { toast } from "sonner";
 import { useI18n } from "@/context/i18n-context";
 import { getHrData } from "@/lib/tenant-resources";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ApexChart } from "@/components/ui/apex-chart";
+import DraggableDashboardGrid from "@/components/dashboard/DraggableDashboardGrid";
+
+const STORAGE_KEY = "dashboard_layout_hr";
+
+function buildDefaultLayouts(): ResponsiveLayouts {
+  const keys = ["employees", "departments", "leave_requests", "dept_dist", "leave_types", "attendance"];
+  const lg = keys.map((key, i) => {
+    const isChart = ["dept_dist", "leave_types", "attendance"].includes(key);
+    const col = i % 3;
+    const row = i < 3 ? 0 : 3;
+    return { i: key, x: col * 4, y: row, w: 4, h: isChart ? 4 : 2, minH: 2, minW: 2 };
+  });
+  const md = keys.map((key, i) => {
+    const isChart = ["dept_dist", "leave_types", "attendance"].includes(key);
+    const col = i % 3;
+    const row = i < 3 ? 0 : 3;
+    return { i: key, x: col * 4, y: row, w: 4, h: isChart ? 4 : 2, minH: 2, minW: 2 };
+  });
+  const sm = keys.map((key, i) => ({
+    i: key, x: (i % 2) * 6, y: Math.floor(i / 2) * 3, w: 6, h: 3, minH: 2, minW: 2,
+  }));
+  const xs = keys.map((key, i) => ({
+    i: key, x: 0, y: i * 3, w: 4, h: 3, minH: 2, minW: 2,
+  }));
+  return { lg, md, sm, xs };
+}
 
 type DeptDist = { department: string; count: number };
 type AttendanceTrend = { date: string; present: number; absent: number; late: number };
@@ -31,12 +58,14 @@ export default function HrPage() {
     getHrData().then((d) => setData(d as HrData)).catch(() => toast.error("Failed to load HR data")).finally(() => setLoading(false));
   }, []);
 
+  const defaultLayouts = useMemo(() => buildDefaultLayouts(), []);
+
   if (loading) return <div className="flex min-h-[200px] items-center justify-center"><Loader2 className="size-6 animate-spin" /></div>;
 
   const cards = [
-    { label: t("dashboard.hr.employees", "Employees"), value: data?.employees_count ?? 0 },
-    { label: t("dashboard.hr.departments", "Departments"), value: data?.departments_count ?? 0 },
-    { label: t("dashboard.hr.leave_requests", "Leave Requests"), value: data?.leave_requests_count ?? 0 },
+    { key: "employees", label: t("dashboard.hr.employees", "Employees"), value: data?.employees_count ?? 0 },
+    { key: "departments", label: t("dashboard.hr.departments", "Departments"), value: data?.departments_count ?? 0 },
+    { key: "leave_requests", label: t("dashboard.hr.leave_requests", "Leave Requests"), value: data?.leave_requests_count ?? 0 },
   ];
 
   const deptSeries = (data?.department_distribution ?? []).map((d) => ({ x: d.department, y: d.count }));
@@ -69,6 +98,39 @@ export default function HrPage() {
     title: { text: t("dashboard.hr.leave_title", "Leave Requests by Type"), align: "left" as const },
   };
 
+  const statCards = cards.map((c) => (
+    <div key={c.key} className="h-full">
+      <Card className="h-full">
+        <CardHeader className="pb-2"><CardTitle className="text-sm font-medium">{c.label}</CardTitle></CardHeader>
+        <CardContent><div className="text-2xl font-bold">{c.value}</div></CardContent>
+      </Card>
+    </div>
+  ));
+
+  const chartCards = [
+    <div key="dept_dist" className="h-full">
+      <Card className="h-full">
+        <CardContent className="pt-4">
+          <ApexChart type="donut" series={deptSeries} options={deptOptions} height={300} />
+        </CardContent>
+      </Card>
+    </div>,
+    <div key="leave_types" className="h-full">
+      <Card className="h-full">
+        <CardContent className="pt-4">
+          <ApexChart type="bar" series={leaveSeries} options={leaveOptions} height={300} />
+        </CardContent>
+      </Card>
+    </div>,
+    <div key="attendance" className="h-full">
+      <Card className="h-full">
+        <CardContent className="pt-4">
+          <ApexChart type="area" series={attendanceSeries} options={attendanceOptions} height={300} />
+        </CardContent>
+      </Card>
+    </div>,
+  ];
+
   return (
     <div className="space-y-4">
       <ModulePageHeader
@@ -80,31 +142,9 @@ export default function HrPage() {
         dashboardHref="/dashboard/modules/hr"
         moduleKey="hr"
       />
-      <div className="grid gap-4 sm:grid-cols-3">
-        {cards.map((c) => (
-          <Card key={c.label}>
-            <CardHeader className="pb-2"><CardTitle className="text-sm font-medium">{c.label}</CardTitle></CardHeader>
-            <CardContent><div className="text-2xl font-bold">{c.value}</div></CardContent>
-          </Card>
-        ))}
-      </div>
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card>
-          <CardContent className="pt-4">
-            <ApexChart type="donut" series={deptSeries} options={deptOptions} height={300} />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-4">
-            <ApexChart type="bar" series={leaveSeries} options={leaveOptions} height={300} />
-          </CardContent>
-        </Card>
-      </div>
-      <Card>
-        <CardContent className="pt-4">
-          <ApexChart type="area" series={attendanceSeries} options={attendanceOptions} height={300} />
-        </CardContent>
-      </Card>
+      <DraggableDashboardGrid storageKey={STORAGE_KEY} defaultLayouts={defaultLayouts}>
+        {[...statCards, ...chartCards]}
+      </DraggableDashboardGrid>
     </div>
   );
 }

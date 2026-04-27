@@ -2,8 +2,8 @@
 
 namespace Modules\Geography\Repositories;
 
-use App\Helpers\TableHelper;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Modules\Geography\Entities\Country;
 use Yajra\DataTables\DataTables;
 
@@ -34,7 +34,7 @@ class CountryRepository implements CountryInterface
             ])->where(
                 function ($q) {
                     if (request()->from_date && request()->to_date) {
-                        TableHelper::loopOverDates(5, $q, $this->model->getTable(), [request()->from_date, request()->to_date]);
+                        $q->whereBetween($this->model->getTable() . '.created_at', [request()->from_date, request()->to_date]);
                     }
                 }
             );
@@ -47,15 +47,23 @@ class CountryRepository implements CountryInterface
                 $query->whereRaw('LOWER(provinces.name) LIKE ?', ["%{$keyword}%"]);
             })
             ->addColumn('actions', function ($row) {
-                return TableHelper::actionButtons(
-                    row: $row,
-                    editRoute: 'landlord.countries.edit',
-                    deleteRoute: 'landlord.countries.destroy',
-                    restoreRoute: 'landlord.countries.restore',
-                    type: $this->model->pluralTitle,
-                    titleType: $this->model->singleTitle,
-                    showIconsOnly: false
-                );
+                $btn = '';
+                $type = $this->model->pluralTitle;
+                $titleType = $this->model->singleTitle;
+
+                if (!isset($row->deleted_at) && !$row->deleted_at && Gate::allows('update.' . $type)) {
+                    $btn .= '<button type="button" data-modal-title="' . translate("edit") . " " . translate($titleType) . '" data-modal-link="' . route('landlord.countries.edit', $row->id) . '" class="btn-primary mx-1 btn-sm open-edit-modal"><i class="far fa-edit fa-fw"></i> ' . translate('edit') . '</button>';
+                }
+
+                if (!isset($row->deleted_at) && !$row->deleted_at && Gate::allows('delete.' . $type)) {
+                    $btn .= '<button type="button" data-delete-type="' . translate($titleType) . '" data-url="' . route('landlord.countries.destroy', $row->id) . '" class="btn-danger mx-1 btn-sm delete-btn"><i class="fa fa-trash fa-fw"></i> ' . translate('delete') . '</button>';
+                }
+
+                if (isset($row->deleted_at) && $row->deleted_at && Gate::allows('restore.' . $type)) {
+                    $btn .= '<button type="button" data-restore-type="' . translate($titleType) . '" data-url="' . route('landlord.countries.restore', $row->id) . '" class="btn-warning mx-1 text-white btn-sm restore-btn"><i class="fas fa-redo-alt fa-fw"></i> ' . translate('restore') . '</button>';
+                }
+
+                return $btn;
             })
             ->rawColumns(['flag', 'actions'])
             ->make(true);

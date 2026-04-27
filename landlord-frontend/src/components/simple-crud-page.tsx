@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ColumnDef } from "@tanstack/react-table";
-import { Loader2, Plus, Pencil, Trash2 } from "lucide-react";
+import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
+import { Loader2, Plus, Pencil, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { DataTable } from "@/components/data-table";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,7 @@ import { useI18n } from "@/context/i18n-context";
 import type { TableParams, PaginatedResponse } from "@/lib/resources";
 import { EntitySelector } from "@/components/entity-selector";
 import { NavigationItemsEditor } from "@/components/navigation-items-editor";
+import { BulkActionsToolbar, type BulkActionConfig, type BulkActionType } from "@/components/bulk-actions";
 import Link from "next/link";
 
 export type FieldDef = {
@@ -84,6 +85,16 @@ export type SimpleCRUDConfig<T extends { id: number }> = {
   sortableColumns?: string[];
   /** Custom action buttons to display in the header */
   actionButtons?: ActionButton[];
+  /** Enable bulk actions */
+  enableBulkActions?: boolean;
+  /** Available bulk actions */
+  bulkActions?: BulkActionConfig[];
+  /** Bulk action handler */
+  onBulkAction?: (action: BulkActionType, ids: number[]) => Promise<void>;
+  /** Entity name for bulk action labels (e.g., "branches", "users") */
+  entityName?: string;
+  /** Import page route */
+  importRoute?: string;
 };
 
 
@@ -102,6 +113,7 @@ export function SimpleCRUDPage<T extends { id: number }>({
   const [saving, setSaving] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
   const [form, setForm] = useState<Record<string, string>>(() => {
     const init: Record<string, string> = {};
     for (const f of config.fields) init[f.name] = "";
@@ -280,6 +292,19 @@ export function SimpleCRUDPage<T extends { id: number }>({
               </Button>
             );
           })}
+          {config.importRoute && (
+            <Link href={config.importRoute}>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-9 gap-1 shrink-0"
+              >
+                <Upload className="size-4" />
+                {t("dashboard.crud.import", "Import")}
+              </Button>
+            </Link>
+          )}
           <Button
             type="button"
             size="sm"
@@ -429,6 +454,16 @@ export function SimpleCRUDPage<T extends { id: number }>({
         confirmText={t("dashboard.actions.delete", "Delete")}
         cancelText={t("dashboard.actions.cancel", "Cancel")}
       />
+      {config.enableBulkActions && config.onBulkAction && selectedRowIds.length > 0 && (
+        <BulkActionsToolbar
+          selectedCount={selectedRowIds.length}
+          selectedIds={selectedRowIds}
+          actions={config.bulkActions || []}
+          onAction={config.onBulkAction}
+          entityNameKey={`dashboard.${config.entityName || 'items'}.label`}
+          entityNameFallback={config.entityName || 'items'}
+        />
+      )}
     </div>
   );
 }

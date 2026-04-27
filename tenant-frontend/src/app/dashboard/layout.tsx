@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import {
   Activity,
   Building2,
+  ChevronLeft,
+  CreditCard,
   Key,
   LayoutDashboard,
   Lock,
@@ -14,24 +16,18 @@ import {
   Search,
   Settings2,
   Shield,
+  ShoppingBag,
+  ShoppingCart,
   Tags,
   Ticket,
   User,
   UserCog,
-  UsersRound,
-  Briefcase,
-  ChevronLeft,
-  ShoppingCart,
-  ShoppingBag,
-  Warehouse,
-  CreditCard,
-  LockOpen,
 } from "lucide-react";
 import { toast } from "sonner";
 import { APP_NAME } from "@/lib/app-config";
 import { useAuth } from "@/context/auth-context";
 import { useI18n } from "@/context/i18n-context";
-import { useModule, type SubscribedModule, type ModuleNavItem } from "@/context/module-context";
+import { useModule, type SubscribedModule } from "@/context/module-context";
 import { ChartPaletteProvider } from "@/context/chart-palette-context";
 import { DashboardBrandingProvider } from "@/context/dashboard-branding-context";
 import { useFeatureFlags } from "@/context/feature-flag-context";
@@ -121,7 +117,6 @@ const navSections: NavSectionDef[] = [
     items: [
       { href: "/dashboard/profile", labelKey: "dashboard.nav.my_profile", fallback: "My Profile", icon: User },
       { href: "/dashboard/settings", labelKey: "dashboard.nav.settings", fallback: "General Settings", icon: Settings2 },
-      { href: "/dashboard/two-factor-auth", labelKey: "dashboard.nav.two_factor", fallback: "Two-Factor Auth", icon: LockOpen },
     ],
   },
   {
@@ -135,11 +130,11 @@ const navSections: NavSectionDef[] = [
       { href: "/dashboard/billing/modules", labelKey: "dashboard.nav.billing_modules", fallback: "Modules & Add-ons", icon: ShoppingBag },
     ],
   },
-  {
-    titleKey: "dashboard.nav.section_modules",
-    titleFallback: "Modules",
-    items: [] as NavLinkDef[],
-  },
+  // {
+  //   titleKey: "dashboard.nav.section_modules",
+  //   titleFallback: "Modules",
+  //   items: [] as NavLinkDef[],
+  // },
   {
     titleKey: "dashboard.nav.section_security",
     titleFallback: "Security",
@@ -238,11 +233,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const { t, dir } = useI18n();
   const { isEnabled } = useFeatureFlags();
   const { enabled: animationsEnabled } = useAnimation();
-  const { subscribedModules, modulesLoading } = useModule();
+  const { subscribedModules, fetchModuleDetail } = useModule();
   const router = useRouter();
   const pathname = usePathname();
   const [paletteOpen, setPaletteOpen] = useState(false);
   const { brandError } = useBrandFilter();
+  const fetchingModulesRef = useRef<Set<string>>(new Set());
 
   const togglePalette = useCallback(() => {
     setPaletteOpen((o) => !o);
@@ -256,6 +252,36 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, [loading, isAuthenticated, router]);
 
+  // Helper to normalize module keys (hyphens to underscores like backend)
+  const normalizeModuleKey = useCallback((key: string) => key.replace(/-/g, '_'), []);
+
+  // Fetch module detail when active module has no navigation
+  useEffect(() => {
+    const activeModuleKey = pathname.startsWith("/dashboard/modules/")
+      ? pathname.split("/")[3] ?? null
+      : null;
+
+    console.log("[Debug] Active module key:", activeModuleKey);
+    console.log("[Debug] Subscribed modules count:", subscribedModules.length);
+    console.log("[Debug] Subscribed modules keys:", subscribedModules.map(m => m.module_key));
+
+    if (!activeModuleKey) return;
+
+    const normalizedKey = normalizeModuleKey(activeModuleKey);
+    const activeMod = subscribedModules.find((m) => m.module_key === activeModuleKey || m.module_key === normalizedKey);
+    console.log("[Debug] Found active module:", activeMod ? { key: activeMod.module_key, hasNav: !!activeMod.navigation?.length } : null);
+
+    if (activeMod && !activeMod.navigation?.length && !fetchingModulesRef.current.has(normalizedKey)) {
+      console.log("[Debug] Fetching module detail for:", normalizedKey);
+      fetchingModulesRef.current.add(normalizedKey);
+      fetchModuleDetail(normalizedKey).then((result) => {
+        console.log("[Debug] Fetch result:", result ? { key: result.module_key, hasNav: !!result.navigation?.length } : null);
+      }).finally(() => {
+        fetchingModulesRef.current.delete(normalizedKey);
+      });
+    }
+  }, [pathname, subscribedModules, fetchModuleDetail, normalizeModuleKey]);
+
   const userPerms = useMemo(() => new Set<string>((user as unknown as { permissions?: string[] })?.permissions ?? []), [user]);
   const hasPerm = useCallback((p?: string) => !p || userPerms.has(p) || userPerms.has("*"), [userPerms]);
 
@@ -264,7 +290,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       href: mod.route ?? `/dashboard/modules/${mod.module_key}`,
       labelKey: `dashboard.nav.${mod.module_key}`,
       fallback: mod.name,
-      icon: resolveIcon(mod.module_key === "crm" ? "UsersRound" : mod.module_key === "hr" ? "Briefcase" : mod.module_key === "pos" ? "ShoppingCart" : null),
+      icon: resolveIcon(mod.icon),
     }));
 
     return navSections
@@ -360,8 +386,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               const activeModuleKey = pathname.startsWith("/dashboard/modules/")
                 ? pathname.split("/")[3] ?? null
                 : null;
+              const normalizedKey = activeModuleKey ? activeModuleKey.replace(/-/g, '_') : null;
               const activeMod = activeModuleKey
-                ? (subscribedModules as SubscribedModule[]).find((m) => m.module_key === activeModuleKey)
+                ? (subscribedModules as SubscribedModule[]).find((m) => m.module_key === activeModuleKey || m.module_key === normalizedKey)
                 : null;
               
               // If we are within a module, show the module's sub-sidebar and a back button
@@ -386,7 +413,23 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     </SidebarGroup>
                     
                     {(() => {
-                      if (!activeMod.navigation?.length) return null;
+                      if (!activeMod.navigation?.length) {
+                        // Show loading state while fetching navigation
+                        return (
+                          <SidebarGroup>
+                            <SidebarGroupContent>
+                              <SidebarMenu>
+                                <SidebarMenuItem>
+                                  <SidebarMenuButton disabled className="text-muted-foreground">
+                                    <span className="size-4 animate-pulse rounded-full bg-muted" />
+                                    <span>Loading navigation...</span>
+                                  </SidebarMenuButton>
+                                </SidebarMenuItem>
+                              </SidebarMenu>
+                            </SidebarGroupContent>
+                          </SidebarGroup>
+                        );
+                      }
 
                       // Group by section
                       const groupedNav = activeMod.navigation.reduce((acc, nav) => {
@@ -410,7 +453,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                     // Get brand-scoped route if brand filter is active
                                     const brandScopedRoute = (() => {
                                       const brandSlug = pathname.split('/')[4]; // /dashboard/modules/[module]/[brand]/...
-                                      const isBrandScoped = brandSlug && brandSlug !== 'crm' && brandSlug !== 'hr' && brandSlug !== 'pos' && brandSlug !== 'survey' && brandSlug !== 'inventory' && brandSlug !== 'sales' && brandSlug !== 'new';
+                                      // Dynamically check if brandSlug is a known module key (not a brand)
+                                      const moduleKeys = new Set((subscribedModules as SubscribedModule[]).map(m => m.module_key));
+                                      const isBrandScoped = brandSlug && !moduleKeys.has(brandSlug) && brandSlug !== 'new';
                                       if (isBrandScoped && nav.route.startsWith(`/dashboard/modules/${activeModuleKey}`)) {
                                         return nav.route.replace(
                                           `/dashboard/modules/${activeModuleKey}`,

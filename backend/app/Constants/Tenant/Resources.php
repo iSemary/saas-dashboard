@@ -102,6 +102,8 @@ class Resources
             'integrations' => ['read', 'create', 'update', 'delete', 'connect'],
             'notifications' => ['read', 'create', 'update', 'delete'],
             'files' => ['read', 'create', 'update', 'delete', 'share'],
+            'login_attempts' => ['view'],
+            'activity_logs' => ['view'],
         ];
     }
 

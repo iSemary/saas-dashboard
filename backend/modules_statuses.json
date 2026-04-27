@@ -18,7 +18,7 @@
     "Workflow": true,
     "Inventory": true,
     "Accounting": true,
-    "HR": false,
+    "HR": true,
     "API": true,
     "StaticPages": true,
     "POS": true

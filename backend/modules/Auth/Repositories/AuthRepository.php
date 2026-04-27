@@ -3,7 +3,6 @@
 namespace Modules\Auth\Repositories;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Modules\Auth\Entities\User;
 
 class AuthRepository implements AuthRepositoryInterface
@@ -54,15 +53,20 @@ class AuthRepository implements AuthRepositoryInterface
 
     public function formatUserData(User $user): array
     {
-        $user->load('roles.permissions');
+        $user->load(['roles.permissions', 'permissions']);
 
         $permissions = [];
+        // Get permissions from roles
         foreach ($user->roles as $role) {
             foreach ($role->permissions as $permission) {
                 $permissions[] = $permission->name;
             }
         }
-        $permissions = array_unique($permissions);
+        // Get direct user permissions
+        foreach ($user->permissions as $permission) {
+            $permissions[] = $permission->name;
+        }
+        $permissions = array_values(array_unique($permissions));
 
         return [
             'id' => $user->id,

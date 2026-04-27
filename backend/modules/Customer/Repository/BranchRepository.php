@@ -7,7 +7,6 @@ use Modules\Customer\Repository\BranchRepositoryInterface;
 use App\Repositories\Traits\TableListTrait;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
-use App\Helpers\TableHelper;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 
@@ -75,7 +74,7 @@ class BranchRepository implements BranchRepositoryInterface
             ->where(
                 function ($q) {
                     if (request()->from_date && request()->to_date) {
-                        TableHelper::loopOverDates(5, $q, 'branches', [request()->from_date, request()->to_date]);
+                        $q->whereBetween('branches.created_at', [request()->from_date, request()->to_date]);
                     }
                 }
             );

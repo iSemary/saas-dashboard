@@ -202,19 +202,30 @@ class WorkflowEngine
      */
     protected function createActivity($model, array $config, array $variables): void
     {
-        $activityData = [
-            'subject' => $this->evaluateExpression($config['subject'], $variables),
-            'description' => $this->evaluateExpression($config['description'] ?? '', $variables),
-            'type' => $config['type'] ?? 'note',
-            'related_type' => get_class($model),
-            'related_id' => $model->id,
-            'assigned_to' => $this->evaluateExpression($config['assigned_to'] ?? null, $variables),
-            'created_by' => auth()->id() ?? 1,
+        $subject = $this->evaluateExpression($config['subject'], $variables);
+        $description = $this->evaluateExpression($config['description'] ?? '', $variables);
+
+        // Create audit entry instead of activity
+        $auditData = [
+            'event' => 'workflow_activity',
+            'auditable_type' => get_class($model),
+            'auditable_id' => $model->id,
+            'old_values' => [],
+            'new_values' => [
+                'workflow_subject' => $subject,
+                'workflow_description' => $description,
+                'workflow_type' => $config['type'] ?? 'note',
+                'assigned_to' => $this->evaluateExpression($config['assigned_to'] ?? null, $variables),
+            ],
+            'user_id' => auth()->id() ?? 1,
+            'user_type' => 'Modules\\Auth\\Entities\\User',
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
         ];
 
-        // Create activity using the CRM module
-        if (class_exists('Modules\CRM\Models\Activity')) {
-            \Modules\CRM\Models\Activity::create($activityData);
+        // Create audit entry using OwenIt Auditing
+        if (class_exists('OwenIt\\Auditing\\Models\\Audit')) {
+            \OwenIt\Auditing\Models\Audit::create($auditData);
         }
     }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { SimpleCRUDPage, type SimpleCRUDConfig } from "@/components/simple-crud-page";
+import { Upload } from "lucide-react";
 import { listCurrencies, createCurrency, updateCurrency, deleteCurrency, type CurrencyRow } from "@/lib/resources";
 
 const config: SimpleCRUDConfig<CurrencyRow> = {
@@ -10,6 +11,15 @@ const config: SimpleCRUDConfig<CurrencyRow> = {
   subtitleFallback: "Manage supported currencies.",
   createLabelKey: "dashboard.currencies.create",
   createLabelFallback: "Add Currency",
+  actionButtons: [
+    {
+      labelKey: "dashboard.import",
+      labelFallback: "Import",
+      icon: Upload,
+      variant: "outline",
+      href: "/dashboard/import/currencies",
+    },
+  ],
   fields: [
     { name: "name", label: "Name", required: true },
     { name: "code", label: "Code", placeholder: "USD", required: true },

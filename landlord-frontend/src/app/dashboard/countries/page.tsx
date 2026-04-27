@@ -1,6 +1,7 @@
 "use client";
 
 import { SimpleCRUDPage, type SimpleCRUDConfig } from "@/components/simple-crud-page";
+import { Upload } from "lucide-react";
 import { listCountries, createCountry, updateCountry, deleteCountry, type CountryRow } from "@/lib/resources";
 
 const config: SimpleCRUDConfig<CountryRow> = {
@@ -10,6 +11,15 @@ const config: SimpleCRUDConfig<CountryRow> = {
   subtitleFallback: "Manage countries for geography setup.",
   createLabelKey: "dashboard.countries.create",
   createLabelFallback: "Add Country",
+  actionButtons: [
+    {
+      labelKey: "dashboard.import",
+      labelFallback: "Import",
+      icon: Upload,
+      variant: "outline",
+      href: "/dashboard/import/countries",
+    },
+  ],
   fields: [
     { name: "name", label: "Name", required: true },
     { name: "code", label: "Code", placeholder: "US", required: true },

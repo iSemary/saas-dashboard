@@ -3,7 +3,6 @@
 namespace Modules\Auth\Repositories\Tenant;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Spatie\Activitylog\Models\Activity;
 
 interface TenantActivityLogApiRepositoryInterface
 {

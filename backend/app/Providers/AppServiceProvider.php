@@ -13,6 +13,8 @@ use App\Repositories\ReportRepositoryInterface;
 use App\Repositories\ReportRepository;
 use App\Repositories\ImportExportRepositoryInterface;
 use App\Repositories\ImportExportRepository;
+use App\Repositories\TicketRepositoryInterface;
+use App\Repositories\TicketRepository;
 use App\Repositories\CrossDb\LandlordRepositoryInterface;
 use App\Repositories\CrossDb\LandlordRepository;
 use App\Repositories\CrossDb\TenantRepositoryInterface;
@@ -35,6 +37,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(BackupRepositoryInterface::class, BackupRepository::class);
         $this->app->bind(ReportRepositoryInterface::class, ReportRepository::class);
         $this->app->bind(ImportExportRepositoryInterface::class, ImportExportRepository::class);
+        $this->app->bind(TicketRepositoryInterface::class, TicketRepository::class);
         $this->app->bind(LandlordRepositoryInterface::class, LandlordRepository::class);
         $this->app->bind(TenantRepositoryInterface::class, TenantRepository::class);
     }

@@ -1,6 +1,7 @@
 "use client";
 
 import { SimpleCRUDPage, type SimpleCRUDConfig } from "@/components/simple-crud-page";
+import { Upload } from "lucide-react";
 import { listCities, createCity, updateCity, deleteCity, listProvinces, type CityRow } from "@/lib/resources";
 
 const config: SimpleCRUDConfig<CityRow> = {
@@ -10,6 +11,15 @@ const config: SimpleCRUDConfig<CityRow> = {
   subtitleFallback: "Manage cities within provinces.",
   createLabelKey: "dashboard.cities.create",
   createLabelFallback: "Add City",
+  actionButtons: [
+    {
+      labelKey: "dashboard.import",
+      labelFallback: "Import",
+      icon: Upload,
+      variant: "outline",
+      href: "/dashboard/import/cities",
+    },
+  ],
   fields: [
     { name: "name", label: "Name", required: true },
     { name: "postal_code", label: "Postal Code", placeholder: "12345" },
