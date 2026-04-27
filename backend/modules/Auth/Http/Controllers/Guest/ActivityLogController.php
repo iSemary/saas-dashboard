@@ -53,7 +53,6 @@ class ActivityLogController extends ApiController
             'layoutPrefix' => $layoutPrefix,
             'breadcrumbs' => $breadcrumbs,
 
-
             'activities' => $result['activities'],
             'pagination' => $result['pagination']
         ]);
@@ -61,9 +60,6 @@ class ActivityLogController extends ApiController
 
     public function modal(Request $request, int $id = null)
     {
-        if (request()->ajax() && request()->get('table')) {
-            return $this->service->getDataTables($id);
-        }
         return view('user.auth.activity-logs.modal', ['id' => $id]);
     }
 
@@ -72,9 +68,6 @@ class ActivityLogController extends ApiController
         $objectType = $request->get('object_type');
         $model = CryptHelper::decrypt($objectType);
 
-        if (request()->ajax() && request()->get('table')) {
-            return $this->service->getDataTablesByRow($id, $model);
-        }
         return view('user.auth.activity-logs.row', ['id' => $id, 'objectType' => $objectType]);
     }
 }

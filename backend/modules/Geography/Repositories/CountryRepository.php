@@ -5,8 +5,6 @@ namespace Modules\Geography\Repositories;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Modules\Geography\Entities\Country;
-use Yajra\DataTables\DataTables;
-
 class CountryRepository implements CountryInterface
 {
     protected $model;
@@ -19,54 +17,6 @@ class CountryRepository implements CountryInterface
     public function all()
     {
         return $this->model->all();
-    }
-
-    public function datatables()
-    {
-        $rows = $this->model->query()->withTrashed()
-            ->leftJoin("provinces", function ($join) {
-                $join->on("provinces.country_id", "=", "countries.id")
-                    ->where("provinces.is_capital", true);
-            })
-            ->select([
-                "countries.*",
-                "provinces.name as capital_province"
-            ])->where(
-                function ($q) {
-                    if (request()->from_date && request()->to_date) {
-                        $q->whereBetween($this->model->getTable() . '.created_at', [request()->from_date, request()->to_date]);
-                    }
-                }
-            );
-
-        return DataTables::of($rows)
-            ->editColumn('flag', function ($row) {
-                return '<img src="' . $row->flag . '" class="img-thumbnail" width="50px" height="50px">';
-            })
-            ->filterColumn('capital_province', function ($query, $keyword) {
-                $query->whereRaw('LOWER(provinces.name) LIKE ?', ["%{$keyword}%"]);
-            })
-            ->addColumn('actions', function ($row) {
-                $btn = '';
-                $type = $this->model->pluralTitle;
-                $titleType = $this->model->singleTitle;
-
-                if (!isset($row->deleted_at) && !$row->deleted_at && Gate::allows('update.' . $type)) {
-                    $btn .= '<button type="button" data-modal-title="' . translate("edit") . " " . translate($titleType) . '" data-modal-link="' . route('landlord.countries.edit', $row->id) . '" class="btn-primary mx-1 btn-sm open-edit-modal"><i class="far fa-edit fa-fw"></i> ' . translate('edit') . '</button>';
-                }
-
-                if (!isset($row->deleted_at) && !$row->deleted_at && Gate::allows('delete.' . $type)) {
-                    $btn .= '<button type="button" data-delete-type="' . translate($titleType) . '" data-url="' . route('landlord.countries.destroy', $row->id) . '" class="btn-danger mx-1 btn-sm delete-btn"><i class="fa fa-trash fa-fw"></i> ' . translate('delete') . '</button>';
-                }
-
-                if (isset($row->deleted_at) && $row->deleted_at && Gate::allows('restore.' . $type)) {
-                    $btn .= '<button type="button" data-restore-type="' . translate($titleType) . '" data-url="' . route('landlord.countries.restore', $row->id) . '" class="btn-warning mx-1 text-white btn-sm restore-btn"><i class="fas fa-redo-alt fa-fw"></i> ' . translate('restore') . '</button>';
-                }
-
-                return $btn;
-            })
-            ->rawColumns(['flag', 'actions'])
-            ->make(true);
     }
 
     public function find($id)

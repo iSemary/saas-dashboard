@@ -5,7 +5,6 @@ namespace Modules\Comment\Repositories;
 interface CommentInterface
 {
     public function all();
-    public function datatables();
     public function find($id);
     public function create(array $data);
     public function update($id, array $data);

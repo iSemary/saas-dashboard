@@ -20,11 +20,6 @@ class TenantUserManagementService implements TenantUserManagementServiceInterfac
         $this->userRepository = $userRepository;
     }
 
-    public function getDataTables()
-    {
-        return $this->userRepository->datatables();
-    }
-
     public function getAllUsers(array $filters = [], int $perPage = 15): LengthAwarePaginator|Collection
     {
         try

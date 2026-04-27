@@ -6,7 +6,6 @@ use Modules\Customer\Entities\BrandModuleSubscription;
 use Modules\Customer\Repository\BrandModuleSubscriptionRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
-use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 
 class BrandModuleSubscriptionRepository implements BrandModuleSubscriptionRepositoryInterface
@@ -167,70 +166,4 @@ class BrandModuleSubscriptionRepository implements BrandModuleSubscriptionReposi
         ];
     }
 
-    public function datatables()
-    {
-        $subscriptions = BrandModuleSubscription::query()->with(['brand', 'creator', 'updater']);
-
-        return DataTables::of($subscriptions)
-            ->addColumn('brand_name', function ($row)
-            {
-                return $row->brand ? $row->brand->name : '-';
-            })
-            ->addColumn('module_icon', function ($row)
-            {
-                $icons = [
-                    'crm' => 'fas fa-handshake',
-                    'hr' => 'fas fa-users',
-                    'accounting' => 'fas fa-calculator',
-                    'sales' => 'fas fa-shopping-cart',
-                    'inventory' => 'fas fa-boxes',
-                    'reporting' => 'fas fa-chart-bar',
-                    'email' => 'fas fa-envelope',
-                    'notification' => 'fas fa-bell',
-                ];
-
-                return '<i class="' . ($icons[$row->module_key] ?? 'fas fa-cube') . '"></i>';
-            })
-            ->addColumn('status_badge', function ($row)
-            {
-                return '<span class="badge ' . $row->getStatusBadgeClass() . '">' .
-                       ucfirst($row->status) .
-                       '</span>';
-            })
-            ->addColumn('valid_subscription', function ($row)
-            {
-                return $row->isValidSubscription() ?
-                    '<span class="text-success"><i class="fas fa-check-circle"></i></span>' :
-                    '<span class="text-danger"><i class="fas fa-times-circle"></i></span>';
-            })
-            ->addColumn('created_by_name', function ($row)
-            {
-                return $row->creator ? $row->creator->name : '-';
-            })
-            ->addColumn('updated_by_name', function ($row)
-            {
-                return $row->updater ? $row->updater->name : '-';
-            })
-            ->addColumn('actions', function ($row) {
-                $actions = '';
-
-                // Edit button
-                $actions .= '<button type="button" data-id="' . $row->id . '" data-url="javascript:void(0)" class="btn btn-sm btn-primary edit-btn mx-1" title="' . translate('edit') . '"><i class="fas fa-edit"></i></button>';
-
-                // Switch button
-                $checked = $row->status === 'active' ? 'checked' : '';
-                $actions .= '<div class="custom-control custom-switch d-inline-block mx-1"><input type="checkbox" class="custom-control-input switch-btn" id="switch-' . $row->id . '" data-id="' . $row->id . '" ' . $checked . '><label class="custom-control-label" for="switch-' . $row->id . '"></label></div>';
-
-                // Restore/Delete button
-                if ($row->trashed()) {
-                    $actions .= '<button type="button" data-id="' . $row->id . '" data-url="javascript:void(0)" class="btn btn-sm btn-warning restore-btn mx-1" title="' . translate('restore') . '"><i class="fas fa-undo"></i></button>';
-                } else {
-                    $actions .= '<button type="button" data-id="' . $row->id . '" data-url="javascript:void(0)" class="btn btn-sm btn-danger delete-btn mx-1" title="' . translate('delete') . '"><i class="fas fa-trash"></i></button>';
-                }
-
-                return $actions;
-            })
-            ->rawColumns(['module_icon', 'status_badge', 'valid_subscription', 'actions'])
-            ->make(true);
-    }
 }

@@ -22,11 +22,6 @@ class EmailCredentialService
         return $this->repository->all($conditions);
     }
 
-    public function getDataTables()
-    {
-        return $this->repository->datatables();
-    }
-
     public function get($id)
     {
         return $this->repository->find($id);

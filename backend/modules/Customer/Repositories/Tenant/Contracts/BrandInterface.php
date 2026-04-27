@@ -10,11 +10,6 @@ interface BrandInterface
     public function getAll(array $conditions = []);
 
     /**
-     * Get brands for DataTables
-     */
-    public function getDataTables();
-
-    /**
      * Get a brand by ID
      */
     public function get(int $id);

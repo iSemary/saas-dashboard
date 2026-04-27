@@ -27,11 +27,6 @@ class BrandModuleSubscriptionService
         return $this->subscriptionRepository->getAll($filters, $perPage);
     }
 
-    public function getDataTables()
-    {
-        return $this->subscriptionRepository->datatables();
-    }
-
     public function getById(int $id): ?BrandModuleSubscription
     {
         return $this->subscriptionRepository->getById($id);

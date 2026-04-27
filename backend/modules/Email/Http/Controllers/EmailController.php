@@ -29,9 +29,6 @@ class EmailController extends ApiController implements HasMiddleware
 
     public function index()
     {
-        if (request()->ajax()) {
-            return $this->emailService->getDataTables();
-        }
         $title = translate('email_logs');
 
         $breadcrumbs = [

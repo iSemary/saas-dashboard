@@ -5,7 +5,6 @@ namespace Modules\Payment\Repositories;
 interface PaymentTransactionInterface
 {
     public function all();
-    public function datatables();
     public function find($id);
     public function getByCustomer($customerId);
     public function getByStatus($status);

@@ -43,11 +43,6 @@ class TranslationService
         return $this->repository->getByKey($key);
     }
 
-    public function getDataTables()
-    {
-        return $this->repository->datatables();
-    }
-
     public function get($id)
     {
         return $this->repository->find($id);
@@ -86,11 +81,6 @@ class TranslationService
     public function countJsonByLocale($locale)
     {
         return $this->repository->countJsonByLocale($locale);
-    }
-
-    public function countDatatablesJsonByLocale($locale)
-    {
-        return $this->repository->countDatatablesJsonByLocale($locale);
     }
 
     public function updateObjectTranslations(string $decryptedObjectType, string $decryptedObjectKey, int $objectId, array $translations)

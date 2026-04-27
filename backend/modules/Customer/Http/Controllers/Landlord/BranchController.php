@@ -41,9 +41,6 @@ class BranchController extends Controller implements HasMiddleware
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            return $this->branchService->getDataTables();
-        }
 
         $title = translate('branches');
         $breadcrumbs = [

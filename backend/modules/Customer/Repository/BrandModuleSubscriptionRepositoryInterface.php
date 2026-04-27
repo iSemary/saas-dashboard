@@ -21,5 +21,4 @@ interface BrandModuleSubscriptionRepositoryInterface
     public function toggleSubscriptionStatus(int $id): bool;
     public function hasActiveSubscription(int $brandId, string $moduleKey): bool;
     public function getDashboardStats(): array;
-    public function datatables();
 }

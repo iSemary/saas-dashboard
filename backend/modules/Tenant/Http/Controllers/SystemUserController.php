@@ -47,9 +47,6 @@ class SystemUserController extends ApiController implements HasMiddleware
 
     public function index()
     {
-        if (request()->ajax()) {
-            return $this->service->getDataTables();
-        }
         $title = translate("system_users");
         $breadcrumbs = [
             ['text' => translate('home'), 'link' => route('home')],

@@ -33,11 +33,6 @@ class ConfigurationService
         return $this->repository->getByKey($key);
     }
 
-    public function getDataTables()
-    {
-        return $this->repository->datatables();
-    }
-
     public function get($id)
     {
         return $this->repository->find($id);

@@ -43,11 +43,6 @@ class EmailRecipientService
         return $this->repository->getPaginated();
     }
 
-    public function getDataTables()
-    {
-        return $this->repository->datatables();
-    }
-
     public function get($id)
     {
         return $this->repository->find($id);

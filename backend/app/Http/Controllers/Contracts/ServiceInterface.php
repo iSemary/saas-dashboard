@@ -14,11 +14,6 @@ interface ServiceInterface
     public function getAll(array $conditions = []);
 
     /**
-     * Get data tables
-     */
-    public function getDataTables();
-
-    /**
      * Get a resource by ID
      */
     public function get(int $id);

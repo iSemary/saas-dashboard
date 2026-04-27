@@ -7,7 +7,6 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 interface EmailCampaignInterface
 {
     public function all();
-    public function datatables();
     public function find($id);
     public function findOrFail(int $id);
     public function paginate(array $filters = [], int $perPage = 50): LengthAwarePaginator;

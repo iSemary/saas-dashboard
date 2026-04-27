@@ -38,11 +38,6 @@ class EmailSubscriberService
         return $this->repository->count();
     }
 
-    public function getDataTables()
-    {
-        return $this->repository->datatables();
-    }
-
     public function get($id)
     {
         return $this->repository->find($id);

@@ -8,7 +8,6 @@ use Modules\Customer\Repository\BrandRepositoryInterface;
 use App\Repositories\Traits\TableListTrait;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
-use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 
 class BrandRepository implements BrandRepositoryInterface
@@ -50,63 +49,6 @@ class BrandRepository implements BrandRepositoryInterface
         }
 
         return $query->orderBy('created_at', 'desc')->paginate($perPage);
-    }
-
-    public function datatables()
-    {
-        $rows = TenantBrand::query()->withTrashed()
-            ->with(['creator', 'updater'])
-            ->select([
-                'brands.*',
-                DB::raw('(SELECT COUNT(*) FROM branches WHERE branches.brand_id = brands.id) AS branches_count')
-            ])
-            ->where(
-                function ($q) {
-                    if (request()->from_date && request()->to_date) {
-                        $q->whereBetween('brands.created_at', [request()->from_date, request()->to_date]);
-                    }
-                }
-            );
-
-        return DataTables::of($rows)
-            ->addColumn('logo', function ($row) {
-                if ($row->logo) {
-                    return '<img src="' . asset('storage/' . $row->logo) . '" width="50" height="50" class="rounded">';
-                }
-                return '<img src="' . asset('assets/shared/images/icons/defaults/image.png') . '" width="50" height="50" class="rounded">';
-            })
-            ->addColumn('branches_count', function ($row) {
-                return '<span class="badge badge-info">' . $row->branches_count . '</span>';
-            })
-            ->addColumn('status', function ($row) {
-                $badgeClass = $row->status === 'active' ? 'success' : 'secondary';
-                return '<span class="badge badge-' . $badgeClass . '">' . translate($row->status) . '</span>';
-            })
-            ->addColumn('actions', function ($row) {
-                $actions = '';
-
-                $actions .= '<button class="btn btn-sm btn-primary open-edit-modal me-1"
-                               data-modal-link="' . route('tenant.brands.edit', $row->id) . '"
-                               data-modal-title="' . translate('edit') . ' ' . translate('brand') . '">
-                               <i class="fa fa-edit"></i>
-                            </button>';
-
-                if ($row->deleted_at) {
-                    $actions .= '<button class="btn btn-sm btn-warning restore-btn me-1"
-                                   data-route="' . route('tenant.brands.restore', $row->id) . '">
-                                   <i class="fa fa-undo"></i>
-                                </button>';
-                } else {
-                    $actions .= '<button class="btn btn-sm btn-danger delete-btn"
-                                   data-route="' . route('tenant.brands.destroy', $row->id) . '">
-                                   <i class="fa fa-trash"></i>
-                                </button>';
-                }
-
-                return $actions;
-            })
-            ->rawColumns(['logo', 'branches_count', 'status', 'actions'])
-            ->make(true);
     }
 
     public function getById(int $id): ?Brand
@@ -177,10 +119,5 @@ class BrandRepository implements BrandRepositoryInterface
             ->with(['creator', 'updater'])
             ->orderBy('name')
             ->get();
-    }
-
-    public function tenantDataTables(int $tenantId)
-    {
-        return $this->datatables();
     }
 }

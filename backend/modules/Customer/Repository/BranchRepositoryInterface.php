@@ -19,7 +19,6 @@ interface BranchRepositoryInterface
     public function getByBrand(int $brandId): Collection;
     public function search(string $query): Collection;
     public function getDashboardStats(): array;
-    public function datatables();
     public function getActiveBranches(): Collection;
     public function getBranchesByLocation(string $city = null, string $state = null, string $country = null): Collection;
 }

@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface TenantRoleRepositoryInterface
 {
-    public function datatables();
     /**
      * Get all roles with their relationships
      */

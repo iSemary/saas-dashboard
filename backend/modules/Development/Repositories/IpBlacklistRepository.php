@@ -1,0 +1,69 @@
+<?php
+
+namespace Modules\Development\Repositories;
+
+use App\Helpers\TableHelper;
+use Modules\Development\Entities\IpBlacklist;
+class IpBlacklistRepository implements IpBlacklistInterface
+{
+    protected $model;
+
+    public function __construct(IpBlacklist $ip_blacklist)
+    {
+        $this->model = $ip_blacklist;
+    }
+
+    public function all()
+    {
+        return $this->model->all();
+    }
+
+    public function find($id)
+    {
+        return $this->model->find($id);
+    }
+
+    public function paginate(array $filters = [], int $perPage = 50): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        $query = $this->model->query();
+        if (isset($filters['search'])) {
+            $query->where('key', 'like', "%{$filters['search']}%");
+        }
+        return $query->orderBy('created_at', 'desc')->paginate($perPage);
+    }
+
+    public function create(array $data)
+    {
+        return $this->model->create($data);
+    }
+
+    public function update($id, array $data)
+    {
+        $row = $this->model->find($id);
+        if ($row) {
+            $row->update($data);
+            return $row;
+        }
+        return null;
+    }
+
+    public function delete($id)
+    {
+        $row = $this->model->find($id);
+        if ($row) {
+            $row->delete();
+            return true;
+        }
+        return false;
+    }
+
+    public function restore($id)
+    {
+        $row = $this->model->withTrashed()->find($id);
+        if ($row) {
+            $row->restore();
+            return true;
+        }
+        return false;
+    }
+}

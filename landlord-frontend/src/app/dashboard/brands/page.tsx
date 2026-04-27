@@ -183,7 +183,6 @@ export default function BrandsPage() {
       <DataTable
         columns={columns}
         data={rows}
-        enableRowSelection={true}
         enableExport={true}
         toolbarActions={
           <>

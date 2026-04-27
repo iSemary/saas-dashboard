@@ -18,11 +18,6 @@ class TenantPermissionService implements TenantPermissionServiceInterface
         $this->permissionRepository = $permissionRepository;
     }
 
-    public function getDataTables()
-    {
-        return $this->permissionRepository->datatables();
-    }
-
     public function getAllPermissions(array $filters = [], int $perPage = 15): LengthAwarePaginator|Collection
     {
         try {

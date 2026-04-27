@@ -23,7 +23,31 @@ class PaymentLogController extends ApiController implements HasMiddleware
      */
     public function index(Request $request)
     {
-        return $this->getDataTables($request);
+        $logType = $request->get('log_type', 'gateway');
+
+        if ($logType === 'audit') {
+            $query = PaymentAuditLog::with('user')->orderBy('created_at', 'desc');
+        } else {
+            $query = PaymentGatewayLog::with(['paymentMethod', 'transaction'])->orderBy('created_at', 'desc');
+        }
+
+        if ($request->has('level') && $request->level) {
+            $query->where('log_level', $request->level);
+        }
+
+        if ($request->has('operation') && $request->operation) {
+            $query->where('operation', 'like', '%' . $request->operation . '%');
+        }
+
+        if ($request->has('date_from') && $request->date_from) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->has('date_to') && $request->date_to) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        return $query->paginate($request->get('per_page', 15));
     }
 
     /**
@@ -44,69 +68,5 @@ class PaymentLogController extends ApiController implements HasMiddleware
         return response()->json(['data' => $log]);
     }
 
-    /**
-     * Get DataTables data for payment logs.
-     */
-    private function getDataTables(Request $request)
-    {
-        $logType = $request->get('log_type', 'gateway'); // gateway or audit
-
-        if ($logType === 'audit') {
-            $query = PaymentAuditLog::with('user')
-                ->orderBy('created_at', 'desc');
-        } else {
-            $query = PaymentGatewayLog::with(['paymentMethod', 'transaction'])
-                ->orderBy('created_at', 'desc');
-        }
-
-        // Apply filters
-        if ($request->has('level') && $request->level) {
-            $query->where('log_level', $request->level);
-        }
-
-        if ($request->has('operation') && $request->operation) {
-            $query->where('operation', 'like', '%' . $request->operation . '%');
-        }
-
-        if ($request->has('date_from') && $request->date_from) {
-            $query->whereDate('created_at', '>=', $request->date_from);
-        }
-
-        if ($request->has('date_to') && $request->date_to) {
-            $query->whereDate('created_at', '<=', $request->date_to);
-        }
-
-        $logs = $query->paginate($request->get('length', 10));
-
-        $data = $logs->getCollection()->map(function ($log) use ($logType) {
-            if ($logType === 'audit') {
-                return [
-                    'id' => $log->id,
-                    'operation' => $log->operation,
-                    'entity_type' => $log->entity_type,
-                    'user' => $log->user ? $log->user->name : 'System',
-                    'ip_address' => $log->ip_address,
-                    'created_at' => $log->created_at->format('Y-m-d H:i:s'),
-                ];
-            } else {
-                return [
-                    'id' => $log->id,
-                    'operation' => $log->operation,
-                    'log_level' => $log->log_level,
-                    'payment_method' => $log->paymentMethod ? $log->paymentMethod->name : 'N/A',
-                    'http_status' => $log->http_status,
-                    'processing_time' => $log->processing_time_ms ? $log->processing_time_ms . 'ms' : 'N/A',
-                    'created_at' => $log->created_at->format('Y-m-d H:i:s'),
-                ];
-            }
-        });
-
-        return response()->json([
-            'draw' => intval($request->get('draw')),
-            'recordsTotal' => $logs->total(),
-            'recordsFiltered' => $logs->total(),
-            'data' => $data,
-        ]);
-    }
 }
 

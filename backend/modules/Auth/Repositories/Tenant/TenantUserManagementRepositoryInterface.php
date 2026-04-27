@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface TenantUserManagementRepositoryInterface
 {
-    public function datatables();
     /**
      * Get all users with their relationships
      */

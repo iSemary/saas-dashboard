@@ -28,11 +28,6 @@ class IpBlacklistService
         return $this->repository->paginate($filters, $perPage);
     }
 
-    public function getDataTables()
-    {
-        return $this->repository->datatables();
-    }
-
     public function get($id)
     {
         return $this->repository->find($id);

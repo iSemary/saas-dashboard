@@ -20,7 +20,7 @@ class CategoryServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->mockRepository = Mockery::mock(CategoryInterface::class);
         $this->mockModel = Mockery::mock(Category::class);
         $this->categoryService = new CategoryService($this->mockRepository, $this->mockModel);
@@ -43,34 +43,17 @@ class CategoryServiceTest extends TestCase
             (object)['id' => 1, 'name' => 'Category 1'],
             (object)['id' => 2, 'name' => 'Category 2'],
         ]);
-        
+
         $this->mockRepository
             ->shouldReceive('all')
             ->once()
             ->andReturn($expectedData);
-        
+
         $result = $this->categoryService->getAll();
-        
+
         $this->assertEquals($expectedData, $result);
     }
-
-    /**
-     * Test getDataTables method
-     */
-    public function test_get_data_tables(): void
-    {
-        $expectedData = ['data' => 'test'];
-        
-        $this->mockRepository
-            ->shouldReceive('datatables')
-            ->once()
-            ->andReturn($expectedData);
-        
-        $result = $this->categoryService->getDataTables();
-        
-        $this->assertEquals($expectedData, $result);
-    }
-
+    
     /**
      * Test get method
      */
@@ -78,15 +61,15 @@ class CategoryServiceTest extends TestCase
     {
         $id = 1;
         $expectedResult = (object)['id' => 1, 'name' => 'Test Category'];
-        
+
         $this->mockRepository
             ->shouldReceive('find')
             ->once()
             ->with($id)
             ->andReturn($expectedResult);
-        
+
         $result = $this->categoryService->get($id);
-        
+
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -101,17 +84,17 @@ class CategoryServiceTest extends TestCase
             'description' => 'Test description',
             'status' => 'active',
         ];
-        
+
         $expectedResult = (object)['id' => 1, 'name' => 'Test Category'];
-        
+
         $this->mockRepository
             ->shouldReceive('create')
             ->once()
             ->with($data)
             ->andReturn($expectedResult);
-        
+
         $result = $this->categoryService->create($data);
-        
+
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -125,17 +108,17 @@ class CategoryServiceTest extends TestCase
             'name' => 'Updated Category',
             'slug' => 'updated-category',
         ];
-        
+
         $expectedResult = (object)['id' => 1, 'name' => 'Updated Category'];
-        
+
         $this->mockRepository
             ->shouldReceive('update')
             ->once()
             ->with($id, $data)
             ->andReturn($expectedResult);
-        
+
         $result = $this->categoryService->update($id, $data);
-        
+
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -146,15 +129,15 @@ class CategoryServiceTest extends TestCase
     {
         $id = 1;
         $expectedResult = true;
-        
+
         $this->mockRepository
             ->shouldReceive('delete')
             ->once()
             ->with($id)
             ->andReturn($expectedResult);
-        
+
         $result = $this->categoryService->delete($id);
-        
+
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -165,15 +148,15 @@ class CategoryServiceTest extends TestCase
     {
         $id = 1;
         $expectedResult = true;
-        
+
         $this->mockRepository
             ->shouldReceive('restore')
             ->once()
             ->with($id)
             ->andReturn($expectedResult);
-        
+
         $result = $this->categoryService->restore($id);
-        
+
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -186,15 +169,15 @@ class CategoryServiceTest extends TestCase
             'name' => '',
             'slug' => '',
         ];
-        
+
         $this->mockRepository
             ->shouldReceive('create')
             ->once()
             ->with($data)
             ->andThrow(new \Exception('Validation failed'));
-        
+
         $this->expectException(\Exception::class);
-        
+
         $this->categoryService->create($data);
     }
 
@@ -205,15 +188,15 @@ class CategoryServiceTest extends TestCase
     {
         $id = 999;
         $data = ['name' => 'Updated Category'];
-        
+
         $this->mockRepository
             ->shouldReceive('update')
             ->once()
             ->with($id, $data)
             ->andThrow(new \Exception('Category not found'));
-        
+
         $this->expectException(\Exception::class);
-        
+
         $this->categoryService->update($id, $data);
     }
 
@@ -223,15 +206,15 @@ class CategoryServiceTest extends TestCase
     public function test_delete_with_non_existent_id(): void
     {
         $id = 999;
-        
+
         $this->mockRepository
             ->shouldReceive('delete')
             ->once()
             ->with($id)
             ->andThrow(new \Exception('Category not found'));
-        
+
         $this->expectException(\Exception::class);
-        
+
         $this->categoryService->delete($id);
     }
 
@@ -241,15 +224,15 @@ class CategoryServiceTest extends TestCase
     public function test_get_with_non_existent_id(): void
     {
         $id = 999;
-        
+
         $this->mockRepository
             ->shouldReceive('find')
             ->once()
             ->with($id)
             ->andReturn(null);
-        
+
         $result = $this->categoryService->get($id);
-        
+
         $this->assertNull($result);
     }
 
@@ -259,14 +242,14 @@ class CategoryServiceTest extends TestCase
     public function test_get_all_returns_empty_collection(): void
     {
         $expectedData = collect([]);
-        
+
         $this->mockRepository
             ->shouldReceive('all')
             ->once()
             ->andReturn($expectedData);
-        
+
         $result = $this->categoryService->getAll();
-        
+
         $this->assertEquals($expectedData, $result);
         $this->assertTrue($result->isEmpty());
     }

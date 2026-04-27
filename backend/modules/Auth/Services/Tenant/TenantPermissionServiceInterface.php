@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface TenantPermissionServiceInterface
 {
-    public function getDataTables();
     /**
      * Get all permissions with pagination and filters
      */

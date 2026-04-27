@@ -7,8 +7,6 @@ use Modules\Auth\Repository\UserManagementRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
-use Yajra\DataTables\DataTables;
-
 class UserManagementRepository implements UserManagementRepositoryInterface
 {
     public function getUsersWithFilters(array $filters = [], int $perPage = 15, array $orderBy = []): LengthAwarePaginator
@@ -184,62 +182,5 @@ class UserManagementRepository implements UserManagementRepositoryInterface
     public function getNewUsersCount(int $days = 30): int
     {
         return User::where('created_at', '>=', now()->subDays($days))->count();
-    }
-
-    /**
-     * Get DataTables data for users
-     */
-    public function getDataTables()
-    {
-        $users = User::query()->with(['roles', 'permissions']);
-
-        return DataTables::of($users)
-            ->addColumn('roles_list', function ($user)
-            {
-                return $user->roles->pluck('name')->implode(', ');
-            })
-            ->addColumn('permissions_count', function ($user)
-            {
-                return $user->getAllPermissions()->count();
-            })
-            ->addColumn('status_badge', function ($user)
-            {
-                $status = $user->status ?? 'active';
-                $badgeClass = $status === 'active' ? 'badge-success' : 'badge-danger';
-                return '<span class="badge ' . $badgeClass . '">' . ucfirst($status) . '</span>';
-            })
-            ->addColumn('last_login', function ($user)
-            {
-                return $user->last_login_at ? $user->last_login_at->diffForHumans() : translate('never');
-            })
-            ->addColumn('created_at_formatted', function ($user)
-            {
-                return $user->created_at->format('Y-m-d H:i:s');
-            })
-            ->addColumn('actions', function ($user) {
-                $actions = '';
-
-                // Edit button
-                $actions .= '<button type="button" data-id="' . $user->id . '" data-url="javascript:void(0)" class="btn btn-sm btn-primary edit-btn mx-1" title="' . translate('edit') . '"><i class="fas fa-edit"></i></button>';
-
-                // Switch button
-                $checked = ($user->status ?? 'active') === 'active' ? 'checked' : '';
-                $actions .= '<div class="custom-control custom-switch d-inline-block mx-1"><input type="checkbox" class="custom-control-input switch-btn" id="switch-' . $user->id . '" data-id="' . $user->id . '" ' . $checked . '><label class="custom-control-label" for="switch-' . $user->id . '"></label></div>';
-
-                // Delete button
-                $actions .= '<button type="button" data-id="' . $user->id . '" data-url="javascript:void(0)" class="btn btn-sm btn-danger delete-btn mx-1" title="' . translate('delete') . '"><i class="fas fa-trash"></i></button>';
-
-                // Add role management button
-                $actions .= '<a href="javascript:void(0)" class="btn btn-sm.btn-info open-manage-roles-modal"
-                           data-user-id="' . $user->id . '"
-                           data-user-name="' . $user->name . '"
-                           title="' . translate('manage_roles') . '">
-                           <i class="fas fa-user-shield"></i>
-                           </a>';
-
-                return $actions;
-            })
-            ->rawColumns(['status_badge', 'actions'])
-            ->make(true);
     }
 }

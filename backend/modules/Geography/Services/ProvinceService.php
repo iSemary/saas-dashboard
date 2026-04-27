@@ -32,11 +32,6 @@ class ProvinceService
         return $this->repository->findOrFail($id);
     }
 
-    public function getDataTables()
-    {
-        return $this->repository->datatables();
-    }
-
     public function get($id)
     {
         return $this->repository->find($id);

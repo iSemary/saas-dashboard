@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface TenantUserManagementServiceInterface
 {
-    public function getDataTables();
     /**
      * Get all users with pagination and filters
      */

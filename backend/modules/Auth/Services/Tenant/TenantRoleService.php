@@ -18,11 +18,6 @@ class TenantRoleService implements TenantRoleServiceInterface
         $this->roleRepository = $roleRepository;
     }
 
-    public function getDataTables()
-    {
-        return $this->roleRepository->datatables();
-    }
-
     public function getAllRoles(array $filters = [], int $perPage = 15): LengthAwarePaginator|Collection
     {
         try {

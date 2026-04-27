@@ -10,52 +10,10 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Gate;
 
 class TenantUserManagementRepository implements TenantUserManagementRepositoryInterface
 {
-    public function datatables()
-    {
-        $rows = User::query()->withTrashed()
-            ->whereNotNull('customer_id')
-            ->with('roles')
-            ->where(function ($q) {
-                if (request()->from_date && request()->to_date) {
-                    $q->whereBetween('users.created_at', [request()->from_date, request()->to_date]);
-                }
-            });
-
-        return DataTables::of($rows)
-            ->addColumn('roles', function ($row) {
-                return $row->roles->pluck('name')->map(function($role) {
-                    return '<span class="badge badge-info">' . ucfirst(str_replace('_', ' ', $role)) . '</span>';
-                })->implode(' ');
-            })
-            ->editColumn('status', function ($row) {
-                return $row->deleted_at
-                    ? '<span class="badge badge-danger">Inactive</span>'
-                    : '<span class="badge badge-success">Active</span>';
-            })
-            ->addColumn('actions', function ($row) {
-                $btn = '';
-                $type = 'users';
-                $titleType = 'user';
-
-                if (!isset($row->deleted_at) && !$row->deleted_at && Gate::allows('update.' . $type)) {
-                    $btn .= '<button type="button" data-modal-title="' . translate("edit") . " " . translate($titleType) . '" data-modal-link="' . route('tenant.users.edit', $row->id) . '" class="btn-primary mx-1 btn-sm open-edit-modal"><i class="far fa-edit"></i></button>';
-                }
-
-                if (!isset($row->deleted_at) && !$row->deleted_at && Gate::allows('delete.' . $type)) {
-                    $btn .= '<button type="button" data-delete-type="' . translate($titleType) . '" data-url="' . route('tenant.users.destroy', $row->id) . '" class="btn-danger mx-1 btn-sm delete-btn"><i class="fa fa-trash"></i></button>';
-                }
-
-                return $btn;
-            })
-            ->rawColumns(['roles', 'status', 'actions'])
-            ->make(true);
-    }
-
     public function getAllUsers(): Collection
     {
         return User::with(['roles', 'permissions', 'country', 'language'])

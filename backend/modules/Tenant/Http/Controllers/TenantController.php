@@ -30,9 +30,6 @@ class TenantController extends ApiController implements HasMiddleware
     
     public function index()
     {
-        if (request()->ajax()) {
-            return $this->service->getDataTables();
-        }
         $title = translate("tenants");
         $breadcrumbs = [
             ['text' => translate('home'), 'link' => route('home')],

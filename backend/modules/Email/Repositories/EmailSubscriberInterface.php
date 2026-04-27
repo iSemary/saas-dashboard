@@ -8,7 +8,6 @@ interface EmailSubscriberInterface
 {
     public function all();
     public function count();
-    public function datatables();
     public function find($id);
     public function findOrFail(int $id);
     public function paginate(array $filters = [], int $perPage = 50): LengthAwarePaginator;

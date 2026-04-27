@@ -22,9 +22,6 @@ class PermissionGroupController extends ApiController implements HasMiddleware
 
     public function index()
     {
-        if (request()->ajax()) {
-            return $this->service->getDataTables();
-        }
         $title = translate("permission_groups");
         $breadcrumbs = [
             ['text' => translate('home'), 'link' => route('home')],

@@ -7,7 +7,6 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 interface EmailRecipientInterface
 {
     public function all();
-    public function datatables();
     public function count();
     public function getPaginated();
     public function find($id);

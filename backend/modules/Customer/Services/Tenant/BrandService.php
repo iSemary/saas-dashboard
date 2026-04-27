@@ -25,14 +25,6 @@ class BrandService
     }
 
     /**
-     * Get brands for DataTables
-     */
-    public function getDataTables()
-    {
-        return $this->repository->getDataTables();
-    }
-
-    /**
      * Get a brand by ID
      */
     public function get(int $id)
@@ -46,7 +38,7 @@ class BrandService
     public function create(array $data)
     {
         // Handle logo upload if present
-        if (isset($data['logo']) && $data['logo'] instanceof UploadedFile) 
+        if (isset($data['logo']) && $data['logo'] instanceof UploadedFile)
         {
             $data['logo'] = $this->uploadLogo($data['logo']);
         }
@@ -60,15 +52,15 @@ class BrandService
     public function update(int $id, array $data)
     {
         // Handle logo upload if present
-        if (isset($data['logo']) && $data['logo'] instanceof UploadedFile) 
+        if (isset($data['logo']) && $data['logo'] instanceof UploadedFile)
         {
             // Delete old logo if exists
             $brand = $this->get($id);
-            if ($brand->logo) 
+            if ($brand->logo)
             {
                 $this->deleteLogo($brand->logo);
             }
-            
+
             $data['logo'] = $this->uploadLogo($data['logo']);
         }
 
@@ -81,9 +73,9 @@ class BrandService
     public function delete(int $id)
     {
         $brand = $this->get($id);
-        
+
         // Delete logo file if exists
-        if ($brand->logo) 
+        if ($brand->logo)
         {
             $this->deleteLogo($brand->logo);
         }
@@ -145,7 +137,7 @@ class BrandService
      */
     private function deleteLogo(string $logoPath)
     {
-        if (Storage::disk('public')->exists($logoPath)) 
+        if (Storage::disk('public')->exists($logoPath))
         {
             Storage::disk('public')->delete($logoPath);
         }
@@ -157,7 +149,7 @@ class BrandService
     public function getBrandsForDashboard()
     {
         return $this->repository->getAll()
-            ->map(function ($brand) 
+            ->map(function ($brand)
             {
                 return [
                     'id' => $brand->id,

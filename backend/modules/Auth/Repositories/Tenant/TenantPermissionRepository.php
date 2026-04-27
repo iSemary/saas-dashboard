@@ -7,51 +7,10 @@ use Modules\Auth\Entities\Role;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
-use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Gate;
 
 class TenantPermissionRepository implements TenantPermissionRepositoryInterface
 {
-    public function datatables()
-    {
-        $rows = Permission::query()->withTrashed()
-            ->where('guard_name', 'web')
-            ->withCount('roles')
-            ->selectRaw("permissions.*,
-                SUBSTRING_INDEX(permissions.name, '.', -1) as resource,
-                SUBSTRING_INDEX(permissions.name, '.', 1) as action")
-            ->where(function ($q) {
-                if (request()->from_date && request()->to_date) {
-                    $q->whereBetween('permissions.created_at', [request()->from_date, request()->to_date]);
-                }
-            });
-
-        return DataTables::of($rows)
-            ->editColumn('resource', function ($row) {
-                return ucfirst($row->resource);
-            })
-            ->editColumn('action', function ($row) {
-                return ucfirst($row->action);
-            })
-            ->addColumn('actions', function ($row) {
-                $btn = '';
-                $type = 'permissions';
-                $titleType = 'permission';
-
-                if (!isset($row->deleted_at) && !$row->deleted_at && Gate::allows('update.' . $type)) {
-                    $btn .= '<button type="button" data-modal-title="' . translate("edit") . " " . translate($titleType) . '" data-modal-link="' . route('tenant.permissions.edit', $row->id) . '" class="btn-primary mx-1 btn-sm open-edit-modal"><i class="far fa-edit"></i></button>';
-                }
-
-                if (!isset($row->deleted_at) && !$row->deleted_at && Gate::allows('delete.' . $type)) {
-                    $btn .= '<button type="button" data-delete-type="' . translate($titleType) . '" data-url="' . route('tenant.permissions.destroy', $row->id) . '" class="btn-danger mx-1 btn-sm delete-btn"><i class="fa fa-trash"></i></button>';
-                }
-
-                return $btn;
-            })
-            ->rawColumns(['actions'])
-            ->make(true);
-    }
-
     public function getAllPermissions(): Collection
     {
         return Permission::with(['roles'])

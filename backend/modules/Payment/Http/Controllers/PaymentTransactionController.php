@@ -18,7 +18,7 @@ class PaymentTransactionController extends Controller
     {
         $this->repository = $repository;
         $this->paymentService = $paymentService;
-        
+
         $this->middleware('permission:view_payment_transactions')->only(['index', 'show']);
         $this->middleware('permission:manage_payment_transactions')->only(['capture', 'void', 'retry']);
     }
@@ -28,9 +28,6 @@ class PaymentTransactionController extends Controller
      */
     public function index()
     {
-        if (request()->ajax()) {
-            return $this->repository->datatables();
-        }
 
         $stats = $this->repository->getAnalytics();
         $paymentMethods = PaymentMethod::active()->get();
@@ -44,7 +41,7 @@ class PaymentTransactionController extends Controller
     public function show($id)
     {
         $transaction = $this->repository->find($id);
-        
+
         if (!$transaction) {
             abort(404);
         }
@@ -64,7 +61,7 @@ class PaymentTransactionController extends Controller
 
         try {
             $transaction = $this->repository->find($id);
-            
+
             if (!$transaction) {
                 return response()->json(['error' => 'Transaction not found'], 404);
             }
@@ -100,7 +97,7 @@ class PaymentTransactionController extends Controller
 
         try {
             $transaction = $this->repository->find($id);
-            
+
             if (!$transaction) {
                 return response()->json(['error' => 'Transaction not found'], 404);
             }
@@ -135,7 +132,7 @@ class PaymentTransactionController extends Controller
         $analytics = $this->repository->getAnalytics($startDate, $endDate);
 
         // Get daily transaction data for charts
-        $dailyData = PaymentTransaction::selectRaw('DATE(created_at) as date, 
+        $dailyData = PaymentTransaction::selectRaw('DATE(created_at) as date,
                                                    COUNT(*) as transaction_count,
                                                    SUM(CASE WHEN status = "completed" THEN amount ELSE 0 END) as total_amount,
                                                    SUM(CASE WHEN status = "completed" THEN 1 ELSE 0 END) as successful_count')
@@ -145,7 +142,7 @@ class PaymentTransactionController extends Controller
                                      ->get();
 
         // Get payment method distribution
-        $methodDistribution = PaymentTransaction::selectRaw('payment_method_id, 
+        $methodDistribution = PaymentTransaction::selectRaw('payment_method_id,
                                                            COUNT(*) as transaction_count,
                                                            SUM(CASE WHEN status = "completed" THEN amount ELSE 0 END) as total_amount')
                                                ->whereBetween('created_at', [$startDate, $endDate])
@@ -207,7 +204,7 @@ class PaymentTransactionController extends Controller
     protected function exportToCsv($transactions)
     {
         $filename = 'transactions_' . now()->format('Y-m-d_H-i-s') . '.csv';
-        
+
         $headers = [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
@@ -215,7 +212,7 @@ class PaymentTransactionController extends Controller
 
         $callback = function() use ($transactions) {
             $file = fopen('php://output', 'w');
-            
+
             // CSV headers
             fputcsv($file, [
                 'Transaction ID', 'Gateway Transaction ID', 'Payment Method', 'Amount', 'Currency',

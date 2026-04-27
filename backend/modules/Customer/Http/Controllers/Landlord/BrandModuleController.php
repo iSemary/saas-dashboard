@@ -18,7 +18,7 @@ class BrandModuleController extends Controller
     public function __construct(
         BrandModuleSubscriptionService $brandModuleService,
         BrandService $brandService
-    ) 
+    )
     {
         $this->brandModuleService = $brandModuleService;
         $this->brandService = $brandService;
@@ -32,7 +32,7 @@ class BrandModuleController extends Controller
         try {
             $filters = $request->only(['brand_id', 'module_key', 'subscription_status', 'search', 'date_from', 'date_to']);
             $perPage = $request->get('per_page', 15);
-            
+
             $subscriptions = $this->brandModuleService->getAll($filters, $perPage);
 
             return response()->json([
@@ -55,30 +55,13 @@ class BrandModuleController extends Controller
     }
 
     /**
-     * Get DataTables data for brand module subscriptions.
-     */
-    public function getDataTables(): JsonResponse
-    {
-        try {
-            $data = $this->brandModuleService->getDataTables();
-            return $data;
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => translate('failed_to_load_data'),
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
      * Show brand module selection interface.
      */
     public function showBrandModules(int $brandId)
     {
         try {
             $brand = $this->brandService->getById($brandId);
-            if (!$brand) 
+            if (!$brand)
             {
                 return redirect()->route('landlord.brands.index')
                                ->with('error', translate('brand_not_found'));
@@ -86,14 +69,14 @@ class BrandModuleController extends Controller
 
             $activeSubscriptions = $this->brandModuleService->getActiveSubscriptions($brandId);
             $availableModules = $this->brandModuleService->getAvailableModules();
-            
+
             // Check which modules are already subscribed
             $subscribedModules = $activeSubscriptions->pluck('module_key')->toArray();
             $unsubscribedModules = array_diff_key($availableModules, array_flip($subscribedModules));
 
             return view('landlord.customer.brands.modules.index', compact(
-                'brand', 
-                'activeSubscriptions', 
+                'brand',
+                'activeSubscriptions',
                 'availableModules',
                 'subscribedModules',
                 'unsubscribedModules'
@@ -125,9 +108,9 @@ class BrandModuleController extends Controller
             $existingSubscriptions = $this->brandModuleService->getActiveSubscriptions($brandId)
                                                              ->pluck('module_key')
                                                              ->toArray();
-            
+
             $duplicateModules = array_intersect($moduleKeys, $existingSubscriptions);
-            if (!empty($duplicateModules)) 
+            if (!empty($duplicateModules))
             {
                 return response()->json([
                     'success' => false,
@@ -201,8 +184,8 @@ class BrandModuleController extends Controller
     {
         try {
             $success = $this->brandModuleService->toggleSubscriptionStatus($id);
-            
-            if ($success) 
+
+            if ($success)
             {
                 $subscription = $this->brandModuleService->getById($id);
                 return response()->json([
@@ -210,8 +193,8 @@ class BrandModuleController extends Controller
                     'message' => translate('subscription_status_updated'),
                     'data' => [
                         'status' => $subscription->subscription_status,
-                        'status_badge' => '<span class="badge ' . $subscription->getStatusBadgeClass() . '">' . 
-                                         ucfirst($subscription->subscription_status) . 
+                        'status_badge' => '<span class="badge ' . $subscription->getStatusBadgeClass() . '">' .
+                                         ucfirst($subscription->subscription_status) .
                                          '</span>'
                     ]
                 ]);
@@ -237,14 +220,14 @@ class BrandModuleController extends Controller
     {
         try {
             $brand = $this->brandService->getById($brandId);
-            if (!$brand) 
+            if (!$brand)
             {
                 return redirect()->route('landlord.brands.index')
                                ->with('error', translate('brand_not_found'));
             }
 
             // Check if brand has access to this module
-            if (!$this->brandModuleService->hasActiveSubscription($brandId, $moduleKey)) 
+            if (!$this->brandModuleService->hasActiveSubscription($brandId, $moduleKey))
             {
                 return redirect()->route('landlord.brands.modules.show', $brandId)
                                ->with('error', translate('brand_no_access_to_module') . ': ' . $moduleKey);
@@ -254,7 +237,7 @@ class BrandModuleController extends Controller
             $availableModules = $this->brandModuleService->getAvailableModules();
             $moduleInfo = $availableModules[$moduleKey] ?? null;
 
-            if (!$moduleInfo) 
+            if (!$moduleInfo)
             {
                 return redirect()->route('landlord.brands.modules.show', $brandId)
                                ->with('error', translate('module_not_found') . ': ' . $moduleKey);
@@ -263,7 +246,7 @@ class BrandModuleController extends Controller
             // Redirect to module-specific dashboard controller
             $routeName = 'landlord.' . $moduleKey . '.dashboard.show';
             return redirect()->route($routeName, ['brandId' => $brandId]);
-            
+
         } catch (\Exception $e) {
             return redirect()->route('landlord.brands.index')
                            ->with('error', translate('error_loading_module_dashboard') . ': ' . $e->getMessage());
@@ -277,7 +260,7 @@ class BrandModuleController extends Controller
     {
         try {
             $stats = $this->brandModuleService->getDashboardStats();
-            
+
             return response()->json([
                 'success' => true,
                 'data' => $stats

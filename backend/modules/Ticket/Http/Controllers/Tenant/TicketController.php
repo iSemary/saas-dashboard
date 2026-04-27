@@ -32,9 +32,6 @@ class TicketController extends ApiController implements HasMiddleware
 
     public function index()
     {
-        if (request()->ajax()) {
-            return $this->service->getDataTables();
-        }
         
         $title = translate($this->service->model->pluralTitle);
         $breadcrumbs = [
@@ -466,5 +463,4 @@ class TicketController extends ApiController implements HasMiddleware
         return $this->return(200, translate("success"), $metrics);
     }
 }
-
 

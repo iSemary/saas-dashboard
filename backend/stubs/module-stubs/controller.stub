@@ -30,10 +30,6 @@ class $MODEL_NAME$Controller extends ApiController implements HasMiddleware
 
     public function index()
     {
-        if (request()->ajax()) {
-            return $this->service->getDataTables();
-        }
-
         $title = translate($this->service->model->pluralTitle);
 
         $breadcrumbs = [
@@ -88,7 +84,7 @@ class $MODEL_NAME$Controller extends ApiController implements HasMiddleware
         $this->service->delete($id);
         return $this->return(200, "Deleted successfully");
     }
-    
+
     public function restore($id)
     {
         $this->service->restore($id);

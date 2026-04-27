@@ -19,16 +19,12 @@ class EmailSubscriberController extends ApiController implements HasMiddleware
     }
     public function index()
     {
-        if (request()->ajax()) {
-            return $this->service->getDataTables();
-        }
         $title = translate($this->service->model->pluralTitle);
 
         $breadcrumbs = [
             ['text' => translate('home'), 'link' => route('home')],
             ['text' => translate($this->service->model->pluralTitle)],
         ];
-
 
         return view('landlord.emails.email-subscribers.index', compact('breadcrumbs', 'title',));
     }

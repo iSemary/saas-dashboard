@@ -30,12 +30,6 @@ class TenantUserManagementController extends Controller
     {
         try
         {
-            // Check if it's an AJAX/DataTables request
-            if ($request->ajax())
-            {
-                return $this->userService->getDataTables();
-            }
-
             $filters = $request->only(['search', 'role_id', 'status', 'country_id', 'created_from', 'created_to']);
             $perPage = $request->get('per_page', 15);
 

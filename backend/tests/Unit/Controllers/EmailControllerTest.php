@@ -30,11 +30,11 @@ class EmailControllerTest extends BaseControllerTest
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Create mock services
         $this->mockEmailCredentialService = Mockery::mock(EmailCredentialService::class);
         $this->mockEmailTemplateService = Mockery::mock(EmailTemplateService::class);
-        
+
         $this->app->instance(EmailCredentialService::class, $this->mockEmailCredentialService);
         $this->app->instance(EmailTemplateService::class, $this->mockEmailTemplateService);
     }
@@ -49,80 +49,31 @@ class EmailControllerTest extends BaseControllerTest
             $this->mockEmailCredentialService,
             $this->mockEmailTemplateService
         );
-        
+
         $this->assertInstanceOf(EmailController::class, $controller);
     }
-
-    /**
-     * Test index method returns view for non-AJAX requests
-     */
-    public function test_index_returns_view_for_non_ajax_requests(): void
-    {
-        $this->mockService
-            ->shouldReceive('getDataTables')
-            ->never();
-        
-        $controller = new EmailController(
-            $this->mockService,
-            $this->mockEmailCredentialService,
-            $this->mockEmailTemplateService
-        );
-        
-        $request = Request::create('/emails', 'GET');
-        $request->headers->set('Accept', 'text/html');
-        
-        $response = $controller->index();
-        
-        $this->assertInstanceOf(\Illuminate\View\View::class, $response);
-    }
-
-    /**
-     * Test index method returns JSON for AJAX requests
-     */
-    public function test_index_returns_json_for_ajax_requests(): void
-    {
-        $expectedData = ['data' => 'test'];
-        
-        $this->mockService
-            ->shouldReceive('getDataTables')
-            ->once()
-            ->andReturn($expectedData);
-        
-        $controller = new EmailController(
-            $this->mockService,
-            $this->mockEmailCredentialService,
-            $this->mockEmailTemplateService
-        );
-        
-        $request = Request::create('/emails', 'GET');
-        $request->headers->set('X-Requested-With', 'XMLHttpRequest');
-        
-        $response = $controller->index();
-        
-        $this->assertInstanceOf(\Illuminate\Http\JsonResponse::class, $response);
-    }
-
+    
     /**
      * Test show method returns view for existing email log
      */
     public function test_show_returns_view_for_existing_email_log(): void
     {
         $mockEmailLog = Mockery::mock(\Modules\Email\Entities\EmailLog::class);
-        
+
         $this->mockService
             ->shouldReceive('getById')
             ->once()
             ->with(1)
             ->andReturn($mockEmailLog);
-        
+
         $controller = new EmailController(
             $this->mockService,
             $this->mockEmailCredentialService,
             $this->mockEmailTemplateService
         );
-        
+
         $response = $controller->show(1);
-        
+
         $this->assertInstanceOf(\Illuminate\View\View::class, $response);
     }
 
@@ -135,32 +86,32 @@ class EmailControllerTest extends BaseControllerTest
             (object)['id' => 1, 'name' => 'Test SMTP'],
             (object)['id' => 2, 'name' => 'Test SMTP 2'],
         ]);
-        
+
         $mockEmailTemplates = collect([
             (object)['id' => 1, 'name' => 'Test Template'],
             (object)['id' => 2, 'name' => 'Test Template 2'],
         ]);
-        
+
         $this->mockEmailCredentialService
             ->shouldReceive('getAll')
             ->once()
             ->with(['status' => 'active'])
             ->andReturn($mockEmailCredentials);
-        
+
         $this->mockEmailTemplateService
             ->shouldReceive('getAll')
             ->once()
             ->with(['status' => 'active'])
             ->andReturn($mockEmailTemplates);
-        
+
         $controller = new EmailController(
             $this->mockService,
             $this->mockEmailCredentialService,
             $this->mockEmailTemplateService
         );
-        
+
         $response = $controller->compose();
-        
+
         $this->assertInstanceOf(\Illuminate\View\View::class, $response);
     }
 
@@ -170,23 +121,23 @@ class EmailControllerTest extends BaseControllerTest
     public function test_send_sends_email_successfully(): void
     {
         $requestData = $this->sampleData;
-        
+
         $this->mockService
             ->shouldReceive('send')
             ->once()
             ->with($requestData)
             ->andReturn(['success' => true]);
-        
+
         $controller = new EmailController(
             $this->mockService,
             $this->mockEmailCredentialService,
             $this->mockEmailTemplateService
         );
-        
+
         $request = Request::create('/emails/send', 'POST', $requestData);
-        
+
         $response = $controller->send($request);
-        
+
         $this->assertInstanceOf(\Illuminate\Http\JsonResponse::class, $response);
         $responseData = json_decode($response->getContent(), true);
         $this->assertTrue($responseData['success']);
@@ -198,23 +149,23 @@ class EmailControllerTest extends BaseControllerTest
     public function test_send_handles_email_sending_failure(): void
     {
         $requestData = $this->sampleData;
-        
+
         $this->mockService
             ->shouldReceive('send')
             ->once()
             ->with($requestData)
             ->andReturn(['success' => false, 'message' => 'SMTP connection failed']);
-        
+
         $controller = new EmailController(
             $this->mockService,
             $this->mockEmailCredentialService,
             $this->mockEmailTemplateService
         );
-        
+
         $request = Request::create('/emails/send', 'POST', $requestData);
-        
+
         $response = $controller->send($request);
-        
+
         $this->assertInstanceOf(\Illuminate\Http\JsonResponse::class, $response);
         $responseData = json_decode($response->getContent(), true);
         $this->assertFalse($responseData['success']);
@@ -230,15 +181,15 @@ class EmailControllerTest extends BaseControllerTest
             ->once()
             ->with([1])
             ->andReturn(['success' => true]);
-        
+
         $controller = new EmailController(
             $this->mockService,
             $this->mockEmailCredentialService,
             $this->mockEmailTemplateService
         );
-        
+
         $response = $controller->resend(1);
-        
+
         $this->assertInstanceOf(\Illuminate\Http\JsonResponse::class, $response);
         $responseData = json_decode($response->getContent(), true);
         $this->assertTrue($responseData['success']);
@@ -254,15 +205,15 @@ class EmailControllerTest extends BaseControllerTest
             ->once()
             ->with([1])
             ->andReturn(['success' => false, 'message' => 'Email not found']);
-        
+
         $controller = new EmailController(
             $this->mockService,
             $this->mockEmailCredentialService,
             $this->mockEmailTemplateService
         );
-        
+
         $response = $controller->resend(1);
-        
+
         $this->assertInstanceOf(\Illuminate\Http\JsonResponse::class, $response);
         $responseData = json_decode($response->getContent(), true);
         $this->assertFalse($responseData['success']);
@@ -274,23 +225,23 @@ class EmailControllerTest extends BaseControllerTest
     public function test_resend_multiple_resends_multiple_emails_successfully(): void
     {
         $ids = [1, 2, 3];
-        
+
         $this->mockService
             ->shouldReceive('resend')
             ->once()
             ->with($ids)
             ->andReturn(['success' => true]);
-        
+
         $controller = new EmailController(
             $this->mockService,
             $this->mockEmailCredentialService,
             $this->mockEmailTemplateService
         );
-        
+
         $request = Request::create('/emails/resend-multiple', 'POST', ['ids' => '1,2,3']);
-        
+
         $response = $controller->resendMultiple($request);
-        
+
         $this->assertInstanceOf(\Illuminate\Http\JsonResponse::class, $response);
         $responseData = json_decode($response->getContent(), true);
         $this->assertTrue($responseData['success']);
@@ -302,20 +253,20 @@ class EmailControllerTest extends BaseControllerTest
     public function test_count_all_returns_email_count(): void
     {
         $expectedCount = 150;
-        
+
         $this->mockService
             ->shouldReceive('countAllEmails')
             ->once()
             ->andReturn($expectedCount);
-        
+
         $controller = new EmailController(
             $this->mockService,
             $this->mockEmailCredentialService,
             $this->mockEmailTemplateService
         );
-        
+
         $response = $controller->countAll();
-        
+
         $this->assertInstanceOf(\Illuminate\Http\JsonResponse::class, $response);
         $responseData = json_decode($response->getContent(), true);
         $this->assertTrue($responseData['success']);
@@ -328,15 +279,15 @@ class EmailControllerTest extends BaseControllerTest
     public function test_middleware_configuration(): void
     {
         $middleware = EmailController::middleware();
-        
+
         $this->assertIsArray($middleware);
         $this->assertNotEmpty($middleware);
-        
+
         // Check for specific middleware
         $middlewareNames = array_map(function($middleware) {
             return $middleware->middleware;
         }, $middleware);
-        
+
         $this->assertContains('permission:read.email_logs', $middlewareNames);
         $this->assertContains('permission:send.emails', $middlewareNames);
         $this->assertContains('permission:resend.email_logs', $middlewareNames);

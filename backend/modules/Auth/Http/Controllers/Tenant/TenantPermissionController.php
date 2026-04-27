@@ -24,12 +24,6 @@ class TenantPermissionController extends Controller
     {
         try
         {
-            // Check if it's an AJAX/DataTables request
-            if ($request->ajax())
-            {
-                return $this->permissionService->getDataTables();
-            }
-
             $filters = $request->only(['search', 'resource', 'action', 'created_from', 'created_to']);
             $perPage = $request->get('per_page', 15);
 

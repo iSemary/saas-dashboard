@@ -5,8 +5,6 @@ namespace Modules\Auth\Http\Controllers\Tenant;
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
 use Modules\Auth\Entities\LoginAttempt;
-use Yajra\DataTables\DataTables;
-
 class TenantLoginAttemptController extends ApiController
 {
     /**
@@ -14,13 +12,6 @@ class TenantLoginAttemptController extends ApiController
      */
     public function index(Request $request, int $id = null)
     {
-        // Check if it's an AJAX/DataTables request
-        if ($request->ajax() && $request->get('table'))
-        {
-            return $this->getDataTables($id);
-        }
-
-        // For non-AJAX requests, return the view
         $userId = $id ?? auth()->id();
         $route = route('tenant.login-attempts.index', $userId);
 
@@ -31,28 +22,6 @@ class TenantLoginAttemptController extends ApiController
         ];
 
         return view('tenant.auth.login-attempts.index', compact('route', 'title', 'breadcrumbs'));
-    }
-
-    /**
-     * Get DataTables data for login attempts
-     */
-    protected function getDataTables(int $id = null)
-    {
-        $userId = $id ?? auth()->id();
-
-        $rows = LoginAttempt::query()
-            ->where('user_id', $userId)
-            ->when(request()->from_date && request()->to_date, function ($query) {
-                $query->whereBetween('login_attempts.created_at', [request()->from_date, request()->to_date]);
-            })
-            ->orderBy('created_at', 'desc');
-
-        return DataTables::of($rows)
-            ->addColumn('agent', function ($row) {
-                return $this->formatAgentIcons($row->agent);
-            })
-            ->rawColumns(['agent'])
-            ->make(true);
     }
 
     private function formatAgentIcons($agent)

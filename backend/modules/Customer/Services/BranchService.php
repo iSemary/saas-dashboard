@@ -27,11 +27,6 @@ class BranchService
         return $this->branchRepository->getAll($params);
     }
 
-    public function getDataTables()
-    {
-        return $this->branchRepository->datatables();
-    }
-
     public function getById(int $id): ?Branch
     {
         return $this->branchRepository->getById($id);

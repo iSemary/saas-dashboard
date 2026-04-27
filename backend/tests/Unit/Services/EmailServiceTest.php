@@ -18,7 +18,7 @@ class EmailServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->mockRepository = Mockery::mock(EmailRepository::class);
         $this->emailService = new EmailService($this->mockRepository);
     }
@@ -32,23 +32,6 @@ class EmailServiceTest extends TestCase
     }
 
     /**
-     * Test getDataTables method
-     */
-    public function test_get_data_tables(): void
-    {
-        $expectedData = ['data' => 'test'];
-        
-        $this->mockRepository
-            ->shouldReceive('datatables')
-            ->once()
-            ->andReturn($expectedData);
-        
-        $result = $this->emailService->getDataTables();
-        
-        $this->assertEquals($expectedData, $result);
-    }
-
-    /**
      * Test send method
      */
     public function test_send(): void
@@ -59,17 +42,17 @@ class EmailServiceTest extends TestCase
             'body' => 'Test Body',
             'email_credential_id' => 1,
         ];
-        
+
         $expectedResult = ['success' => true];
-        
+
         $this->mockRepository
             ->shouldReceive('send')
             ->once()
             ->with($data)
             ->andReturn($expectedResult);
-        
+
         $result = $this->emailService->send($data);
-        
+
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -80,15 +63,15 @@ class EmailServiceTest extends TestCase
     {
         $id = 1;
         $expectedResult = (object)['id' => 1, 'email' => 'test@example.com'];
-        
+
         $this->mockRepository
             ->shouldReceive('getById')
             ->once()
             ->with($id)
             ->andReturn($expectedResult);
-        
+
         $result = $this->emailService->getById($id);
-        
+
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -99,15 +82,15 @@ class EmailServiceTest extends TestCase
     {
         $ids = [1, 2, 3];
         $expectedResult = ['success' => true];
-        
+
         $this->mockRepository
             ->shouldReceive('resend')
             ->once()
             ->with($ids)
             ->andReturn($expectedResult);
-        
+
         $result = $this->emailService->resend($ids);
-        
+
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -117,14 +100,14 @@ class EmailServiceTest extends TestCase
     public function test_count_all_emails(): void
     {
         $expectedCount = 150;
-        
+
         $this->mockRepository
             ->shouldReceive('countAllEmails')
             ->once()
             ->andReturn($expectedCount);
-        
+
         $result = $this->emailService->countAllEmails();
-        
+
         $this->assertEquals($expectedCount, $result);
     }
 
@@ -138,17 +121,17 @@ class EmailServiceTest extends TestCase
             'subject' => '',
             'body' => '',
         ];
-        
+
         $expectedResult = ['success' => false, 'message' => 'Invalid email data'];
-        
+
         $this->mockRepository
             ->shouldReceive('send')
             ->once()
             ->with($data)
             ->andReturn($expectedResult);
-        
+
         $result = $this->emailService->send($data);
-        
+
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -158,15 +141,15 @@ class EmailServiceTest extends TestCase
     public function test_get_by_id_with_non_existent_id(): void
     {
         $id = 999;
-        
+
         $this->mockRepository
             ->shouldReceive('getById')
             ->once()
             ->with($id)
             ->andReturn(null);
-        
+
         $result = $this->emailService->getById($id);
-        
+
         $this->assertNull($result);
     }
 
@@ -177,15 +160,15 @@ class EmailServiceTest extends TestCase
     {
         $ids = [];
         $expectedResult = ['success' => false, 'message' => 'No emails to resend'];
-        
+
         $this->mockRepository
             ->shouldReceive('resend')
             ->once()
             ->with($ids)
             ->andReturn($expectedResult);
-        
+
         $result = $this->emailService->resend($ids);
-        
+
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -195,14 +178,14 @@ class EmailServiceTest extends TestCase
     public function test_count_all_emails_returns_zero(): void
     {
         $expectedCount = 0;
-        
+
         $this->mockRepository
             ->shouldReceive('countAllEmails')
             ->once()
             ->andReturn($expectedCount);
-        
+
         $result = $this->emailService->countAllEmails();
-        
+
         $this->assertEquals($expectedCount, $result);
     }
 

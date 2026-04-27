@@ -611,11 +611,6 @@ The WebSocket server handles real-time updates for the dashboard.
 - `.file-uploader` - File upload component
 - `.generate-password-input` - Password generator
 
-### Global IDs
-
-- `#table` - Datatables container
-- `#ckInput` - CKEditor input fields
-
 ### Global Data Attributes
 
 - `data-toggle="tooltip"` - Bootstrap tooltip
@@ -679,14 +674,6 @@ Use the `Translatable` trait for multi-language support:
 use Translatable;
 
 protected $translatableColumns = ['name', 'description'];
-```
-
-In datatables:
-
-```php
-->editColumn('description', function($row) {
-    return TranslateHelper::returnTranslatableEditor($row, 'description');
-})
 ```
 
 ## 📊 Data Models

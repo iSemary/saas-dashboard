@@ -4,8 +4,6 @@ namespace Modules\Customer\Repositories\Tenant;
 
 use Modules\Customer\Entities\Tenant\Brand;
 use Modules\Customer\Repositories\Tenant\Contracts\BrandInterface;
-use Yajra\DataTables\Facades\DataTables;
-
 class BrandRepository implements BrandInterface
 {
     protected $model;
@@ -22,78 +20,15 @@ class BrandRepository implements BrandInterface
     {
         $query = $this->model->query();
 
-        if (!empty($conditions)) 
+        if (!empty($conditions))
         {
-            foreach ($conditions as $condition) 
+            foreach ($conditions as $condition)
             {
                 $query->where($condition['column'], $condition['operator'], $condition['value']);
             }
         }
 
         return $query->orderBy('name')->get();
-    }
-
-    /**
-     * Get brands for DataTables
-     */
-    public function getDataTables()
-    {
-        $brands = $this->model->with(['creator', 'updater'])
-                            ->select(['brands.*']);
-
-        return DataTables::of($brands)
-            ->addIndexColumn()
-            ->addColumn('logo', function ($brand) 
-            {
-                if ($brand->logo) {
-                    return '<img src="' . $brand->logo_url . '" alt="' . $brand->name . '" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">';
-                }
-                return '<div class="text-center text-muted"><i class="fas fa-image fa-2x"></i></div>';
-            })
-            ->addColumn('modules_count', function ($brand) 
-            {
-                return $brand->modules_count;
-            })
-            ->addColumn('status_badge', function ($brand) 
-            {
-                $badgeClass = match($brand->status) 
-                {
-                    'active' => 'badge-success',
-                    'inactive' => 'badge-warning',
-                    'suspended' => 'badge-danger',
-                    default => 'badge-secondary'
-                };
-                
-                return '<span class="badge ' . $badgeClass . '">' . ucfirst($brand->status) . '</span>';
-            })
-            ->addColumn('created_by_name', function ($brand) 
-            {
-                return $brand->creator ? $brand->creator->name : 'N/A';
-            })
-            ->addColumn('action', function ($brand) 
-            {
-                $actions = '<div class="btn-group" role="group">';
-                
-                $actions .= '<a href="' . route('tenant.brands.show', $brand->id) . '" class="btn btn-sm btn-info" title="' . translate('view') . '">
-                    <i class="fas fa-eye"></i>
-                </a>';
-                
-                $actions .= '<button type="button" class="btn btn-sm btn-warning open-edit-modal" title="' . translate('edit') . '"
-                    data-modal-link="' . route('tenant.brands.edit', $brand->id) . '"
-                    data-modal-title="' . translate('edit') . ' ' . translate('brand') . '">
-                    <i class="fas fa-edit"></i>
-                </button>';
-                
-                $actions .= '<button type="button" class="btn btn-sm btn-danger" onclick="deleteRow(\'' . route('tenant.brands.destroy', $brand->id) . '\', \'brand\')" title="' . translate('delete') . '">
-                    <i class="fas fa-trash"></i>
-                </button>';
-                
-                $actions .= '</div>';
-                
-                return $actions;
-            })
-            ->rawColumns(['logo', 'status_badge', 'action'])
-            ->make(true);
     }
 
     /**
@@ -159,20 +94,20 @@ class BrandRepository implements BrandInterface
                 ->where('brand_id', $brandId)
                 ->pluck('module_id')
                 ->toArray();
-            
+
             if (empty($moduleIds)) {
                 return collect();
             }
-            
+
             // Get modules from landlord database directly
             $modules = \DB::connection('landlord')
                 ->table('modules')
                 ->whereIn('id', $moduleIds)
                 ->select(['id', 'module_key', 'name', 'description', 'icon', 'status'])
                 ->get();
-            
+
             return $modules;
-            
+
         } catch (\Exception $e) {
             \Log::error('BrandRepository getBrandModules Error: ' . $e->getMessage());
             return collect();
@@ -186,7 +121,7 @@ class BrandRepository implements BrandInterface
     {
         // Clear existing assignments
         \DB::table('brand_module')->where('brand_id', $brandId)->delete();
-        
+
         // Insert new assignments
         $assignments = [];
         foreach ($moduleIds as $moduleId) {
@@ -197,7 +132,7 @@ class BrandRepository implements BrandInterface
                 'updated_at' => now(),
             ];
         }
-        
+
         return \DB::table('brand_module')->insert($assignments);
     }
 

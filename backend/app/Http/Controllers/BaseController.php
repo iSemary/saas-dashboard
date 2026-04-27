@@ -10,7 +10,7 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 
 /**
  * Base Controller implementing SOLID principles
- * 
+ *
  * Single Responsibility: Handles common controller functionality
  * Open/Closed: Can be extended without modification
  * Liskov Substitution: Can be substituted by any controller extending it
@@ -77,12 +77,8 @@ abstract class BaseController extends ApiController implements HasMiddleware
     /**
      * Display a listing of the resource
      */
-    public function index(): View|JsonResponse
+    public function index(): View
     {
-        if (request()->ajax()) {
-            return $this->getService()->getDataTables();
-        }
-
         return $this->renderIndexView();
     }
 
@@ -138,7 +134,7 @@ abstract class BaseController extends ApiController implements HasMiddleware
 
             $formData = $this->getFormData();
             $formData['row'] = $row;
-            
+
             return view($this->getViewPath() . '.editor', $formData);
         } catch (\Exception $e) {
             return $this->return(500, translate("retrieval_failed"), [], [$e->getMessage()]);

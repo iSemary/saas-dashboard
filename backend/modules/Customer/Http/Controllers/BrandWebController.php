@@ -35,9 +35,6 @@ class BrandWebController extends ApiController implements HasMiddleware
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            return $this->brandService->getDataTables();
-        }
 
         $title = translate('brands');
         $breadcrumbs = [

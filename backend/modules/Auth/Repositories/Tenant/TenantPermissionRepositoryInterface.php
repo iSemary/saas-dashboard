@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface TenantPermissionRepositoryInterface
 {
-    public function datatables();
     /**
      * Get all permissions with their relationships
      */

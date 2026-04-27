@@ -23,11 +23,6 @@ class EmailGroupService
         return $this->repository->all($conditions);
     }
 
-    public function getDataTables()
-    {
-        return $this->repository->datatables();
-    }
-
     public function list(array $filters = [], int $perPage = 50)
     {
         return $this->repository->paginate($filters, $perPage);

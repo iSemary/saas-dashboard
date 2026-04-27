@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Exception;
 use Session;
-use Yajra\DataTables\Facades\DataTables;
 
 class AuthController extends ApiController
 {
@@ -276,33 +275,8 @@ class AuthController extends ApiController
 
     public function showAttempts(int $id = null)
     {
-        if (request()->ajax() && request()->get('table')) {
-            return $this->attemptsDatatables($id);
-        }
-
         $route = $id ? route('landlord.attempts.index', $id) : route('attempts.index');
         return view('user.auth.login-attempts.index', compact('route'));
-    }
-
-    public function attemptsDatatables($id = null)
-    {
-        $rows = LoginAttempt::query()
-            ->when($id, function ($query) use ($id) {
-                return $query->where('user_id', $id);
-            })->where(
-                function ($q) {
-                    if (request()->from_date && request()->to_date) {
-                        $q->whereBetween('login_attempts.created_at', [request()->from_date, request()->to_date]);
-                    }
-                }
-            );
-
-        return DataTables::of($rows)
-            ->addColumn('agent', function ($row) {
-                return $this->formatAgentIcons($row->agent);
-            })
-            ->rawColumns(['agent'])
-            ->make(true);
     }
 
     /**

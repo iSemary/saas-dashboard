@@ -7,7 +7,6 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 interface CountryInterface
 {
     public function all();
-    public function datatables();
     public function getTimeZones();
     public function find($id);
     public function findOrFail(int $id);

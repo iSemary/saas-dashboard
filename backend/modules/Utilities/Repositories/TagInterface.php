@@ -7,7 +7,6 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 interface TagInterface
 {
     public function all();
-    public function datatables(int $id = null);
     public function find($id);
     public function create(array $data);
     public function update($id, array $data);

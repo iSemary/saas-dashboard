@@ -24,12 +24,6 @@ class TenantRoleController extends Controller
     {
         try
         {
-            // Check if it's an AJAX/DataTables request
-            if ($request->ajax())
-            {
-                return $this->roleService->getDataTables();
-            }
-
             $filters = $request->only(['search', 'created_from', 'created_to']);
             $perPage = $request->get('per_page', 15);
 

@@ -31,11 +31,6 @@ class BranchController extends Controller implements HasMiddleware
     public function index(Request $request)
     {
         try {
-            // Check if it's an AJAX/DataTables request
-            if ($request->ajax()) {
-                return $this->branchService->getDataTables();
-            }
-
             $filters = $request->only(['brand_id', 'search', 'status', 'city', 'state', 'country', 'created_by', 'date_from', 'date_to']);
             $perPage = $request->get('per_page', 15);
 
@@ -91,7 +86,7 @@ class BranchController extends Controller implements HasMiddleware
                     'error' => $e->getMessage()
                 ], 500);
             }
-            
+
             return redirect()->back()->with('error', translate('something_went_wrong'));
         }
     }
@@ -103,7 +98,7 @@ class BranchController extends Controller implements HasMiddleware
     {
         $brands = $this->brandService->getByTenant(Auth::user()->tenant_id ?? 1);
         $statusOptions = ['active' => translate('active'), 'inactive' => translate('inactive'), 'suspended' => translate('suspended')];
-        
+
         return view('tenant.customer.branches.editor', compact('brands', 'statusOptions'));
     }
 
@@ -114,7 +109,7 @@ class BranchController extends Controller implements HasMiddleware
     {
         try {
             $data = $request->validated();
-            
+
             // Add tenant context
             $data['created_by'] = Auth::user()->id;
 
@@ -180,7 +175,7 @@ class BranchController extends Controller implements HasMiddleware
 
         $brands = $this->brandService->getByTenant(Auth::user()->tenant_id ?? 1);
         $statusOptions = ['active' => translate('active'), 'inactive' => translate('inactive'), 'suspended' => translate('suspended')];
-        
+
         return view('tenant.customer.branches.editor', compact('branch', 'brands', 'statusOptions'));
     }
 
@@ -191,7 +186,7 @@ class BranchController extends Controller implements HasMiddleware
     {
         try {
             $data = $request->validated();
-            
+
             // Add tenant context
             $data['updated_by'] = Auth::user()->id;
 
@@ -290,7 +285,7 @@ class BranchController extends Controller implements HasMiddleware
         try {
             $filters = $request->only(['search', 'status', 'city', 'state', 'country', 'created_by', 'date_from', 'date_to']);
             $perPage = $request->get('per_page', 15);
-            
+
             $branches = $this->branchService->getBranchesForBrand($brandId, $filters, $perPage);
 
             return response()->json([
@@ -319,7 +314,7 @@ class BranchController extends Controller implements HasMiddleware
     {
         try {
             $query = $request->get('q');
-            
+
             if (empty($query)) {
                 return response()->json([
                     'success' => false,
@@ -416,7 +411,7 @@ class BranchController extends Controller implements HasMiddleware
     {
         try {
             $templatePath = $this->branchService->downloadTemplate();
-            
+
             return response()->download($templatePath, 'branches_template.xlsx');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', translate('failed_to_download_template'));

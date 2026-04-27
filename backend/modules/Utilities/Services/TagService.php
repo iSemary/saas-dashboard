@@ -31,11 +31,6 @@ class TagService
         return $this->repository->findOrFail($id);
     }
 
-    public function getDataTables(int $id = null)
-    {
-        return $this->repository->datatables($id);
-    }
-
     public function get($id)
     {
         return $this->repository->find($id);

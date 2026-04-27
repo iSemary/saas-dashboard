@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface TenantRoleServiceInterface
 {
-    public function getDataTables();
     /**
      * Get all roles with pagination and filters
      */

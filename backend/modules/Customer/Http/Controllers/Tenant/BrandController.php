@@ -33,10 +33,6 @@ class BrandController extends ApiController implements HasMiddleware
      */
     public function index()
     {
-        if (request()->ajax())
-        {
-            return $this->service->getDataTables();
-        }
 
         $title = translate('brands');
         $breadcrumbs = [
@@ -124,7 +120,6 @@ class BrandController extends ApiController implements HasMiddleware
         $this->service->restore($id);
         return $this->return(200, translate("restored_successfully"));
     }
-
 
     /**
      * Get modules for a specific brand (AJAX endpoint)

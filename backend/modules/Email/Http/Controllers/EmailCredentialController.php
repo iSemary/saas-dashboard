@@ -19,9 +19,6 @@ class EmailCredentialController extends ApiController implements HasMiddleware
     }
     public function index()
     {
-        if (request()->ajax()) {
-            return $this->service->getDataTables();
-        }
         $title = translate($this->service->model->pluralTitle);
 
         $breadcrumbs = [

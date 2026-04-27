@@ -22,11 +22,6 @@ class PaymentMethodService
         return $this->repository->all();
     }
 
-    public function getDataTables()
-    {
-        return $this->repository->datatables();
-    }
-
     public function get($id)
     {
         return $this->repository->find($id);

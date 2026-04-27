@@ -48,7 +48,7 @@ abstract class BaseControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Create mock service
         $this->mockService = Mockery::mock($this->serviceClass);
         $this->app->instance($this->serviceClass, $this->mockService);
@@ -69,35 +69,13 @@ abstract class BaseControllerTest extends TestCase
     public function test_index_returns_view_for_non_ajax_requests(): void
     {
         $controller = new $this->controllerClass($this->mockService);
-        
+
         $request = Request::create('/test', 'GET');
         $request->headers->set('Accept', 'text/html');
-        
-        $response = $controller->index();
-        
-        $this->assertInstanceOf(View::class, $response);
-    }
 
-    /**
-     * Test index method returns JSON for AJAX requests
-     */
-    public function test_index_returns_json_for_ajax_requests(): void
-    {
-        $expectedData = ['data' => 'test'];
-        
-        $this->mockService
-            ->shouldReceive('getDataTables')
-            ->once()
-            ->andReturn($expectedData);
-        
-        $controller = new $this->controllerClass($this->mockService);
-        
-        $request = Request::create('/test', 'GET');
-        $request->headers->set('X-Requested-With', 'XMLHttpRequest');
-        
         $response = $controller->index();
-        
-        $this->assertInstanceOf(JsonResponse::class, $response);
+
+        $this->assertInstanceOf(View::class, $response);
     }
 
     /**
@@ -106,9 +84,9 @@ abstract class BaseControllerTest extends TestCase
     public function test_create_returns_view(): void
     {
         $controller = new $this->controllerClass($this->mockService);
-        
+
         $response = $controller->create();
-        
+
         $this->assertInstanceOf(View::class, $response);
     }
 
@@ -122,13 +100,13 @@ abstract class BaseControllerTest extends TestCase
             ->once()
             ->with($this->sampleData)
             ->andReturn(true);
-        
+
         $controller = new $this->controllerClass($this->mockService);
-        
+
         $request = Request::create('/test', 'POST', $this->sampleData);
-        
+
         $response = $controller->store($request);
-        
+
         $this->assertInstanceOf(JsonResponse::class, $response);
         $responseData = json_decode($response->getContent(), true);
         $this->assertTrue($responseData['success']);
@@ -143,13 +121,13 @@ abstract class BaseControllerTest extends TestCase
             ->shouldReceive('create')
             ->once()
             ->andThrow(new \Exception('Validation failed'));
-        
+
         $controller = new $this->controllerClass($this->mockService);
-        
+
         $request = Request::create('/test', 'POST', $this->sampleData);
-        
+
         $response = $controller->store($request);
-        
+
         $this->assertInstanceOf(JsonResponse::class, $response);
         $responseData = json_decode($response->getContent(), true);
         $this->assertFalse($responseData['success']);
@@ -161,17 +139,17 @@ abstract class BaseControllerTest extends TestCase
     public function test_show_returns_view_for_existing_resource(): void
     {
         $mockModel = Mockery::mock($this->modelClass);
-        
+
         $this->mockService
             ->shouldReceive('get')
             ->once()
             ->with(1)
             ->andReturn($mockModel);
-        
+
         $controller = new $this->controllerClass($this->mockService);
-        
+
         $response = $controller->show(1);
-        
+
         $this->assertInstanceOf(View::class, $response);
     }
 
@@ -185,11 +163,11 @@ abstract class BaseControllerTest extends TestCase
             ->once()
             ->with(999)
             ->andReturn(null);
-        
+
         $controller = new $this->controllerClass($this->mockService);
-        
+
         $response = $controller->show(999);
-        
+
         $this->assertInstanceOf(JsonResponse::class, $response);
         $responseData = json_decode($response->getContent(), true);
         $this->assertFalse($responseData['success']);
@@ -201,17 +179,17 @@ abstract class BaseControllerTest extends TestCase
     public function test_edit_returns_view_for_existing_resource(): void
     {
         $mockModel = Mockery::mock($this->modelClass);
-        
+
         $this->mockService
             ->shouldReceive('get')
             ->once()
             ->with(1)
             ->andReturn($mockModel);
-        
+
         $controller = new $this->controllerClass($this->mockService);
-        
+
         $response = $controller->edit(1);
-        
+
         $this->assertInstanceOf(View::class, $response);
     }
 
@@ -225,13 +203,13 @@ abstract class BaseControllerTest extends TestCase
             ->once()
             ->with(1, $this->sampleData)
             ->andReturn(true);
-        
+
         $controller = new $this->controllerClass($this->mockService);
-        
+
         $request = Request::create('/test/1', 'PUT', $this->sampleData);
-        
+
         $response = $controller->update($request, 1);
-        
+
         $this->assertInstanceOf(JsonResponse::class, $response);
         $responseData = json_decode($response->getContent(), true);
         $this->assertTrue($responseData['success']);
@@ -247,11 +225,11 @@ abstract class BaseControllerTest extends TestCase
             ->once()
             ->with(1)
             ->andReturn(true);
-        
+
         $controller = new $this->controllerClass($this->mockService);
-        
+
         $response = $controller->destroy(1);
-        
+
         $this->assertInstanceOf(JsonResponse::class, $response);
         $responseData = json_decode($response->getContent(), true);
         $this->assertTrue($responseData['success']);
@@ -267,11 +245,11 @@ abstract class BaseControllerTest extends TestCase
             ->once()
             ->with(1)
             ->andReturn(true);
-        
+
         $controller = new $this->controllerClass($this->mockService);
-        
+
         $response = $controller->restore(1);
-        
+
         $this->assertInstanceOf(JsonResponse::class, $response);
         $responseData = json_decode($response->getContent(), true);
         $this->assertTrue($responseData['success']);
@@ -283,7 +261,7 @@ abstract class BaseControllerTest extends TestCase
     public function test_middleware_configuration(): void
     {
         $middleware = $this->controllerClass::middleware();
-        
+
         $this->assertIsArray($middleware);
         $this->assertNotEmpty($middleware);
     }

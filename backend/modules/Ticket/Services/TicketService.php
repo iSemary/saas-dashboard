@@ -58,11 +58,6 @@ class TicketService
         return $ticket;
     }
 
-    public function getDataTables()
-    {
-        return $this->repository->datatables();
-    }
-
     public function get($id)
     {
         return $this->repository->find($id);

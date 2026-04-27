@@ -12,5 +12,4 @@ return [
     Laravolt\Avatar\ServiceProvider::class,
     Maatwebsite\Excel\ExcelServiceProvider::class,
     OwenIt\Auditing\AuditingServiceProvider::class,
-    Yajra\DataTables\DataTablesServiceProvider::class,
 ];

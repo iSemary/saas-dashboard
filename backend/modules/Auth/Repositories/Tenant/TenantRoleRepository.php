@@ -7,49 +7,10 @@ use Modules\Auth\Entities\Permission;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
-use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Gate;
 
 class TenantRoleRepository implements TenantRoleRepositoryInterface
 {
-    public function datatables()
-    {
-        $rows = Role::query()->withTrashed()
-            ->where('guard_name', 'web')
-            ->withCount(['permissions', 'users'])
-            ->where(function ($q) {
-                if (request()->from_date && request()->to_date) {
-                    $q->whereBetween('roles.created_at', [request()->from_date, request()->to_date]);
-                }
-            });
-
-        return DataTables::of($rows)
-            ->editColumn('name', function ($row) {
-                return ucfirst(str_replace('_', ' ', $row->name));
-            })
-            ->addColumn('actions', function ($row) {
-                $btn = '';
-                $type = 'roles';
-                $titleType = 'role';
-
-                if (!isset($row->deleted_at) && !$row->deleted_at && Gate::allows('update.' . $type)) {
-                    $btn .= '<button type="button" data-modal-title="' . translate("edit") . " " . translate($titleType) . '" data-modal-link="' . route('tenant.roles.edit', $row->id) . '" class="btn-primary mx-1 btn-sm open-edit-modal"><i class="far fa-edit"></i></button>';
-                }
-
-                if (!isset($row->deleted_at) && !$row->deleted_at && Gate::allows('delete.' . $type)) {
-                    $btn .= '<button type="button" data-delete-type="' . translate($titleType) . '" data-url="' . route('tenant.roles.destroy', $row->id) . '" class="btn-danger mx-1 btn-sm delete-btn"><i class="fa fa-trash"></i></button>';
-                }
-
-                if (isset($row->deleted_at) && $row->deleted_at && Gate::allows('restore.' . $type)) {
-                    $btn .= '<button type="button" data-restore-type="' . translate($titleType) . '" data-url="' . route('tenant.roles.restore', $row->id) . '" class="btn-warning mx-1 text-white btn-sm restore-btn"><i class="fas fa-redo-alt"></i></button>';
-                }
-
-                return $btn;
-            })
-            ->rawColumns(['actions'])
-            ->make(true);
-    }
-
     public function getAllRoles(): Collection
     {
         return Role::with(['permissions', 'users'])

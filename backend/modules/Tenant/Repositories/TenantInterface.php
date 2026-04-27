@@ -8,7 +8,6 @@ interface TenantInterface
 {
     public function init(string $customerUsername);
     public function all();
-    public function datatables();
     public function find($id);
     public function findOrFail(int $id);
     public function paginate(array $filters = [], int $perPage = 50): LengthAwarePaginator;

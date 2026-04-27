@@ -16,16 +16,6 @@ class ActivityLogService
         $this->repository = $repository;
     }
     
-    public function getDataTables($id)
-    {
-        return $this->repository->datatables($id);
-    }
-
-    public function getDataTablesByRow($id, $model)
-    {
-        return $this->repository->getDataTablesByRow($id, $model);
-    }
-
     public function getById()
     {
         return $this->repository->getById();

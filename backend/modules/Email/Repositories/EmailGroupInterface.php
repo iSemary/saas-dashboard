@@ -7,7 +7,6 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 interface EmailGroupInterface
 {
     public function all();
-    public function datatables();
     public function getPaginated();
     public function find($id);
     public function findOrFail(int $id);

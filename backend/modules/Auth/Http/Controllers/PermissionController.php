@@ -19,9 +19,6 @@ class PermissionController extends ApiController implements HasMiddleware
 
     public function index()
     {
-        if (request()->ajax()) {
-            return $this->service->getDataTables();
-        }
         $title = translate("permissions");
         $breadcrumbs = [
             ['text' => translate('home'), 'link' => route('home')],
